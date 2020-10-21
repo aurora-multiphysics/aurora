@@ -53,7 +53,6 @@ temp_print_trace.*
 *.poly
 *.mpx
 *.btr
-*.xml
 *.xml.*
 *.gmv
 *.plt
@@ -89,6 +88,8 @@ temp_print_trace.*
 *.processor.*
 .clang_complete
 .failed_tests
+*.h5
+*.h5m
 failed-unittest
 compile_commands.json
 build
