@@ -1,6 +1,9 @@
-Aurora
+AURORA
 =====
 
-"Fork Aurora" to create a new MOOSE-based application.
+A Unified Resource for OpenMC [fusion] Reactor Applications.
 
-For more information see: [http://mooseframework.org/create-an-app/](http://mooseframework.org/create-an-app/)
+In other words, a MOOSE-based app to combine the Monte Carlo neutron transport calculations from OpenMC with the FEA-based calculations supported by the MOOSE framework, intended for modelling of tokamak physics. 
+
+For more information on MOOSE see: [http://mooseframework.org]
+For more information on OpenMC see: [https://docs.openmc.org/en/stable/]
