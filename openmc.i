@@ -1,6 +1,7 @@
 [Mesh]
-  type = FileMesh
-  file = copper_air_tetmesh.e
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
 []
 
 [Problem]
@@ -10,15 +11,9 @@
 [Executioner]
   type = OpenMCExecutioner
 []
-  
-[Variables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
 
-[Outputs]
-  exodus = true
-  execute_on = "final"
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+  []  
 []

@@ -15,7 +15,7 @@
 []
   
 [Variables]
-  [heating-main]
+  [heating-local]
       order = CONSTANT
       family = MONOMIAL
   []
@@ -25,7 +25,7 @@
   [openmc]
     type = FullSolveMultiApp
     app_type = OpenMCApp
-    execute_on = initial
+    execute_on = "initial"
     input_files = 'openmc.i'
     positions = '0   0   0'
     library_path = ./openmc/lib
@@ -33,14 +33,11 @@
 []
 
 [Transfers]
-  [./from_openmc]
-    type = MultiAppCopyTransfer
-    direction = from_multiapp
-    source_variable = heating-local
-    variable = heating-main
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
     multi_app = openmc
   [../]
-
 []
   
 [Outputs]

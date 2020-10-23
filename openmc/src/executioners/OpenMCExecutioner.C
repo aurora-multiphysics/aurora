@@ -18,18 +18,19 @@ validParams<OpenMCExecutioner>()
   return params;
 }
 
-OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) : Transient(parameters), isInit(false)
+OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
+  Transient(parameters),
+  setProblemLocal(false)
 {
-  // Create MOAB interface
-  moabPtr =  std::make_shared<moab::Core>();
+  // To-do: set var names as required params
   var_name = "heating-local";
 }
 
 void
-OpenMCExecutioner::init()
+OpenMCExecutioner::execute()
 {
-  Transient::init();
-  
+
+  // Initialize MOAB here so it occurs after transfers when part of MultiApp
   if(!initMOAB()){
     std::cerr<<"Failed to initialize MOAB"<<std::endl;
     return;
@@ -39,22 +40,7 @@ OpenMCExecutioner::init()
     std::cerr<<"Failed to initialize OpenMC"<<std::endl;
     return;
   }
-
-  if(!initSystems()){
-    std::cerr<<"Failed to initalize systems"<<std::endl;
-    return;
-  }
-
-  // Mark successful initialisation
-  isInit = true;
-}
-
-void
-OpenMCExecutioner::execute()
-{
-  // Don't continue if something already went wrong
-  if (!isInit) return;
-    
+      
   // Clear tallies from any previous calls
   openmc_err = openmc_reset();
   if (openmc_err) return;
@@ -66,125 +52,70 @@ OpenMCExecutioner::execute()
   // Fetch the tallied results
   std::vector< std::vector< double > > results_by_mat;
   if(!getResults(results_by_mat)) return;
-
   if(results_by_mat.empty()) return;
-  
-  // Pass the results into libMesh systems
+
+  // Pass the results into moab user objec
   // ( just one material for now )
   // TODO system for every material?
-  try
-    {
-      setSolution(iSys, iVar, results_by_mat.back());
-    }
-  catch(std::logic_error &e)
-    {
-      std::cerr<<"Failed to pass OpenMC results to systems"<<std::endl;
-      std::cerr<<e.what()<<std::endl;
-      return;
-    }
+  if(!moab().setSolution(var_name,results_by_mat.back())){
+    std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
+    return;
+  }
 
-  std::cout<<"Solution set"<<std::endl;
-
-  try
-    {
-      _time = 1;
-      _problem.outputStep(EXEC_FINAL);
-    }
-  catch(std::exception &e)
-    {
-      std::cerr<<"Failed to output results."<<std::endl;
-      std::cerr<<e.what()<<std::endl;
-      return;
-     }  
-
-  std::cout<<"output results"<<std::endl;
-  
+  if(setProblemLocal){
+    // If the problem belongs to this executioner, we need to set the output here
+    try
+      {
+        _time = 1;
+        _problem.outputStep(EXEC_FINAL);
+      }
+    catch(std::exception &e)
+      {
+        std::cerr<<"Failed to output results."<<std::endl;
+        std::cerr<<e.what()<<std::endl;
+        return;
+      }    
+  }
 }
 
-MeshBase&
-OpenMCExecutioner::mesh()
+MoabUserObject&
+OpenMCExecutioner::moab()
 {
-  return feProblem().mesh().getMesh();  
-}
-
-EquationSystems&
-OpenMCExecutioner::systems()
-{
-  return feProblem().es();
-}
-
-System&
-OpenMCExecutioner::system(std::string var_now)
-{
-  return feProblem().getSystem(var_now);  
-}
-
-
-bool
-OpenMCExecutioner::initSystems()
-{
-  try
-    {
-      libMesh::System& sys = system(var_name);      
-      iSys = sys.number();
-      iVar = sys.variable_number(var_name);      
-    }
-  catch(std::exception &e)
-    {
-      std::cerr<<e.what()<<std::endl;
-      return false;
-    }
-  
-  // // Add a new system and fetch a reference
-  // libMesh::System& sys = systems().add_system("Basic","OpenMCsys");
-  // sys.set_basic_system_only();
-
-  // // Set ID to retrieve system later
-  // iSys = sys.number();
-  
-  // // Add a new variable and save index
-  // iVar = sys.add_variable("heating",libMesh::Order::CONSTANT,libMesh::FEFamily::MONOMIAL);
-  
-  // Initialise the data structures for the equation systems
-  systems().init();
-
-  return true;
-}
-
-
-bool
-OpenMCExecutioner::initProblem()
-{
- try
-    {
-      _problem.initialSetup();
-    }
-  catch(std::exception &e)
-    {
-      std::cerr<<e.what()<<std::endl;
-      return false;
-    }
- return true;
+  // TODO set this name as a required input param for executioner
+  return feProblem().getUserObject<MoabUserObject>("moab");
 }
 
 bool
 OpenMCExecutioner::initMOAB()
 {
-  // Fetch spatial dimension from libMesh
-  int dim = mesh().spatial_dimension() ;
-  
-  // Set spatial dimension in MOAB
-  moab::ErrorCode  rval = moabPtr->set_dimension(dim);
-  if(rval!=moab::MB_SUCCESS) return false;
-  
-  std::map<dof_id_type,moab::EntityHandle> node_id_to_handle;
-  rval = createNodes(node_id_to_handle);
-  if(rval!=moab::MB_SUCCESS) return false;
 
-  rval = createElems(node_id_to_handle,_elem_handle_to_id);
-  if(rval!=moab::MB_SUCCESS) return false;
+  try
+    {
+
+      if(!(feProblem().hasUserObject("moab")))
+        throw std::logic_error("Could not find MoabUserObject with name 'moab'. Please check your input file.");
+         
+      // Fetch a named instance of MOAB user object
+      MoabUserObject& moabUO = moab();
+
+      // Check if the user object already has a problem, e.g. through a transfer, in which case don't pass one in
+      if(!moabUO.hasProblem()){
+        FEProblemBase& problem = feProblem();
+        moabUO.setProblem(&feProblem());
+        setProblemLocal=true;
+      }
+      
+      moabUO.initMOAB();
+      
+    }
+  catch(std::exception &e)
+    {
+      std::cerr<<e.what()<<std::endl;
+      return false;
+    }
 
   return true;
+
 }
 
 bool
@@ -192,7 +123,7 @@ OpenMCExecutioner::initOpenMC()
 {
 
   // Set OpenMC's copy of MOAB
-  openmc::model::moabPtr = moabPtr;
+  openmc::model::moabPtr = moab().moabPtr;
   
   char * argv[] = {nullptr, nullptr};
   openmc_err = openmc_init(1, argv, &_communicator.get());
@@ -201,125 +132,6 @@ OpenMCExecutioner::initOpenMC()
   
 }
 
-moab::ErrorCode
-OpenMCExecutioner::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle)
-{
-  moab::ErrorCode rval(moab::MB_SUCCESS);
-
-  // Clear prior results.
-  node_id_to_handle.clear();
-    
-  // Init array for MOAB node coords
-  double 	coords[3];
-
-    // TODO think about how the mesh is distributed...
-  // Iterate over nodes in libmesh
-  auto itnode = mesh().nodes_begin();
-  auto endnode = mesh().nodes_end();
-  for( ; itnode!=endnode; ++itnode){
-    // Fetch a const ref to node
-    const Node& node = **itnode;
-
-    // Fetch coords
-    coords[0]=node(0);
-    coords[1]=node(1);
-    coords[2]=node(2);
-
-    // Fetch ID
-    dof_id_type id = node.id();
-
-    // Add node to MOAB database and get handle
-    moab::EntityHandle ent(0);
-    rval = moabPtr->create_vertex(coords,ent);
-    if(rval!=moab::MB_SUCCESS){
-      node_id_to_handle.clear();
-      return rval;
-    }
-
-    // Save mapping of ids.
-    node_id_to_handle[id] = ent;
-       
-  }
-
-  return rval;
-}
-
-
-
-moab::ErrorCode
-OpenMCExecutioner::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle,std::map<dof_id_type,moab::EntityHandle>& elem_handle_to_id)
-{
-  moab::ErrorCode rval(moab::MB_SUCCESS);
-
-  // Clear prior results.
-  elem_handle_to_id.clear();
-  
-  // Initialise an array for moab connectivity
-  unsigned int nNodes = 4;
-  moab::EntityHandle conn[nNodes];
-
-  // moab::Range tets;
-  
-  // TODO think about how the mesh is distributed...
-  // Iterate over elements in libmesh
-  auto itelem = mesh().elements_begin();
-  auto endelem = mesh().elements_end();
-  for( ; itelem!=endelem; ++itelem){
-    Elem& elem = **itelem;
-
-    // Check all the elements are tets 
-    ElemType type = elem.type();
-    if(type!=TET4){
-      rval = moab::MB_FAILURE;
-      return rval;
-    }
-
-    // Get the connectivity
-    std::vector< dof_id_type > conn_libmesh;
-    elem.connectivity	(0,libMesh::IOPackage::VTK,conn_libmesh);
-    if(conn_libmesh.size()!=nNodes){
-      rval = moab::MB_FAILURE;
-      return rval;
-    }
-    
-    // Set MOAB connectivity
-    for(unsigned int iNode=0; iNode<nNodes;++iNode){
-      if(node_id_to_handle.find(conn_libmesh.at(iNode)) == 
-         node_id_to_handle.end()){
-        rval = moab::MB_FAILURE;
-        return rval;
-      }
-      conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
-    }
-
-    // Fetch ID
-    dof_id_type id = elem.id();
-
-    // Create an element in MOAB database
-    moab::EntityHandle ent(0);
-    rval = moabPtr->create_element(moab::MBTET,conn,nNodes,ent);
-    if(rval!=moab::MB_SUCCESS){
-      elem_handle_to_id.clear();
-      return rval;
-    }
-    elem_handle_to_id[ent]=id;
-    //    tets.insert(ent);
-    
-  }
-
-  // moab::EntityHandle tetset;
-  // rval = moabPtr->create_meshset(moab::MESHSET_SET, tetset);
-  // if (rval != moab::MB_SUCCESS) {
-  //   return rval;
-  // }
-  
-  // rval = moabPtr->add_entities(tetset, tets);
-  // if (rval != moab::MB_SUCCESS) {
-  //   return rval;
-  // }
-  
-  return rval;  
-}
 
 bool
 OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_mat)
@@ -591,97 +403,3 @@ OpenMCExecutioner::decomposeIntoFilterBins(int32_t iResultBin,
   
   return true;
 };
-
-moab::EntityHandle
-OpenMCExecutioner::bin_index_to_handle(unsigned int index)
-{
-  if(index > _elem_handle_to_id.size() ) return 0;
-
-  moab::EntityHandle ent = (_elem_handle_to_id.begin())->first + index;
-  return ent;
-}
-
-
-void
-OpenMCExecutioner::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::vector< double > &results)
-{
-
-  // Fetch a reference to our system
-  // TODO debug this line!  
-  libMesh::System& sys = systems().get_system(iSysNow);
-    
-  // Check the sizes match up
-  uint32_t nBins = results.size();
-  // if(sys.solution->size() != nBins){
-  //   std::cout<<" Solution size = "<< sys.solution->size()<<std::endl;
-  //   std::cout<<" current local Solution size = "<< sys.current_local_solution->size()<<std::endl;
-  //   std::cout<<"nvars = "<< sys.n_vars()<< " n comps" <<sys.n_components()<<std::endl;
-  //   throw std::logic_error("Solution has a different number of bins to OpenMC results vector.");
-  // }
-
-  // Check we map our bins onto unique indices
-  std::set<dof_id_type> sol_indices;
-  
-  std::cout<<"Number of bins = "<<nBins<<std::endl;
-  
-  // Loop over mesh filter bins
-  for(uint32_t iBin=0; iBin< nBins; iBin++){
-
-    // Result for this bin
-    double result = results.at(iBin);
-
-    // Get the solution index for this bin
-    dof_id_type index = bin_index_to_soln_index(iSysNow,iVarNow,iBin);
-
-    // Check we haven't used this index already
-    if(sol_indices.find(index)!= sol_indices.end()){
-      throw std::logic_error("OpenMC indices non-uniquely map to solution indices.");
-    }
-    sol_indices.insert(index);
-
-    // if(result != 0.){
-    //   std::cout<<"setting result"<< index << " " << result<<std::endl;
-    // }
-
-    //Number complex_result = (result,0.);
-    
-    // Set the solution for this index
-    sys.solution->set(index,result);
-  }
-
-  sys.solution->close();
-
-  _problem.copySolutionsBackwards();
-
-  for (THREAD_ID tid = 0; tid < libMesh::n_threads(); ++tid){
-    _problem.getVariable(tid,var_name).computeElemValues(); 
-  }
-    
-  
-}
-
-dof_id_type
-OpenMCExecutioner::bin_index_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, unsigned int index)
-{
-
-  // Convert the bin index to an entity handle
-  moab::EntityHandle ent = bin_index_to_handle(index);
-  
-  // Convert the entity handle to a libMesh id
-  dof_id_type id = _elem_handle_to_id[ent];
-  
-  // Get a reference to the element with this ID
-  Elem& elem  = mesh().elem_ref(id);
-
-  // Expect only one component, but check anyay
-  unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
-  if(n_components != 1){
-    throw std::logic_error("Unexpected number of expected solution components");
-  }
-  
-  // Get the degree of freedom number
-  dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
-
-  return soln_index;
-  
-}

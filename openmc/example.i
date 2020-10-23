@@ -19,8 +19,13 @@
   []
 []
 
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+  []
+[]
+
 [Outputs]
   exodus = true
-  console = true
   execute_on = "final"
 []
