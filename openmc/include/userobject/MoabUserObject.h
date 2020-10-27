@@ -49,7 +49,7 @@ class MoabUserObject : public UserObject
   // bool initSystem(std::string var_now);
   
   // Pass the OpenMC results into the libMesh systems solution
-  bool setSolution(std::string var_now,std::vector< double > &results);
+  bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool normToVol=true);
 
   // Publically available pointer to MOAB interface
   std::shared_ptr<moab::Interface> moabPtr;
@@ -73,11 +73,14 @@ private:
   moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle,std::map<dof_id_type,moab::EntityHandle>& elem_handle_to_id);
 
   // Helper method to set the results in a given system and variable
-  void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results);
+  void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool normToVol);
 
   // Helper methods to convert between indices
-  dof_id_type bin_index_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, unsigned int index);
-  dof_id_type bin_index_to_elem_id(unsigned int index);  
+  dof_id_type elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, dof_id_type id);
+  dof_id_type bin_index_to_elem_id(unsigned int index);
+
+  // Return the volume of an element (use for tally normalisation)
+  double elemVolume(dof_id_type id);
  
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;

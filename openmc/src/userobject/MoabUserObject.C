@@ -43,7 +43,7 @@ MoabUserObject::systems()
 System&
 MoabUserObject::system(std::string var_now)
 {
-  return problem().getSystem(var_now);  
+  return problem().getSystem(var_now);
 }
 
 void
@@ -51,12 +51,12 @@ MoabUserObject::initMOAB()
 {
   // Fetch spatial dimension from libMesh
   int dim = mesh().spatial_dimension() ;
-  
+
   // Set spatial dimension in MOAB
   moab::ErrorCode  rval = moabPtr->set_dimension(dim);
   if(rval!=moab::MB_SUCCESS)
     throw std::logic_error("Failed to set MOAB dimension");
-  
+
   std::map<dof_id_type,moab::EntityHandle> node_id_to_handle;
   rval = createNodes(node_id_to_handle);
   if(rval!=moab::MB_SUCCESS)
@@ -73,25 +73,25 @@ MoabUserObject::initMOAB()
 
 //   try
 //     {
-//       libMesh::System& sys = system(var_name);      
+//       libMesh::System& sys = system(var_name);
 //       unsigned int iSys = sys.number();
-//       iVar = sys.variable_number(var_name);      
+//       iVar = sys.variable_number(var_name);
 //     }
 //   catch(std::exception &e)
 //     {
 //       std::cerr<<e.what()<<std::endl;
 //       return false;
-//     }  
+//     }
 //   // // Add a new system and fetch a reference
 //   // libMesh::System& sys = systems().add_system("Basic","OpenMCsys");
 //   // sys.set_basic_system_only();
 
 //   // // Set ID to retrieve system later
 //   // iSys = sys.number();
-  
+
 //   // // Add a new variable and save index
 //   // iVar = sys.add_variable("heating",libMesh::Order::CONSTANT,libMesh::FEFamily::MONOMIAL);
-  
+
 //   // Initialise the data structures for the equation systems
 //   systems().init();
 
@@ -100,22 +100,22 @@ MoabUserObject::initMOAB()
 
 // Pass the results for named variable into the libMesh systems solution
 bool
-MoabUserObject::setSolution(std::string var_now,std::vector< double > &results)
+MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, double scaleFactor, bool normToVol)
 {
 
   try
     {
-      libMesh::System& sys = system(var_now);      
+      libMesh::System& sys = system(var_now);
       unsigned int iSys = sys.number();
       unsigned int iVar = sys.variable_number(var_now);
-      setSolution(iSys,iVar,results);
+      setSolution(iSys,iVar,results,scaleFactor,normToVol);
 
       problem().copySolutionsBackwards();
 
       for (THREAD_ID tid = 0; tid < libMesh::n_threads(); ++tid){
-        problem().getVariable(tid,var_now).computeElemValues(); 
+        problem().getVariable(tid,var_now).computeElemValues();
       }
-      
+
     }
   catch(std::exception &e)
     {
@@ -124,7 +124,7 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results)
     }
 
   return true;
-  
+
 }
 
 moab::ErrorCode
@@ -132,12 +132,12 @@ MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 {
 
   if(!hasProblem()) return  moab::MB_FAILURE;
-  
+
   moab::ErrorCode rval(moab::MB_SUCCESS);
 
   // Clear prior results.
   node_id_to_handle.clear();
-    
+
   // Init array for MOAB node coords
   double 	coords[3];
 
@@ -167,7 +167,7 @@ MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
     // Save mapping of ids.
     node_id_to_handle[id] = ent;
-       
+
   }
 
   return rval;
@@ -183,7 +183,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
   // Clear prior results.
   elem_handle_to_id.clear();
-  
+
   // Initialise an array for moab connectivity
   unsigned int nNodes = 4;
   moab::EntityHandle conn[nNodes];
@@ -195,7 +195,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   for( ; itelem!=endelem; ++itelem){
     Elem& elem = **itelem;
 
-    // Check all the elements are tets 
+    // Check all the elements are tets
     ElemType type = elem.type();
     if(type!=TET4){
       rval = moab::MB_FAILURE;
@@ -209,10 +209,10 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
       rval = moab::MB_FAILURE;
       return rval;
     }
-    
+
     // Set MOAB connectivity
     for(unsigned int iNode=0; iNode<nNodes;++iNode){
-      if(node_id_to_handle.find(conn_libmesh.at(iNode)) == 
+      if(node_id_to_handle.find(conn_libmesh.at(iNode)) ==
          node_id_to_handle.end()){
         rval = moab::MB_FAILURE;
         return rval;
@@ -231,21 +231,20 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
       return rval;
     }
     elem_handle_to_id[ent]=id;
-    
+
   }
-  
-  return rval;  
+
+  return rval;
 }
 
 void
-MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::vector< double > &results)
+MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::vector< double > &results, double scaleFactor, bool normToVol)
 {
 
   if(!hasProblem())
     throw std::logic_error("FE problem was not set");
-  
+
   // Fetch a reference to our system
-  // TODO debug this line!  
   libMesh::System& sys = systems().get_system(iSysNow);
 
   // Ensure we map our bins onto unique indices
@@ -253,15 +252,29 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
 
   // Get the number of bins
   uint32_t nBins = results.size();
-  
+
   // Loop over mesh filter bins
   for(uint32_t iBin=0; iBin< nBins; iBin++){
 
     // Result for this bin
     double result = results.at(iBin);
 
-    // Get the solution index for this bin
-    dof_id_type index = bin_index_to_soln_index(iSysNow,iVarNow,iBin);
+    // Scale the result
+    result*=scaleFactor;
+
+    // Convert the bin index to a libmesh id
+    dof_id_type id = bin_index_to_elem_id(iBin);
+
+    if(normToVol){
+      // Fetch the volume of element
+      double vol = elemVolume(id);
+      // Normalise result to the element volume
+      result /= vol;
+    }
+
+
+    // Get the solution index for this element
+    dof_id_type index = elem_id_to_soln_index(iSysNow,iVarNow,id);
 
     // Check we haven't used this index already
     if(sol_indices.find(index)!= sol_indices.end()){
@@ -272,21 +285,24 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
     // if(result != 0.){
     //   std::cout<<"setting result"<< index << " " << result<<std::endl;
     // }
-    
+
     // Set the solution for this index
     sys.solution->set(index,result);
   }
 
   sys.solution->close();
-  
-}
-                      
-dof_id_type
-MoabUserObject::bin_index_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, unsigned int index)
-{
 
-  // Convert the bin index to a libmesh id
-  dof_id_type id = bin_index_to_elem_id(index);
+}
+
+double
+MoabUserObject::elemVolume(dof_id_type id)
+{
+  return mesh().elem_ref(id).volume();
+}
+
+dof_id_type
+MoabUserObject::elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, dof_id_type id)
+{
 
   // Get a reference to the element with this ID
   Elem& elem  = mesh().elem_ref(id);
@@ -296,12 +312,12 @@ MoabUserObject::bin_index_to_soln_index(unsigned int iSysNow, unsigned int iVarN
   if(n_components != 1){
     throw std::logic_error("Unexpected number of expected solution components");
   }
-  
+
   // Get the degree of freedom number
   dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
 
   return soln_index;
-  
+
 }
 
 dof_id_type
@@ -316,7 +332,7 @@ MoabUserObject::bin_index_to_elem_id(unsigned int index)
 
   if(_elem_handle_to_id.find(ent)==_elem_handle_to_id.end())
     throw std::logic_error("Unknown entity handle");
-  
+
   // Convert the entity handle to a libMesh id
   dof_id_type id = _elem_handle_to_id[ent];
 

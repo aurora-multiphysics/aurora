@@ -22,9 +22,9 @@ class OpenMCExecutioner : public Transient
 {
 public:
   OpenMCExecutioner(const InputParameters & parameters);
-  
+
   virtual void execute() override;
- 
+
 private:
 
   // Helper struct
@@ -33,7 +33,7 @@ private:
     int32_t id; // Unique ID
     int32_t stride; // Shape data for results array
     size_t nbins; // Number of filter bins
-    std::string type; // Type of filter 
+    std::string type; // Type of filter
   };
 
   // Methods
@@ -43,7 +43,7 @@ private:
 
   // Initialise MOAB
   bool initMOAB();
-  
+
   // Initialise OpenMC
   bool initOpenMC();
 
@@ -56,22 +56,31 @@ private:
                      int32_t& meshFilter,
                      int32_t& matFilter,
                      int32_t& nFilterBins);
-  
+
   int32_t getFilterBin(int32_t iResultBin, const FilterInfo & filter);
   bool decomposeIntoFilterBins(int32_t iResultBin,
                                const std::map<int32_t, FilterInfo>& filters_by_id,
                                std::map<int32_t,int32_t>& filter_id_to_bin_index);
-    
+
   // Data members
 
   // Record whether we set the FE Problem locally.
   bool setProblemLocal;
-  
+
   // Hold OpenMC error code
   int openmc_err;
-      
-  // To-do get from file...
+
+  // Name of the variable in which we will store the tally data
   std::string var_name;
-  
+
+  // Name of the score to extract
+  std::string score_name;
+
+  // Strength of fusion neutron source in neutrons/s
+  double source_strength;
+
+  // ID of the tally we will use
+  int32_t tally_id;
+
 };
 #endif // OPENMCEXECUTIONER_H

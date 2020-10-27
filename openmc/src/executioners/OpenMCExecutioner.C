@@ -15,15 +15,22 @@ InputParameters
 validParams<OpenMCExecutioner>()
 {
   InputParameters params = validParams<Transient>();
+  params.addRequiredParam<std::string>(
+      "variable", "Variable name to store the results of tally");
+  params.addParam<std::string>("score_name", "heating-local", "Name of the OpenMC score we want to extract");
+  params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
+  params.addParam<int32_t>("tally_id", 1, "OpenMC tally ID to extract results from.");
   return params;
 }
 
 OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   Transient(parameters),
-  setProblemLocal(false)
+  setProblemLocal(false),
+  var_name(getParam<std::string>("variable")),
+  score_name(getParam<std::string>("score_name")),
+  source_strength(getParam<double>("neutron_source")),
+  tally_id(getParam<int32_t>("tally_id"))
 {
-  // To-do: set var names as required params
-  var_name = "heating-local";
 }
 
 void
@@ -54,10 +61,10 @@ OpenMCExecutioner::execute()
   if(!getResults(results_by_mat)) return;
   if(results_by_mat.empty()) return;
 
-  // Pass the results into moab user objec
-  // ( just one material for now )
-  // TODO system for every material?
-  if(!moab().setSolution(var_name,results_by_mat.back())){
+  // Pass the results into moab user object
+  // ( summed over materials for now )
+  // TODO system for every material? or just remove material binning
+  if(!moab().setSolution(var_name,results_by_mat.back(),source_strength,true)){
     std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
     return;
   }
@@ -137,12 +144,9 @@ bool
 OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_mat)
 {
 
-  // Assume we know what tally we want
-  int32_t tallyID = 1;
-
   // Get the tally index
   int32_t t_index(0);
-  openmc_err = openmc_get_tally_index(tallyID,&t_index);
+  openmc_err = openmc_get_tally_index(tally_id,&t_index);
   if (openmc_err) return false;
 
   // Fetch a reference to the tally
@@ -157,14 +161,14 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
   for(unsigned int iScore=0; iScore<nScores; iScore++){
     // Get the score name
     std::string name = tally.score_name(iScore);
-    if(name == "heating-local"){
+    if(name == score_name){
       // Found the score we want
       heatScoreIndex = int(iScore);
       break;
     }
   }
   if(heatScoreIndex == -1){
-    openmc::set_errmsg("Failed to find 'heating-local' score.");
+    openmc::set_errmsg("Failed to find '"+score_name+"' score.");
     return false;
   }
 
@@ -230,13 +234,6 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
     // Get the heat score result.
     // Last index: 0-> internal placeholder, 1-> mean, 2-> stddev
     double result = results(iresult,heatScoreIndex,1);
-    
-    // if(result != 0.){
-    //   std::cout<<"setting result"
-    //            << " matIndex = "<< matIndex
-    //            << " meshIndex = "<< meshIndex
-    //            << " " << result<<std::endl;
-    // }
         
     // Add to sum for this material
     (results_by_mat.at(matIndex)).at(meshIndex) += result;
