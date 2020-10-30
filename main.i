@@ -1,6 +1,7 @@
 [Mesh]
   type = FileMesh
-  file = copper_air_tetmesh.e
+  file = copper_air_bcs_tetmesh.e
+  construct_side_list_from_node_list=true
 []
 
 [Problem]
@@ -10,7 +11,7 @@
 
 [Executioner]
   type = Transient
-  num_steps = 1
+  num_steps = 40
   dt = 1
   solve_type = NEWTON
 []
@@ -30,18 +31,12 @@
   []
 []
 
-[Materials]
-  [copper]
-    type = ADGenericConstantMaterial
-    prop_names = 'thermal_conductivity specific_heat density'
-    prop_values = '397.48 385.0 8920.0' # W/m*K, J/kg-K, kg/m^3 rounded to nice numbers
-    block = 1
-  []
-  [air]
-    type = ADGenericConstantMaterial
-    prop_names = 'thermal_conductivity specific_heat density'
-    prop_values = '26.3 1000 1'
-    block = 2
+[BCs]
+  [air-outer]
+    type = DirichletBC
+    variable = temperature
+    boundary = 'top-outer bottom-outer left-outer right-outer front-outer back-outer'
+    value = 300 # (K)
   []
 []
 
@@ -60,6 +55,39 @@
   []
 []
 
+#[Functions]
+#  [heating-function]
+#    type = ParsedFunction
+#    value = q0*exp(-(sqrt(x*x+y*y+z*z))/r0)
+#    vars = 'r0 q0'
+#    vals = '5 100000'
+#  []
+#[]
+
+[Materials]
+  [copper]
+    type = ADGenericConstantMaterial
+    prop_names = 'thermal_conductivity specific_heat density'
+    prop_values = '397.48 385.0 8920.0' # W/m*K, J/kg-K, kg/m^3
+    block = 1
+  []
+  [air]
+    type = ADGenericConstantMaterial
+    prop_names = 'thermal_conductivity specific_heat density'
+    prop_values = '26.3 1000 1'
+    block = 2
+  []
+  [heating]
+    type = ADGenericFunctionMaterial
+    prop_names = 'volumetric_heat'
+    prop_values = 'heating-function'
+    block = '1 2'
+    constant_on = 'ELEMENT'
+    output_properties = 'volumetric_heat'
+    outputs = exodus
+  []
+[]
+
 [Kernels]
   [heat_conduction]
     type = ADHeatConduction
@@ -70,9 +98,9 @@
     variable = temperature
   []
   [heat-source]
-    type = HeatSource
+    type = ADMatHeatSource
+    material_property = volumetric_heat
     variable = temperature
-    function = heating-function
   []
 []
 

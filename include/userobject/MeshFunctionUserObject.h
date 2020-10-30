@@ -30,17 +30,20 @@ class MeshFunctionUserObject : public GeneralUserObject
   virtual void finalize() override {};
 
   // Evaluate the mesh function at a point
-  Number value (const Point &p, const Real t=0.) const;
+  Number value (const Point &p) const;
 
 private:
-  
-  EquationSystems & systems();
-
-  System& system(std::string var_now);
-  
-  // Pointer to the libmesh mesh function object
-  std::unique_ptr<MeshFunction> _mesh_function;
 
   // Name of variable we want to turn into a function
   std::string _var_name;
+
+  // Pointer to the libMesh system containing our variable
+  System* sysPtr;
+
+  // Pointer to a libMesh point locator
+  std::unique_ptr< PointLocatorBase > point_locator_ptr;
+
+  // Save the system and variable number for convenience
+  unsigned int iVar;
+  unsigned int iSys;
 };
