@@ -14,7 +14,7 @@ VariableFunction::validParams()
 
   // Add required parameters
   params.addRequiredParam<UserObjectName>("uoname",
-                                          "Name of the MeshFunctionUserObject name to retrieve the mesh function from.");
+                                          "Name of the FunctionUserObject name to retrieve the mesh function from.");
 
   return params;
 }
@@ -27,7 +27,7 @@ VariableFunction::VariableFunction(const InputParameters & parameters) :
 void
 VariableFunction::initialSetup()
 {
-  meshFunction = &getUserObject<MeshFunctionUserObject>(userObjName);
+  meshFunction = &getUserObject<FunctionUserObject>(userObjName);
 }
 
 Real

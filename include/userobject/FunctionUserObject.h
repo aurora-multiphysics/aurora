@@ -8,17 +8,17 @@
 #include <libmesh/system.h>
 
 // Forward declaration
-class MeshFunctionUserObject;
+class FunctionUserObject;
 
 template <>
-InputParameters validParams<MeshFunctionUserObject>();
+InputParameters validParams<FunctionUserObject>();
 
 // Similar to SolutionUserObject, but the variable is loaded from memory
-class MeshFunctionUserObject : public GeneralUserObject
+class FunctionUserObject : public GeneralUserObject
 {
  public:
 
-  MeshFunctionUserObject(const InputParameters & parameters);
+  FunctionUserObject(const InputParameters & parameters);
 
   // Sets the mesh function from a variable in memory
   virtual void execute() override;

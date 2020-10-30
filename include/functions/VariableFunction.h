@@ -2,7 +2,7 @@
 
 // MOOSE includes
 #include "Function.h"
-#include "MeshFunctionUserObject.h"
+#include "FunctionUserObject.h"
 
 class VariableFunction;
 
@@ -26,7 +26,7 @@ public:
 private:
 
   // Pointer to the mesh function user object
-  const MeshFunctionUserObject * meshFunction;
+  const FunctionUserObject * meshFunction;
 
   // Name of meshFunctionUserObject to retrieve
   std::string userObjName;

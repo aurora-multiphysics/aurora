@@ -1,11 +1,11 @@
 // Moose includes
-#include "MeshFunctionUserObject.h"
+#include "FunctionUserObject.h"
 
-registerMooseObject("AuroraApp", MeshFunctionUserObject);
+registerMooseObject("AuroraApp", FunctionUserObject);
 
 template <>
 InputParameters
-validParams<MeshFunctionUserObject>()
+validParams<FunctionUserObject>()
 {
   InputParameters params = validParams<GeneralUserObject>();
 
@@ -14,17 +14,13 @@ validParams<MeshFunctionUserObject>()
   return params;
 }
 
-MeshFunctionUserObject::MeshFunctionUserObject(const InputParameters & parameters) :
+FunctionUserObject::FunctionUserObject(const InputParameters & parameters) :
   GeneralUserObject(parameters),
   _var_name(getParam<std::string>("variable"))
-{
-  std::cout<<"Created MeshFunctionUserObject with name "<<this->name()
-           <<" "<< &_fe_problem
-           <<std::endl;
-}
+{}
 
 void
-MeshFunctionUserObject::execute()
+FunctionUserObject::execute()
 {
 
   // Fetch a pointer to the point locator object
@@ -43,7 +39,7 @@ MeshFunctionUserObject::execute()
 
 // Evaluate the mesh function at a point
 Number
-MeshFunctionUserObject::value (const Point &p) const
+FunctionUserObject::value (const Point &p) const
 {
 
   if(point_locator_ptr!=nullptr){
@@ -70,6 +66,6 @@ MeshFunctionUserObject::value (const Point &p) const
 
   }
   else{
-    throw std::logic_error("Point locator is null in MeshFunctionUserObject.");
+    throw std::logic_error("Point locator is null in FunctionUserObject.");
   }
 }

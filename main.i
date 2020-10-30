@@ -11,8 +11,8 @@
 
 [Executioner]
   type = Transient
-  num_steps = 40
-  dt = 1
+  num_steps = 100
+  dt = 5
   solve_type = NEWTON
 []
 
@@ -41,8 +41,8 @@
 []
 
 [UserObjects]
-  [mesh-heating-function]
-    type = MeshFunctionUserObject
+  [uo-heating-function]
+    type = FunctionUserObject
     variable = heating-local
     execute_on = "initial"
   []
@@ -51,7 +51,7 @@
 [Functions]
   [heating-function]
     type = VariableFunction
-    uoname = "mesh-heating-function"
+    uoname = "uo-heating-function"
   []
 []
 
