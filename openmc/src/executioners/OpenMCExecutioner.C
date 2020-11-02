@@ -5,7 +5,7 @@ registerMooseObject("OpenMCApp", OpenMCExecutioner);
 
 // Declare OpenMC global objects that we need
 namespace openmc::model {
-  extern std::shared_ptr<moab::Interface> moabPtr;
+  extern std::map<int32_t, std::shared_ptr<moab::Interface> > moabPtrs;
   extern std::vector<std::unique_ptr<Tally>> tallies;
   extern std::vector<std::unique_ptr<Filter>> tally_filters;
 }
@@ -20,6 +20,7 @@ validParams<OpenMCExecutioner>()
   params.addParam<std::string>("score_name", "heating-local", "Name of the OpenMC score we want to extract");
   params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
   params.addParam<int32_t>("tally_id", 1, "OpenMC tally ID to extract results from.");
+  params.addParam<int32_t>("mesh_id", 1, "OpenMC mesh ID for which we are providing the MOAB interface");
   return params;
 }
 
@@ -29,7 +30,8 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   var_name(getParam<std::string>("variable")),
   score_name(getParam<std::string>("score_name")),
   source_strength(getParam<double>("neutron_source")),
-  tally_id(getParam<int32_t>("tally_id"))
+  tally_id(getParam<int32_t>("tally_id")),
+  mesh_id(getParam<int32_t>("mesh_id"))
 {
 }
 
@@ -129,8 +131,13 @@ bool
 OpenMCExecutioner::initOpenMC()
 {
 
+  // Check there is not an instance in memory already!
+  if(openmc::model::moabPtrs.find(mesh_id)!=openmc::model::moabPtrs.end()){
+    if(openmc::model::moabPtrs[mesh_id] != nullptr) return false;
+  }
+  
   // Set OpenMC's copy of MOAB
-  openmc::model::moabPtr = moab().moabPtr;
+  openmc::model::moabPtrs[mesh_id] = moab().moabPtr;
   
   char * argv[] = {nullptr, nullptr};
   openmc_err = openmc_init(1, argv, &_communicator.get());

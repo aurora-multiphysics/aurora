@@ -79,8 +79,11 @@ private:
   // Strength of fusion neutron source in neutrons/s
   double source_strength;
 
-  // ID of the tally we will use
+  // OpenMC ID of the tally we will use
   int32_t tally_id;
+
+  // OpenMC ID of the mesh to which we pass data
+  int32_t mesh_id;
 
 };
 #endif // OPENMCEXECUTIONER_H
