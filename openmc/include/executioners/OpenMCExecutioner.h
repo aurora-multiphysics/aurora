@@ -41,6 +41,15 @@ private:
   // Get the moab user object
   MoabUserObject& moab();
 
+  // Initialise MOAB/OpenMC
+  bool initialize();
+
+  // Run OpenMC and get results
+  bool run();
+
+  // Update MOAB with any results from MOOSE
+  bool update();
+
   // Initialise MOAB
   bool initMOAB();
 
@@ -66,6 +75,9 @@ private:
 
   // Record whether we set the FE Problem locally.
   bool setProblemLocal;
+
+  // Save whether initialised
+  bool isInit;
 
   // Hold OpenMC error code
   int openmc_err;

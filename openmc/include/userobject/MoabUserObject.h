@@ -23,7 +23,7 @@ InputParameters validParams<MoabUserObject>();
 // User object which is just a wrapper around a MOAB ptr
 class MoabUserObject : public UserObject
 {
- public: 
+ public:
 
   MoabUserObject(const InputParameters & parameters);
 
@@ -40,14 +40,17 @@ class MoabUserObject : public UserObject
   } ;
 
   // Check if problem has been set
-  bool hasProblem(){ return !( _problem_ptr == nullptr ); }; 
-  
+  bool hasProblem(){ return !( _problem_ptr == nullptr ); };
+
   // Initialise MOAB
   void initMOAB();
 
+  // Update MOAB with any results from MOOSE
+  void update();
+
   // // Intialise libMesh systems containing var_now
   // bool initSystem(std::string var_now);
-  
+
   // Pass the OpenMC results into the libMesh systems solution
   bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool normToVol=true);
 
@@ -60,14 +63,14 @@ private:
 
   // Get a modifyable reference to the underlying libmesh mesh.
   MeshBase& mesh();
-  
+
   // Get a modifyable reference to the underlying libmesh equation systems
   EquationSystems & systems();
 
   System& system(std::string var_now);
 
   FEProblemBase& problem();
-    
+
   // Helper methods to set MOAB database
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle,std::map<dof_id_type,moab::EntityHandle>& elem_handle_to_id);
@@ -81,11 +84,11 @@ private:
 
   // Return the volume of an element (use for tally normalisation)
   double elemVolume(dof_id_type id);
- 
+
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
-  
+
   // Map from MOAB element entity handles to libmesh ids.
   std::map<dof_id_type,moab::EntityHandle> _elem_handle_to_id;
-  
+
 };

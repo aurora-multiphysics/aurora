@@ -27,6 +27,7 @@ validParams<OpenMCExecutioner>()
 OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   Transient(parameters),
   setProblemLocal(false),
+  isInit(false),
   var_name(getParam<std::string>("variable")),
   score_name(getParam<std::string>("score_name")),
   source_strength(getParam<double>("neutron_source")),
@@ -39,36 +40,76 @@ void
 OpenMCExecutioner::execute()
 {
 
+  if(!initialize()) return;
+
+  if(!update()) return;
+
+  if(!run()){
+     std::cerr<<"Failed to run OpenMC"<<std::endl;
+     return;
+  }
+
+}
+
+bool
+OpenMCExecutioner::initialize()
+{
+
+  // Don't re-initialize
+  if(isInit) return true;
+
   // Initialize MOAB here so it occurs after transfers when part of MultiApp
   if(!initMOAB()){
     std::cerr<<"Failed to initialize MOAB"<<std::endl;
-    return;
+    return false;
   }
-  
+
   if(!initOpenMC()){
     std::cerr<<"Failed to initialize OpenMC"<<std::endl;
-    return;
+    return false;
   }
-      
+
+  isInit = true;
+  return isInit;
+}
+
+bool
+OpenMCExecutioner::update()
+{
+
+  try{
+    moab().update();
+  }
+  catch(std::exception &e){
+    std::cerr<<e.what()<<std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+bool
+OpenMCExecutioner::run()
+{
   // Clear tallies from any previous calls
   openmc_err = openmc_reset();
-  if (openmc_err) return;
+  if (openmc_err) return false;
 
   // Run the simulation
   openmc_err = openmc_run();
-  if (openmc_err) return;
+  if (openmc_err) return false;
 
   // Fetch the tallied results
   std::vector< std::vector< double > > results_by_mat;
-  if(!getResults(results_by_mat)) return;
-  if(results_by_mat.empty()) return;
+  if(!getResults(results_by_mat)) return false;
+  if(results_by_mat.empty()) return false;
 
   // Pass the results into moab user object
   // ( summed over materials for now )
   // TODO system for every material? or just remove material binning
   if(!moab().setSolution(var_name,results_by_mat.back(),source_strength,true)){
     std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
-    return;
+    return false;
   }
 
   if(setProblemLocal){
@@ -82,9 +123,11 @@ OpenMCExecutioner::execute()
       {
         std::cerr<<"Failed to output results."<<std::endl;
         std::cerr<<e.what()<<std::endl;
-        return;
-      }    
+        return false;
+      }
   }
+
+  return true;
 }
 
 MoabUserObject&
@@ -103,7 +146,7 @@ OpenMCExecutioner::initMOAB()
 
       if(!(feProblem().hasUserObject("moab")))
         throw std::logic_error("Could not find MoabUserObject with name 'moab'. Please check your input file.");
-         
+
       // Fetch a named instance of MOAB user object
       MoabUserObject& moabUO = moab();
 
@@ -113,9 +156,9 @@ OpenMCExecutioner::initMOAB()
         moabUO.setProblem(&feProblem());
         setProblemLocal=true;
       }
-      
+
       moabUO.initMOAB();
-      
+
     }
   catch(std::exception &e)
     {
@@ -135,15 +178,15 @@ OpenMCExecutioner::initOpenMC()
   if(openmc::model::moabPtrs.find(mesh_id)!=openmc::model::moabPtrs.end()){
     if(openmc::model::moabPtrs[mesh_id] != nullptr) return false;
   }
-  
+
   // Set OpenMC's copy of MOAB
   openmc::model::moabPtrs[mesh_id] = moab().moabPtr;
-  
+
   char * argv[] = {nullptr, nullptr};
   openmc_err = openmc_init(1, argv, &_communicator.get());
   if (openmc_err) return false;
   else return true;
-  
+
 }
 
 
@@ -158,10 +201,10 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
 
   // Fetch a reference to the tally
   openmc::Tally& tally = *(openmc::model::tallies.at(t_index));
-  
+
   // Fetch the index of the score we are interested in
   int heatScoreIndex=-1;
-  
+
   // Fetch the number of tally scores
   size_t nScores = (tally.scores_).size();
   // Loop over score indices
@@ -179,7 +222,7 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
     return false;
   }
 
-  //Fetch a reference to the indices of the filters;  
+  //Fetch a reference to the indices of the filters;
   std::map<int32_t, FilterInfo> filters_by_id;
   int32_t nFilterBins;
   int32_t meshFilter;
@@ -187,7 +230,7 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
   if(!setFilterInfo(tally,filters_by_id,meshFilter,matFilter,nFilterBins)){
     return false;
   }
-  
+
   size_t nMats = filters_by_id[matFilter].nbins;
   size_t nMeshBins = filters_by_id[meshFilter].nbins;
 
@@ -213,10 +256,10 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
     openmc::set_errmsg("Results shape is inconsistent with expected tally values.");
     return false;
   }
-  
+
   // Loop over results
   for(int32_t iresult=0; iresult<nFilterBins; iresult++){
-            
+
     std::map<int32_t,int32_t> filter_id_to_bin_index;
     if(!decomposeIntoFilterBins(iresult,
                                 filters_by_id,
@@ -224,7 +267,7 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
       openmc::set_errmsg("Failed to decompose results index into filter indices");
       return false;
     }
-      
+
     int32_t meshIndex = -1;
     int32_t matIndex = -1;
     if(filter_id_to_bin_index.find(meshFilter)!=filter_id_to_bin_index.end()){
@@ -237,11 +280,11 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
       openmc::set_errmsg("Failed to set filter bin indices");
       return false;
     }
-      
+
     // Get the heat score result.
     // Last index: 0-> internal placeholder, 1-> mean, 2-> stddev
     double result = results(iresult,heatScoreIndex,1);
-        
+
     // Add to sum for this material
     (results_by_mat.at(matIndex)).at(meshIndex) += result;
 
@@ -274,7 +317,7 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
   matFilter=-1;
   nFilterBins=-1;
   int32_t firstFilter=-1;
-  
+
   const std::vector<int32_t> & tally_filter_indices = tally.filters();
   size_t nFilters = tally_filter_indices.size();
 
@@ -282,9 +325,9 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
   //iFilter is the index in tally.filters
   for(size_t iFilter=0; iFilter<nFilters; iFilter++){
 
-    FilterInfo f_info;     
-    
-    // Get the global index 
+    FilterInfo f_info;
+
+    // Get the global index
     f_info.index = tally_filter_indices.at(iFilter);
 
     // Fetch a reference to the filter
@@ -296,10 +339,10 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
     // Unique ID code
     f_info.id = filter.id();
 
-    // Type of filter 
+    // Type of filter
     f_info.type = filter.type();
 
-    //Get the stride 
+    //Get the stride
     f_info.stride = tally.strides(iFilter);
 
     filters_by_id[f_info.id] = f_info;
@@ -307,7 +350,7 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
     if(iFilter==0){
       firstFilter=f_info.id;
     }
-    
+
     if(f_info.type=="mesh"){
       if(meshFilter ==-1) meshFilter = f_info.id;
       else{
@@ -322,7 +365,7 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
         return false;
       }
     }
-        
+
   }
 
   //Check we set everything
@@ -352,7 +395,7 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
 
   // Done
   return true;
-  
+
 };
 
 int32_t
@@ -363,7 +406,7 @@ OpenMCExecutioner::getFilterBin(int32_t iResultBin, const FilterInfo & filter)
 
   // Fetch the remainder of everything with smaller stride
   int32_t remainder = iResultBin % filter.stride;
-  
+
   // Subtract remainer to get integer multiple of stride
   int32_t round_down = iResultBin - remainder;
 
@@ -404,6 +447,6 @@ OpenMCExecutioner::decomposeIntoFilterBins(int32_t iResultBin,
     }
     filter_id_to_bin_index[id] = bin_index;
   }
-  
+
   return true;
 };

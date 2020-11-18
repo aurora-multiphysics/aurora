@@ -67,6 +67,12 @@ MoabUserObject::initMOAB()
     throw std::logic_error("Could not create elems");
 }
 
+void
+MoabUserObject::update()
+{
+  // Currently does nothing
+}
+
 // // bool
 // MoabUserObject::initSystem(std::string var_now)
 // {
