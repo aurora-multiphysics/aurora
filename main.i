@@ -11,15 +11,17 @@
 
 [Executioner]
   type = Transient
-  num_steps = 100
-  dt = 5
+  num_steps = 2
+  dt = 1
   solve_type = NEWTON
 []
 
 [Variables]
   [temperature]
-    order = FIRST
-    family = LAGRANGE
+    order = CONSTANT
+    family = MONOMIAL
+    #order = FIRST
+    #family = LAGRANGE
     initial_condition = 300 # Start at room temperature
   []
 []
@@ -33,7 +35,10 @@
 
 [BCs]
   [air-outer]
-    type = DirichletBC
+    #type = DirichletBC
+    # penalty is a variant for monomials
+    type = PenaltyDirichletBC
+    penalty = 1e5
     variable = temperature
     boundary = 'top-outer bottom-outer left-outer right-outer front-outer back-outer'
     value = 300 # (K)
@@ -108,7 +113,7 @@
   [openmc]
     type = FullSolveMultiApp
     app_type = OpenMCApp
-    execute_on = "initial"
+    execute_on = "timestep_begin"
     input_files = "openmc.i"
     positions = '0   0   0'
     library_path = ./openmc/lib

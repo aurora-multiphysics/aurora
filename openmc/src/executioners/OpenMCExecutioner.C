@@ -42,8 +42,6 @@ OpenMCExecutioner::execute()
 
   if(!initialize()) return;
 
-  if(!update()) return;
-
   if(!run()){
      std::cerr<<"Failed to run OpenMC"<<std::endl;
      return;
@@ -55,8 +53,8 @@ bool
 OpenMCExecutioner::initialize()
 {
 
-  // Don't re-initialize
-  if(isInit) return true;
+  // Don't re-initialize, just update
+  if(isInit) return update();
 
   // Initialize MOAB here so it occurs after transfers when part of MultiApp
   if(!initMOAB()){
@@ -76,15 +74,13 @@ OpenMCExecutioner::initialize()
 bool
 OpenMCExecutioner::update()
 {
-
-  try{
-    moab().update();
+  // Don't need to do anything if this isn't inside a multiapp
+  if(!setProblemLocal){
+    if(!moab().update()){
+      std::cerr<<"Failed to update MOAB"<<std::endl;
+      return false;
+    }
   }
-  catch(std::exception &e){
-    std::cerr<<e.what()<<std::endl;
-    return false;
-  }
-
   return true;
 }
 

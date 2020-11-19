@@ -7,7 +7,7 @@
 [Problem]
   type = OpenMCProblem
 []
-  
+
 [Executioner]
   type = OpenMCExecutioner
   variable = 'heating-local'
@@ -17,5 +17,7 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
-  []  
+    bin_varname = "temperature"
+    n_minor = 2
+  []
 []

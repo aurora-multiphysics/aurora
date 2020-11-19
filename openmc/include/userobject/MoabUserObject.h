@@ -46,7 +46,7 @@ class MoabUserObject : public UserObject
   void initMOAB();
 
   // Update MOAB with any results from MOOSE
-  void update();
+  bool update();
 
   // // Intialise libMesh systems containing var_now
   // bool initSystem(std::string var_now);
@@ -73,7 +73,13 @@ private:
 
   // Helper methods to set MOAB database
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
-  moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle,std::map<dof_id_type,moab::EntityHandle>& elem_handle_to_id);
+  moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
+
+  // Clear the maps between entity handles and dof ids
+  void clearElemMaps();
+
+  // Add an element to maps
+  void addElem(dof_id_type id,moab::EntityHandle ent);
 
   // Helper method to set the results in a given system and variable
   void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool normToVol);
@@ -85,10 +91,46 @@ private:
   // Return the volume of an element (use for tally normalisation)
   double elemVolume(dof_id_type id);
 
+  // Sort elems in to bins of a given temperature
+  bool sortElemsByResults();
+
+  // Group the binned elems into local temperature regions
+  bool groupLocalElems();
+
+  // Group a given bin into local regions
+  // NB elems in param is a copy, localElems is a reference
+  void groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::Range>& localElems);
+
+
+  // Given a value of our variable, find what bin this corresponds to.
+  int getResultsBin(double value);
+
+  // Clear the containers of elements grouped into bins of constant temp
+  void resetContainers();
+
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
 
   // Map from MOAB element entity handles to libmesh ids.
-  std::map<dof_id_type,moab::EntityHandle> _elem_handle_to_id;
+  std::map<moab::EntityHandle,dof_id_type> _elem_handle_to_id;
+
+  // Reverse map
+  std::map<dof_id_type,moab::EntityHandle> _id_to_elem_handle;
+
+  // Members required to sort elems into bins given a result evaluated on that elem
+
+  // Input Settings
+  bool binElems;
+  std::string var_name; // Name of the MOOSE variable
+  double var_min; // Minimum value of our variable
+  unsigned int nPow; // Number of powers of 10 to bin in
+  unsigned int nMinor; // Number of minor divisions for binning on a log scale
+
+  int powMin; // Number of powers of 10 to bin in
+  unsigned int nBins; // nPow*nMinor
+  // std::vector<double> edges; // Bin edges
+  // std::vector<double> midpoints; // Evaluate the temperature representing the bin mipoint
+  std::vector<std::set<dof_id_type> > sortedElems; // Sort elems into bins
+  std::vector<std::vector<moab::Range> > elemGroups; // Neighbouring ranges of moab elems to skin in bins of temperature
 
 };
