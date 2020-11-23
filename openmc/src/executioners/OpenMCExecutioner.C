@@ -34,6 +34,12 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   tally_id(getParam<int32_t>("tally_id")),
   mesh_id(getParam<int32_t>("mesh_id"))
 {
+
+  // Units for heating are eV / neutron
+  // source_strength has units  neutron / s
+  // convert to J / s
+  scale_factor = source_strength * eVinJoules;
+
 }
 
 void
@@ -103,7 +109,7 @@ OpenMCExecutioner::run()
   // Pass the results into moab user object
   // ( summed over materials for now )
   // TODO system for every material? or just remove material binning
-  if(!moab().setSolution(var_name,results_by_mat.back(),source_strength,true)){
+  if(!moab().setSolution(var_name,results_by_mat.back(),scale_factor,true)){
     std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
     return false;
   }

@@ -9,10 +9,12 @@ validParams<MoabUserObject>()
 {
   InputParameters params = validParams<UserObject>();
 
+  params.addParam<double>("length_scale", 1.,"Scale factor to convert lengths from MOOSE to MOAB");
   params.addParam<std::string>("bin_varname", "", "Variable name by whose results elements should be binned.");
   params.addParam<double>("var_min", 300.,"Minimum value to define range of bins.");
-  params.addParam<unsigned int>("n_pow", 6, "Number of powers in which to bin in a log scale.");
-  params.addParam<unsigned int>("n_minor", 5, "Number of minor divisions in which to bin in a log scale.");
+  params.addParam<double>("var_max", 600.,"Max value to define range of bins.");
+  params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
+  params.addParam<unsigned int>("n_bins", 60, "Number of bins");
 
   return params;
 }
@@ -20,27 +22,32 @@ validParams<MoabUserObject>()
 MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   UserObject(parameters),
   _problem_ptr(nullptr),
+  lengthscale(getParam<double>("length_scale")),
   var_name(getParam<std::string>("bin_varname")),
+  logscale(getParam<bool>("logscale")),
   var_min(getParam<double>("var_min")),
-  nPow(getParam<unsigned int>("n_pow")),
-  nMinor(getParam<unsigned int>("n_minor"))
+  var_max(getParam<double>("var_max")),
+  nVarBins(getParam<unsigned int>("n_bins"))
 {
   // Create MOAB interface
   moabPtr =  std::make_shared<moab::Core>();
 
   // Set variables relating to binning
   binElems = ( var_name != "" );
-  nBins = nPow*nMinor;
-  if(binElems){
-
-    if(var_min <= 0.){
-      mooseError("var_min out of range! Please pick a value > 0");
-    }
-    powMin = int(floor(log10(var_min)));
-
-    // edges.resize(nBins+1);
-    // midpoints.resize(nBins);
+  if(var_min <= 0.){
+    mooseError("var_min out of range! Please pick a value > 0");
   }
+  if(var_max <= var_min){
+    mooseError("Please pick a value for var_max > var_min");
+  }
+  bin_width = (var_max-var_min)/double(nVarBins);
+  powMin = int(floor(log10(var_min)));
+  powMax = int(ceil(log10(var_max)));
+  nPow = std::min(powMax-powMin, 1);
+  if(nPow > nVarBins){
+    mooseError("Please ensure number of powers for variable is less than the number of bins");
+  }
+  nMinor = nVarBins/nPow;
 }
 
 FEProblemBase&
@@ -94,7 +101,6 @@ MoabUserObject::initMOAB()
 bool
 MoabUserObject::update()
 {
-
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return false;
 
@@ -112,7 +118,6 @@ MoabUserObject::update()
 bool
 MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, double scaleFactor, bool normToVol)
 {
-
   try
     {
       libMesh::System& sys = system(var_now);
@@ -125,7 +130,6 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, 
       for (THREAD_ID tid = 0; tid < libMesh::n_threads(); ++tid){
         problem().getVariable(tid,var_now).computeElemValues();
       }
-
     }
   catch(std::exception &e)
     {
@@ -134,14 +138,13 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, 
     }
 
   return true;
-
 }
 
 moab::ErrorCode
 MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle)
 {
 
-  if(!hasProblem()) return  moab::MB_FAILURE;
+  if(!hasProblem()) return moab::MB_FAILURE;
 
   moab::ErrorCode rval(moab::MB_SUCCESS);
 
@@ -151,7 +154,7 @@ MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   // Init array for MOAB node coords
   double 	coords[3];
 
-    // TODO think about how the mesh is distributed...
+  // TODO think about how the mesh is distributed...
   // Iterate over nodes in libmesh
   auto itnode = mesh().nodes_begin();
   auto endnode = mesh().nodes_end();
@@ -159,10 +162,10 @@ MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to
     // Fetch a const ref to node
     const Node& node = **itnode;
 
-    // Fetch coords
-    coords[0]=node(0);
-    coords[1]=node(1);
-    coords[2]=node(2);
+    // Fetch coords (and scale to correct units)
+    coords[0]=lengthscale*double(node(0));
+    coords[1]=lengthscale*double(node(1));
+    coords[2]=lengthscale*double(node(2));
 
     // Fetch ID
     dof_id_type id = node.id();
@@ -272,11 +275,8 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
   // Ensure we map our bins onto unique indices
   std::set<dof_id_type> sol_indices;
 
-  // Get the number of bins
-  uint32_t nBins = results.size();
-
   // Loop over mesh filter bins
-  for(uint32_t iBin=0; iBin< nBins; iBin++){
+  for(size_t iBin=0; iBin< results.size(); iBin++){
 
     // Result for this bin
     double result = results.at(iBin);
@@ -293,7 +293,6 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
       // Normalise result to the element volume
       result /= vol;
     }
-
 
     // Get the solution index for this element
     dof_id_type index = elem_id_to_soln_index(iSysNow,iVarNow,id);
@@ -383,39 +382,46 @@ MoabUserObject::sortElemsByResults()
   // Set representing overflow bin
   std::set<dof_id_type> overflowElems;
 
-  // 3) Loop over all elems in mesh
-  // NB this won't work for nodal variables.
-  // Need to devise alternative method here.
-  auto itelem = mesh().elements_begin();
-  auto endelem = mesh().elements_end();
-  for( ; itelem!=endelem; ++itelem){
 
-    Elem& elem = **itelem;
-    dof_id_type id = elem.id();
+  // 3) Outer loop over subdomains (= mats)
+  for(size_t iMat=0; iMat<nMatBins; ++iMat){
 
-    // Check the number of components for this var
-    unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
-    if(n_components != 1){
-      std::cout<< "Unexpected number of expected solution components: "<<n_components<<std::endl;
-      return false;
+    // 4) Loop over all elems in subdomain (starts at 1)
+    auto itelem = mesh().active_subdomain_elements_begin(iMat+1);
+    auto endelem = mesh().active_subdomain_elements_end(iMat+1);
+    for( ; itelem!=endelem; ++itelem){
+
+      Elem& elem = **itelem;
+      dof_id_type id = elem.id();
+
+      // Check the number of components for this var
+      unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
+      if(n_components != 1){
+        std::cout<< "Unexpected number of expected solution components: "<<n_components<<std::endl;
+        return false;
+      }
+
+      // Get the degree of freedom number for this var
+      dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
+
+      // Get the solution value
+      // NB this won't work for nodal variables.
+      // Need to devise alternative method here, e.g mesh_function
+      double result = sysPtr->solution->el(soln_index);
+
+      // Calculate the bin number for this value
+      int iBin = getResultsBin(result);
+
+      // Bin number can be out of range if user specified range doesn't fully contain results
+      if(iBin < 0) underflowElems.insert(id);
+      else if(iBin >= nVarBins) overflowElems.insert(id);
+      else{
+        // Cast as size_t to avoid any overflow issues if we have a lot of subdomains.
+        size_t iSortBin = iMat*nVarBins + iBin;
+        sortedElems.at(iSortBin).insert(id);
+      }
     }
-
-    // Get the degree of freedom number for this var
-    dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
-
-    // Get the solution value
-    double result = sysPtr->solution->el(soln_index);
-
-    // Calculate the bin number for this value
-    int iBin = getResultsBin(result);
-
-    // Bin number can be out of range if user specified range doesn't fully contain results
-    if(iBin < 0) underflowElems.insert(id);
-    else if(iBin >= nBins) overflowElems.insert(id);
-    else sortedElems.at(iBin).insert(id);
-
   }
-
   // Report how many elems fell outside the range
   // TODO - Should it be an error?
   if(!underflowElems.empty() || !overflowElems.empty() ){
@@ -439,8 +445,11 @@ MoabUserObject::groupLocalElems()
     mesh().find_neighbors();
 
     // Loop over variable bins
-    for(unsigned int iBin=0; iBin<nBins; iBin++){
+    for(size_t iBin=0; iBin<nSortBins; iBin++){
       groupLocalElems(sortedElems.at(iBin),elemGroups.at(iBin));
+      if(!elemGroups.at(iBin).empty())
+        std::cout<<"Found "<< elemGroups.at(iBin).size()<< " local regions in T bin. "<< iBin<<std::endl;
+
     }
   }
   catch(std::exception &e){
@@ -511,6 +520,8 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
     // Done, no more local neighbors in the current bin.
 
     // Save this moab range of local neighbors
+    if(!local.empty())
+      std::cout<<"local region contains "<<local.size()<<" elements"<<std::endl;
     localElems.push_back(local);
   }
   // Done, assigned all elems in bin to a local range.
@@ -519,14 +530,30 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
 void
 MoabUserObject::resetContainers()
 {
+  // Get number of subdomains
+  nMatBins = mesh().n_subdomains();
+  nSortBins = nMatBins*nVarBins;
   sortedElems.clear();
-  sortedElems.resize(nBins);
+  sortedElems.resize(nSortBins);
   elemGroups.clear();
-  elemGroups.resize(nBins);
+  elemGroups.resize(nSortBins);
 }
 
 int
 MoabUserObject::getResultsBin(double value)
+{
+  if(logscale) return getResultsBinLog(value);
+  else return getResultsBinLin(value);
+}
+
+inline int
+MoabUserObject::getResultsBinLin(double value)
+{
+  return int(floor((value-var_min)/bin_width));
+}
+
+int
+MoabUserObject::getResultsBinLog(double value)
 {
 
   // Get the power of 10

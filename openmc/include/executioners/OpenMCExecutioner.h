@@ -73,6 +73,9 @@ private:
 
   // Data members
 
+  // constant to convert eV to joules
+  static constexpr double eVinJoules = 1.60218e-19;
+
   // Record whether we set the FE Problem locally.
   bool setProblemLocal;
 
@@ -90,6 +93,9 @@ private:
 
   // Strength of fusion neutron source in neutrons/s
   double source_strength;
+
+  // Factor by which we need to multiply results
+  double scale_factor;
 
   // OpenMC ID of the tally we will use
   int32_t tally_id;

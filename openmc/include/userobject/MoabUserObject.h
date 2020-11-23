@@ -104,12 +104,17 @@ private:
 
   // Given a value of our variable, find what bin this corresponds to.
   int getResultsBin(double value);
+  inline int getResultsBinLin(double value);
+  int getResultsBinLog(double value);
 
   // Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
 
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
+
+  // Convert MOOSE units to dagmc length units
+  double lengthscale;
 
   // Map from MOAB element entity handles to libmesh ids.
   std::map<moab::EntityHandle,dof_id_type> _elem_handle_to_id;
@@ -118,19 +123,29 @@ private:
   std::map<dof_id_type,moab::EntityHandle> _id_to_elem_handle;
 
   // Members required to sort elems into bins given a result evaluated on that elem
-
-  // Input Settings
-  bool binElems;
   std::string var_name; // Name of the MOOSE variable
+
+  bool binElems; // Whether or not to perform binning
+  bool logscale; // Whether or not to bin in a log scale
+
   double var_min; // Minimum value of our variable
-  unsigned int nPow; // Number of powers of 10 to bin in
+  double var_max; // Maximum value of our variable for binning on a linear scale
+  double bin_width; // Fixed bin width for binning on a linear scale
+
+  int powMin; // Minimum power of 10
+  int powMax; // Maximum power of 10
+
+  unsigned int nVarBins; // Number of variable bins to use
+  unsigned int nPow; // Number of powers of 10 to bin in for binning on a log scale
   unsigned int nMinor; // Number of minor divisions for binning on a log scale
 
-  int powMin; // Number of powers of 10 to bin in
-  unsigned int nBins; // nPow*nMinor
+  size_t nMatBins; // Number of distinct subdomains (e.g. vols, mats)
+  size_t nSortBins; // Number of bins needed for sorting results (mats*varbins)
+
+  std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and subdomain
+  std::vector<std::vector<moab::Range> > elemGroups; // Neighbouring ranges of moab elems to skin in bins of temperature
+
   // std::vector<double> edges; // Bin edges
   // std::vector<double> midpoints; // Evaluate the temperature representing the bin mipoint
-  std::vector<std::set<dof_id_type> > sortedElems; // Sort elems into bins
-  std::vector<std::vector<moab::Range> > elemGroups; // Neighbouring ranges of moab elems to skin in bins of temperature
 
 };

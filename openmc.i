@@ -11,13 +11,13 @@
 [Executioner]
   type = OpenMCExecutioner
   variable = 'heating-local'
-  neutron_source = 1.0e8
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
     bin_varname = "temperature"
-    n_minor = 2
+    #uncomment to change lengthscale relative to moose
+    #length_scale = 100
   []
 []

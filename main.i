@@ -1,6 +1,16 @@
 [Mesh]
-  type = FileMesh
-  file = copper_air_bcs_tetmesh.e
+  [meshcm]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
+  #Uncomment to change units of mesh
+  # If uncommented also change openmc.i/UserObjects/moab:length_scale as appropriate
+  #[scale]
+  #  type = TransformGenerator
+  #  input = meshcm
+  #  transform = SCALE
+  #  vector_value = '0.01 0.01 0.01'
+  #[]
   construct_side_list_from_node_list=true
 []
 
@@ -114,6 +124,7 @@
     type = FullSolveMultiApp
     app_type = OpenMCApp
     execute_on = "timestep_begin"
+    #execute_on = "initial"
     input_files = "openmc.i"
     positions = '0   0   0'
     library_path = ./openmc/lib
