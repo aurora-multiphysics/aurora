@@ -5,6 +5,8 @@
 
 // MOAB includes
 #include "moab/Core.hpp"
+#include "moab/Skinner.hpp"
+#include "MBTagConventions.hpp"
 
 // Libmesh includes
 #include <libmesh/elem.h>
@@ -75,6 +77,8 @@ private:
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
 
+  moab::ErrorCode setupTags();
+
   // Clear the maps between entity handles and dof ids
   void clearElemMaps();
 
@@ -113,6 +117,9 @@ private:
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
 
+  // Pointer to a moab skinner for finding temperature surfaces
+  std::unique_ptr< moab::Skinner > skinner;
+
   // Convert MOOSE units to dagmc length units
   double lengthscale;
 
@@ -144,6 +151,24 @@ private:
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and subdomain
   std::vector<std::vector<moab::Range> > elemGroups; // Neighbouring ranges of moab elems to skin in bins of temperature
+
+  std::vector<std::string> mat_names;
+
+  // An entitiy handle to represent the set of all tets
+  moab::EntityHandle meshset;
+
+  // Some moab tags
+  moab::Tag geometry_dimension_tag;
+  moab::Tag id_tag;
+  moab::Tag faceting_tol_tag;
+  moab::Tag geometry_resabs_tag;
+  moab::Tag category_tag;
+  moab::Tag name_tag;
+  moab::Tag material_tag; // Moab tag handle corresponding to material label
+
+  // DagMC settings
+  double faceting_tol;
+  double geom_tol;
 
   // std::vector<double> edges; // Bin edges
   // std::vector<double> midpoints; // Evaluate the temperature representing the bin mipoint

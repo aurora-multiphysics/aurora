@@ -11,10 +11,14 @@ validParams<MoabUserObject>()
 
   params.addParam<double>("length_scale", 1.,"Scale factor to convert lengths from MOOSE to MOAB");
   params.addParam<std::string>("bin_varname", "", "Variable name by whose results elements should be binned.");
+  params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of material names");
   params.addParam<double>("var_min", 300.,"Minimum value to define range of bins.");
   params.addParam<double>("var_max", 600.,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
+
+  params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
+  params.addParam<double>("geom_tol",1.e-6,"Geometry tolerance for DagMC");
 
   return params;
 }
@@ -27,13 +31,19 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   logscale(getParam<bool>("logscale")),
   var_min(getParam<double>("var_min")),
   var_max(getParam<double>("var_max")),
-  nVarBins(getParam<unsigned int>("n_bins"))
+  nVarBins(getParam<unsigned int>("n_bins")),
+  mat_names(getParam<std::vector<std::string> >("material_names")),
+  faceting_tol(getParam<double>("faceting_tol")),
+  geom_tol(getParam<double>("geom_tol"))
 {
   // Create MOAB interface
   moabPtr =  std::make_shared<moab::Core>();
 
+  // Create a skinner
+  skinner = std::make_unique<moab::Skinner>(moabPtr.get());
+
   // Set variables relating to binning
-  binElems = ( var_name != "" );
+  binElems = !( var_name == "" || mat_names.empty());
   if(var_min <= 0.){
     mooseError("var_min out of range! Please pick a value > 0");
   }
@@ -96,6 +106,11 @@ MoabUserObject::initMOAB()
   rval = createElems(node_id_to_handle);
   if(rval!=moab::MB_SUCCESS)
     throw std::logic_error("Could not create elems");
+
+  rval = setupTags();
+  if(rval!=moab::MB_SUCCESS)
+    throw std::logic_error("Could not set up tags");
+
 }
 
 bool
@@ -197,9 +212,14 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   // Clear prior results.
   clearElemMaps();
 
+  //Create a meshset
+  rval = moabPtr->create_meshset(moab::MESHSET_SET,meshset);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
   // Initialise an array for moab connectivity
   unsigned int nNodes = 4;
   moab::EntityHandle conn[nNodes];
+  moab::Range all_elems;
 
   // TODO think about how the mesh is distributed...
   // Iterate over elements in libmesh
@@ -243,10 +263,58 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
       clearElemMaps();
       return rval;
     }
+
+    // Save mapping between libMesh ids and moab handles
     addElem(id,ent);
+
+    // Add to range of all elems
+    all_elems.insert(ent);
   }
 
+  // Add the elems to the meshset
+  rval = moabPtr->add_entities	(meshset,all_elems);
+
   return rval;
+}
+
+moab::ErrorCode
+MoabUserObject::setupTags()
+{
+
+  // Create some tags for later use
+  moab::ErrorCode rval = moab::MB_SUCCESS;
+
+  // First some built-in MOAB tag types
+  rval = moabPtr->tag_get_handle(GEOM_DIMENSION_TAG_NAME, 1, moab::MB_TYPE_INTEGER, geometry_dimension_tag, moab::MB_TAG_DENSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME, 1, moab::MB_TYPE_INTEGER, id_tag, moab::MB_TAG_DENSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  rval = moabPtr->tag_get_handle(CATEGORY_TAG_NAME, CATEGORY_TAG_SIZE, moab::MB_TYPE_OPAQUE, category_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  rval = moabPtr->tag_get_handle(NAME_TAG_NAME, NAME_TAG_SIZE, moab::MB_TYPE_OPAQUE, name_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  // Some tags needed for DagMC
+  rval = moabPtr->tag_get_handle("FACETING_TOL", 1, moab::MB_TYPE_DOUBLE, faceting_tol_tag,moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  rval = moabPtr->tag_get_handle("GEOMETRY_RESABS", 1, moab::MB_TYPE_DOUBLE, geometry_resabs_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  rval = moabPtr->tag_get_handle("Material", 1, moab::MB_TYPE_DOUBLE, material_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  // Set the values for DagMC faceting / geometry tolerance tags on the mesh entity set
+  rval = moabPtr->tag_set_data(faceting_tol_tag, &meshset, 1, &faceting_tol);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  rval = moabPtr->tag_set_data(geometry_resabs_tag, &meshset, 1, &geom_tol);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
+  return moab::MB_SUCCESS;
 }
 
 void
@@ -384,6 +452,9 @@ MoabUserObject::sortElemsByResults()
 
 
   // 3) Outer loop over subdomains (= mats)
+  // Fix me:
+  // variable names -> materialbase -> subdomains.
+  // only want unique group index for individual materials.
   for(size_t iMat=0; iMat<nMatBins; ++iMat){
 
     // 4) Loop over all elems in subdomain (starts at 1)

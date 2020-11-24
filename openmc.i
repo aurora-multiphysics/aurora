@@ -17,6 +17,7 @@
   [moab]
     type = MoabUserObject
     bin_varname = "temperature"
+    material_names = 'copper air'
     #uncomment to change lengthscale relative to moose
     #length_scale = 100
   []
