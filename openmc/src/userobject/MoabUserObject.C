@@ -16,13 +16,13 @@ validParams<MoabUserObject>()
   params.addParam<double>("var_max", 600.,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
-
   params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
   params.addParam<double>("geom_tol",1.e-6,"Geometry tolerance for DagMC");
 
   return params;
 }
 
+// TO-DO automate the supplying of materials
 MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   UserObject(parameters),
   _problem_ptr(nullptr),
@@ -64,7 +64,7 @@ FEProblemBase&
 MoabUserObject::problem()
 {
   if(_problem_ptr == nullptr)
-    throw std::logic_error("No problem was set");
+    mooseError("No problem was set");
 
   return *_problem_ptr;
 }
@@ -93,23 +93,26 @@ MoabUserObject::initMOAB()
   // Fetch spatial dimension from libMesh
   int dim = mesh().spatial_dimension() ;
 
+  // put in execute?
+  findMaterials();
+
   // Set spatial dimension in MOAB
   moab::ErrorCode  rval = moabPtr->set_dimension(dim);
   if(rval!=moab::MB_SUCCESS)
-    throw std::logic_error("Failed to set MOAB dimension");
+    mooseError("Failed to set MOAB dimension");
+
+  rval = createTags();
+  if(rval!=moab::MB_SUCCESS)
+    mooseError("Could not set up tags");
 
   std::map<dof_id_type,moab::EntityHandle> node_id_to_handle;
   rval = createNodes(node_id_to_handle);
   if(rval!=moab::MB_SUCCESS)
-    throw std::logic_error("Could not create nodes");
+    mooseError("Could not create nodes");
 
   rval = createElems(node_id_to_handle);
   if(rval!=moab::MB_SUCCESS)
-    throw std::logic_error("Could not create elems");
-
-  rval = setupTags();
-  if(rval!=moab::MB_SUCCESS)
-    throw std::logic_error("Could not set up tags");
+    mooseError("Could not create elems");
 
 }
 
@@ -153,6 +156,42 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, 
     }
 
   return true;
+}
+
+void
+MoabUserObject::findMaterials()
+{
+  // Clear any prior data.
+  mat_blocks.clear();
+
+  std::set<SubdomainID> unique_blocks;
+
+  // Loop over the materials provided by the user
+  for(const auto & mat : mat_names){
+    // Look for the material
+    std::shared_ptr< MaterialBase > mat_ptr = problem().getMaterial(mat, Moose::BLOCK_MATERIAL_DATA);
+
+    if(mat_ptr == nullptr){
+      mooseError("Could not find material "+mat );
+    }
+
+    // Get the element blocks corresponding to this mat.
+    std::set<SubdomainID> blocks = mat_ptr->blockIDs();
+
+    // Check that all the blocks are unique
+    unsigned int nblks_before = unique_blocks.size();
+    unsigned int nblks_new = blocks.size();
+    unique_blocks.insert(blocks.begin(),blocks.end());
+    if(unique_blocks.size() != (nblks_before+nblks_new) ){
+      mooseError("Some blocks appear in more than one material.");
+    }
+
+    // Save list
+    mat_blocks.push_back(blocks);
+  }
+
+  // Save number of materials
+  nMatBins = mat_blocks.size();
 }
 
 moab::ErrorCode
@@ -221,64 +260,83 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   moab::EntityHandle conn[nNodes];
   moab::Range all_elems;
 
-  // TODO think about how the mesh is distributed...
-  // Iterate over elements in libmesh
-  auto itelem = mesh().elements_begin();
-  auto endelem = mesh().elements_end();
-  for( ; itelem!=endelem; ++itelem){
-    Elem& elem = **itelem;
+  // Outer loop over materials
+  for(unsigned int iMat=0; iMat<nMatBins; iMat++){
 
-    // Check all the elements are tets
-    ElemType type = elem.type();
-    if(type!=TET4){
-      rval = moab::MB_FAILURE;
-      return rval;
-    }
+    // Create a meshset for this material
+    rval = createMat(mat_names.at(iMat));
+    if(rval!=moab::MB_SUCCESS) return rval;
 
-    // Get the connectivity
-    std::vector< dof_id_type > conn_libmesh;
-    elem.connectivity	(0,libMesh::IOPackage::VTK,conn_libmesh);
-    if(conn_libmesh.size()!=nNodes){
-      rval = moab::MB_FAILURE;
-      return rval;
-    }
+    // Create a range for the elements in this mat
+    moab::Range mat_elems;
 
-    // Set MOAB connectivity
-    for(unsigned int iNode=0; iNode<nNodes;++iNode){
-      if(node_id_to_handle.find(conn_libmesh.at(iNode)) ==
-         node_id_to_handle.end()){
+    // Get the subdomains for this material
+    std::set<SubdomainID>& blocks = mat_blocks.at(iMat);
+
+    // Iterate over elements in this materials
+    auto itelem = mesh().active_subdomain_set_elements_begin(blocks);
+    auto endelem = mesh().active_subdomain_set_elements_end(blocks);
+    for( ; itelem!=endelem; ++itelem){
+      Elem& elem = **itelem;
+
+      // Check all the elements are tets
+      ElemType type = elem.type();
+      if(type!=TET4){
         rval = moab::MB_FAILURE;
         return rval;
       }
-      conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
+
+      // Get the connectivity
+      std::vector< dof_id_type > conn_libmesh;
+      elem.connectivity	(0,libMesh::IOPackage::VTK,conn_libmesh);
+      if(conn_libmesh.size()!=nNodes){
+        rval = moab::MB_FAILURE;
+        return rval;
+      }
+
+      // Set MOAB connectivity
+      for(unsigned int iNode=0; iNode<nNodes;++iNode){
+        if(node_id_to_handle.find(conn_libmesh.at(iNode)) ==
+           node_id_to_handle.end()){
+          rval = moab::MB_FAILURE;
+          return rval;
+        }
+        conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
+      }
+
+      // Fetch ID
+      dof_id_type id = elem.id();
+
+      // Create an element in MOAB database
+      moab::EntityHandle ent(0);
+      rval = moabPtr->create_element(moab::MBTET,conn,nNodes,ent);
+      if(rval!=moab::MB_SUCCESS){
+        clearElemMaps();
+        return rval;
+      }
+
+      // Save mapping between libMesh ids and moab handles
+      addElem(id,ent);
+
+      // Save the handle for adding to entity sets
+      mat_elems.insert(ent);
     }
 
-    // Fetch ID
-    dof_id_type id = elem.id();
+    // Add the elems to the material set
+    rval = moabPtr->add_entities(mat_handles.at(iMat),mat_elems);
 
-    // Create an element in MOAB database
-    moab::EntityHandle ent(0);
-    rval = moabPtr->create_element(moab::MBTET,conn,nNodes,ent);
-    if(rval!=moab::MB_SUCCESS){
-      clearElemMaps();
-      return rval;
-    }
-
-    // Save mapping between libMesh ids and moab handles
-    addElem(id,ent);
-
-    // Add to range of all elems
-    all_elems.insert(ent);
+    // Add material elems to range of all elems
+    all_elems.insert(mat_elems.begin(),mat_elems.end());
   }
 
-  // Add the elems to the meshset
-  rval = moabPtr->add_entities	(meshset,all_elems);
+  // Add the elems to the full meshset
+  rval = moabPtr->add_entities(meshset,all_elems);
 
   return rval;
 }
 
 moab::ErrorCode
-MoabUserObject::setupTags()
+MoabUserObject::createTags()
 {
 
   // Create some tags for later use
@@ -297,14 +355,15 @@ MoabUserObject::setupTags()
   rval = moabPtr->tag_get_handle(NAME_TAG_NAME, NAME_TAG_SIZE, moab::MB_TYPE_OPAQUE, name_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
   if(rval!=moab::MB_SUCCESS)  return rval;
 
+  // Convenience tag for associating tets with mats
+  rval = moabPtr->tag_get_handle("Material", 1, moab::MB_TYPE_INTEGER, material_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS)  return rval;
+
   // Some tags needed for DagMC
   rval = moabPtr->tag_get_handle("FACETING_TOL", 1, moab::MB_TYPE_DOUBLE, faceting_tol_tag,moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
   if(rval!=moab::MB_SUCCESS)  return rval;
 
   rval = moabPtr->tag_get_handle("GEOMETRY_RESABS", 1, moab::MB_TYPE_DOUBLE, geometry_resabs_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
-  if(rval!=moab::MB_SUCCESS)  return rval;
-
-  rval = moabPtr->tag_get_handle("Material", 1, moab::MB_TYPE_DOUBLE, material_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
   if(rval!=moab::MB_SUCCESS)  return rval;
 
   // Set the values for DagMC faceting / geometry tolerance tags on the mesh entity set
@@ -317,6 +376,104 @@ MoabUserObject::setupTags()
   return moab::MB_SUCCESS;
 }
 
+moab::ErrorCode
+MoabUserObject::createMat(std::string name)
+{
+  // Create a new mesh set
+  moab::EntityHandle mat_set;
+  moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,mat_set);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  // Save handle
+  mat_handles.push_back(mat_set);
+
+  // Get material id
+  unsigned int mat_id = mat_handles.size();
+
+  rval = setTagData(material_tag,mat_set,&mat_id);
+  return rval;
+}
+
+moab::ErrorCode
+MoabUserObject::createGroup(unsigned int id, std::string name)
+{
+  // Create a new mesh set
+  moab::EntityHandle group_set;
+  moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,group_set);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  // Prepend the name tag
+  if ( name == "" )  name = std::to_string(id);
+  name = "mat:"+name;
+
+  // Set the tags for this material
+  return setTags(group_set,name,"Group",id,4);
+}
+
+
+moab::ErrorCode
+MoabUserObject::createVol(unsigned int id)
+{
+  moab::EntityHandle volume_set;
+  moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,volume_set);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  return setTags(volume_set,"","Volume",id,3);
+}
+
+moab::ErrorCode
+MoabUserObject::createSurf(unsigned int id)
+{
+  moab::EntityHandle surface_set;
+  moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,surface_set);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  return setTags(surface_set,"","Surface",id,2);
+}
+
+moab::ErrorCode
+MoabUserObject::setTags(moab::EntityHandle ent, std::string name, std::string category, unsigned int id, int dim)
+{
+
+  moab::ErrorCode rval;
+
+  // Set the name tag
+  if(name!=""){
+    rval = setTagData(name_tag,ent,name,NAME_TAG_SIZE);
+    if(rval!=moab::MB_SUCCESS) return rval;
+  }
+
+  // Set the category tag
+  if(category!=""){
+    rval = setTagData(category_tag,ent,category,CATEGORY_TAG_SIZE);
+    if(rval!=moab::MB_SUCCESS) return rval;
+  }
+
+  // Set the dimension tag
+  rval = setTagData(geometry_dimension_tag,ent,&dim);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  // Set the id tag
+  rval = setTagData(id_tag,ent,&id);
+  return rval;
+
+}
+
+moab::ErrorCode
+MoabUserObject::setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE)
+{
+  char namebuf[SIZE];
+  memset(namebuf,'\0', SIZE); // fill C char array with null
+  strncpy(namebuf,data.c_str(),SIZE-1);
+  return moabPtr->tag_set_data(tag,&ent,1,namebuf);
+}
+
+moab::ErrorCode
+MoabUserObject::setTagData(moab::Tag tag, moab::EntityHandle ent, void* data)
+{
+  return moabPtr->tag_set_data(tag,&ent,1,data);
+}
+
 void
 MoabUserObject::clearElemMaps()
 {
@@ -324,7 +481,8 @@ MoabUserObject::clearElemMaps()
   _id_to_elem_handle.clear();
 }
 
-void MoabUserObject::addElem(dof_id_type id,moab::EntityHandle ent)
+void
+MoabUserObject::addElem(dof_id_type id,moab::EntityHandle ent)
 {
   _elem_handle_to_id[ent]=id;
   _id_to_elem_handle[id]=ent;
@@ -335,7 +493,7 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
 {
 
   if(!hasProblem())
-    throw std::logic_error("FE problem was not set");
+    mooseError("FE problem was not set");
 
   // Fetch a reference to our system
   libMesh::System& sys = systems().get_system(iSysNow);
@@ -344,7 +502,7 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
   std::set<dof_id_type> sol_indices;
 
   // Loop over mesh filter bins
-  for(size_t iBin=0; iBin< results.size(); iBin++){
+  for(unsigned int iBin=0; iBin< results.size(); iBin++){
 
     // Result for this bin
     double result = results.at(iBin);
@@ -367,7 +525,7 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
 
     // Check we haven't used this index already
     if(sol_indices.find(index)!= sol_indices.end()){
-      throw std::logic_error("OpenMC indices non-uniquely map to solution indices.");
+      mooseError("OpenMC indices non-uniquely map to solution indices.");
     }
     sol_indices.insert(index);
 
@@ -395,7 +553,7 @@ MoabUserObject::elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow
   // Expect only one component, but check anyay
   unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
   if(n_components != 1){
-    throw std::logic_error("Unexpected number of expected solution components");
+    mooseError("Unexpected number of expected solution components");
   }
 
   // Get the degree of freedom number
@@ -410,13 +568,13 @@ MoabUserObject::bin_index_to_elem_id(unsigned int index)
 {
   // Convert the bin index to an entity handle
   if(index > _elem_handle_to_id.size() )
-    throw std::out_of_range("Bin index is out of range.");
+    mooseError("Bin index is out of range.");
 
   // Conversion assumes ent handles were set contiguously in OpenMC
   moab::EntityHandle ent = (_elem_handle_to_id.begin())->first + index;
 
   if(_elem_handle_to_id.find(ent)==_elem_handle_to_id.end())
-    throw std::logic_error("Unknown entity handle");
+    mooseError("Unknown entity handle");
 
   // Convert the entity handle to a libMesh id
   dof_id_type id = _elem_handle_to_id[ent];
@@ -450,16 +608,15 @@ MoabUserObject::sortElemsByResults()
   // Set representing overflow bin
   std::set<dof_id_type> overflowElems;
 
+  // Outer loop over materials
+  for(unsigned int iMat=0; iMat<nMatBins; iMat++){
 
-  // 3) Outer loop over subdomains (= mats)
-  // Fix me:
-  // variable names -> materialbase -> subdomains.
-  // only want unique group index for individual materials.
-  for(size_t iMat=0; iMat<nMatBins; ++iMat){
+    // Get the subdomains for this material
+    std::set<SubdomainID>& blocks = mat_blocks.at(iMat);
 
-    // 4) Loop over all elems in subdomain (starts at 1)
-    auto itelem = mesh().active_subdomain_elements_begin(iMat+1);
-    auto endelem = mesh().active_subdomain_elements_end(iMat+1);
+    // Iterate over elements in this materials
+    auto itelem = mesh().active_subdomain_set_elements_begin(blocks);
+    auto endelem = mesh().active_subdomain_set_elements_end(blocks);
     for( ; itelem!=endelem; ++itelem){
 
       Elem& elem = **itelem;
@@ -483,20 +640,20 @@ MoabUserObject::sortElemsByResults()
       // Calculate the bin number for this value
       int iBin = getResultsBin(result);
 
-      // Bin number can be out of range if user specified range doesn't fully contain results
+      // Sort elems into a bin
       if(iBin < 0) underflowElems.insert(id);
       else if(iBin >= nVarBins) overflowElems.insert(id);
       else{
-        // Cast as size_t to avoid any overflow issues if we have a lot of subdomains.
-        size_t iSortBin = iMat*nVarBins + iBin;
+        unsigned int iSortBin = iMat*nVarBins + iBin;
         sortedElems.at(iSortBin).insert(id);
       }
     }
   }
+
   // Report how many elems fell outside the range
   // TODO - Should it be an error?
   if(!underflowElems.empty() || !overflowElems.empty() ){
-    size_t outside = underflowElems.size() + overflowElems.size();
+    unsigned int outside = underflowElems.size() + overflowElems.size();
     std::cout<<"Warning: "<< outside
              << " elements fell outside the specified bin range for the variable "
              << var_name
@@ -516,10 +673,10 @@ MoabUserObject::groupLocalElems()
     mesh().find_neighbors();
 
     // Loop over variable bins
-    for(size_t iBin=0; iBin<nSortBins; iBin++){
+    for(unsigned int iBin=0; iBin<nSortBins; iBin++){
       groupLocalElems(sortedElems.at(iBin),elemGroups.at(iBin));
       if(!elemGroups.at(iBin).empty())
-        std::cout<<"Found "<< elemGroups.at(iBin).size()<< " local regions in T bin. "<< iBin<<std::endl;
+        std::cout<<"Found "<< elemGroups.at(iBin).size()<< " local regions in T/mat bin "<< iBin<<std::endl;
 
     }
   }
@@ -601,8 +758,6 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
 void
 MoabUserObject::resetContainers()
 {
-  // Get number of subdomains
-  nMatBins = mesh().n_subdomains();
   nSortBins = nMatBins*nVarBins;
   sortedElems.clear();
   sortedElems.resize(nSortBins);
@@ -645,3 +800,22 @@ MoabUserObject::getResultsBinLog(double value)
   return iBin;
 
 }
+
+// bool
+// MoabUserObject::findSurface(const moab::Range& region)
+// {
+
+//   moab::ErrorCode rval = moab::MB_SUCCESS;
+
+
+//   //
+
+//   // Find skin for the range passed
+//   const moab::EntityHandle rootset=0; // look in the root set
+//   bool incverts = false; // Don't return vertices
+//   moab::Range surfs; // Range holding moab entities for the surfaces that were found
+//   moab::Range reversed; // Range holding moab entities for the tris with reverse sense from their skin
+//   rval = skinner->find_skin(rootset, &region, inc_verts, surfs, reversed);
+
+//   return true;
+// }

@@ -2,6 +2,7 @@
 
 // MOOSE includes
 #include "UserObject.h"
+#include "MaterialBase.h"
 
 // MOAB includes
 #include "moab/Core.hpp"
@@ -76,8 +77,18 @@ private:
   // Helper methods to set MOAB database
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
+  moab::ErrorCode createTags();
+  moab::ErrorCode createMat(std::string name);
+  moab::ErrorCode createGroup(unsigned int id, std::string name);
+  moab::ErrorCode createVol(unsigned int id);
+  moab::ErrorCode createSurf(unsigned int id);
+  moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
+  moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
+  moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
 
-  moab::ErrorCode setupTags();
+
+  // Look for materials in the FE problem
+  void findMaterials();
 
   // Clear the maps between entity handles and dof ids
   void clearElemMaps();
@@ -85,7 +96,7 @@ private:
   // Add an element to maps
   void addElem(dof_id_type id,moab::EntityHandle ent);
 
-  // Helper method to set the results in a given system and variable
+  // Helper method to setthe results in a given system and variable
   void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool normToVol);
 
   // Helper methods to convert between indices
@@ -113,6 +124,8 @@ private:
 
   // Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
+
+  //  bool findSurface(const moab::Range& region);
 
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
@@ -145,14 +158,16 @@ private:
   unsigned int nVarBins; // Number of variable bins to use
   unsigned int nPow; // Number of powers of 10 to bin in for binning on a log scale
   unsigned int nMinor; // Number of minor divisions for binning on a log scale
-
-  size_t nMatBins; // Number of distinct subdomains (e.g. vols, mats)
-  size_t nSortBins; // Number of bins needed for sorting results (mats*varbins)
+  unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
+  unsigned int nSortBins; // Number of bins needed for sorting results (mats*varbins)
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and subdomain
   std::vector<std::vector<moab::Range> > elemGroups; // Neighbouring ranges of moab elems to skin in bins of temperature
 
-  std::vector<std::string> mat_names;
+  // Materials data
+  std::vector<std::string> mat_names; // material names
+  std::vector< std::set<SubdomainID> > mat_blocks; // all element blocks assigned to mats
+  std::vector<moab::EntityHandle> mat_handles;
 
   // An entitiy handle to represent the set of all tets
   moab::EntityHandle meshset;
