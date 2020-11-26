@@ -63,6 +63,13 @@ class MoabUserObject : public UserObject
 
 private:
 
+  // Private types
+  enum Sense { BACKWARDS=-1, FORWARDS=1};
+  struct VolData{
+    moab::EntityHandle vol;
+    Sense sense;
+  };
+
   // Private methods
 
   // Get a modifyable reference to the underlying libmesh mesh.
@@ -82,11 +89,12 @@ private:
   moab::ErrorCode createMat(std::string name);
   moab::ErrorCode createGroup(unsigned int id, std::string name,moab::EntityHandle& group_set);
   moab::ErrorCode createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set);
-  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces, moab::EntityHandle volume_set, int sense);
+  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata);
+  moab::ErrorCode createSurfaces(moab::Range& reversed, VolData& voldata, unsigned int& surf_id);
+  moab::ErrorCode updateSurfData(moab::EntityHandle surface_set,VolData data);
   moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
-
 
   // Look for materials in the FE problem
   void findMaterials();
@@ -175,6 +183,9 @@ private:
 
   // An entitiy handle to represent the set of all tets
   moab::EntityHandle meshset;
+
+  // Save some topological data: map from surface handle to vol handle and sense
+  std::map<moab::EntityHandle, std::vector<VolData> > surfsToVols;
 
   // Some moab tags
   moab::Tag geometry_dimension_tag;

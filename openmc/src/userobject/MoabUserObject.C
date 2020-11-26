@@ -136,6 +136,8 @@ MoabUserObject::update()
   // Find the surfaces of local temperature regions
   if(!findSurfaces()) return false;
 
+  std::cout<<"Success!"<<std::endl;
+
   // Deliberately force fail for now.
   return false;
 }
@@ -423,7 +425,7 @@ MoabUserObject::createVol(unsigned int id,moab::EntityHandle& volume_set,moab::E
 }
 
 moab::ErrorCode
-MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces, moab::EntityHandle volume_set, int sense)
+MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata)
 {
   // Create meshset
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,surface_set);
@@ -437,14 +439,38 @@ MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab
   rval = moabPtr->add_entities(surface_set,faces);
   if(rval != moab::MB_SUCCESS) return rval;
 
+  std::cout<<"Created surface "<< id<< " with "<<faces.size()<<" elems."<<std::endl;
+
+  // Create entry in map
+  surfsToVols[surface_set] = std::vector<VolData>();
+
+  // Add volume to list associated with this surface
+  for(const auto & data : voldata){
+    rval = updateSurfData(surface_set,data);
+    if(rval != moab::MB_SUCCESS) return rval;
+  }
+
+  return moab::MB_SUCCESS;
+}
+
+moab::ErrorCode
+MoabUserObject::updateSurfData(moab::EntityHandle surface_set,VolData data)
+{
+
   // Add the surface to the volume set
-  rval = moabPtr->add_parent_child(volume_set,surface_set);
+  moab::ErrorCode rval = moabPtr->add_parent_child(data.vol,surface_set);
   if(rval != moab::MB_SUCCESS) return rval;
 
   // Set the surfaces sense
-  rval = gtt->set_sense(surface_set,volume_set,sense);
-  return rval;
+  rval = gtt->set_sense(surface_set,data.vol,int(data.sense));
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Save
+  surfsToVols[surface_set].push_back(data);
+
+  return moab::MB_SUCCESS;
 }
+
 
 moab::ErrorCode
 MoabUserObject::setTags(moab::EntityHandle ent, std::string name, std::string category, unsigned int id, int dim)
@@ -859,20 +885,81 @@ MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, 
   // Find surfaces from these regions
   moab::Range tris; // The tris of the surfaces
   moab::Range rtris;  // The tris which are reversed with respect to their surfaces
-  rval = skinner->find_skin(meshsubset,region,false,tris,&rtris);
+  rval = skinner->find_skin(0,region,false,tris,&rtris);
   if(rval != moab::MB_SUCCESS) return false;
 
-  // Create a surface set
-  moab::EntityHandle surface_set;
-  surf_id++;
-  rval = createSurf(surf_id,surface_set,tris,volume_set,1);
+  // Create surface sets for the forwards tris
+  VolData vdata = {volume_set,Sense::FORWARDS};
+  rval = createSurfaces(tris,vdata,surf_id);
   if(rval != moab::MB_SUCCESS) return false;
 
-  // Create a surface set for the reversed tris
-  moab::EntityHandle rsurface_set;
-  surf_id++;
-  rval = createSurf(surf_id,rsurface_set,rtris,volume_set,-1);
+  // Create surface sets for the reversed tris
+  vdata.sense =Sense::BACKWARDS;
+  rval = createSurfaces(rtris,vdata,surf_id);
   if(rval != moab::MB_SUCCESS) return false;
 
   return true;
+}
+
+
+moab::ErrorCode
+MoabUserObject::createSurfaces(moab::Range& faces, VolData& voldata, unsigned int& surf_id){
+
+  moab::ErrorCode rval = moab::MB_SUCCESS;
+
+  if(faces.empty()) return rval;
+
+  // Loop over the surfaces we have already created
+  for ( const auto & surfpair : surfsToVols ) {
+
+    // Local copies of surf/vols
+    moab::EntityHandle surf = surfpair.first;
+    std::vector<VolData> vols = surfpair.second;
+
+    // First get the entities in this surface
+    moab::Range tris;
+    rval = moabPtr->get_entities_by_handle(surf,tris);
+    if(rval!=moab::MB_SUCCESS) return rval;
+
+    // Find any tris that live in both surfs
+    moab::Range overlap = moab::intersect(tris,faces);
+    if(!overlap.empty()) {
+
+      // Check if the tris are a subset or the entire surf
+      if(tris.size()==overlap.size()){
+        // Whole surface -> Just need to update the volume relationships
+        rval = updateSurfData(surf,voldata);
+      }
+      else{
+        // If overlap is subset, subtract shared tris from this surface and create a new shared surface
+        rval = moabPtr->remove_entities(surf,overlap);
+        if(rval!=moab::MB_SUCCESS) return rval;
+
+        // Append our new volume to the list that share this surf
+        vols.push_back(voldata);
+
+        // Create a new shared surface
+        moab::EntityHandle shared_surf;
+        surf_id++;
+        rval = createSurf(surf_id,shared_surf,overlap,vols);
+        if(rval!=moab::MB_SUCCESS) return rval;
+      }
+
+      // Subtract from the input list
+      for( auto& shared : overlap ){
+        faces.erase(shared);
+      }
+      if(faces.empty()) break;
+    }
+  }
+
+  if(!faces.empty()){
+    moab::EntityHandle surface_set;
+    std::vector<VolData> voldatavec(1,voldata);
+    surf_id++;
+    rval = createSurf(surf_id,surface_set,faces,voldatavec);
+    if(rval != moab::MB_SUCCESS) return rval;
+  }
+
+  return rval;
 }
