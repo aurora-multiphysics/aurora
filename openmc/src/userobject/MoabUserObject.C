@@ -42,6 +42,9 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   // Create a skinner
   skinner = std::make_unique<moab::Skinner>(moabPtr.get());
 
+  // Create a geom topo tool
+  gtt = std::make_unique<moab::GeomTopoTool>(moabPtr.get());
+
   // Set variables relating to binning
   binElems = !( var_name == "" || mat_names.empty());
   if(var_min <= 0.){
@@ -101,6 +104,11 @@ MoabUserObject::initMOAB()
   if(rval!=moab::MB_SUCCESS)
     mooseError("Failed to set MOAB dimension");
 
+  //Create a meshset
+  rval = moabPtr->create_meshset(moab::MESHSET_SET,meshset);
+  if(rval!=moab::MB_SUCCESS)
+    mooseError("Failed to create mesh set");
+
   rval = createTags();
   if(rval!=moab::MB_SUCCESS)
     mooseError("Could not set up tags");
@@ -125,8 +133,8 @@ MoabUserObject::update()
   // Sort libMesh elements into bins of the specified variable
   if(!sortElemsByResults()) return false;
 
-  // Find local groups of elements
-  if(!groupLocalElems()) return false;
+  // Find the surfaces of local temperature regions
+  if(!findSurfaces()) return false;
 
   // Deliberately force fail for now.
   return false;
@@ -251,10 +259,6 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   // Clear prior results.
   clearElemMaps();
 
-  //Create a meshset
-  rval = moabPtr->create_meshset(moab::MESHSET_SET,meshset);
-  if(rval!=moab::MB_SUCCESS) return rval;
-
   // Initialise an array for moab connectivity
   unsigned int nNodes = 4;
   moab::EntityHandle conn[nNodes];
@@ -371,9 +375,7 @@ MoabUserObject::createTags()
   if(rval!=moab::MB_SUCCESS)  return rval;
 
   rval = moabPtr->tag_set_data(geometry_resabs_tag, &meshset, 1, &geom_tol);
-  if(rval!=moab::MB_SUCCESS)  return rval;
-
-  return moab::MB_SUCCESS;
+  return rval;
 }
 
 moab::ErrorCode
@@ -395,16 +397,11 @@ MoabUserObject::createMat(std::string name)
 }
 
 moab::ErrorCode
-MoabUserObject::createGroup(unsigned int id, std::string name)
+MoabUserObject::createGroup(unsigned int id, std::string name,moab::EntityHandle& group_set)
 {
   // Create a new mesh set
-  moab::EntityHandle group_set;
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,group_set);
   if(rval!=moab::MB_SUCCESS) return rval;
-
-  // Prepend the name tag
-  if ( name == "" )  name = std::to_string(id);
-  name = "mat:"+name;
 
   // Set the tags for this material
   return setTags(group_set,name,"Group",id,4);
@@ -412,23 +409,41 @@ MoabUserObject::createGroup(unsigned int id, std::string name)
 
 
 moab::ErrorCode
-MoabUserObject::createVol(unsigned int id)
+MoabUserObject::createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set)
 {
-  moab::EntityHandle volume_set;
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,volume_set);
   if(rval!=moab::MB_SUCCESS) return rval;
 
-  return setTags(volume_set,"","Volume",id,3);
+  rval =  setTags(volume_set,"","Volume",id,3);
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Add the volume to group
+  rval = moabPtr->add_entities(group_set, &volume_set,1);
+  return rval;
 }
 
 moab::ErrorCode
-MoabUserObject::createSurf(unsigned int id)
+MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces, moab::EntityHandle volume_set, int sense)
 {
-  moab::EntityHandle surface_set;
+  // Create meshset
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,surface_set);
   if(rval!=moab::MB_SUCCESS) return rval;
 
-  return setTags(surface_set,"","Surface",id,2);
+  // Set tags
+  rval = setTags(surface_set,"","Surface",id,2);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  // Add tris to the surface
+  rval = moabPtr->add_entities(surface_set,faces);
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Add the surface to the volume set
+  rval = moabPtr->add_parent_child(volume_set,surface_set);
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Set the surfaces sense
+  rval = gtt->set_sense(surface_set,volume_set,sense);
+  return rval;
 }
 
 moab::ErrorCode
@@ -665,19 +680,48 @@ MoabUserObject::sortElemsByResults()
 }
 
 bool
-MoabUserObject::groupLocalElems()
+MoabUserObject::findSurfaces()
 {
 
+  moab::ErrorCode rval = moab::MB_SUCCESS;
   try{
     // Find all neighbours in mesh
     mesh().find_neighbors();
 
-    // Loop over variable bins
-    for(unsigned int iBin=0; iBin<nSortBins; iBin++){
-      groupLocalElems(sortedElems.at(iBin),elemGroups.at(iBin));
-      if(!elemGroups.at(iBin).empty())
-        std::cout<<"Found "<< elemGroups.at(iBin).size()<< " local regions in T/mat bin "<< iBin<<std::endl;
+    // Counter for volumes
+    unsigned int vol_id=0;
 
+    // Counter for surfaces
+    unsigned int surf_id=0;
+
+    // Loop over material bins
+    for(unsigned int iMat=0; iMat<nMatBins; iMat++){
+
+      // Get the material name:
+      std::string mat_name = "mat:"+mat_names.at(iMat);
+
+      // Create a material group
+      moab::EntityHandle group_set;
+      rval = createGroup(iMat+1,mat_name,group_set);
+      if(rval != moab::MB_SUCCESS) return false;
+
+      // Loop over variable bins
+      for(unsigned int iVar=0; iVar<nVarBins; iVar++){
+
+        unsigned int iBin = iMat*nVarBins + iVar;
+
+        std::vector<moab::Range> regions;
+        groupLocalElems(sortedElems.at(iBin),regions);
+
+        if(!regions.empty())
+          std::cout<<"Found "<< regions.size()<< " local regions in mat bin "<< iMat<< " and T bin"<< iVar <<std::endl;
+
+        // Loop over all regions and find surfaces
+        for(const auto & region : regions){
+          if(!findSurface(region,group_set,vol_id,surf_id,mat_handles.at(iMat))) return false;
+        }
+
+      }
     }
   }
   catch(std::exception &e){
@@ -761,8 +805,6 @@ MoabUserObject::resetContainers()
   nSortBins = nMatBins*nVarBins;
   sortedElems.clear();
   sortedElems.resize(nSortBins);
-  elemGroups.clear();
-  elemGroups.resize(nSortBins);
 }
 
 int
@@ -801,21 +843,36 @@ MoabUserObject::getResultsBinLog(double value)
 
 }
 
-// bool
-// MoabUserObject::findSurface(const moab::Range& region)
-// {
 
-//   moab::ErrorCode rval = moab::MB_SUCCESS;
+bool
+MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id, moab::EntityHandle meshsubset)
+{
 
+  moab::ErrorCode rval;
 
-//   //
+  // Create a volume set
+  moab::EntityHandle volume_set;
+  vol_id++;
+  rval = createVol(vol_id,volume_set,group);
+  if(rval != moab::MB_SUCCESS) return false;
 
-//   // Find skin for the range passed
-//   const moab::EntityHandle rootset=0; // look in the root set
-//   bool incverts = false; // Don't return vertices
-//   moab::Range surfs; // Range holding moab entities for the surfaces that were found
-//   moab::Range reversed; // Range holding moab entities for the tris with reverse sense from their skin
-//   rval = skinner->find_skin(rootset, &region, inc_verts, surfs, reversed);
+  // Find surfaces from these regions
+  moab::Range tris; // The tris of the surfaces
+  moab::Range rtris;  // The tris which are reversed with respect to their surfaces
+  rval = skinner->find_skin(meshsubset,region,false,tris,&rtris);
+  if(rval != moab::MB_SUCCESS) return false;
 
-//   return true;
-// }
+  // Create a surface set
+  moab::EntityHandle surface_set;
+  surf_id++;
+  rval = createSurf(surf_id,surface_set,tris,volume_set,1);
+  if(rval != moab::MB_SUCCESS) return false;
+
+  // Create a surface set for the reversed tris
+  moab::EntityHandle rsurface_set;
+  surf_id++;
+  rval = createSurf(surf_id,rsurface_set,rtris,volume_set,-1);
+  if(rval != moab::MB_SUCCESS) return false;
+
+  return true;
+}

@@ -7,6 +7,7 @@
 // MOAB includes
 #include "moab/Core.hpp"
 #include "moab/Skinner.hpp"
+#include "moab/GeomTopoTool.hpp"
 #include "MBTagConventions.hpp"
 
 // Libmesh includes
@@ -79,9 +80,9 @@ private:
   moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createTags();
   moab::ErrorCode createMat(std::string name);
-  moab::ErrorCode createGroup(unsigned int id, std::string name);
-  moab::ErrorCode createVol(unsigned int id);
-  moab::ErrorCode createSurf(unsigned int id);
+  moab::ErrorCode createGroup(unsigned int id, std::string name,moab::EntityHandle& group_set);
+  moab::ErrorCode createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set);
+  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces, moab::EntityHandle volume_set, int sense);
   moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
@@ -109,8 +110,8 @@ private:
   // Sort elems in to bins of a given temperature
   bool sortElemsByResults();
 
-  // Group the binned elems into local temperature regions
-  bool groupLocalElems();
+  // Group the binned elems into local temperature regions and find their surfaces
+  bool findSurfaces();
 
   // Group a given bin into local regions
   // NB elems in param is a copy, localElems is a reference
@@ -125,13 +126,17 @@ private:
   // Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
 
-  //  bool findSurface(const moab::Range& region);
+  // Find the surfaces for the provided range and add to group
+  bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id, moab::EntityHandle meshsubset=0);
 
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
 
   // Pointer to a moab skinner for finding temperature surfaces
   std::unique_ptr< moab::Skinner > skinner;
+
+  // Pointer for gtt for setting surface sense
+  std::unique_ptr< moab::GeomTopoTool > gtt;
 
   // Convert MOOSE units to dagmc length units
   double lengthscale;
@@ -161,8 +166,7 @@ private:
   unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
   unsigned int nSortBins; // Number of bins needed for sorting results (mats*varbins)
 
-  std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and subdomain
-  std::vector<std::vector<moab::Range> > elemGroups; // Neighbouring ranges of moab elems to skin in bins of temperature
+  std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
 
   // Materials data
   std::vector<std::string> mat_names; // material names
