@@ -704,7 +704,24 @@ MoabUserObject::findSurfaces()
         }
 
       }
-    }
+    } // End loop over materials
+
+    // Finally, build a graveyard
+    rval = buildGraveyard(vol_id,surf_id);
+    if(rval != moab::MB_SUCCESS) return false;
+
+    // // TODO - delete these lines: currently present to create output for debug
+    // moab::Range tets;
+    // rval = moabPtr->get_entities_by_type(meshset,moab::MBTET,tets);
+    // if(rval != moab::MB_SUCCESS) return false;
+    // rval = moabPtr->delete_entities(tets);
+    // if(rval != moab::MB_SUCCESS) return false;
+
+    // std::cout << "Writing mesh..." << std::endl;
+    // rval = moabPtr->write_mesh("surfs_new.h5m");
+    // if(rval != moab::MB_SUCCESS) return false;
+    // TODO - delete these lines - END
+
   }
   catch(std::exception &e){
     std::cerr<<e.what()<<std::endl;
@@ -825,7 +842,6 @@ MoabUserObject::getResultsBinLog(double value)
 
 }
 
-
 bool
 MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id)
 {
@@ -917,5 +933,168 @@ MoabUserObject::createSurfaces(moab::Range& faces, VolData& voldata, unsigned in
     if(rval != moab::MB_SUCCESS) return rval;
   }
 
+  return rval;
+}
+
+moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned int & surf_id)
+{
+  moab::ErrorCode rval(moab::MB_SUCCESS);
+
+  // Create the graveyard set
+  moab::EntityHandle graveyard;
+  unsigned int id = nMatBins+1;
+  std::string mat_name = "mat:Graveyard";
+  rval = createGroup(id,mat_name,graveyard);
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Create a volume set
+  moab::EntityHandle volume_set;
+  vol_id++;
+  rval = createVol(vol_id,volume_set,graveyard);
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Set up for the volume data to pass to surfs
+  VolData vdata = {volume_set,Sense::FORWARDS};
+
+  // Find a bounding box
+  BoundingBox bbox =  MeshTools::create_bounding_box(mesh());
+
+  // Create inner surface from the box with normals pointing out of box
+  // Rescale by 1% to avoid having to imprint
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,1.01);
+  if(rval != moab::MB_SUCCESS) return rval;
+
+  // Create outer surface with face normals pointing into the box
+  // Rescale by 10% to create a volume
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,1.1);
+  return rval;
+}
+
+moab::ErrorCode
+MoabUserObject::createSurfaceFromBox(const BoundingBox& box, VolData& voldata, unsigned int& surf_id, bool normalout, double factor)
+{
+  // Create the vertices of the box
+  std::vector<moab::EntityHandle> vert_handles;
+  moab::ErrorCode rval = createNodesFromBox(box,factor,vert_handles);
+  if(rval!=moab::MB_SUCCESS) return rval;
+  else if(vert_handles.size() != 8) mooseError("Failed to get box coords");
+
+  // Create the tris in 4 groups of 3 (4 open tetrahedra)
+  moab::Range tris;
+  rval = createCornerTris(vert_handles,0,1,2,4,normalout,tris);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  rval = createCornerTris(vert_handles,3,2,1,7,normalout,tris);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  rval = createCornerTris(vert_handles,6,4,2,7,normalout,tris);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  rval = createCornerTris(vert_handles,5,1,4,7,normalout,tris);
+  if(rval!=moab::MB_SUCCESS) return rval;
+
+  moab::EntityHandle surface_set;
+  std::vector<VolData> voldatavec(1,voldata);
+  surf_id++;
+  return createSurf(surf_id,surface_set,tris,voldatavec);
+}
+
+moab::ErrorCode
+MoabUserObject::createNodesFromBox(const BoundingBox& box,double factor,std::vector<moab::EntityHandle>& vert_handles)
+{
+  moab::ErrorCode rval(moab::MB_SUCCESS);
+
+  // Fetch the vertices of the box
+  std::vector<Point> verts = boxCoords(box,factor);
+  if(verts.size() != 8) mooseError("Failed to get box coords");
+
+  // Array to represent a coord in moab
+  double coord[3];
+  // Create the vertices in moab and get the handles
+  for(const auto & vert : verts){
+    coord[0]=vert(0);
+    coord[1]=vert(1);
+    coord[2]=vert(2);
+
+    moab::EntityHandle ent;
+    rval = moabPtr->create_vertex(coord,ent);
+    if(rval!=moab::MB_SUCCESS){
+      vert_handles.clear();
+      return rval;
+    }
+    vert_handles.push_back(ent);
+  }
+  return rval;
+}
+
+std::vector<Point>
+MoabUserObject::boxCoords(const BoundingBox& box, double factor)
+{
+  Point minpoint = box.min();
+  Point maxpoint = box.max();
+  Point diff = (maxpoint - minpoint)/2.0;
+  Point origin = minpoint + diff;
+
+  // Rescale (half)sides of box
+  diff *= factor;
+
+  // modify minpoint
+  minpoint = origin - diff;
+
+  // Vectors for sides of box
+  Point dx(2.0*diff(0),0.,0.);
+  Point dy(0.,2.0*diff(1),0.);
+  Point dz(0.,0.,2.0*diff(2));
+
+  // Start at (-,-,-) and add side vectors
+  std::vector<Point> verts(8,minpoint);
+  for(unsigned int idz=0; idz<2; idz++){
+    for(unsigned int idy=0; idy<2; idy++){
+      for(unsigned int idx=0; idx<2; idx++){
+        unsigned int ibin = 4*idz + 2*idy+ idx;
+        verts.at(ibin) += double(idx)*dx + double(idy)*dy + double(idz)*dz;
+      }
+    }
+  }
+
+  return verts;
+}
+
+moab::ErrorCode
+MoabUserObject::createCornerTris(const std::vector<moab::EntityHandle> & verts,
+                                 unsigned int corner,
+                                 unsigned int v1, unsigned int v2 ,unsigned int v3,
+                                 bool normalout, moab::Range &surface_tris)
+{
+  // Create 3 tris stemming from one corner (i.e. an open tetrahedron)
+  // Assume first is the central corner, and the others are labelled clockwise looking down on the corner
+  moab::ErrorCode rval = moab::MB_SUCCESS;
+  unsigned int indices[3] = {v1,v2,v3};
+
+  //Create each tri by a cyclic permutation of indices
+  for(unsigned int i=0; i<3; i++){
+    // v1,v2 = 0,1; 1,2; 2;0
+    int v1 = indices[i%3];
+    int v2 = indices[(i+1)%3];
+    if(normalout){
+      // anti-clockwise: normal points outwards
+      rval = createTri(verts,corner,v2,v1,surface_tris);
+    }
+    else{
+      // clockwise: normal points inwards
+      rval = createTri(verts,corner,v1,v2,surface_tris);
+    }
+    if(rval!=moab::MB_SUCCESS) return rval;
+  }
+  return rval;
+}
+
+moab::ErrorCode
+MoabUserObject::createTri(const std::vector<moab::EntityHandle> & vertices,unsigned int v1, unsigned int v2 ,unsigned int v3, moab::Range &surface_tris) {
+  moab::ErrorCode rval = moab::MB_SUCCESS;
+  moab::EntityHandle triangle;
+  moab::EntityHandle connectivity[3] = { vertices[v1],vertices[v2],vertices[v3] };
+  rval = moabPtr->create_element(moab::MBTRI,connectivity,3,triangle);
+  surface_tris.insert(triangle);
   return rval;
 }

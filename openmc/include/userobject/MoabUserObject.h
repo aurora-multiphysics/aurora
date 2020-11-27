@@ -17,6 +17,7 @@
 #include <libmesh/enum_fe_family.h>
 #include <libmesh/equation_systems.h>
 #include <libmesh/system.h>
+#include <libmesh/mesh_tools.h>
 
 // Forward Declarations
 class MoabUserObject;
@@ -86,16 +87,31 @@ private:
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createTags();
-  moab::ErrorCode createMat(std::string name);
   moab::ErrorCode createGroup(unsigned int id, std::string name,moab::EntityHandle& group_set);
   moab::ErrorCode createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set);
   moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata);
   moab::ErrorCode createSurfaces(moab::Range& reversed, VolData& voldata, unsigned int& surf_id);
+
+  
+  moab::ErrorCode createSurfaceFromBox(const BoundingBox& box, VolData& voldata, unsigned int& surf_id, bool normalout, double factor=1.0);
+  moab::ErrorCode createNodesFromBox(const BoundingBox& box,double factor,std::vector<moab::EntityHandle>& vert_handles);
+  moab::ErrorCode createCornerTris(const std::vector<moab::EntityHandle> & verts,
+                                   unsigned int corner, unsigned int v1,
+                                   unsigned int v2 ,unsigned int v3, 
+                                   bool normalout, moab::Range &surface_tris);
+  moab::ErrorCode createTri(const std::vector<moab::EntityHandle> & vertices,unsigned int v1, unsigned int v2 ,unsigned int v3, moab::Range &surface_tris);
+    
   moab::ErrorCode updateSurfData(moab::EntityHandle surface_set,VolData data);
   moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
 
+  // Build the graveyard (needed by OpenMC)  
+  moab::ErrorCode buildGraveyard(unsigned int & vol_id, unsigned int & surf_id);
+
+  // Get the coords of the box back as an array (possibly scaled)
+  std::vector<Point> boxCoords(const BoundingBox& box, double factor);
+  
   // Look for materials in the FE problem
   void findMaterials();
 
