@@ -135,7 +135,7 @@ private:
   void resetContainers();
 
   // Find the surfaces for the provided range and add to group
-  bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id, moab::EntityHandle meshsubset=0);
+  bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id);
 
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
@@ -179,7 +179,6 @@ private:
   // Materials data
   std::vector<std::string> mat_names; // material names
   std::vector< std::set<SubdomainID> > mat_blocks; // all element blocks assigned to mats
-  std::vector<moab::EntityHandle> mat_handles;
 
   // An entitiy handle to represent the set of all tets
   moab::EntityHandle meshset;

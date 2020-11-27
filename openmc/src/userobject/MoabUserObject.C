@@ -266,73 +266,53 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   moab::EntityHandle conn[nNodes];
   moab::Range all_elems;
 
-  // Outer loop over materials
-  for(unsigned int iMat=0; iMat<nMatBins; iMat++){
+  // Iterate over elements in the mesh
+  auto itelem = mesh().elements_begin();
+  auto endelem = mesh().elements_end();
+  for( ; itelem!=endelem; ++itelem){
+    Elem& elem = **itelem;
 
-    // Create a meshset for this material
-    rval = createMat(mat_names.at(iMat));
-    if(rval!=moab::MB_SUCCESS) return rval;
-
-    // Create a range for the elements in this mat
-    moab::Range mat_elems;
-
-    // Get the subdomains for this material
-    std::set<SubdomainID>& blocks = mat_blocks.at(iMat);
-
-    // Iterate over elements in this materials
-    auto itelem = mesh().active_subdomain_set_elements_begin(blocks);
-    auto endelem = mesh().active_subdomain_set_elements_end(blocks);
-    for( ; itelem!=endelem; ++itelem){
-      Elem& elem = **itelem;
-
-      // Check all the elements are tets
-      ElemType type = elem.type();
-      if(type!=TET4){
-        rval = moab::MB_FAILURE;
-        return rval;
-      }
-
-      // Get the connectivity
-      std::vector< dof_id_type > conn_libmesh;
-      elem.connectivity	(0,libMesh::IOPackage::VTK,conn_libmesh);
-      if(conn_libmesh.size()!=nNodes){
-        rval = moab::MB_FAILURE;
-        return rval;
-      }
-
-      // Set MOAB connectivity
-      for(unsigned int iNode=0; iNode<nNodes;++iNode){
-        if(node_id_to_handle.find(conn_libmesh.at(iNode)) ==
-           node_id_to_handle.end()){
-          rval = moab::MB_FAILURE;
-          return rval;
-        }
-        conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
-      }
-
-      // Fetch ID
-      dof_id_type id = elem.id();
-
-      // Create an element in MOAB database
-      moab::EntityHandle ent(0);
-      rval = moabPtr->create_element(moab::MBTET,conn,nNodes,ent);
-      if(rval!=moab::MB_SUCCESS){
-        clearElemMaps();
-        return rval;
-      }
-
-      // Save mapping between libMesh ids and moab handles
-      addElem(id,ent);
-
-      // Save the handle for adding to entity sets
-      mat_elems.insert(ent);
+    // Check all the elements are tets
+    ElemType type = elem.type();
+    if(type!=TET4){
+      rval = moab::MB_FAILURE;
+      return rval;
     }
 
-    // Add the elems to the material set
-    rval = moabPtr->add_entities(mat_handles.at(iMat),mat_elems);
+    // Get the connectivity
+    std::vector< dof_id_type > conn_libmesh;
+    elem.connectivity	(0,libMesh::IOPackage::VTK,conn_libmesh);
+    if(conn_libmesh.size()!=nNodes){
+      rval = moab::MB_FAILURE;
+      return rval;
+    }
 
-    // Add material elems to range of all elems
-    all_elems.insert(mat_elems.begin(),mat_elems.end());
+    // Set MOAB connectivity
+    for(unsigned int iNode=0; iNode<nNodes;++iNode){
+      if(node_id_to_handle.find(conn_libmesh.at(iNode)) ==
+         node_id_to_handle.end()){
+        rval = moab::MB_FAILURE;
+        return rval;
+      }
+      conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
+    }
+
+    // Fetch ID
+    dof_id_type id = elem.id();
+
+    // Create an element in MOAB database
+    moab::EntityHandle ent(0);
+    rval = moabPtr->create_element(moab::MBTET,conn,nNodes,ent);
+    if(rval!=moab::MB_SUCCESS){
+      clearElemMaps();
+      return rval;
+    }
+
+    // Save mapping between libMesh ids and moab handles
+    addElem(id,ent);
+
+    // Save the handle for adding to entity sets
+    all_elems.insert(ent);
   }
 
   // Add the elems to the full meshset
@@ -361,10 +341,6 @@ MoabUserObject::createTags()
   rval = moabPtr->tag_get_handle(NAME_TAG_NAME, NAME_TAG_SIZE, moab::MB_TYPE_OPAQUE, name_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
   if(rval!=moab::MB_SUCCESS)  return rval;
 
-  // Convenience tag for associating tets with mats
-  rval = moabPtr->tag_get_handle("Material", 1, moab::MB_TYPE_INTEGER, material_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
-  if(rval!=moab::MB_SUCCESS)  return rval;
-
   // Some tags needed for DagMC
   rval = moabPtr->tag_get_handle("FACETING_TOL", 1, moab::MB_TYPE_DOUBLE, faceting_tol_tag,moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
   if(rval!=moab::MB_SUCCESS)  return rval;
@@ -377,24 +353,6 @@ MoabUserObject::createTags()
   if(rval!=moab::MB_SUCCESS)  return rval;
 
   rval = moabPtr->tag_set_data(geometry_resabs_tag, &meshset, 1, &geom_tol);
-  return rval;
-}
-
-moab::ErrorCode
-MoabUserObject::createMat(std::string name)
-{
-  // Create a new mesh set
-  moab::EntityHandle mat_set;
-  moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,mat_set);
-  if(rval!=moab::MB_SUCCESS) return rval;
-
-  // Save handle
-  mat_handles.push_back(mat_set);
-
-  // Get material id
-  unsigned int mat_id = mat_handles.size();
-
-  rval = setTagData(material_tag,mat_set,&mat_id);
   return rval;
 }
 
@@ -438,8 +396,6 @@ MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab
   // Add tris to the surface
   rval = moabPtr->add_entities(surface_set,faces);
   if(rval != moab::MB_SUCCESS) return rval;
-
-  std::cout<<"Created surface "<< id<< " with "<<faces.size()<<" elems."<<std::endl;
 
   // Create entry in map
   surfsToVols[surface_set] = std::vector<VolData>();
@@ -744,7 +700,7 @@ MoabUserObject::findSurfaces()
 
         // Loop over all regions and find surfaces
         for(const auto & region : regions){
-          if(!findSurface(region,group_set,vol_id,surf_id,mat_handles.at(iMat))) return false;
+          if(!findSurface(region,group_set,vol_id,surf_id)) return false;
         }
 
       }
@@ -871,7 +827,7 @@ MoabUserObject::getResultsBinLog(double value)
 
 
 bool
-MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id, moab::EntityHandle meshsubset)
+MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id)
 {
 
   moab::ErrorCode rval;
