@@ -138,8 +138,7 @@ MoabUserObject::update()
 
   std::cout<<"Success!"<<std::endl;
 
-  // Deliberately force fail for now.
-  return false;
+  return true;
 }
 
 // Pass the results for named variable into the libMesh systems solution

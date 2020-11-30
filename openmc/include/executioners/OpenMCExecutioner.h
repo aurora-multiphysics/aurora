@@ -5,13 +5,27 @@
 #include "Transient.h"
 #include "MoabUserObject.h"
 
+// DagMC includes
+#include "DagMC.hpp"
+#include "dagmcmetadata.hpp"
+
 // OpenMC includes
 #include "openmc/capi.h"
 #include "openmc/error.h"
 #include "openmc/mesh.h"
 #include "openmc/tallies/tally.h"
 #include "openmc/tallies/filter.h"
+#include "openmc/thermal.h" // data::thermal_scatt_map
+#include "openmc/nuclide.h" // data::nuclide_map
+#include "openmc/settings.h" // settings::run_mode
+#include "openmc/constants.h" // enum RunMode
+#include "openmc/mgxs_interface.h" // data::mg
+#include "openmc/timer.h" // simulation:time_read_xs
+#include "openmc/dagmc.h" // model::DAG
+#include "openmc/geometry_aux.h" // finalize geometry
+#include "openmc/cross_sections.h"
 #include "xtensor/xio.hpp"
+
 
 class OpenMCExecutioner;
 
@@ -56,6 +70,9 @@ private:
   // Initialise OpenMC
   bool initOpenMC();
 
+    // Update OpenMC
+  bool updateOpenMC();
+
   // Process Tallies from OpenMC
   bool getResults(std::vector< std::vector< double > > &results_by_mat );
 
@@ -71,7 +88,22 @@ private:
                                const std::map<int32_t, FilterInfo>& filters_by_id,
                                std::map<int32_t,int32_t>& filter_id_to_bin_index);
 
+
+
+  // Delete old data, pass in new surfaces, setup metadata
+  bool reloadDAGMC();
+
+  // Set up OpenMC cells, surfaces
+  bool setupCells();
+  bool setupSurfaces();
+
+  // Given temperatures and materials, set up the cross sections
+  void prepareXS();
+
   // Data members
+
+  // Copy of the pointer to DAGMC
+  moab::DagMC* dagPtr;
 
   // constant to convert eV to joules
   static constexpr double eVinJoules = 1.60218e-19;

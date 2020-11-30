@@ -4,10 +4,14 @@
 registerMooseObject("OpenMCApp", OpenMCExecutioner);
 
 // Declare OpenMC global objects that we need
-namespace openmc::model {
-  extern std::map<int32_t, std::shared_ptr<moab::Interface> > moabPtrs;
-  extern std::vector<std::unique_ptr<Tally>> tallies;
-  extern std::vector<std::unique_ptr<Filter>> tally_filters;
+namespace openmc {
+  namespace model{
+    extern std::map<int32_t, std::shared_ptr<moab::Interface> > moabPtrs;
+    extern std::vector<std::unique_ptr<Tally>> tallies;
+    extern std::vector<std::unique_ptr<Filter>> tally_filters;
+    extern moab::DagMC* DAG;
+  }
+  extern void free_memory_dagmc();
 }
 
 template <>
@@ -81,12 +85,20 @@ bool
 OpenMCExecutioner::update()
 {
   // Don't need to do anything if this isn't inside a multiapp
-  if(!setProblemLocal){
-    if(!moab().update()){
-      std::cerr<<"Failed to update MOAB"<<std::endl;
-      return false;
-    }
+  if(setProblemLocal) return true;
+
+  // Update MOAB - extract surfaces from temperature binning
+  if(!moab().update()){
+    std::cerr<<"Failed to update MOAB"<<std::endl;
+    return false;
   }
+
+  // Load new geometry into OpenMC and reinitialise cross sections
+  if(!updateOpenMC()){
+    std::cerr<<"Failed to update OpenMC"<<std::endl;
+    return false;
+  }
+
   return true;
 }
 
@@ -191,6 +203,29 @@ OpenMCExecutioner::initOpenMC()
 
 }
 
+bool
+OpenMCExecutioner::updateOpenMC()
+{
+
+  if(!reloadDAGMC()){
+    std::cerr<<"Failed to load data into DagMC"<<std::endl;
+    return false;
+  }
+
+  if(!setupCells()){
+    std::cerr<<"Failed to set up cells in OpenMC"<<std::endl;
+    return false;
+  }
+
+  if(!setupSurfaces()){
+    std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
+    return false;
+  }
+
+  prepareXS();
+
+  return false;
+}
 
 bool
 OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_mat)
@@ -452,3 +487,68 @@ OpenMCExecutioner::decomposeIntoFilterBins(int32_t iResultBin,
 
   return true;
 };
+
+
+bool
+OpenMCExecutioner::reloadDAGMC()
+{
+  moab::ErrorCode rval;
+
+  // Delete old data
+  openmc::free_memory_dagmc();
+
+  // Create a new DagMC, but pass in our MOAB interface
+  dagPtr = new moab::DagMC(moab().moabPtr);
+  openmc::model::DAG = dagPtr;
+
+  // Set up geometry in DagMC from already-loaded mesh
+  rval = dagPtr->load_existing_contents();
+  if(rval!= moab::MB_SUCCESS) return false;
+
+  // Initialize acceleration data structures
+  rval = dagPtr->init_OBBTree();
+  if(rval!= moab::MB_SUCCESS) return false;
+
+  // Parse model metadata
+  dagmcMetaData DMD(dagPtr, false, false);
+  DMD.load_property_data();
+
+  return false;
+}
+
+bool
+OpenMCExecutioner::setupCells()
+{
+  return false;
+}
+
+bool
+OpenMCExecutioner::setupSurfaces()
+{
+  return false;
+}
+
+void
+OpenMCExecutioner::prepareXS()
+{
+  // Copied code segment from read_input_xml
+
+  // Convert user IDs -> indices, assign temperatures
+  openmc::double_2dvec nuc_temps(openmc::data::nuclide_map.size());
+  openmc::double_2dvec thermal_temps(openmc::data::thermal_scatt_map.size());
+  openmc::finalize_geometry(nuc_temps, thermal_temps);
+
+  if (openmc::settings::run_mode != openmc::RunMode::PLOTTING) {
+    openmc::simulation::time_read_xs.start();
+    if (openmc::settings::run_CE) {
+      // Read continuous-energy cross sections
+      openmc::read_ce_cross_sections(nuc_temps, thermal_temps);
+    } else {
+      // Create material macroscopic data for MGXS
+      openmc::set_mg_interface_nuclides_and_temps();
+      openmc::data::mg.init();
+      openmc::mark_fissionable_mgxs_materials();
+    }
+    openmc::simulation::time_read_xs.stop();
+  }
+}
