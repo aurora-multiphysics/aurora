@@ -13,24 +13,28 @@
 
 // OpenMC includes
 #include "openmc/capi.h"
-#include "openmc/error.h"
-#include "openmc/mesh.h"
-#include "openmc/tallies/tally.h"
-#include "openmc/tallies/filter.h"
-#include "openmc/thermal.h" // data::thermal_scatt_map
-#include "openmc/nuclide.h" // data::nuclide_map
-#include "openmc/settings.h" // settings::run_mode
+#include "openmc/cell.h"
 #include "openmc/constants.h" // enum RunMode
-#include "openmc/mgxs_interface.h" // data::mg
-#include "openmc/timer.h" // simulation:time_read_xs
+#include "openmc/cross_sections.h"
 #include "openmc/dagmc.h" // model::DAG
+#include "openmc/error.h"
 #include "openmc/geometry.h" // overlap_check_count
 #include "openmc/geometry_aux.h" // finalize geometry
-#include "openmc/cross_sections.h"
-#include "openmc/cell.h"
-#include "openmc/surface.h"
-#include "openmc/string_utils.h"
 #include "openmc/material.h"
+#include "openmc/mesh.h"
+#include "openmc/message_passing.h"
+#include "openmc/mgxs_interface.h" // data::mg
+#include "openmc/nuclide.h" // data::nuclide_map
+#include "openmc/output.h" // print_plot
+#include "openmc/plot.h"
+#include "openmc/tallies/filter.h"
+#include "openmc/tallies/tally.h"
+#include "openmc/timer.h" // simulation:time_read_xs
+#include "openmc/thermal.h" // data::thermal_scatt_map
+#include "openmc/settings.h" // settings::run_mode
+#include "openmc/string_utils.h"
+#include "openmc/summary.h"
+#include "openmc/surface.h"
 #include "xtensor/xio.hpp"
 
 class OpenMCExecutioner;
@@ -106,15 +110,16 @@ private:
   bool setupCells();
   bool setupSurfaces();
 
-  void setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx,moab::EntityHandle& graveyard);
+  bool setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx);
+  bool setSurfAttrib(openmc::DAGSurface& surf,unsigned int index);
 
-  // Given temperatures and materials, set up the cross sections
-  void prepareXS();
+  // Final openMC set up after geometery has been set.
+  void completeSetup();
 
   // Data members
 
-  // Copy of the pointer to DAGMC
-  moab::DagMC* dagPtr;
+
+  moab::DagMC* dagPtr; // Copy of the pointer to DAGMC
   std::unique_ptr<dagmcMetaData> dmdPtr;
 
   // constant to convert eV to joules
@@ -151,8 +156,10 @@ private:
   // OpenMC ID of the mesh to which we pass data
   int32_t mesh_id;
 
-
   std::map<std::string,int32_t> mat_names_to_id;
+
+  // Place to store graveyard entity handle
+  moab::EntityHandle graveyard;
 
 };
 #endif // OPENMCEXECUTIONER_H

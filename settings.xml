@@ -11,4 +11,5 @@
   </source>
   <photon_transport>false</photon_transport>
   <dagmc>true</dagmc>
+  <temperature_method>interpolation</temperature_method>
 </settings>

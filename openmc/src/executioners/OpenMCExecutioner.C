@@ -76,9 +76,6 @@ OpenMCExecutioner::update()
 bool
 OpenMCExecutioner::run()
 {
-  // Clear tallies from any previous calls
-  openmc_err = openmc_reset();
-  if (openmc_err) return false;
 
   // Run the simulation
   openmc_err = openmc_run();
@@ -197,6 +194,10 @@ bool
 OpenMCExecutioner::updateOpenMC()
 {
 
+  // Clear tallies from any previous calls
+  openmc_err = openmc_reset();
+  if (openmc_err) return false;
+
   if(!reloadDAGMC()){
     std::cerr<<"Failed to load data into DagMC"<<std::endl;
     return false;
@@ -207,14 +208,15 @@ OpenMCExecutioner::updateOpenMC()
     return false;
   }
 
-  // if(!setupSurfaces()){
-  //   std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
-  //   return false;
-  // }
+  if(!setupSurfaces()){
+    std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
+    return false;
+  }
 
-  //prepareXS();
+  // Final OpenMC setup after geometry is updated.
+  completeSetup();
 
-  return false;
+  return true;
 }
 
 bool
@@ -534,9 +536,6 @@ OpenMCExecutioner::setupCells()
   // Get number of volumes from DAGMC
   unsigned int n_cells = dagPtr->num_entities(DIM_VOL);
 
-  // Place to store graveyard entity handle
-  moab::EntityHandle graveyard = 0;
-
   // Loop over the cells
   for (unsigned int icell = 0; icell < n_cells; icell++) {
 
@@ -545,7 +544,10 @@ OpenMCExecutioner::setupCells()
 
     // Create new cell
     openmc::DAGCell* cell = new openmc::DAGCell();
-    setCellAttrib(*cell,index,dagmc_univ_id,graveyard);
+    if(!setCellAttrib(*cell,index,dagmc_univ_id)){
+      delete cell;
+      return false;
+    }
 
     // Save cell
     openmc::model::cell_map[cell->id_] = icell;
@@ -571,13 +573,36 @@ OpenMCExecutioner::setupCells()
 bool
 OpenMCExecutioner::setupSurfaces()
 {
-  return false;
+
+  // Get number of surfaces from DAGMC
+  unsigned int n_surfaces = dagPtr->num_entities(DIM_SURF);
+
+  // Loop over the surfaces
+  for (unsigned int iSurf = 0; iSurf < n_surfaces; iSurf++) {
+
+    // DagMC indices are offset by one (convention stemming from MCNP)
+    unsigned int index = iSurf+1;
+
+    // Create new surface
+    openmc::DAGSurface* surf = new openmc::DAGSurface();
+    if(!setSurfAttrib(*surf,index)){
+      delete surf;
+      return false;
+    }
+
+    // Add to global array and map
+    openmc::model::surface_map[surf->id_] = iSurf;
+    openmc::model::surfaces.emplace_back(surf);
+
+  }
+
+  return true;
 }
 
 void
-OpenMCExecutioner::prepareXS()
+OpenMCExecutioner::completeSetup()
 {
-  // Copied code segment from read_input_xml
+  // Copied code segment from openmc::read_input_xml()
 
   // Convert user IDs -> indices, assign temperatures
   openmc::double_2dvec nuc_temps(openmc::data::nuclide_map.size());
@@ -597,10 +622,32 @@ OpenMCExecutioner::prepareXS()
     }
     openmc::simulation::time_read_xs.stop();
   }
+
+  //openmc::read_tallies_xml();
+
+  // Initialize distribcell_filters
+  openmc::prepare_distribcell();
+
+  if (openmc::settings::run_mode == openmc::RunMode::PLOTTING) {
+    // Read plots.xml if it exists
+    openmc::read_plots_xml();
+    if (openmc::mpi::master && openmc::settings::verbosity >= 5)
+      openmc::print_plot();
+
+  } else {
+    // Write summary information
+    if (openmc::mpi::master && openmc::settings::output_summary)
+      openmc::write_summary();
+
+    // Warn if overlap checking is on
+    if (openmc::mpi::master && openmc::settings::check_overlaps) {
+      openmc::warning("Cell overlap checking is ON.");
+    }
+  }
 }
 
-void
-OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_id,moab::EntityHandle& graveyard)
+bool
+OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_id)
 {
   moab::EntityHandle vol_handle= dagPtr->entity_by_index(DIM_VOL, index);
 
@@ -613,7 +660,8 @@ OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_
   // Determine volume material assignment
   std::string mat_name = dmdPtr->get_volume_property("material", vol_handle);
   if (mat_name.empty()) {
-    openmc::fatal_error(fmt::format("Volume {} has no material assignment.", cell.id_));
+    std::cerr<<"Volume "<< cell.id_<<" has no material assignment."<<std::endl;
+    return false;
   }
   openmc::to_lower(mat_name);
 
@@ -633,6 +681,7 @@ OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_
     }
     else{
       std::cerr<<"Material "<< mat_name << "not found for cell "<< cell.id_<<std::endl;
+      return false;
     }
   }
 
@@ -642,4 +691,49 @@ OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_
     double temp = moab().getTemperature(vol_handle);
     cell.sqrtkT_.push_back(std::sqrt(openmc::K_BOLTZMANN * temp));
   }
+
+  return true;
+}
+
+bool
+OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
+{
+  moab::EntityHandle surf_handle = dagPtr->entity_by_index(DIM_SURF,index);
+
+  surf.dag_index_ = index;
+  surf.id_ = dagPtr->id_by_index(DIM_SURF, surf.dag_index_);
+  surf.dagmc_ptr_ = dagPtr;
+
+  // set BCs
+  std::string bc_value = dmdPtr->get_surface_property("boundary", surf_handle);
+  openmc::to_lower(bc_value);
+  if (bc_value.empty() || bc_value == "transmit" || bc_value == "transmission") {
+    // set to transmission by default
+    surf.bc_ = openmc::Surface::BoundaryType::TRANSMIT;
+  } else if (bc_value == "vacuum") {
+    surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
+  } else if (bc_value == "reflective" || bc_value == "reflect" || bc_value == "reflecting") {
+    surf.bc_ = openmc::Surface::BoundaryType::REFLECT;
+  } else if (bc_value == "periodic") {
+    std::cerr<<"Periodic boundary condition not supported in DAGMC."<<std::endl;
+    return false;
+  } else {
+    std::cout<<"Unknown boundary condition "<<bc_value
+             <<" specified on surface "
+             << surf.id_<<std::endl;
+    return false;
+  }
+
+  // graveyard check
+  moab::Range parent_vols;
+  moab::ErrorCode rval = dagPtr->moab_instance()->get_parent_meshsets(surf_handle, parent_vols);
+  if(rval!=moab::MB_SUCCESS) return false;
+
+  // if this surface belongs to the graveyard
+  if (graveyard && parent_vols.find(graveyard) != parent_vols.end()) {
+    // set graveyard surface BC's to vacuum
+    surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
+  }
+
+  return true;
 }
