@@ -9,6 +9,8 @@
 #include "DagMC.hpp"
 #include "dagmcmetadata.hpp"
 
+#define DAGMC 1
+
 // OpenMC includes
 #include "openmc/capi.h"
 #include "openmc/error.h"
@@ -22,10 +24,14 @@
 #include "openmc/mgxs_interface.h" // data::mg
 #include "openmc/timer.h" // simulation:time_read_xs
 #include "openmc/dagmc.h" // model::DAG
+#include "openmc/geometry.h" // overlap_check_count
 #include "openmc/geometry_aux.h" // finalize geometry
 #include "openmc/cross_sections.h"
+#include "openmc/cell.h"
+#include "openmc/surface.h"
+#include "openmc/string_utils.h"
+#include "openmc/material.h"
 #include "xtensor/xio.hpp"
-
 
 class OpenMCExecutioner;
 
@@ -56,19 +62,22 @@ private:
   MoabUserObject& moab();
 
   // Initialise MOAB/OpenMC
-  bool initialize();
+  void initialize();
 
   // Run OpenMC and get results
   bool run();
 
   // Update MOAB with any results from MOOSE
-  bool update();
+  void update();
 
   // Initialise MOAB
   bool initMOAB();
 
   // Initialise OpenMC
   bool initOpenMC();
+
+  // Set up map of names to ids
+  bool initMaterials();
 
     // Update OpenMC
   bool updateOpenMC();
@@ -97,6 +106,8 @@ private:
   bool setupCells();
   bool setupSurfaces();
 
+  void setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx,moab::EntityHandle& graveyard);
+
   // Given temperatures and materials, set up the cross sections
   void prepareXS();
 
@@ -104,9 +115,14 @@ private:
 
   // Copy of the pointer to DAGMC
   moab::DagMC* dagPtr;
+  std::unique_ptr<dagmcMetaData> dmdPtr;
 
   // constant to convert eV to joules
   static constexpr double eVinJoules = 1.60218e-19;
+
+  // Geometric dimensions
+  static constexpr int DIM_VOL = 3;
+  static constexpr int DIM_SURF = 2;
 
   // Record whether we set the FE Problem locally.
   bool setProblemLocal;
@@ -134,6 +150,9 @@ private:
 
   // OpenMC ID of the mesh to which we pass data
   int32_t mesh_id;
+
+
+  std::map<std::string,int32_t> mat_names_to_id;
 
 };
 #endif // OPENMCEXECUTIONER_H

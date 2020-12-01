@@ -53,11 +53,10 @@ class MoabUserObject : public UserObject
   // Update MOAB with any results from MOOSE
   bool update();
 
-  // // Intialise libMesh systems containing var_now
-  // bool initSystem(std::string var_now);
-
   // Pass the OpenMC results into the libMesh systems solution
   bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool normToVol=true);
+
+  double getTemperature(moab::EntityHandle vol);
 
   // Publically available pointer to MOAB interface
   std::shared_ptr<moab::Interface> moabPtr;
@@ -92,26 +91,26 @@ private:
   moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata);
   moab::ErrorCode createSurfaces(moab::Range& reversed, VolData& voldata, unsigned int& surf_id);
 
-  
+
   moab::ErrorCode createSurfaceFromBox(const BoundingBox& box, VolData& voldata, unsigned int& surf_id, bool normalout, double factor=1.0);
   moab::ErrorCode createNodesFromBox(const BoundingBox& box,double factor,std::vector<moab::EntityHandle>& vert_handles);
   moab::ErrorCode createCornerTris(const std::vector<moab::EntityHandle> & verts,
                                    unsigned int corner, unsigned int v1,
-                                   unsigned int v2 ,unsigned int v3, 
+                                   unsigned int v2 ,unsigned int v3,
                                    bool normalout, moab::Range &surface_tris);
   moab::ErrorCode createTri(const std::vector<moab::EntityHandle> & vertices,unsigned int v1, unsigned int v2 ,unsigned int v3, moab::Range &surface_tris);
-    
+
   moab::ErrorCode updateSurfData(moab::EntityHandle surface_set,VolData data);
   moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
 
-  // Build the graveyard (needed by OpenMC)  
+  // Build the graveyard (needed by OpenMC)
   moab::ErrorCode buildGraveyard(unsigned int & vol_id, unsigned int & surf_id);
 
   // Get the coords of the box back as an array (possibly scaled)
   std::vector<Point> boxCoords(const BoundingBox& box, double factor);
-  
+
   // Look for materials in the FE problem
   void findMaterials();
 
@@ -141,17 +140,21 @@ private:
   // NB elems in param is a copy, localElems is a reference
   void groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::Range>& localElems);
 
-
   // Given a value of our variable, find what bin this corresponds to.
   int getResultsBin(double value);
   inline int getResultsBinLin(double value);
   int getResultsBinLog(double value);
 
+  // Calculate the variable evaluatec at the bin midpoints
+  void calcMidpoints();
+  void calcMidpointsLin();
+  void calcMidpointsLog();
+
   // Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
 
   // Find the surfaces for the provided range and add to group
-  bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id);
+  bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
@@ -202,6 +205,9 @@ private:
   // Save some topological data: map from surface handle to vol handle and sense
   std::map<moab::EntityHandle, std::vector<VolData> > surfsToVols;
 
+  // Save a map of EntityHandle to temperature
+  std::map<moab::EntityHandle,double> volToTemp;
+
   // Some moab tags
   moab::Tag geometry_dimension_tag;
   moab::Tag id_tag;
@@ -215,7 +221,8 @@ private:
   double faceting_tol;
   double geom_tol;
 
-  // std::vector<double> edges; // Bin edges
-  // std::vector<double> midpoints; // Evaluate the temperature representing the bin mipoint
+  // Store the temperature corresponding to the bin mipoint
+  std::vector<double> midpoints;
+
 
 };

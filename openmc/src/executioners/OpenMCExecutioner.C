@@ -3,17 +3,6 @@
 
 registerMooseObject("OpenMCApp", OpenMCExecutioner);
 
-// Declare OpenMC global objects that we need
-namespace openmc {
-  namespace model{
-    extern std::map<int32_t, std::shared_ptr<moab::Interface> > moabPtrs;
-    extern std::vector<std::unique_ptr<Tally>> tallies;
-    extern std::vector<std::unique_ptr<Filter>> tally_filters;
-    extern moab::DagMC* DAG;
-  }
-  extern void free_memory_dagmc();
-}
-
 template <>
 InputParameters
 validParams<OpenMCExecutioner>()
@@ -50,56 +39,38 @@ void
 OpenMCExecutioner::execute()
 {
 
-  if(!initialize()) return;
+  // Initialize here so it occurs after MultiApp transfers
+  initialize();
 
-  if(!run()){
-     std::cerr<<"Failed to run OpenMC"<<std::endl;
-     return;
-  }
+  if(!run()) mooseError("Failed to run OpenMC");
 
 }
 
-bool
+void
 OpenMCExecutioner::initialize()
 {
 
   // Don't re-initialize, just update
-  if(isInit) return update();
+  if(isInit) update();
 
-  // Initialize MOAB here so it occurs after transfers when part of MultiApp
-  if(!initMOAB()){
-    std::cerr<<"Failed to initialize MOAB"<<std::endl;
-    return false;
-  }
+  if(!initMOAB()) mooseError("Failed to initialize MOAB");
 
-  if(!initOpenMC()){
-    std::cerr<<"Failed to initialize OpenMC"<<std::endl;
-    return false;
-  }
+  if(!initOpenMC()) mooseError("Failed to initialize OpenMC");
 
   isInit = true;
-  return isInit;
 }
 
-bool
+void
 OpenMCExecutioner::update()
 {
   // Don't need to do anything if this isn't inside a multiapp
-  if(setProblemLocal) return true;
+  if(setProblemLocal) return;
 
   // Update MOAB - extract surfaces from temperature binning
-  if(!moab().update()){
-    std::cerr<<"Failed to update MOAB"<<std::endl;
-    return false;
-  }
+  if(!moab().update()) mooseError("Failed to update MOAB");
 
   // Load new geometry into OpenMC and reinitialise cross sections
-  if(!updateOpenMC()){
-    std::cerr<<"Failed to update OpenMC"<<std::endl;
-    return false;
-  }
-
-  return true;
+  if(!updateOpenMC()) mooseError("Failed to update OpenMC");
 }
 
 bool
@@ -199,8 +170,27 @@ OpenMCExecutioner::initOpenMC()
   char * argv[] = {nullptr, nullptr};
   openmc_err = openmc_init(1, argv, &_communicator.get());
   if (openmc_err) return false;
-  else return true;
 
+  return initMaterials();
+
+}
+
+bool
+OpenMCExecutioner::initMaterials()
+{
+  for (const auto& mat : openmc::model::materials) {
+    std::string mat_name = mat->name_;
+    int32_t id = mat->id_;
+    if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
+      std::cerr<<"More than one material found with name "
+               <<mat_name
+               <<". Please ensure materials have unique names."
+               <<std::endl;
+      return false;
+    }
+    mat_names_to_id[mat->name_] = id;
+  }
+  return true;
 }
 
 bool
@@ -217,12 +207,12 @@ OpenMCExecutioner::updateOpenMC()
     return false;
   }
 
-  if(!setupSurfaces()){
-    std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
-    return false;
-  }
+  // if(!setupSurfaces()){
+  //   std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
+  //   return false;
+  // }
 
-  prepareXS();
+  //prepareXS();
 
   return false;
 }
@@ -510,16 +500,72 @@ OpenMCExecutioner::reloadDAGMC()
   if(rval!= moab::MB_SUCCESS) return false;
 
   // Parse model metadata
-  dagmcMetaData DMD(dagPtr, false, false);
-  DMD.load_property_data();
+  dmdPtr = std::make_unique<dagmcMetaData>(dagPtr, false, false);
+  dmdPtr->load_property_data();
 
-  return false;
+  return true;
 }
 
 bool
 OpenMCExecutioner::setupCells()
 {
-  return false;
+
+  // Clear existing cell data
+  openmc::model::cells.clear();
+  openmc::model::cell_map.clear();
+
+  // Universe ID for DAGMC (always zero)
+  int32_t dagmc_univ_id = 0;
+
+  // Create universe if required
+  auto it = openmc::model::universe_map.find(dagmc_univ_id);
+  if (it == openmc::model::universe_map.end()) {
+    openmc::model::universes.push_back(std::make_unique<openmc::Universe>());
+    openmc::model::universes.back()->id_ = dagmc_univ_id;
+    openmc::model::universe_map[dagmc_univ_id] = openmc::model::universes.size() - 1;
+  }
+  // Get reference to dagmc universe
+  int32_t uID = openmc::model::universe_map[dagmc_univ_id];
+  openmc::Universe& universe = *(openmc::model::universes.at(uID));
+
+  // Clear prior universe cell data
+  universe.cells_.clear();
+
+  // Get number of volumes from DAGMC
+  unsigned int n_cells = dagPtr->num_entities(DIM_VOL);
+
+  // Place to store graveyard entity handle
+  moab::EntityHandle graveyard = 0;
+
+  // Loop over the cells
+  for (unsigned int icell = 0; icell < n_cells; icell++) {
+
+    // DagMC indices are offset by one (convention stemming from MCNP)
+    unsigned int index = icell+1;
+
+    // Create new cell
+    openmc::DAGCell* cell = new openmc::DAGCell();
+    setCellAttrib(*cell,index,dagmc_univ_id,graveyard);
+
+    // Save cell
+    openmc::model::cell_map[cell->id_] = icell;
+    openmc::model::cells.emplace_back(cell);
+    universe.cells_.push_back(icell);
+
+  }
+
+  // Allocate the cell overlap count if necessary
+  if (openmc::settings::check_overlaps) {
+    openmc::model::overlap_check_count.resize(openmc::model::cells.size(), 0);
+  }
+
+  if (!graveyard) {
+    std::cerr<<"No graveyard volume found in the DagMC model."<<std::endl;
+    return false;
+
+  }
+
+  return true;
 }
 
 bool
@@ -550,5 +596,50 @@ OpenMCExecutioner::prepareXS()
       openmc::mark_fissionable_mgxs_materials();
     }
     openmc::simulation::time_read_xs.stop();
+  }
+}
+
+void
+OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_id,moab::EntityHandle& graveyard)
+{
+  moab::EntityHandle vol_handle= dagPtr->entity_by_index(DIM_VOL, index);
+
+  cell.dag_index_ = index;
+  cell.id_ = dagPtr->id_by_index(DIM_VOL, index);
+  cell.dagmc_ptr_ = dagPtr;
+  cell.universe_ = universe_id;
+  cell.fill_ = openmc::C_NONE;
+
+  // Determine volume material assignment
+  std::string mat_name = dmdPtr->get_volume_property("material", vol_handle);
+  if (mat_name.empty()) {
+    openmc::fatal_error(fmt::format("Volume {} has no material assignment.", cell.id_));
+  }
+  openmc::to_lower(mat_name);
+
+  // Set the cell material
+  if (mat_name == "void" || mat_name == "vacuum" || mat_name == "graveyard") {
+    cell.material_.push_back(openmc::MATERIAL_VOID);
+
+    // If we found the graveyard, save handle
+    if(mat_name == "graveyard"){
+      graveyard = vol_handle;
+    }
+  }
+  else{
+    // TODO - use uwuw?
+    if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
+      cell.material_.push_back(mat_names_to_id[mat_name]);
+    }
+    else{
+      std::cerr<<"Material "<< mat_name << "not found for cell "<< cell.id_<<std::endl;
+    }
+  }
+
+  // Set the cell temperature
+  if (cell.material_[0] != openmc::MATERIAL_VOID){
+    //Retrieve the binned temperature data
+    double temp = moab().getTemperature(vol_handle);
+    cell.sqrtkT_.push_back(std::sqrt(openmc::K_BOLTZMANN * temp));
   }
 }

@@ -12,8 +12,8 @@ validParams<MoabUserObject>()
   params.addParam<double>("length_scale", 1.,"Scale factor to convert lengths from MOOSE to MOAB");
   params.addParam<std::string>("bin_varname", "", "Variable name by whose results elements should be binned.");
   params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of material names");
-  params.addParam<double>("var_min", 300.,"Minimum value to define range of bins.");
-  params.addParam<double>("var_max", 600.,"Max value to define range of bins.");
+  params.addParam<double>("var_min", 297.5,"Minimum value to define range of bins.");
+  params.addParam<double>("var_max", 597.5,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
   params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
@@ -61,6 +61,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     mooseError("Please ensure number of powers for variable is less than the number of bins");
   }
   nMinor = nVarBins/nPow;
+  calcMidpoints();
 }
 
 FEProblemBase&
@@ -135,8 +136,6 @@ MoabUserObject::update()
 
   // Find the surfaces of local temperature regions
   if(!findSurfaces()) return false;
-
-  std::cout<<"Success!"<<std::endl;
 
   return true;
 }
@@ -378,6 +377,8 @@ MoabUserObject::createVol(unsigned int id,moab::EntityHandle& volume_set,moab::E
 
   // Add the volume to group
   rval = moabPtr->add_entities(group_set, &volume_set,1);
+  if(rval != moab::MB_SUCCESS) return rval;
+
   return rval;
 }
 
@@ -531,6 +532,15 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
 
   sys.solution->close();
 
+}
+
+double
+MoabUserObject::getTemperature(moab::EntityHandle vol)
+{
+  if(volToTemp.find(vol)==volToTemp.end()){
+    throw std::out_of_range("Could not find volume");
+  }
+  return volToTemp[vol];
 }
 
 double
@@ -694,12 +704,17 @@ MoabUserObject::findSurfaces()
         std::vector<moab::Range> regions;
         groupLocalElems(sortedElems.at(iBin),regions);
 
-        if(!regions.empty())
-          std::cout<<"Found "<< regions.size()<< " local regions in mat bin "<< iMat<< " and T bin"<< iVar <<std::endl;
+        // Retrieve the average bin temperature
+        double temp = midpoints.at(iVar);
 
         // Loop over all regions and find surfaces
         for(const auto & region : regions){
-          if(!findSurface(region,group_set,vol_id,surf_id)) return false;
+          moab::EntityHandle volume_set;
+          if(!findSurface(region,group_set,vol_id,surf_id,volume_set)){
+            return false;
+          }
+          // Save the volume temperature
+          volToTemp[volume_set] = temp;
         }
 
       }
@@ -719,7 +734,7 @@ MoabUserObject::findSurfaces()
     // std::cout << "Writing mesh..." << std::endl;
     // rval = moabPtr->write_mesh("surfs_new.h5m");
     // if(rval != moab::MB_SUCCESS) return false;
-    // TODO - delete these lines - END
+    // // TODO - delete these lines - END
 
   }
   catch(std::exception &e){
@@ -790,8 +805,6 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
     // Done, no more local neighbors in the current bin.
 
     // Save this moab range of local neighbors
-    if(!local.empty())
-      std::cout<<"local region contains "<<local.size()<<" elements"<<std::endl;
     localElems.push_back(local);
   }
   // Done, assigned all elems in bin to a local range.
@@ -838,17 +851,47 @@ MoabUserObject::getResultsBinLog(double value)
   int iBin = nMinor*iMajor + iMinor;
 
   return iBin;
-
 }
 
+void
+MoabUserObject::calcMidpoints()
+{
+  if(logscale) calcMidpointsLog();
+  else calcMidpointsLin();
+}
+
+
+void
+MoabUserObject::calcMidpointsLin()
+{
+  double var_now = var_min - bin_width/2.0;
+  for(unsigned int iVar=0; iVar<nVarBins; iVar++){
+    var_now += bin_width;
+    midpoints.push_back(var_now);
+  }
+}
+
+void
+MoabUserObject::calcMidpointsLog()
+{
+  double powDiff = 1./double(nMinor);
+  double powStart = double(powMin) - 0.5*powStart;
+  double var_now = pow(10,powStart);
+  double prodDiff = pow(10,powDiff);
+  for(unsigned int iVar=0; iVar<nVarBins; iVar++){
+    var_now *= prodDiff;
+    midpoints.push_back(var_now);
+  }
+}
+
+
 bool
-MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id)
+MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set)
 {
 
   moab::ErrorCode rval;
 
   // Create a volume set
-  moab::EntityHandle volume_set;
   vol_id++;
   rval = createVol(vol_id,volume_set,group);
   if(rval != moab::MB_SUCCESS) return false;
