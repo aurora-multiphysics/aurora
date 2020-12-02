@@ -661,11 +661,6 @@ OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_
     if(mat_name == "graveyard"){
       graveyard = vol_handle;
     }
-
-    if(dagPtr->is_implicit_complement(vol_handle)){
-      impl_compl = vol_handle;
-    }
-
   }
   else{
     // TODO - use uwuw?
@@ -722,15 +717,10 @@ OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
   moab::ErrorCode rval = dagPtr->moab_instance()->get_parent_meshsets(surf_handle, parent_vols);
   if(rval!=moab::MB_SUCCESS) return false;
 
-  // Check if this surface belongs to the graveyard or implicit complement
-  // TODO - check if just graveyard?
-  for(size_t iparent=0; iparent<parent_vols.size(); iparent++){
-    if((graveyard && parent_vols[iparent] == graveyard) ||
-       (impl_compl && parent_vols[iparent] == impl_compl)){
-      // Set surface bcs to vacuum
-      surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
-      break;
-    }
+  // Check if this surface belongs to the graveyard
+  if (graveyard && parent_vols.find(graveyard) != parent_vols.end()) {
+    // Set graveyard surface's bcs to vacuum
+    surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
   }
 
   return true;

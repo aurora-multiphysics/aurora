@@ -160,8 +160,5 @@ private:
   // Place to store graveyard entity handle
   moab::EntityHandle graveyard;
 
-  // Place to store implicit comeplement entity handle
-  moab::EntityHandle impl_compl;
-
 };
 #endif // OPENMCEXECUTIONER_H
