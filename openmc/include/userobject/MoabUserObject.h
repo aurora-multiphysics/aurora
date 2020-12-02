@@ -153,6 +153,9 @@ private:
   // Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
 
+  // Clear MOAB entity sets
+  bool resetMOAB();
+
   // Find the surfaces for the provided range and add to group
   bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 

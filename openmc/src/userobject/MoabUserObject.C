@@ -141,6 +141,8 @@ MoabUserObject::initMOAB()
   if(rval!=moab::MB_SUCCESS)
     mooseError("Could not create elems");
 
+  // Find which elements belong to which materials
+  findMaterials();
 }
 
 bool
@@ -149,8 +151,8 @@ MoabUserObject::update()
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return false;
 
-  // Find which elements belong to which materials
-  findMaterials();
+  // Clear existing entity sets
+  if(!resetMOAB()) return false;
 
   // Sort libMesh elements into bins of the specified variable
   if(!sortElemsByResults()) return false;
@@ -858,6 +860,42 @@ MoabUserObject::resetContainers()
   nSortBins = nMatBins*nVarBins;
   sortedElems.clear();
   sortedElems.resize(nSortBins);
+  volToTemp.clear();
+}
+
+bool
+MoabUserObject::resetMOAB()
+{
+
+  moab::ErrorCode rval = moab::MB_SUCCESS;
+
+  std::vector<std::string> categories;
+  categories.push_back("Surface");
+  categories.push_back("Volume");
+  categories.push_back("Group");
+
+  // Retrieve and delete the entities in each category
+  for(const auto & data : categories){
+
+    char category[CATEGORY_TAG_SIZE];
+    memset(category,'\0', CATEGORY_TAG_SIZE); // fill C char array with null
+    strncpy(category,data.c_str(),CATEGORY_TAG_SIZE-1);
+    const void* const val[] = {&category};
+
+    moab::Range ents;
+    rval = moabPtr->get_entities_by_type_and_tag(0, moab::MBENTITYSET, &category_tag,
+                                                 val, 1, ents);
+    if(rval != moab::MB_SUCCESS) return false;
+
+    rval = moabPtr->delete_entities(ents);
+    if(rval != moab::MB_SUCCESS) return false;
+  }
+
+  // Clear data structures in this class
+  surfsToVols.clear();
+
+  // Done
+  return true;
 }
 
 int
