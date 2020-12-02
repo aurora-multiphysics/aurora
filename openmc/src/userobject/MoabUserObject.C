@@ -769,9 +769,15 @@ MoabUserObject::writeSurfaces()
   }
 
   if( (n_its % n_period) == 0 ){
+
+    // Generate list of surfaces to write.
+    std::vector<moab::EntityHandle> surfs;
+    for( auto itsurf : surfsToVols){
+      surfs.push_back(itsurf.first);
+    }
     std::string filename = output_base + "_" + std::to_string(n_write) +".h5m";
     std::cout << "Writing MOAB mesh to "<< filename << std::endl;
-    moab::ErrorCode rval = moabPtr->write_mesh(filename.c_str());
+    moab::ErrorCode rval = moabPtr->write_mesh(filename.c_str(),surfs.data(),surfs.size());
     if(rval != moab::MB_SUCCESS) return false;
     n_write++;
   }

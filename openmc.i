@@ -18,7 +18,7 @@
     type = MoabUserObject
     bin_varname = "temperature"
     material_names = 'copper air'
-    output_skins = false
+    output_skins = true
     #uncomment to change lengthscale relative to moose
     #length_scale = 100
   []
