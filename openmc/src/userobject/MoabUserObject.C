@@ -97,9 +97,6 @@ MoabUserObject::initMOAB()
   // Fetch spatial dimension from libMesh
   int dim = mesh().spatial_dimension() ;
 
-  // put in execute?
-  findMaterials();
-
   // Set spatial dimension in MOAB
   moab::ErrorCode  rval = moabPtr->set_dimension(dim);
   if(rval!=moab::MB_SUCCESS)
@@ -130,6 +127,9 @@ MoabUserObject::update()
 {
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return false;
+
+  // Find which elements belong to which materials
+  findMaterials();
 
   // Sort libMesh elements into bins of the specified variable
   if(!sortElemsByResults()) return false;

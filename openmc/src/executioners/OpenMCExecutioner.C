@@ -51,7 +51,10 @@ OpenMCExecutioner::initialize()
 {
 
   // Don't re-initialize, just update
-  if(isInit) update();
+  if(isInit){
+    update();
+    return;
+  }
 
   if(!initMOAB()) mooseError("Failed to initialize MOAB");
 
@@ -574,6 +577,10 @@ bool
 OpenMCExecutioner::setupSurfaces()
 {
 
+  // Clear existing surface data
+  openmc::model::surfaces.clear();
+  openmc::model::surface_map.clear();
+
   // Get number of surfaces from DAGMC
   unsigned int n_surfaces = dagPtr->num_entities(DIM_SURF);
 
@@ -593,7 +600,6 @@ OpenMCExecutioner::setupSurfaces()
     // Add to global array and map
     openmc::model::surface_map[surf->id_] = iSurf;
     openmc::model::surfaces.emplace_back(surf);
-
   }
 
   return true;
@@ -602,6 +608,9 @@ OpenMCExecutioner::setupSurfaces()
 void
 OpenMCExecutioner::completeSetup()
 {
+
+  openmc::model::root_universe = openmc::find_root_universe();
+
   // Copied code segment from openmc::read_input_xml()
 
   // Convert user IDs -> indices, assign temperatures
@@ -623,27 +632,6 @@ OpenMCExecutioner::completeSetup()
     openmc::simulation::time_read_xs.stop();
   }
 
-  //openmc::read_tallies_xml();
-
-  // Initialize distribcell_filters
-  openmc::prepare_distribcell();
-
-  if (openmc::settings::run_mode == openmc::RunMode::PLOTTING) {
-    // Read plots.xml if it exists
-    openmc::read_plots_xml();
-    if (openmc::mpi::master && openmc::settings::verbosity >= 5)
-      openmc::print_plot();
-
-  } else {
-    // Write summary information
-    if (openmc::mpi::master && openmc::settings::output_summary)
-      openmc::write_summary();
-
-    // Warn if overlap checking is on
-    if (openmc::mpi::master && openmc::settings::check_overlaps) {
-      openmc::warning("Cell overlap checking is ON.");
-    }
-  }
 }
 
 bool
@@ -673,6 +661,11 @@ OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_
     if(mat_name == "graveyard"){
       graveyard = vol_handle;
     }
+
+    if(dagPtr->is_implicit_complement(vol_handle)){
+      impl_compl = vol_handle;
+    }
+
   }
   else{
     // TODO - use uwuw?
@@ -729,10 +722,15 @@ OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
   moab::ErrorCode rval = dagPtr->moab_instance()->get_parent_meshsets(surf_handle, parent_vols);
   if(rval!=moab::MB_SUCCESS) return false;
 
-  // if this surface belongs to the graveyard
-  if (graveyard && parent_vols.find(graveyard) != parent_vols.end()) {
-    // set graveyard surface BC's to vacuum
-    surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
+  // Check if this surface belongs to the graveyard or implicit complement
+  // TODO - check if just graveyard?
+  for(size_t iparent=0; iparent<parent_vols.size(); iparent++){
+    if((graveyard && parent_vols[iparent] == graveyard) ||
+       (impl_compl && parent_vols[iparent] == impl_compl)){
+      // Set surface bcs to vacuum
+      surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
+      break;
+    }
   }
 
   return true;

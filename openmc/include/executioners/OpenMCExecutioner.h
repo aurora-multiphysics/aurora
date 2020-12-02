@@ -102,8 +102,7 @@ private:
                                std::map<int32_t,int32_t>& filter_id_to_bin_index);
 
 
-
-  // Delete old data, pass in new surfaces, setup metadata
+  // Pass in mesh, new surfaces, setup metadata
   bool reloadDAGMC();
 
   // Set up OpenMC cells, surfaces
@@ -160,6 +159,9 @@ private:
 
   // Place to store graveyard entity handle
   moab::EntityHandle graveyard;
+
+  // Place to store implicit comeplement entity handle
+  moab::EntityHandle impl_compl;
 
 };
 #endif // OPENMCEXECUTIONER_H
