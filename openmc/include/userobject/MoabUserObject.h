@@ -156,6 +156,8 @@ private:
   // Find the surfaces for the provided range and add to group
   bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 
+  bool writeSurfaces();
+
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
 
@@ -224,5 +226,12 @@ private:
   // Store the temperature corresponding to the bin mipoint
   std::vector<double> midpoints;
 
+  // Settings to control the optional writing of surfaces to file.
+  bool output_skins;
+  std::string output_base;
+  unsigned int n_output; // Number of writes
+  unsigned int n_period; // Period of writes (skip every n_period -1)
+  unsigned int n_write; // Number of times file has been written to
+  unsigned int n_its; // Store the number of times writeSurfaces is called
 
 };

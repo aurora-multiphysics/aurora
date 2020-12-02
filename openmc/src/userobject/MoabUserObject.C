@@ -9,15 +9,28 @@ validParams<MoabUserObject>()
 {
   InputParameters params = validParams<UserObject>();
 
+  // MOAB mesh params
   params.addParam<double>("length_scale", 1.,"Scale factor to convert lengths from MOOSE to MOAB");
+
+  // Params relating to binning
   params.addParam<std::string>("bin_varname", "", "Variable name by whose results elements should be binned.");
-  params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of material names");
   params.addParam<double>("var_min", 297.5,"Minimum value to define range of bins.");
   params.addParam<double>("var_max", 597.5,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
+
+  // Mesh metadata
+  params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of material names");
+
+  // Dagmc params
   params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
   params.addParam<double>("geom_tol",1.e-6,"Geometry tolerance for DagMC");
+
+  // Output params
+  params.addParam<bool>("output_skins", false, "Switch to control whether MOAB should write skins to file.");
+  params.addParam<std::string>("output_base", "moab_surfs", "Base filename for file writes (will be appended by integer");
+  params.addParam<unsigned int>("n_output", 10, "Number of times to write to file if output_skins is true");
+  params.addParam<unsigned int>("n_skip", 0, "Number of iterations to skip between writes if output_skins is true and n_output>1");
 
   return params;
 }
@@ -34,7 +47,11 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   nVarBins(getParam<unsigned int>("n_bins")),
   mat_names(getParam<std::vector<std::string> >("material_names")),
   faceting_tol(getParam<double>("faceting_tol")),
-  geom_tol(getParam<double>("geom_tol"))
+  geom_tol(getParam<double>("geom_tol")),
+  output_skins(getParam<bool>("output_skins")),
+  output_base(getParam<std::string>("output_base")),
+  n_output(getParam<unsigned int>("n_output")),
+  n_period(getParam<unsigned int>("n_skip")+1)
 {
   // Create MOAB interface
   moabPtr =  std::make_shared<moab::Core>();
@@ -62,6 +79,10 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   }
   nMinor = nVarBins/nPow;
   calcMidpoints();
+
+  // Set variables relating to writing to file
+  n_write=0;
+  n_its=0;
 }
 
 FEProblemBase&
@@ -724,25 +745,40 @@ MoabUserObject::findSurfaces()
     rval = buildGraveyard(vol_id,surf_id);
     if(rval != moab::MB_SUCCESS) return false;
 
-    // // TODO - delete these lines: currently present to create output for debug
-    // moab::Range tets;
-    // rval = moabPtr->get_entities_by_type(meshset,moab::MBTET,tets);
-    // if(rval != moab::MB_SUCCESS) return false;
-    // rval = moabPtr->delete_entities(tets);
-    // if(rval != moab::MB_SUCCESS) return false;
-
-    // std::cout << "Writing mesh..." << std::endl;
-    // rval = moabPtr->write_mesh("surfs_new.h5m");
-    // if(rval != moab::MB_SUCCESS) return false;
-    // // TODO - delete these lines - END
-
   }
   catch(std::exception &e){
     std::cerr<<e.what()<<std::endl;
     return false;
   }
 
+  // Optionally write to file
+  if(output_skins){
+    if(!writeSurfaces()) return false;
+  }
+
   return true;
+}
+
+bool
+MoabUserObject::writeSurfaces()
+{
+
+  if(n_write >= n_output){
+    output_skins; // Don't write any more times
+    return true;
+  }
+
+  if( (n_its % n_period) == 0 ){
+    std::string filename = output_base + "_" + std::to_string(n_write) +".h5m";
+    std::cout << "Writing MOAB mesh to "<< filename << std::endl;
+    moab::ErrorCode rval = moabPtr->write_mesh(filename.c_str());
+    if(rval != moab::MB_SUCCESS) return false;
+    n_write++;
+  }
+
+  n_its++;
+  return true;
+
 }
 
 void
