@@ -102,6 +102,9 @@ private:
                                std::map<int32_t,int32_t>& filter_id_to_bin_index);
 
 
+  // clear some data in OpenMC
+  bool resetOpenMC();
+
   // Pass in mesh, new surfaces, setup metadata
   bool reloadDAGMC();
 

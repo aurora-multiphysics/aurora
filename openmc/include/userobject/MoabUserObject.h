@@ -50,6 +50,9 @@ class MoabUserObject : public UserObject
   // Initialise MOAB
   void initMOAB();
 
+  // Clear mesh data
+  void reset();
+
   // Update MOAB with any results from MOOSE
   bool update();
 

@@ -148,11 +148,12 @@ MoabUserObject::initMOAB()
 bool
 MoabUserObject::update()
 {
-  // Don't attempt to bin results if we haven't been provided with a variable
-  if(!binElems) return false;
 
-  // Clear existing entity sets
-  if(!resetMOAB()) return false;
+  // Clear MOAB mesh data from last timestep
+  reset();
+
+  // Re-initialise the mesh data
+  initMOAB();
 
   // Sort libMesh elements into bins of the specified variable
   if(!sortElemsByResults()) return false;
@@ -615,6 +616,9 @@ bool
 MoabUserObject::sortElemsByResults()
 {
 
+  // Don't attempt to bin results if we haven't been provided with a variable
+  if(!binElems) return false;
+
   // 1) Clear any prior data;
   resetContainers();
 
@@ -863,39 +867,19 @@ MoabUserObject::resetContainers()
   volToTemp.clear();
 }
 
-bool
-MoabUserObject::resetMOAB()
+
+void
+MoabUserObject::reset()
 {
+  // Clear data
+  moabPtr.reset(new moab::Core());
 
-  moab::ErrorCode rval = moab::MB_SUCCESS;
+  // Create a skinner and geometry topo tool
+  skinner.reset(new moab::Skinner(moabPtr.get()));
+  gtt.reset(new moab::GeomTopoTool(moabPtr.get()));
 
-  std::vector<std::string> categories;
-  categories.push_back("Surface");
-  categories.push_back("Volume");
-  categories.push_back("Group");
-
-  // Retrieve and delete the entities in each category
-  for(const auto & data : categories){
-
-    char category[CATEGORY_TAG_SIZE];
-    memset(category,'\0', CATEGORY_TAG_SIZE); // fill C char array with null
-    strncpy(category,data.c_str(),CATEGORY_TAG_SIZE-1);
-    const void* const val[] = {&category};
-
-    moab::Range ents;
-    rval = moabPtr->get_entities_by_type_and_tag(0, moab::MBENTITYSET, &category_tag,
-                                                 val, 1, ents);
-    if(rval != moab::MB_SUCCESS) return false;
-
-    rval = moabPtr->delete_entities(ents);
-    if(rval != moab::MB_SUCCESS) return false;
-  }
-
-  // Clear data structures in this class
+  // Clear entity set maps
   surfsToVols.clear();
-
-  // Done
-  return true;
 }
 
 int

@@ -21,7 +21,7 @@
 
 [Executioner]
   type = Transient
-  num_steps = 2
+  num_steps = 5
   dt = 1
   solve_type = NEWTON
 []
@@ -124,7 +124,6 @@
     type = FullSolveMultiApp
     app_type = OpenMCApp
     execute_on = "timestep_begin"
-    #execute_on = "initial"
     input_files = "openmc.i"
     positions = '0   0   0'
     library_path = ./openmc/lib

@@ -28,7 +28,7 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   mesh_id(getParam<int32_t>("mesh_id"))
 {
 
-  // Units for heating are eV / neutron
+  // Units for heating are eV / source neutron
   // source_strength has units  neutron / s
   // convert to J / s
   scale_factor = source_strength * eVinJoules;
@@ -197,9 +197,10 @@ bool
 OpenMCExecutioner::updateOpenMC()
 {
 
-  // Clear tallies from any previous calls
-  openmc_err = openmc_reset();
-  if (openmc_err) return false;
+  if(!resetOpenMC()){
+    std::cerr<<"Failed to reset OpenMC"<<std::endl;
+    return false;
+  }
 
   if(!reloadDAGMC()){
     std::cerr<<"Failed to load data into DagMC"<<std::endl;
@@ -482,6 +483,26 @@ OpenMCExecutioner::decomposeIntoFilterBins(int32_t iResultBin,
 
   return true;
 };
+
+
+bool
+OpenMCExecutioner::resetOpenMC()
+{
+
+  // Clear tallies from any previous calls
+  openmc_err = openmc_reset();
+  if (openmc_err) return false;
+
+
+  // Clear nuclides, these will get reset in read_ce_cross_sections
+  // Horrible circular logic means that clearing nuclides clears nuclide_map, but
+  // which is needed before nuclides gets reset
+  std::unordered_map<std::string, int> nuclide_map_copy = openmc::data::nuclide_map;
+  openmc::data::nuclides.clear();
+  openmc::data::nuclide_map = nuclide_map_copy;
+
+  return true;
+}
 
 
 bool
