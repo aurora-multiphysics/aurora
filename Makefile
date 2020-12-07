@@ -47,12 +47,11 @@ XFEM                        := no
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
-OPENMC_APP_DIR = /home/helen/Projects/MooseApps/aurora/openmc
+OPENMC_APP_DIR = $(CURDIR)/openmc
 OPENMC_APP_INC = -I$(OPENMC_APP_DIR)/include
 OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_APP_DIR)/lib -L$(OPENMC_APP_DIR)/lib -lopen_mc-opt
 
-MOAB_INC = -I/home/helen/local/moab/include
-MOAB_LIB = -L/home/helen/local/moab/lib -lMOAB
+include $(OPENMC_APP_DIR)/config.inc
 
 ADDITIONAL_INCLUDES += $(OPENMC_APP_INC) $(MOAB_INC)
 EXTERNAL_FLAGS += $(OPENMC_APP_LIB) $(MOAB_LIB)

@@ -47,20 +47,10 @@ XFEM                        := no
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
-OPENMC_DIR = $(shell which openmc | sed 's/\/bin\/openmc//')
-OPENMC_INC = -I$(OPENMC_DIR)/include
-OPENMC_LIB =-Wl,-rpath,$(OPENMC_DIR)/lib -L$(OPENMC_DIR)/lib -lopenmc
+include config.inc
 
-# TODO set dynamically
-HDF5_INC = -I/usr/include/hdf5/serial
-HDF5_LIB = -L/usr/lib/x86_64-linux-gnu/hdf5/serial/ -lhdf5_hl
-
-DAGMC_INC = -I/home/helen/local/dagmc/include -I/home/helen/local/moab/include -I/usr/include/eigen3
-DAGMC_LIB = -L/home/helen/local/dagmc/lib -L/home/helen/local/moab/lib -lMOAB -ldagmc -lpyne_dagmc -luwuw -ldagtally -lmakeWatertight
-
-ADDITIONAL_INCLUDES += $(OPENMC_INC) $(HDF5_INC) $(DAGMC_INC)
-EXTERNAL_FLAGS += $(OPENMC_LIB) $(HDF5_LIB) $(DAGMC_LIB)
-#ADDITIONAL_CPPFLAGS += 
+ADDITIONAL_INCLUDES += $(OPENMC_INC) $(DAGMC_INC)
+EXTERNAL_FLAGS += $(OPENMC_LIB) $(DAGMC_LIB)
 
 # dep apps
 APPLICATION_DIR    := $(CURDIR)
