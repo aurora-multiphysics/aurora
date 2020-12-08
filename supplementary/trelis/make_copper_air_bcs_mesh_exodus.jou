@@ -1,0 +1,47 @@
+reset
+brick x 5 y 10 z 5
+move Volume 1 location 5 0 0 include_merged 
+brick x 20 
+subtract body 1 from body 2 imprint keep
+delete volume 2
+imprint body all
+merge tol 5e-7
+merge all
+group "mat:Copper" add vol 1
+group "mat:Air" add vol 3
+volume all size auto factor 5
+volume all scheme tetmesh proximity layers off geometry approximation angle 15 geometric sizing on 
+volume all tetmesh growth_factor 1 
+Trimesher surface gradation 1.3
+Trimesher volume gradation 1.3
+mesh volume all
+set duplicate block elements off
+block 1 add group 2 
+block 2 add group 3
+nodeset 1 add surface 1 
+nodeset 2 add surface 2 
+nodeset 3 add surface 3 
+nodeset 4 add surface 4 
+nodeset 5 add surface 5 
+nodeset 6 add surface 6
+nodeset 7 add surface 13 
+nodeset 8 add surface 14
+nodeset 9 add surface 15 
+nodeset 10 add surface 16 
+nodeset 11 add surface 17
+nodeset 12 add surface 18
+nodeset 1 name "front"
+nodeset 2 name "back"
+nodeset 3 name "bottom"
+nodeset 4 name "left"
+nodeset 5 name "top"
+nodeset 6 name "right"
+nodeset 7 name "front-outer"
+nodeset 8 name "back-outer"
+nodeset 9 name "bottom-outer"
+nodeset 10 name "left-outer"
+nodeset 11 name "top-outer"
+nodeset 12 name "right-outer"
+set exodus netcdf4 off
+set large exodus file on
+export mesh "/home/helen/Projects/Trelis/OpenMCUMesh/copper_air_bcs_tetmesh.e" overwrite

@@ -21,7 +21,6 @@
 *.so
 *.so.*
 *.vrb
-*.jou
 *.pyc
 *.mod
 *.e.*
