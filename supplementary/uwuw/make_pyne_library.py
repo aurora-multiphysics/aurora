@@ -10,15 +10,13 @@ copper = Material({'Cu':1})
 copper = copper.expand_elements()
 
 # Add to material library
-mat_lib ["copper"] = copper
+mat_lib["copper"] = copper
 
 # Create a pyne material for copper
 air = Material({'N':0.784431, 'O':0.210748, 'Ar':0.004821})
 air = air.expand_elements()
 
 # Add to material library
-mat_lib ["air"] = air
+mat_lib["air"] = air
 
 mat_lib.write_hdf5("material_library.h5","/materials","/nucid")
-
-print(mat_lib)

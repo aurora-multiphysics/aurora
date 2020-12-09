@@ -1,0 +1,5 @@
+1) Create a local pyne h5m library:
+$  python3 make_pyne_library.py
+
+2) Preprocess your dagmc file
+$  uwuw_preproc -v geometry.h5m -l material_library.h5 -o dagmc.h5m
