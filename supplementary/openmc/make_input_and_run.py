@@ -6,17 +6,17 @@ import os
 import subprocess
 
 def createMaterials():
-
-    copper = Material(1, "copper")
-    copper.add_element('Cu', 1.0)
-    copper.set_density('g/cm3', 8.96)
-    copper.temperature = 300
     
-    air = openmc.Material(name='air')
+    air = openmc.Material(1, name='air')
     air.set_density('g/cc', 0.001205)
     air.add_element('N', 0.784431)
     air.add_element('O', 0.210748)
     air.add_element('Ar',0.0046)
+
+    copper = Material(2, "copper")
+    copper.add_element('Cu', 1.0)
+    copper.set_density('g/cm3', 8.96)
+    copper.temperature = 300
     
     mats = openmc.Materials([copper, air])
     mats.export_to_xml()
@@ -79,7 +79,7 @@ def createTallies():
     # Filters
     
     # Unstructured mesh to calculate tallies upon
-    umesh = openmc.UnstructuredMesh("",False,False)
+    umesh = openmc.UnstructuredMesh("copper_air_tetmesh.h5m")    
     mesh_filter = openmc.MeshFilter(umesh)
 
     # Tallies
@@ -100,3 +100,5 @@ def setupInput( ):
     createTallies()
 
 setupInput()
+openmc.plot_geometry()
+#openmc.run()
