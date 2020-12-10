@@ -1,5 +1,29 @@
+0) Ensure your versions of OpenMC, Pyne and DagMC are compatible.
+****************************************************************
+Date: 10/12/20
+
+DagMC v pre 3.2.0, branch develop, e.g. commit 44b7d4db87c717d7b77f28828f13b4da4bc3b0f9
+Pyne v 0.6 branch develop commit b7c4932c0399e6a0881aea943b392fb97cd0b6bd
+OpenMC repo helen-brooks/openmc branch external-mesh commit d52e9e07a7c3ce640929147b6d0c4ba15296702a
+
+Alternatively while not currently compatible with OpenMC the following DagMC+Pyne combination are compatible
+DagMC branch 3.2.0-rc2
+Pyne 0.7 branch 0.7.0-rc
+When OpenMC has been updated to use Pyne 0.7 this will be the recommended combination.
+****************************************************************
+
 1) Create a local pyne h5m library:
 $  python3 make_pyne_library.py
 
-2) Preprocess your dagmc file
+2) Preprocess your dagmc file. Two options:
+
+i) To simply add metadata to your geometry.h5m file
+$  uwuw_preproc -v geometry.h5m -l material_library.h5
+
+ii) To create a new file 
+$  # First need to copy - necessary because uwuw_preproc only appends the metadata
+$  cp geometry.h5m dagmc.h5m 
 $  uwuw_preproc -v geometry.h5m -l material_library.h5 -o dagmc.h5m
+
+Now copy your *.h5m file to /openmc-working-dir/dagmc.h5m
+(OpenMC expects the file to be called dagmc.h5m)
