@@ -5,9 +5,9 @@ brick x 20
 subtract body 1 from body 2 keep
 brick x 21
 subtract body 2 from body 4
-group "mat:Copper" add vol 1
-group "mat:Air" add vol 3
-group "mat:Graveyard" add vol 5
+group "mat:copper" add vol 1
+group "mat:air" add vol 3
+group "mat:graveyard" add vol 5
 imprint body all
 merge tol 5e-7
 merge all
