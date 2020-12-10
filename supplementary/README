@@ -1,1 +1,12 @@
-This directory contains example scripts to generate files which form part of the workflow.
+This directory contains example scripts to generate files which form part of the analysis workflow.
+
+STEP 1: mesh preparation
+You will need to generate CAD and mesh files using a program such as trelis. The trelis directory contains example scripts to create a simple CAD geometry, imprint, merge, tag with metadata, and facet the surfaces for DagMC.
+
+STEP 2 - optional: metadata preparation
+If you wish to use the UWUW (University of Wisconsinn Unified Workflow) to add material properties and tallies to the dagmc file, you will need to:
+i) Create a PyNE material library using the python script; these scripts can be found in the uwuw directory.
+ii) Run the uwuw_preproc executable to add the material library data to the dagmc file
+
+STEP 3: generate OpenMC input
+Currently it is necessary to run OpenMC to generate input files for the openMC sub app in MOOSE. Example python scripts to produce the input xml, or run the openmc standalone executable (not the MOOSE sub-app) may be found in the openmc directory.
