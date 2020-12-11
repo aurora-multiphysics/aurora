@@ -21,6 +21,7 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   Transient(parameters),
   setProblemLocal(false),
   isInit(false),
+  useUWUW(true),
   var_name(getParam<std::string>("variable")),
   score_name(getParam<std::string>("score_name")),
   source_strength(getParam<double>("neutron_source")),
@@ -178,6 +179,22 @@ OpenMCExecutioner::initOpenMC()
 bool
 OpenMCExecutioner::initMaterials()
 {
+  // Find out if we have a material library in dagmc file
+  if(uwuwPtr == nullptr){
+    uwuwPtr = std::make_unique<UWUW>("dagmc.h5m");
+  }
+  if (uwuwPtr->material_library.size() == 0) {
+    useUWUW = false;
+  }
+
+  // Didn't find a material library in dagmc.h5m file
+  if(!useUWUW) return initMatNames();
+  else return true;
+}
+
+bool
+OpenMCExecutioner::initMatNames()
+{
   for (const auto& mat : openmc::model::materials) {
     std::string mat_name = mat->name_;
     int32_t id = mat->id_;
@@ -191,6 +208,55 @@ OpenMCExecutioner::initMaterials()
     mat_names_to_id[mat->name_] = id;
   }
   return true;
+}
+
+bool
+OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
+{
+
+  // Fetch the string name from dagmc metadata
+  std::string mat_name = dmdPtr->get_volume_property("material", vol_handle);
+  if (mat_name.empty()) {
+    return false;
+  }
+  // By convention names are lower case in openmc
+  openmc::to_lower(mat_name);
+
+  // Find name id for special case - void material
+  if (mat_name == "void" || mat_name == "vacuum" || mat_name == "graveyard") {
+
+    // If we found the graveyard, save handle
+    if(mat_name == "graveyard"){
+      graveyard = vol_handle;
+    }
+
+    mat_id = openmc::MATERIAL_VOID;
+    return true;
+  }
+
+
+  // Find id for non-void mats
+  if(useUWUW){
+    // UWUW material library is indexed by a string of the form "mat:xxx/rho=xxx"
+    std::string uwuw_mat = dmdPtr->volume_material_property_data_eh[vol_handle];
+    if(uwuwPtr->material_library.count(uwuw_mat) != 0){
+      mat_id = uwuwPtr->material_library[uwuw_mat].metadata["mat_number"].asInt();
+    }
+    else{
+      std::cerr<<"Couldn't find material "<<uwuw_mat<<" in the UWUW material library."<<std::endl;
+      return false;
+    }
+  }
+  else if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
+    mat_id = mat_names_to_id[mat_name];
+  }
+  else{
+    std::cerr<<"Couldn't find material "<<mat_name<<std::endl;
+    return false;
+  }
+
+  return true;
+
 }
 
 bool
@@ -658,7 +724,6 @@ OpenMCExecutioner::completeSetup()
 bool
 OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_id)
 {
-  moab::EntityHandle vol_handle= dagPtr->entity_by_index(DIM_VOL, index);
 
   cell.dag_index_ = index;
   cell.id_ = dagPtr->id_by_index(DIM_VOL, index);
@@ -666,32 +731,17 @@ OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_
   cell.universe_ = universe_id;
   cell.fill_ = openmc::C_NONE;
 
-  // Determine volume material assignment
-  std::string mat_name = dmdPtr->get_volume_property("material", vol_handle);
-  if (mat_name.empty()) {
-    std::cerr<<"Volume "<< cell.id_<<" has no material assignment."<<std::endl;
-    return false;
-  }
-  openmc::to_lower(mat_name);
+  // Get the MOAB handle
+  moab::EntityHandle vol_handle= dagPtr->entity_by_index(DIM_VOL, index);
 
-  // Set the cell material
-  if (mat_name == "void" || mat_name == "vacuum" || mat_name == "graveyard") {
-    cell.material_.push_back(openmc::MATERIAL_VOID);
-
-    // If we found the graveyard, save handle
-    if(mat_name == "graveyard"){
-      graveyard = vol_handle;
-    }
+  // Set the material ID
+  int mat_id;
+  if(getMatID(vol_handle, mat_id)){
+    cell.material_.push_back(mat_id);
   }
   else{
-    // TODO - use uwuw?
-    if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
-      cell.material_.push_back(mat_names_to_id[mat_name]);
-    }
-    else{
-      std::cerr<<"Material "<< mat_name << "not found for cell "<< cell.id_<<std::endl;
-      return false;
-    }
+    std::cerr<<"Could not set material for cell "<< cell.id_<<std::endl;
+    return false;
   }
 
   // Set the cell temperature
@@ -727,7 +777,7 @@ OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
     std::cerr<<"Periodic boundary condition not supported in DAGMC."<<std::endl;
     return false;
   } else {
-    std::cout<<"Unknown boundary condition "<<bc_value
+    std::cerr<<"Unknown boundary condition "<<bc_value
              <<" specified on surface "
              << surf.id_<<std::endl;
     return false;

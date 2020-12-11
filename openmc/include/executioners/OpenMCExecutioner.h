@@ -37,6 +37,8 @@
 #include "openmc/surface.h"
 #include "xtensor/xio.hpp"
 
+#include "uwuw.hpp"
+
 class OpenMCExecutioner;
 
 template <>
@@ -80,8 +82,14 @@ private:
   // Initialise OpenMC
   bool initOpenMC();
 
-  // Set up map of names to ids
+  // Initialise material maps (either local map or UWUW)
   bool initMaterials();
+
+  // Set up map of names to ids
+  bool initMatNames();
+
+  // Return the openmc id of the material
+  bool getMatID(moab::EntityHandle vol_handle, int& mat_id);
 
     // Update OpenMC
   bool updateOpenMC();
@@ -120,10 +128,6 @@ private:
 
   // Data members
 
-
-  moab::DagMC* dagPtr; // Copy of the pointer to DAGMC
-  std::unique_ptr<dagmcMetaData> dmdPtr;
-
   // constant to convert eV to joules
   static constexpr double eVinJoules = 1.60218e-19;
 
@@ -131,11 +135,18 @@ private:
   static constexpr int DIM_VOL = 3;
   static constexpr int DIM_SURF = 2;
 
+  moab::DagMC* dagPtr; // Copy of the pointer to DAGMC
+  std::unique_ptr<dagmcMetaData> dmdPtr;
+  std::unique_ptr<UWUW> uwuwPtr;
+
   // Record whether we set the FE Problem locally.
   bool setProblemLocal;
 
   // Save whether initialised
   bool isInit;
+
+  // Save whether we have a UWUW material library
+  bool useUWUW;
 
   // Hold OpenMC error code
   int openmc_err;
