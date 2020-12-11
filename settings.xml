@@ -10,6 +10,7 @@
     </space>
   </source>
   <photon_transport>false</photon_transport>
-  <dagmc>true</dagmc>
+  <verbosity>2</verbosity>
   <temperature_method>interpolation</temperature_method>
+  <dagmc>true</dagmc>
 </settings>

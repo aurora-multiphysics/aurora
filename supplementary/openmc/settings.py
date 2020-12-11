@@ -72,6 +72,9 @@ def createSettings(  ):
 
     # Interpolate temperatures
     settings.temperature['method'] = 'interpolation'
+
+    # Reduce openmc verbosity
+    settings.verbosity = 2
     
     settings.export_to_xml()
     print("Created settings.xml")
