@@ -49,6 +49,8 @@ class OpenMCExecutioner : public Transient
 public:
   OpenMCExecutioner(const InputParameters & parameters);
 
+  ~OpenMCExecutioner();
+
   virtual void execute() override;
 
 private:
@@ -173,6 +175,16 @@ private:
 
   // Place to store graveyard entity handle
   moab::EntityHandle graveyard;
+
+  // Switch to control whether dagmc output is written to file or not.
+  bool redirect_dagout;
+
+  // Name of dagmc logfile
+  std::string dagmc_logname;
+
+  // Todo: how to deal with threads?
+  std::fstream dagmclog;
+
 
 };
 #endif // OPENMCEXECUTIONER_H

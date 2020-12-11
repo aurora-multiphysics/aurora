@@ -14,6 +14,8 @@ validParams<OpenMCExecutioner>()
   params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
   params.addParam<int32_t>("tally_id", 1, "OpenMC tally ID to extract results from.");
   params.addParam<int32_t>("mesh_id", 1, "OpenMC mesh ID for which we are providing the MOAB interface");
+  params.addParam<bool>("redirect_dagout", true, "Switch to control whether dagmc output is written to file or not");
+  params.addParam<std::string>("dagmc_logname", "/dev/null", "File to which to redirect DagMC output");
   return params;
 }
 
@@ -26,14 +28,23 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   score_name(getParam<std::string>("score_name")),
   source_strength(getParam<double>("neutron_source")),
   tally_id(getParam<int32_t>("tally_id")),
-  mesh_id(getParam<int32_t>("mesh_id"))
+  mesh_id(getParam<int32_t>("mesh_id")),
+  redirect_dagout(getParam<bool>("redirect_dagout")),
+  dagmc_logname(getParam<std::string>("dagmc_logname"))
 {
-
   // Units for heating are eV / source neutron
   // source_strength has units  neutron / s
   // convert to J / s
   scale_factor = source_strength * eVinJoules;
+}
 
+OpenMCExecutioner::~OpenMCExecutioner()
+{
+  // Close any open log files
+  // To-do : what happens if exception is throw? Will the file still close safely?
+  if(!dagmclog.is_open()){
+    dagmclog.close();
+  }
 }
 
 void
@@ -576,6 +587,41 @@ OpenMCExecutioner::reloadDAGMC()
 {
   moab::ErrorCode rval;
 
+  // Backup streambuffer of std out if redirecting
+  std::streambuf* stream_buffer_stdout;
+
+  if(redirect_dagout){
+    // Don't reopen log file
+    if(!dagmclog.is_open()){
+      if(dagmc_logname!=""){
+        // Open our log file
+        dagmclog.open(dagmc_logname, std::ios::out);
+      }
+      // Did we successfully open a file?
+      if(!dagmclog.is_open()){
+        std::cerr<<"Failed to open dagmc log file: "<< dagmc_logname<< std::endl;
+        return false;
+      }
+      else{
+        std::cout<<"Redirecting DagMC output to file: "<< dagmc_logname<< std::endl;
+      }
+    }
+    // Check if any previous io operations failed
+    if(dagmclog.bad()){
+      std::cerr<<"Bad bit detected in fstream to dag log  file"<< dagmc_logname<< std::endl;
+      return false;
+    }
+
+    // Backup streambuffer of std out
+    stream_buffer_stdout = std::cout.rdbuf();
+
+    // Get the streambuffer of the file
+    std::streambuf* stream_buffer_file = dagmclog.rdbuf();
+
+    // Redirect cout to file
+    std::cout.rdbuf(stream_buffer_file);
+  }
+
   // Delete old data
   openmc::free_memory_dagmc();
 
@@ -594,6 +640,11 @@ OpenMCExecutioner::reloadDAGMC()
   // Parse model metadata
   dmdPtr = std::make_unique<dagmcMetaData>(dagPtr, false, false);
   dmdPtr->load_property_data();
+
+  if(redirect_dagout){
+    // Reset cout streambuffer
+    std::cout.rdbuf(stream_buffer_stdout);
+  }
 
   return true;
 }
