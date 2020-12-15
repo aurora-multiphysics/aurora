@@ -4,6 +4,7 @@ from settings import *
 
 def setupInput( ):
     
+    createMaterials(False)
     createSettings()
     createTallies("",False,False)
 

@@ -1,1 +1,1 @@
-../make_input_xml.py
+../make_input_xml_legacy.py
