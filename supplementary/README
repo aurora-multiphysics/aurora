@@ -1,7 +1,7 @@
 This directory contains example scripts to generate files which form part of the analysis workflow.
 
 STEP 1: mesh preparation
-You will need to generate CAD and mesh files using a program such as trelis. The trelis directory contains example scripts to create a simple CAD geometry, imprint, merge, tag with metadata, and facet the surfaces for DagMC.
+You will need to generate CAD and mesh files using a program such as trelis. The trelis directory contains example scripts to create a simple CAD geometry, imprint, merge, tag with metadata, and facet the surfaces for DagMC. N.B. trelis gets confused if it finds the dagmc libraries in the LD_LIBRARY_PATH so be sure to have a clean environement.
 
 STEP 2 - optional: metadata preparation
 If you wish to use the UWUW (University of Wisconsinn Unified Workflow) to add material properties and tallies to the dagmc file, you will need to:
