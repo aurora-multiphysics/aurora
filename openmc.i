@@ -23,3 +23,7 @@
     #length_scale = 100
   []
 []
+
+[Outputs]
+  console = false
+[]
