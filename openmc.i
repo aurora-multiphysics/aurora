@@ -26,4 +26,8 @@
 
 [Outputs]
   console = false
+  [my_console]
+    type = Console
+    output_screen = false
+  []
 []

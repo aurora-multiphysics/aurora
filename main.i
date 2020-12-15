@@ -142,4 +142,8 @@
 [Outputs]
   console = false
   exodus = true
+  [my_console]
+    type = Console
+    output_screen = false
+  []
 []
