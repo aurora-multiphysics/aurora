@@ -75,6 +75,14 @@ def createSettings(  ):
 
     # Reduce openmc verbosity
     settings.verbosity = 2
+
+    # Turn off outputs
+    settings.output={}
+    settings.output["tallies"] = False;
+    settings.output["summary"] = False;
+
+    settings.statepoint={}
+    settings.statepoint["batches"]=[]
     
     settings.export_to_xml()
     print("Created settings.xml")
