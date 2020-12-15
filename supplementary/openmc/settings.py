@@ -95,11 +95,15 @@ def createTallies(meshname, create=True, load=True):
     umesh = openmc.UnstructuredMesh(meshname, create, load)    
     mesh_filter = openmc.MeshFilter(umesh)
 
+    # energy filter 0 - 5 MeV
+    energy_filter = openmc.EnergyFilter(((0.0, 5.e+06)))
+
+    # Material filter
+    material_filter = openmc.MaterialFilter(bins=[1, 2])
+
     # Tallies
     tally = openmc.Tally()
-    # energy filter 0 - 1 MeV, 1 - 5 MeV
-    energy_filter = openmc.EnergyFilter((0.0, 1.e+06, 5.e+06))
-    tally.filters = [energy_filter,mesh_filter]
+    tally.filters = [material_filter, mesh_filter, energy_filter]
     tally.scores = ['heating-local', 'flux']
     tally.estimator = 'tracklength'    
     tallies = openmc.Tallies([tally])
