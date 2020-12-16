@@ -1,0 +1,11 @@
+Available example journal files:
+
+1) make_copper_air_bcs_mesh_exodus.jou : make the tetmesh in exodus format to be used by moose; assumed units are m
+
+2) make_dag_geom_simple.jou : make a dagmc surface file for use with openmc
+
+3) make_dag_geom_simple_cm.jou : as (3), but where dimensions have been scale by 100 to be consistent with moose since openmc assumes cm
+
+4)  make_copper_air_tetmesh_h5m.jou : make an unstructured mesh to be used for tallying in openmc - only needed for standalone opencm, aurora will not use this.
+
+5)  make_copper_air_tetmesh_cm_h5m.jou : as (4), but where dimensions have been scale by 100 to be consistent with moose since openmc assumes cm
