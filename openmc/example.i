@@ -15,7 +15,6 @@
   type = OpenMCProblem
 []
 
-
 [Executioner]
   type = OpenMCExecutioner
   variable = 'heating-local'
@@ -31,6 +30,8 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
+    #uncomment to change lengthscale relative to moose
+    length_scale = 100
   []
 []
 

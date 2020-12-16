@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materials>
+  <material id="1" name="air">
+    <density units="g/cc" value="0.001205" />
+    <nuclide ao="0.781557629247" name="N14" />
+    <nuclide ao="0.002873370753" name="N15" />
+    <nuclide ao="0.210668126508" name="O16" />
+    <nuclide ao="7.9873492e-05" name="O17" />
+    <nuclide ao="1.53456e-05" name="Ar36" />
+    <nuclide ao="2.8934e-06" name="Ar38" />
+    <nuclide ao="0.004581761" name="Ar40" />
+  </material>
+  <material id="2" name="copper" temperature="300">
+    <density units="g/cm3" value="8.96" />
+    <nuclide ao="0.6915" name="Cu63" />
+    <nuclide ao="0.3085" name="Cu65" />
+  </material>
+</materials>
