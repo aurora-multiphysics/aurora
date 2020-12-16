@@ -11,5 +11,6 @@ group "mat:graveyard" add vol 5
 imprint body all
 merge tol 5e-7
 merge all
-export dagmc geometry.h5m faceting_tolerance 10 length_tolerance 500
+export dagmc geometry_cm.h5m faceting_tolerance 10 length_tolerance 500
+
 

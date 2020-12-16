@@ -1,0 +1,18 @@
+reset
+brick x 500 y 1000 z 500
+move Volume 1 location 500 0 0 include_merged 
+brick x 2000 
+subtract body 1 from body 2 imprint keep
+delete volume 2
+imprint body all
+merge tol 5e-7
+merge all
+group "mat:copper" add vol 1
+group "mat:air" add vol 3
+volume all size auto factor 5
+volume all scheme tetmesh proximity layers off geometry approximation angle 15 geometric sizing on 
+volume all tetmesh growth_factor 1 
+Trimesher surface gradation 1.3
+Trimesher volume gradation 1.3
+mesh volume all
+save as "copper_air_tetmesh_cm.cub" overwrite
