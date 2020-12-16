@@ -1,0 +1,14 @@
+Scripts available
+
+1) Create input files for aurora. Run
+$  python3 make_input_xml.py
+from either the uwuw-mats or legacy-mats directories (as appropriate for your choice of material treatment). Copy the created files and dagmc.h5m to the root aurora directory.
+
+2) Run openmc in plotting mode: run
+python3 make_input_and_plot.py
+from either the uwuw-mats or legacy-mats directories (as appropriate for your choice of material treatment).
+
+3) Run openmc
+python3 make_input_and_plot.py
+from either the uwuw-mats or legacy-mats directories (as appropriate for your choice of material treatment).
+

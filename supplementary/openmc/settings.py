@@ -51,7 +51,7 @@ def createMaterials(createplots=True):
         plots.export_to_xml()
         print("Created plots.xml")
 
-def createSettings(  ):
+def createSettings( suppressOutput=True ):
 
     # Create neutron source
     point = openmc.stats.Point((0, 0, 0))
@@ -76,10 +76,14 @@ def createSettings(  ):
     # Reduce openmc verbosity
     settings.verbosity = 2
 
-    # Turn off outputs
-    settings.output={}
-    settings.output["tallies"] = False;
-    settings.output["summary"] = False;
+    if suppressOutput:
+        # Turn off outputs
+        settings.output={}
+        settings.output["tallies"] = False;
+        settings.output["summary"] = False;
+
+        settings.statepoint={}
+        settings.statepoint["batches"]=[]
 
     settings.statepoint={}
     settings.statepoint["batches"]=[]
