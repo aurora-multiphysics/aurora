@@ -97,14 +97,12 @@ OpenMCExecutioner::run()
   if (openmc_err) return false;
 
   // Fetch the tallied results
-  std::vector< std::vector< double > > results_by_mat;
-  if(!getResults(results_by_mat)) return false;
-  if(results_by_mat.empty()) return false;
+  std::vector< double > results_by_elem;
+  if(!getResults(results_by_elem)) return false;
+  if(results_by_elem.empty()) return false;
 
   // Pass the results into moab user object
-  // ( summed over materials for now )
-  // TODO system for every material? or just remove material binning
-  if(!moab().setSolution(var_name,results_by_mat.back(),scale_factor,true)){
+  if(!moab().setSolution(var_name,results_by_elem,scale_factor,true)){
     std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
     return false;
   }
@@ -301,7 +299,7 @@ OpenMCExecutioner::updateOpenMC()
 }
 
 bool
-OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_mat)
+OpenMCExecutioner::getResults(std::vector< double > &results_by_elem)
 {
 
   // Get the tally index
@@ -336,19 +334,17 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
   std::map<int32_t, FilterInfo> filters_by_id;
   int32_t nFilterBins;
   int32_t meshFilter;
-  int32_t matFilter;
-  if(!setFilterInfo(tally,filters_by_id,meshFilter,matFilter,nFilterBins)){
+  if(!setFilterInfo(tally,filters_by_id,meshFilter,nFilterBins)){
     return false;
   }
 
-  size_t nMats = filters_by_id[matFilter].nbins;
   size_t nMeshBins = filters_by_id[meshFilter].nbins;
 
   // Clear any previous data if there was any
-  results_by_mat.clear();
+  results_by_elem.clear();
 
   // Resize results vector
-  results_by_mat.resize(nMats+1, std::vector<double>(nMeshBins,0.));
+  results_by_elem.resize(nMeshBins,0.);
 
   // Get a reference to the tally results
   xt::xtensor<double, 3> & results = tally.results_;
@@ -379,14 +375,10 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
     }
 
     int32_t meshIndex = -1;
-    int32_t matIndex = -1;
     if(filter_id_to_bin_index.find(meshFilter)!=filter_id_to_bin_index.end()){
       meshIndex = filter_id_to_bin_index[meshFilter];
     }
-    if(filter_id_to_bin_index.find(matFilter)!=filter_id_to_bin_index.end()){
-      matIndex = filter_id_to_bin_index[matFilter];
-    }
-    if(meshIndex == -1 || matIndex == -1){
+    if(meshIndex == -1){
       openmc::set_errmsg("Failed to set filter bin indices");
       return false;
     }
@@ -395,11 +387,8 @@ OpenMCExecutioner::getResults(std::vector< std::vector< double > > &results_by_m
     // Last index: 0-> internal placeholder, 1-> mean, 2-> stddev
     double result = results(iresult,heatScoreIndex,1);
 
-    // Add to sum for this material
-    (results_by_mat.at(matIndex)).at(meshIndex) += result;
-
-    // Add to sum over all materials
-    (results_by_mat.at(nMats)).at(meshIndex) += result;
+    // Add to sum for this mesh element
+    results_by_elem.at(meshIndex) += result;
 
   }
 
@@ -419,12 +408,10 @@ bool
 OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
                                  std::map<int32_t, FilterInfo>& filters_by_id,
                                  int32_t& meshFilter,
-                                 int32_t& matFilter,
                                  int32_t& nFilterBins)
 {
 
   meshFilter=-1;
-  matFilter=-1;
   nFilterBins=-1;
   int32_t firstFilter=-1;
 
@@ -468,14 +455,6 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
         return false;
       }
     }
-    else if(f_info.type=="material"){
-      if(matFilter ==-1) matFilter = f_info.id;
-      else{
-        openmc::set_errmsg("Found more than one material filter");
-        return false;
-      }
-    }
-
   }
 
   //Check we set everything
@@ -491,11 +470,6 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
     openmc::set_errmsg("Failed to find mesh filter");
     return false;
   }
-  else if(matFilter ==-1){
-    openmc::set_errmsg("Failed to find material filter");
-    return false;
-  }
-
 
   nFilterBins = filters_by_id[firstFilter].stride*filters_by_id[firstFilter].nbins;
   if(nFilterBins != tally.n_filter_bins()){

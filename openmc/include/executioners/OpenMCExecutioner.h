@@ -97,13 +97,12 @@ private:
   bool updateOpenMC();
 
   // Process Tallies from OpenMC
-  bool getResults(std::vector< std::vector< double > > &results_by_mat );
+  bool getResults(std::vector< double > &results_by_elem);
 
   // Helper methods to extract tally results
   bool setFilterInfo(openmc::Tally& tally,
                      std::map<int32_t, FilterInfo>& filters_by_id,
                      int32_t& meshFilter,
-                     int32_t& matFilter,
                      int32_t& nFilterBins);
 
   int32_t getFilterBin(int32_t iResultBin, const FilterInfo & filter);
