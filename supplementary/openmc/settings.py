@@ -24,7 +24,7 @@ def createMaterials(createplots=True):
 
     if createplots:
         p_xy = openmc.Plot()
-        p_xy.width = (25.0, 25.0)
+        p_xy.width = (2500.0, 2500.0)
         p_xy.pixels = (400, 400)
         p_xy.origin = (0.,0.,0.)
         p_xy.color_by = 'material'
@@ -32,7 +32,7 @@ def createMaterials(createplots=True):
         p_xy.basis = 'xy'
 
         p_xz = openmc.Plot()
-        p_xz.width = (25.0, 25.0)
+        p_xz.width = (2500.0, 2500.0)
         p_xz.pixels = (400, 400)
         p_xz.origin = (0.,0.,0.)
         p_xz.color_by = 'material'
@@ -40,9 +40,9 @@ def createMaterials(createplots=True):
         p_xz.basis = 'xz'
 
         p_yz = openmc.Plot()
-        p_yz.width = (25.0, 25.0)
+        p_yz.width = (2500.0, 2500.0)
         p_yz.pixels = (400, 400)
-        p_yz.origin = (5.,0.,0.)
+        p_yz.origin = (500.,0.,0.)
         p_yz.color_by = 'material'
         p_yz.colors = {copper: 'orange', air: 'blue'}
         p_yz.basis = 'yz'
@@ -84,9 +84,6 @@ def createSettings( suppressOutput=True ):
 
         settings.statepoint={}
         settings.statepoint["batches"]=[]
-
-    settings.statepoint={}
-    settings.statepoint["batches"]=[]
     
     settings.export_to_xml()
     print("Created settings.xml")
@@ -99,15 +96,9 @@ def createTallies(meshname, create=True, load=True):
     umesh = openmc.UnstructuredMesh(meshname, create, load)    
     mesh_filter = openmc.MeshFilter(umesh)
 
-    # energy filter 0 - 5 MeV
-    energy_filter = openmc.EnergyFilter(((0.0, 5.e+06)))
-
-    # Material filter
-    material_filter = openmc.MaterialFilter(bins=[1, 2])
-
     # Tallies
     tally = openmc.Tally()
-    tally.filters = [material_filter, mesh_filter, energy_filter]
+    tally.filters = [mesh_filter]
     tally.scores = ['heating-local', 'flux']
     tally.estimator = 'tracklength'    
     tallies = openmc.Tallies([tally])
