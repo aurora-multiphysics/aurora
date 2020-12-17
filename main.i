@@ -3,14 +3,6 @@
     type = FileMeshGenerator
     file = copper_air_bcs_tetmesh.e
   []
-  #Uncomment to change units of mesh
-  # If uncommented also change openmc.i/UserObjects/moab:length_scale as appropriate
-  #[scale]
-  #  type = TransformGenerator
-  #  input = meshcm
-  #  transform = SCALE
-  #  vector_value = '0.01 0.01 0.01'
-  #[]
   construct_side_list_from_node_list=true
 []
 
@@ -142,6 +134,7 @@
 [Outputs]
   console = false
   exodus = true
+  execute_on = 'timestep_end'
   [my_console]
     type = Console
     output_screen = false

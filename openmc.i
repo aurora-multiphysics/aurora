@@ -11,6 +11,7 @@
 [Executioner]
   type = OpenMCExecutioner
   variable = 'heating-local'
+  neutron_source = 1.0e18
 []
 
 [UserObjects]
@@ -20,7 +21,8 @@
     material_names = 'copper air'
     output_skins = true
     #uncomment to change lengthscale relative to moose
-    #length_scale = 100
+    length_scale = 100
+    faceting_tol = 10
   []
 []
 
