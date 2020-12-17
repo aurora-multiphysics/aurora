@@ -24,8 +24,6 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
-    #uncomment to change lengthscale relative to moose
-    length_scale = 100
   []
 []
 

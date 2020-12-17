@@ -10,7 +10,7 @@ validParams<MoabUserObject>()
   InputParameters params = validParams<UserObject>();
 
   // MOAB mesh params
-  params.addParam<double>("length_scale", 1.,"Scale factor to convert lengths from MOOSE to MOAB");
+  params.addParam<double>("length_scale", 100.,"Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.");
 
   // Params relating to binning
   params.addParam<std::string>("bin_varname", "", "Variable name by whose results elements should be binned.");

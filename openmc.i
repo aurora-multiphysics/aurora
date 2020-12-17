@@ -20,8 +20,6 @@
     bin_varname = "temperature"
     material_names = 'copper air'
     output_skins = true
-    #uncomment to change lengthscale relative to moose
-    length_scale = 100
     faceting_tol = 10
   []
 []
