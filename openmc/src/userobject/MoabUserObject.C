@@ -1066,13 +1066,17 @@ moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned 
   BoundingBox bbox =  MeshTools::create_bounding_box(mesh());
 
   // Create inner surface from the box with normals pointing out of box
-  // Rescale by 1% to avoid having to imprint
-  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,1.01);
+  // Rescale by 1% to avoid having to imprint,
+  // scale and by moose -> openmc length unit conversion factor
+  double scalefactor = 1.01 * lengthscale;
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,scalefactor);
   if(rval != moab::MB_SUCCESS) return rval;
 
   // Create outer surface with face normals pointing into the box
-  // Rescale by 10% to create a volume
-  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,1.1);
+  // Rescale by 10% to create a volume, and
+  // scale and by moose -> openmc length unit conversion factor
+  scalefactor = 1.10 * lengthscale;
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,scalefactor);
   return rval;
 }
 
