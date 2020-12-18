@@ -7,6 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
+#include "MooseUnitApp.h"
 #include "AuroraApp.h"
 #include "gtest/gtest.h"
 
@@ -27,6 +28,7 @@ main(int argc, char ** argv)
   testing::InitGoogleTest(&argc, argv);
 
   MooseInit init(argc, argv);
+  registerApp(MooseUnitApp);
   registerApp(AuroraApp);
   Moose::_throw_on_error = true;
 
