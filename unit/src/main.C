@@ -28,8 +28,16 @@ main(int argc, char ** argv)
   testing::InitGoogleTest(&argc, argv);
 
   MooseInit init(argc, argv);
+
+  // This line is annoyingly needed just to force load the shared library,
+  // otherwise gtest doesn't find the tests
+  // TODO: is there a way to get this to happen automatically?
   registerApp(MooseUnitApp);
+
+
   registerApp(AuroraApp);
+  std::shared_ptr<MooseApp> app = AppFactory::createAppShared("AuroraApp", argc, argv);
+
   Moose::_throw_on_error = true;
 
   return RUN_ALL_TESTS();
