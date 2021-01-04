@@ -8,6 +8,8 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "BasicTest.h"
+#include "Executioner.h"
+#include "FEProblemBase.h"
 
 class FEProblemTest : public InputFileTest{
 protected:
@@ -20,4 +22,23 @@ TEST_F(FEProblemTest, readInput)
 
   ASSERT_NO_THROW(app->setupOptions());
   ASSERT_NO_THROW(app->runInputFile());
+}
+
+TEST_F(FEProblemTest, problemIsAlwaysConverged)
+{
+  ASSERT_FALSE(appIsNull);
+  ASSERT_NO_THROW(app->setupOptions());
+  ASSERT_NO_THROW(app->runInputFile());
+
+  FEProblemBase& problem = app->getExecutioner()->feProblem();
+
+  // Check the type is correct
+  EXPECT_EQ(problem.type(),"OpenMCProblem");
+
+  // Converged should already return true
+  EXPECT_TRUE(problem.converged());
+
+  // "Solving" the problem should do absolutely nothing
+  ASSERT_NO_THROW(problem.solve());
+  EXPECT_TRUE(problem.converged());
 }
