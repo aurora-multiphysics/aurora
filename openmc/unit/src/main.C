@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "MooseUnitApp.h"
-//#include "OpenMCApp.h"
+#include "OpenMCApp.h"
 #include "gtest/gtest.h"
 
 // Moose includes
@@ -34,7 +34,9 @@ main(int argc, char ** argv)
   // TODO: is there a way to get this to happen automatically?
   registerApp(MooseUnitApp);
 
-  //registerApp(OpenMCApp);
+  registerApp(OpenMCApp);
+  std::shared_ptr<MooseApp> app = AppFactory::createAppShared("OpenMCApp", argc, argv);
+
   Moose::_throw_on_error = true;
 
   return RUN_ALL_TESTS();

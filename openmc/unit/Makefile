@@ -59,6 +59,12 @@ APPLICATION_NAME   := open_mc-unit
 BUILD_EXEC         := yes
 
 DEP_APPS    ?= $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME))
+
+include ../config.inc
+
+ADDITIONAL_INCLUDES += $(OPENMC_INC) $(DAGMC_INC)
+EXTERNAL_FLAGS += $(OPENMC_LIB) $(DAGMC_LIB)
+
 include $(FRAMEWORK_DIR)/app.mk
 
 # Find all the OpenMC unit test source files and include their dependencies.
