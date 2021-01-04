@@ -12,6 +12,8 @@
 TEST_F(BasicTest, registryTest)
 {
 
+  ASSERT_FALSE(appIsNull);
+
   // Fetch a reference to all objects that been registered (in the global singleton)
   const auto& allRegistered = Registry::allObjects();
 
@@ -47,5 +49,19 @@ TEST_F(BasicTest, registryTest)
     EXPECT_TRUE(knownObj.second) << "Object "<< knownObj.first
                                  << " was not registered to OpenMCApp.";
   }
+
+}
+
+class MinimalInputTest : public InputFileTest{
+protected:
+  MinimalInputTest() : InputFileTest("minimal.i") {};
+};
+
+TEST_F(MinimalInputTest, readInput)
+{
+  ASSERT_FALSE(appIsNull);
+
+  ASSERT_NO_THROW(app->setupOptions());
+  ASSERT_NO_THROW(app->runInputFile());
 
 }
