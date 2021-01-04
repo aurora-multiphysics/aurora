@@ -5,7 +5,8 @@
 []
 
 [Problem]
-  type = OpenMCProblem
+  type = FEProblem
+  solve = false
 []
 
 [Executioner]
