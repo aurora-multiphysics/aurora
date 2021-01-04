@@ -71,7 +71,7 @@ class InputFileTest : public BasicTest {
     if(inputfile==""){
       throw std::logic_error("Input file string is empty");
     }
-    args+=" -i "+inputfile;
+    args+=" -i inputs/"+inputfile;
   };
 
 };
