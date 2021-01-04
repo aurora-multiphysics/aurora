@@ -35,7 +35,6 @@ main(int argc, char ** argv)
   registerApp(MooseUnitApp);
 
   registerApp(OpenMCApp);
-  std::shared_ptr<MooseApp> app = AppFactory::createAppShared("OpenMCApp", argc, argv);
 
   Moose::_throw_on_error = true;
 
