@@ -168,11 +168,14 @@ MoabUserObject::update()
 bool
 MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, double scaleFactor, bool normToVol)
 {
+  // Will "throw" a mooseError if var_now not set
+  // In normal run just causes a system exit, so don't catch these
+  libMesh::System& sys = system(var_now);
+  unsigned int iSys = sys.number();
+  unsigned int iVar = sys.variable_number(var_now);
+
   try
     {
-      libMesh::System& sys = system(var_now);
-      unsigned int iSys = sys.number();
-      unsigned int iVar = sys.variable_number(var_now);
       setSolution(iSys,iVar,results,scaleFactor,normToVol);
 
       problem().copySolutionsBackwards();
@@ -181,7 +184,7 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, 
         problem().getVariable(tid,var_now).computeElemValues();
       }
     }
-  catch(std::exception &e)
+  catch(std::runtime_error &e)
     {
       std::cerr<<e.what()<<std::endl;
       return false;
@@ -229,7 +232,6 @@ MoabUserObject::findMaterials()
 moab::ErrorCode
 MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle)
 {
-
   if(!hasProblem()) return moab::MB_FAILURE;
 
   moab::ErrorCode rval(moab::MB_SUCCESS);
@@ -554,6 +556,11 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
     sys.solution->set(index,result);
   }
 
+  // Final check that there was a solution found for each element
+  if(sol_indices.size() != _elem_handle_to_id.size()){
+    throw std::runtime_error("Mismatch in size of results vector and number of elements");
+  }
+
   sys.solution->close();
 
 }
@@ -583,7 +590,7 @@ MoabUserObject::elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow
   // Expect only one component, but check anyay
   unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
   if(n_components != 1){
-    mooseError("Unexpected number of expected solution components");
+    throw std::runtime_error("Unexpected number of expected solution components");
   }
 
   // Get the degree of freedom number
@@ -598,13 +605,13 @@ MoabUserObject::bin_index_to_elem_id(unsigned int index)
 {
   // Convert the bin index to an entity handle
   if(index > _elem_handle_to_id.size() )
-    mooseError("Bin index is out of range.");
+    throw std::runtime_error("Bin index is out of range.");
 
   // Conversion assumes ent handles were set contiguously in OpenMC
   moab::EntityHandle ent = (_elem_handle_to_id.begin())->first + index;
 
   if(_elem_handle_to_id.find(ent)==_elem_handle_to_id.end())
-    mooseError("Unknown entity handle");
+    throw std::runtime_error("Unknown entity handle");
 
   // Convert the entity handle to a libMesh id
   dof_id_type id = _elem_handle_to_id[ent];
