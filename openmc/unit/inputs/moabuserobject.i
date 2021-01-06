@@ -16,11 +16,13 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
+    # match up with variable below for this test
+    bin_varname = "temperature"
   []
 []
 
 [Variables]
-  [heating-local]
+  [temperature]
     order = CONSTANT
     family = MONOMIAL
   []

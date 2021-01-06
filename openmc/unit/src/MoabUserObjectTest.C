@@ -166,7 +166,7 @@ class MoabUserObjectTest : public MoabUserObjectTestBase {
 protected:
   MoabUserObjectTest() :
     MoabUserObjectTestBase("moabuserobject.i"),
-    var_name("heating-local"),
+    var_name("temperature"),
     tol(1.e-9) {};
 
   bool checkSystem(){
