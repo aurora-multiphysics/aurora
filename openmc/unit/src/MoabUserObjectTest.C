@@ -50,7 +50,6 @@ protected:
   }
 
   bool setProblem(){
-
     // Set the fe problem ptr
     moabUOPtr->setProblem(problemPtr);
 
@@ -68,6 +67,11 @@ class MoabUserObjectTest : public MoabUserObjectTestBase {
 protected:
   MoabUserObjectTest() :
     MoabUserObjectTestBase("moabuserobject.i"),
+    var_name("temperature"),
+    tol(1.e-9) {};
+
+  MoabUserObjectTest(std::string inputfile) :
+    MoabUserObjectTestBase(inputfile),
     var_name("temperature"),
     tol(1.e-9) {};
 
@@ -192,13 +196,23 @@ protected:
     getSolutionData(ents,rMax,solMax,solutionData);
 
     // Check we can set the solution
-    EXPECT_TRUE(moabUOPtr->setSolution(var_name,
+    ASSERT_TRUE(moabUOPtr->setSolution(var_name,
                                        solutionData,
                                        scalefactor,normToVol));
 
   }
 
-  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
+  void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst) {
+
+    // Create a vector for constant solution
+    std::vector<double> solutionData(ents.size(),solConst);    // Create a vector for solutionData
+
+    // Check we can set the solution
+    ASSERT_TRUE(moabUOPtr->setSolution(var_name,solutionData,1.0,false));
+
+  }
+
+  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solConst, double scalefactor=1.0, bool normToVol=false) {
 
 
     // Create a vector for solutionData
@@ -214,11 +228,6 @@ protected:
                                         scalefactor,normToVol));
 
 
-    // Set a non-trival solution
-    setSolution(ents,rMax,solMax,scalefactor,normToVol);
-
-    // Check the solution we set is correct
-
     // Fetch the system details;
     ASSERT_TRUE(checkSystem());
     System & sys = getSys();
@@ -230,35 +239,54 @@ protected:
 
     // Get the mesh
     MeshBase& mesh = problemPtr->mesh().getMesh();
-    // Loop over the elements
-    auto itelem = mesh.elements_begin();
-    auto endelem = mesh.elements_end();
-    for( ; itelem!=endelem; ++itelem){
-      Elem& elem = **itelem;
 
-      // Get the degree of freedom number for this element
-      dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+    for(int i=0; i<2; i++){
 
-      ASSERT_LT(soln_index,solsize);
-
-      // Get the solution value for this element
-      double sol = double(sys.solution->el(soln_index));
-
-      // Get the midpoint radius
-      double radius = elemRadius(elem);
-
-      // Get the expected solution for this element
-      double solExpect = getSolution(radius,rMax,solMax);
-      solExpect *= scalefactor;
-
-      if(normToVol){
-        double volume = elem.volume();
-        solExpect /= volume;
+      if(i==0){
+        // Set a constant solution
+        setConstSolution(ents,solConst);
+      }
+      else{
+        // Set a non-trival solution
+        setSolution(ents,rMax,solMax,scalefactor,normToVol);
       }
 
-      // Compare
-      double solDiff = fabs(sol-solExpect);
-      EXPECT_LT(solDiff,tol);
+      // Check the solution we set is correct
+
+      // Loop over the elements
+      auto itelem = mesh.elements_begin();
+      auto endelem = mesh.elements_end();
+      for( ; itelem!=endelem; ++itelem){
+        Elem& elem = **itelem;
+
+        // Get the degree of freedom number for this element
+        dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+
+        ASSERT_LT(soln_index,solsize);
+
+        // Get the solution value for this element
+        double sol = double(sys.solution->el(soln_index));
+
+        double solExpect=solConst;
+        if(i>0){
+          // Get the midpoint radius
+          double radius = elemRadius(elem);
+
+          // Get the expected solution for this element
+          solExpect = getSolution(radius,rMax,solMax);
+          solExpect *= scalefactor;
+
+          if(normToVol){
+            double volume = elem.volume();
+            solExpect /= volume;
+          }
+        }
+
+        // Compare
+        double solDiff = fabs(sol-solExpect);
+        EXPECT_LT(solDiff,tol);
+
+      }
 
     }
 
@@ -275,6 +303,13 @@ protected:
 class BadMoabUserObjectTest : public MoabUserObjectTestBase {
 protected:
   BadMoabUserObjectTest() : MoabUserObjectTestBase("badmoabuserobject.i") {};
+};
+
+
+class FindMoabSurfacesTest : public MoabUserObjectTest {
+protected:
+  FindMoabSurfacesTest() :
+    MoabUserObjectTest("findsurfstest.i") {};
 };
 
 // Test the fixture set up
@@ -390,7 +425,10 @@ TEST_F(MoabUserObjectTest, setSolution)
   // Define maximum radius for box with side length 2100 cm
   double rMax = 1050*sqrt(3);
 
-  // Pick a max solution value
+  // Pick a constant solution value for constant test
+  double solConst = 300.;
+
+  // Pick a max solution value for non-trivial test
   double solMax = 350.;
 
   std::vector<double> scalefactors;
@@ -398,8 +436,8 @@ TEST_F(MoabUserObjectTest, setSolution)
   scalefactors.push_back(5.0);
 
   for(auto scale: scalefactors){
-    checkSetSolution(ents,rMax,solMax,scale,false);
-    checkSetSolution(ents,rMax,solMax,scale,true);
+    checkSetSolution(ents,rMax,solMax,solConst,scale,false);
+    checkSetSolution(ents,rMax,solMax,solConst,scale,true);
   }
 
 }
@@ -438,30 +476,30 @@ TEST_F(MoabUserObjectTest, reset)
 }
 
 
-// // Test for MOAB mesh updating
-// TEST_F(MoabUserObjectTest, findSurfs)
-// {
-//   ASSERT_TRUE(foundMOAB);
-//   ASSERT_TRUE(setProblem());
+// Test for finding surfaces
+TEST_F(FindMoabSurfacesTest, constTemp)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
 
-//   // Set the mesh
-//   ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
 
-//   // Get elems
-//   std::vector<moab::EntityHandle> ents;
-//   getElems(ents);
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
 
-//   // Set a non-trival solution
-//   double rMax = 1050*sqrt(3);
-//   double solMax = 350.;
-//   setSolution(ents,rMax,solMax);
+  // Set a constant solution
+  double solConst = 300.;
+  setConstSolution(ents,solConst);
 
-//   //   // Clear the mesh
-//   //   ASSERT_NO_THROW(moabUOPtr->update());
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
 
-//   //   // Check surfaces and volumes
+  // Check surfaces and volumes
 
-// }
+}
 
 // Check that a non-tet mesh fails
 TEST_F(BadMoabUserObjectTest, failinit)
