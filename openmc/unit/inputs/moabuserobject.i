@@ -18,3 +18,10 @@
     type = MoabUserObject
   []
 []
+
+[Variables]
+  [heating-local]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
