@@ -104,8 +104,40 @@ protected:
     return true;
   }
 
+  void getElems(std::vector<moab::EntityHandle>& ents){
+
+    // Get the MOAB interface to check the data
+    std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+    ASSERT_NE(moabPtr,nullptr);
+
+    // Get root set
+    moab::EntityHandle rootset = moabPtr->get_root_set();
+
+    // Get elems
+    moab::ErrorCode rval = moabPtr->get_entities_by_type(rootset,moab::MBTET,ents);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+  }
+
   double getSolution(double radius, double rMax, double max){
     return max*exp(-radius/rMax);
+  }
+
+  void getSolutionData(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, std::vector<double>& solutionData){
+    double solMin = solMax*exp(-1.);
+
+    // Manufacture a solution based on radius of element centroid.
+    for(const auto& ent : ents){
+      double radius;
+      std::string errmsg;
+      bool success = calcRadius(moabUOPtr->moabPtr,ent,radius,errmsg);
+      ASSERT_TRUE(success) << errmsg;
+      EXPECT_GT(radius,0.);
+      EXPECT_LT(radius,rMax);
+      double solution=getSolution(radius,rMax,solMax);
+      EXPECT_GT(solution,solMin);
+      EXPECT_LT(solution,solMax);
+      solutionData.push_back(solution);
+    }
   }
 
   double elemRadius(Elem& el){
@@ -128,7 +160,6 @@ protected:
   MoabUserObject* moabUOPtr;
   FEProblemBase* problemPtr;
   bool foundMOAB;
-
 };
 
 class MoabUserObjectTest : public MoabUserObjectTestBase {
@@ -154,42 +185,41 @@ protected:
   }
 
 
-  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
+  void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
 
     // Create a vector for solutionData
     std::vector<double> solutionData;
 
-    // Expect failure due to wrong var name
-    EXPECT_THROW(moabUOPtr->setSolution("dummy",solutionData,scalefactor,normToVol),
-                 std::runtime_error);
-
-    // Expect failure due to empty solution
-    EXPECT_FALSE(moabUOPtr->setSolution(var_name,
-                                        solutionData,
-                                        scalefactor,normToVol));
-
-    double solMin = solMax*exp(-1.);
-
-    // Manufacture a solution based on radius of element centroid.
-    for(const auto& ent : ents){
-      double radius;
-      std::string errmsg;
-      bool success = calcRadius(moabUOPtr->moabPtr,ent,radius,errmsg);
-      ASSERT_TRUE(success) << errmsg;
-      EXPECT_GT(radius,0.);
-      EXPECT_LT(radius,rMax);
-      double solution=getSolution(radius,rMax,solMax);
-      EXPECT_GT(solution,solMin);
-      EXPECT_LT(solution,solMax);
-      solutionData.push_back(solution);
-    }
+    // Populate a vector with some manufactured solution values
+    getSolutionData(ents,rMax,solMax,solutionData);
 
     // Check we can set the solution
     EXPECT_TRUE(moabUOPtr->setSolution(var_name,
                                        solutionData,
                                        scalefactor,normToVol));
 
-    // Check the solution is correct
+  }
+
+  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
+
+
+    // Create a vector for solutionData
+    std::vector<double> dummySolutionData;
+
+    // Expect failure due to wrong var name
+    EXPECT_THROW(moabUOPtr->setSolution("dummy",dummySolutionData,scalefactor,normToVol),
+                 std::runtime_error);
+
+    // Expect failure due to empty solution
+    EXPECT_FALSE(moabUOPtr->setSolution(var_name,
+                                        dummySolutionData,
+                                        scalefactor,normToVol));
+
+
+    // Set a non-trival solution
+    setSolution(ents,rMax,solMax,scalefactor,normToVol);
+
+    // Check the solution we set is correct
 
     // Fetch the system details;
     ASSERT_TRUE(checkSystem());
@@ -355,20 +385,13 @@ TEST_F(MoabUserObjectTest, setSolution)
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
 
-  // Get the MOAB interface to check the data
-  std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
-  ASSERT_NE(moabPtr,nullptr);
-
-  // Get root set
-  moab::EntityHandle rootset = moabPtr->get_root_set();
-
   // Get elems
   std::vector<moab::EntityHandle> ents;
-  moab::ErrorCode rval = moabPtr->get_entities_by_type(rootset,moab::MBTET,ents);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
+  getElems(ents);
 
   // Define maximum radius for box with side length 2100 cm
   double rMax = 1050*sqrt(3);
+
   // Pick a max solution value
   double solMax = 350.;
 
@@ -387,6 +410,7 @@ TEST_F(MoabUserObjectTest, setSolution)
 // TEST_F(MoabUserObjectTest, reset)
 // {
 //   ASSERT_TRUE(foundMOAB);
+//   ASSERT_TRUE(setProblem());
 
 //   // Set the mesh
 //   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -402,19 +426,30 @@ TEST_F(MoabUserObjectTest, setSolution)
 // }
 
 
-// Test for MOAB mesh updating
+// // Test for MOAB mesh updating
+// TEST_F(MoabUserObjectTest, findSurfs)
 // {
 //   ASSERT_TRUE(foundMOAB);
+//   ASSERT_TRUE(setProblem());
 
 //   // Set the mesh
 //   ASSERT_NO_THROW(moabUOPtr->initMOAB());
 
-//   // Clear the mesh
-//   ASSERT_NO_THROW(moabUOPtr->update());
+//   // Get elems
+//   std::vector<moab::EntityHandle> ents;
+//   getElems(ents);
 
-//   // Check surfaces and volumes
+//   // Set a non-trival solution
+//   double rMax = 1050*sqrt(3);
+//   double solMax = 350.;
+//   setSolution(ents,rMax,solMax);
 
-//}
+//   //   // Clear the mesh
+//   //   ASSERT_NO_THROW(moabUOPtr->update());
+
+//   //   // Check surfaces and volumes
+
+// }
 
 // Check that a non-tet mesh fails
 TEST_F(BadMoabUserObjectTest, failinit)
