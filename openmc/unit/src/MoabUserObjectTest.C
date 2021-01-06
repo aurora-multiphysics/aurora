@@ -58,6 +58,34 @@ protected:
     return moabUOPtr->hasProblem();
   }
 
+  // Member data
+  MoabUserObject* moabUOPtr;
+  FEProblemBase* problemPtr;
+  bool foundMOAB;
+};
+
+class MoabUserObjectTest : public MoabUserObjectTestBase {
+protected:
+  MoabUserObjectTest() :
+    MoabUserObjectTestBase("moabuserobject.i"),
+    var_name("temperature"),
+    tol(1.e-9) {};
+
+  bool checkSystem(){
+    try{
+      System & sys = getSys();
+    }
+    catch(std::runtime_error e){
+      return false;
+    }
+    return true;
+  }
+
+
+  System& getSys() {
+    return problemPtr->getSystem(var_name);
+  }
+
 
   bool calcRadius(std::shared_ptr<moab::Interface> moabPtr,
                   moab::EntityHandle elem,
@@ -154,36 +182,6 @@ protected:
     centroid *= 100.0;
     return centroid.norm();
   }
-
-
-  // Member data
-  MoabUserObject* moabUOPtr;
-  FEProblemBase* problemPtr;
-  bool foundMOAB;
-};
-
-class MoabUserObjectTest : public MoabUserObjectTestBase {
-protected:
-  MoabUserObjectTest() :
-    MoabUserObjectTestBase("moabuserobject.i"),
-    var_name("temperature"),
-    tol(1.e-9) {};
-
-  bool checkSystem(){
-    try{
-      System & sys = getSys();
-    }
-    catch(std::runtime_error e){
-      return false;
-    }
-    return true;
-  }
-
-
-  System& getSys() {
-    return problemPtr->getSystem(var_name);
-  }
-
 
   void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
 
