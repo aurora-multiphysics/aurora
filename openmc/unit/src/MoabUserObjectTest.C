@@ -407,23 +407,37 @@ TEST_F(MoabUserObjectTest, setSolution)
 }
 
 // Test for MOAB mesh reseting
-// TEST_F(MoabUserObjectTest, reset)
-// {
-//   ASSERT_TRUE(foundMOAB);
-//   ASSERT_TRUE(setProblem());
+TEST_F(MoabUserObjectTest, reset)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
 
-//   // Set the mesh
-//   ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
 
-//   // Clear the mesh
-//   ASSERT_NO_THROW(moabUOPtr->reset());
+  // Clear the mesh
+  ASSERT_NO_THROW(moabUOPtr->reset());
 
-//   // Get the MOAB interface
-//   std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+  // Get the MOAB interface
+  std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
 
-//   // Check the (lack of) data
+  // Check the (lack of) data
 
-// }
+  // Get root set
+  moab::EntityHandle rootset = moabPtr->get_root_set();
+
+  // Check no entity handles of each dimensionality in turn
+  // dim=4 -> entitiy set
+  std::vector<moab::EntityHandle> ents;
+  moab::ErrorCode rval;
+  for(int dim=0; dim<5; dim++){
+    ents.clear();
+    rval = moabPtr->get_entities_by_dimension(rootset,dim,ents);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    EXPECT_EQ(ents.size(),0);
+  }
+
+}
 
 
 // // Test for MOAB mesh updating
