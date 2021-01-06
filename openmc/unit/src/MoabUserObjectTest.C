@@ -153,6 +153,89 @@ protected:
     return problemPtr->getSystem(var_name);
   }
 
+
+  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
+
+    // Create a vector for solutionData
+    std::vector<double> solutionData;
+
+    // Expect failure due to wrong var name
+    EXPECT_THROW(moabUOPtr->setSolution("dummy",solutionData,scalefactor,normToVol),
+                 std::runtime_error);
+
+    // Expect failure due to empty solution
+    EXPECT_FALSE(moabUOPtr->setSolution(var_name,
+                                        solutionData,
+                                        scalefactor,normToVol));
+
+    double solMin = solMax*exp(-1.);
+
+    // Manufacture a solution based on radius of element centroid.
+    for(const auto& ent : ents){
+      double radius;
+      std::string errmsg;
+      bool success = calcRadius(moabUOPtr->moabPtr,ent,radius,errmsg);
+      ASSERT_TRUE(success) << errmsg;
+      EXPECT_GT(radius,0.);
+      EXPECT_LT(radius,rMax);
+      double solution=getSolution(radius,rMax,solMax);
+      EXPECT_GT(solution,solMin);
+      EXPECT_LT(solution,solMax);
+      solutionData.push_back(solution);
+    }
+
+    // Check we can set the solution
+    EXPECT_TRUE(moabUOPtr->setSolution(var_name,
+                                       solutionData,
+                                       scalefactor,normToVol));
+
+    // Check the solution is correct
+
+    // Fetch the system details;
+    ASSERT_TRUE(checkSystem());
+    System & sys = getSys();
+    unsigned int iSys = sys.number();
+    unsigned int iVar = sys.variable_number(var_name);
+
+    // Get the size of solution vector
+    numeric_index_type 	solsize = sys.solution->size();
+
+    // Get the mesh
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+    // Loop over the elements
+    auto itelem = mesh.elements_begin();
+    auto endelem = mesh.elements_end();
+    for( ; itelem!=endelem; ++itelem){
+      Elem& elem = **itelem;
+
+      // Get the degree of freedom number for this element
+      dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+
+      ASSERT_LT(soln_index,solsize);
+
+      // Get the solution value for this element
+      double sol = double(sys.solution->el(soln_index));
+
+      // Get the midpoint radius
+      double radius = elemRadius(elem);
+
+      // Get the expected solution for this element
+      double solExpect = getSolution(radius,rMax,solMax);
+      solExpect *= scalefactor;
+
+      if(normToVol){
+        double volume = elem.volume();
+        solExpect /= volume;
+      }
+
+      // Compare
+      double solDiff = fabs(sol-solExpect);
+      EXPECT_LT(solDiff,tol);
+
+    }
+
+  }
+
   std::string var_name;
 
   // Define a tolerance for double comparisons
@@ -284,83 +367,20 @@ TEST_F(MoabUserObjectTest, setSolution)
   moab::ErrorCode rval = moabPtr->get_entities_by_type(rootset,moab::MBTET,ents);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
 
-
-  // Create a vector for solutionData
-  std::vector<double> solutionData;
-
-  // Expect failure due to wrong var name
-  EXPECT_THROW(moabUOPtr->setSolution("dummy",solutionData,1.0,false),
-               std::runtime_error);
-
-  // Expect failure due to empty solution
-  EXPECT_FALSE(moabUOPtr->setSolution(var_name,
-                                      solutionData,
-                                      1.0,false));
-
   // Define maximum radius for box with side length 2100 cm
   double rMax = 1050*sqrt(3);
   // Pick a max solution value
   double solMax = 350.;
-  double solMin = solMax*exp(-1.);
 
-  // Manufacture a solution based on radius of element centroid.
-  for(const auto& ent : ents){
-    double radius;
-    std::string errmsg;
-    bool success = calcRadius(moabPtr,ent,radius,errmsg);
-    ASSERT_TRUE(success) << errmsg;
-    EXPECT_GT(radius,0.);
-    EXPECT_LT(radius,rMax);
-    double solution=getSolution(radius,rMax,solMax);
-    EXPECT_GT(solution,solMin);
-    EXPECT_LT(solution,solMax);
-    solutionData.push_back(solution);
+  std::vector<double> scalefactors;
+  scalefactors.push_back(1.0);
+  scalefactors.push_back(5.0);
+
+  for(auto scale: scalefactors){
+    checkSetSolution(ents,rMax,solMax,scale,false);
+    checkSetSolution(ents,rMax,solMax,scale,true);
   }
 
-  // Check we can set the solution
-  EXPECT_TRUE(moabUOPtr->setSolution(var_name,
-                                      solutionData,
-                                      1.0,false));
-
-  // Check the solution is correct
-
-  // Fetch the system details;
-  ASSERT_TRUE(checkSystem());
-  System & sys = getSys();
-  unsigned int iSys = sys.number();
-  unsigned int iVar = sys.variable_number(var_name);
-
-  // Get the size of solution vector
-  numeric_index_type 	solsize = sys.solution->size();
-
-  // Get the mesh
-  MeshBase& mesh = problemPtr->mesh().getMesh();
-
-  // Loop over the elements
-  auto itelem = mesh.elements_begin();
-  auto endelem = mesh.elements_end();
-  for( ; itelem!=endelem; ++itelem){
-    Elem& elem = **itelem;
-
-    // Get the degree of freedom number for this element
-    dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
-
-    ASSERT_LT(soln_index,solsize);
-
-    // Get the solution value for this element
-    double sol = double(sys.solution->el(soln_index));
-
-    // Get the midpoint radius
-    double radius = elemRadius(elem);
-
-    // Get the expected solution for this element
-    double solExpect = getSolution(radius,rMax,solMax);
-
-    // Compare
-    double solDiff = fabs(sol-solExpect);
-    EXPECT_LT(solDiff,tol);
-
-  }
 }
 
 // Test for MOAB mesh reseting
