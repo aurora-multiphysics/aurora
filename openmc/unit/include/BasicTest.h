@@ -68,6 +68,12 @@ class InputFileTest : public BasicTest {
  protected:
 
   InputFileTest(std::string inputfile){
+    setInputFile(inputfile);
+  };
+
+  InputFileTest(){};
+
+  void setInputFile(std::string inputfile){
     if(inputfile==""){
       throw std::logic_error("Input file string is empty");
     }
