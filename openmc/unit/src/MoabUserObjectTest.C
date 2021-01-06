@@ -58,6 +58,72 @@ protected:
     return moabUOPtr->hasProblem();
   }
 
+
+  bool calcRadius(std::shared_ptr<moab::Interface> moabPtr,
+                  moab::EntityHandle elem,
+                  double& radius,
+                  std::string& errmsg){
+
+    moab::ErrorCode rval;
+
+    // Fetch elem connectivity
+    std::vector<moab::EntityHandle> conn;
+    rval = moabPtr->get_connectivity(&elem, 1, conn);
+    if (rval != moab::MB_SUCCESS){
+      errmsg="Failed to get connectivity.";
+      return false;
+    }
+
+    // Fetch vertex coords
+    size_t nNodes = conn.size();
+    if(nNodes==0){
+      errmsg="Failed to get nodes.";
+      return false;
+    }
+
+    std::vector<double> nodeCoords(nNodes*3);
+    rval = moabPtr->get_coords(conn.data(), nNodes, nodeCoords.data());
+    if (rval != moab::MB_SUCCESS){
+      errmsg="Failed to get nodes' coords.";
+      return false;
+    }
+
+    // Compute the centroid of the element vertices
+    double centroid[3] = {0.,0.,0.};
+    for(size_t inode=0; inode<nNodes; ++inode){
+      for(int i=0; i<3; i++){
+        double coord = nodeCoords.at(3*inode +i);
+        centroid[i]+= coord;
+      }
+    }
+
+    radius = sqrt( centroid[0]*centroid[0]
+                   + centroid[1]*centroid[1]
+                   + centroid[2]*centroid[2] ) / double(nNodes);
+
+    return true;
+  }
+
+  double getSolution(double radius, double rMax, double max){
+    return max*exp(-radius/rMax);
+  }
+
+  double elemRadius(Elem& el){
+
+    Point centroid(0.,0.,0.);
+    unsigned int nNodes = el.n_nodes();
+    for(unsigned int iNode=0; iNode<nNodes; ++iNode){
+      // Get the point coords for this node
+      const Point& point = el.point(iNode);
+      centroid += point;
+    }
+    centroid /= double(nNodes);
+    // Scale to same units as Moab
+    centroid *= 100.0;
+    return centroid.norm();
+  }
+
+
   // Member data
   MoabUserObject* moabUOPtr;
   FEProblemBase* problemPtr;
@@ -67,7 +133,31 @@ protected:
 
 class MoabUserObjectTest : public MoabUserObjectTestBase {
 protected:
-  MoabUserObjectTest() : MoabUserObjectTestBase("moabuserobject.i") {};
+  MoabUserObjectTest() :
+    MoabUserObjectTestBase("moabuserobject.i"),
+    var_name("heating-local"),
+    tol(1.e-9) {};
+
+  bool checkSystem(){
+    try{
+      System & sys = getSys();
+    }
+    catch(std::runtime_error e){
+      return false;
+    }
+    return true;
+  }
+
+
+  System& getSys() {
+    return problemPtr->getSystem(var_name);
+  }
+
+  std::string var_name;
+
+  // Define a tolerance for double comparisons
+  double tol;
+
 };
 
 // Test correct failure for ill-defined mesh
@@ -159,7 +249,7 @@ TEST_F(MoabUserObjectTest, init)
   rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &faceting_tol);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
   double diff = fabs(faceting_tol - 1.e-4);
-  EXPECT_LT(diff,1e-9);
+  EXPECT_LT(diff,tol);
 
   rval = moabPtr->tag_get_handle("GEOMETRY_RESABS",tag_handle);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
@@ -168,8 +258,109 @@ TEST_F(MoabUserObjectTest, init)
   rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &geom_tol);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
   diff = fabs(geom_tol - 1.e-6);
-  EXPECT_LT(diff,1e-9);
+  EXPECT_LT(diff,tol);
 
+}
+
+
+// Test for setting FE problem solution
+TEST_F(MoabUserObjectTest, setSolution)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get the MOAB interface to check the data
+  std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+  ASSERT_NE(moabPtr,nullptr);
+
+  // Get root set
+  moab::EntityHandle rootset = moabPtr->get_root_set();
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  moab::ErrorCode rval = moabPtr->get_entities_by_type(rootset,moab::MBTET,ents);
+  EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+
+  // Create a vector for solutionData
+  std::vector<double> solutionData;
+
+  // Expect failure due to wrong var name
+  EXPECT_THROW(moabUOPtr->setSolution("dummy",solutionData,1.0,false),
+               std::runtime_error);
+
+  // Expect failure due to empty solution
+  EXPECT_FALSE(moabUOPtr->setSolution(var_name,
+                                      solutionData,
+                                      1.0,false));
+
+  // Define maximum radius for box with side length 2100 cm
+  double rMax = 1050*sqrt(3);
+  // Pick a max solution value
+  double solMax = 350.;
+  double solMin = solMax*exp(-1.);
+
+  // Manufacture a solution based on radius of element centroid.
+  for(const auto& ent : ents){
+    double radius;
+    std::string errmsg;
+    bool success = calcRadius(moabPtr,ent,radius,errmsg);
+    ASSERT_TRUE(success) << errmsg;
+    EXPECT_GT(radius,0.);
+    EXPECT_LT(radius,rMax);
+    double solution=getSolution(radius,rMax,solMax);
+    EXPECT_GT(solution,solMin);
+    EXPECT_LT(solution,solMax);
+    solutionData.push_back(solution);
+  }
+
+  // Check we can set the solution
+  EXPECT_TRUE(moabUOPtr->setSolution(var_name,
+                                      solutionData,
+                                      1.0,false));
+
+  // Check the solution is correct
+
+  // Fetch the system details;
+  ASSERT_TRUE(checkSystem());
+  System & sys = getSys();
+  unsigned int iSys = sys.number();
+  unsigned int iVar = sys.variable_number(var_name);
+
+  // Get the size of solution vector
+  numeric_index_type 	solsize = sys.solution->size();
+
+  // Get the mesh
+  MeshBase& mesh = problemPtr->mesh().getMesh();
+
+  // Loop over the elements
+  auto itelem = mesh.elements_begin();
+  auto endelem = mesh.elements_end();
+  for( ; itelem!=endelem; ++itelem){
+    Elem& elem = **itelem;
+
+    // Get the degree of freedom number for this element
+    dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+
+    ASSERT_LT(soln_index,solsize);
+
+    // Get the solution value for this element
+    double sol = double(sys.solution->el(soln_index));
+
+    // Get the midpoint radius
+    double radius = elemRadius(elem);
+
+    // Get the expected solution for this element
+    double solExpect = getSolution(radius,rMax,solMax);
+
+    // Compare
+    double solDiff = fabs(sol-solExpect);
+    EXPECT_LT(solDiff,tol);
+
+  }
 }
 
 // Test for MOAB mesh reseting
