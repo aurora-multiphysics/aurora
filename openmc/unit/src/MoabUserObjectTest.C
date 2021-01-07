@@ -68,12 +68,14 @@ protected:
   MoabUserObjectTest() :
     MoabUserObjectTestBase("moabuserobject.i"),
     var_name("temperature"),
-    tol(1.e-9) {};
+    tol(1.e-9),
+    lengthscale(100.0) {};
 
   MoabUserObjectTest(std::string inputfile) :
     MoabUserObjectTestBase(inputfile),
     var_name("temperature"),
-    tol(1.e-9) {};
+    tol(1.e-9),
+    lengthscale(100.0) {};
 
   bool checkSystem(){
     try{
@@ -183,7 +185,7 @@ protected:
     }
     centroid /= double(nNodes);
     // Scale to same units as Moab
-    centroid *= 100.0;
+    centroid *= lengthscale;
     return centroid.norm();
   }
 
@@ -296,6 +298,10 @@ protected:
 
   // Define a tolerance for double comparisons
   double tol;
+
+  // Lengthscale to convert between Moose and MOAB units:
+  // must match up with parameter in user object
+  double lengthscale;
 
 };
 
@@ -422,8 +428,8 @@ TEST_F(MoabUserObjectTest, setSolution)
   std::vector<moab::EntityHandle> ents;
   getElems(ents);
 
-  // Define maximum radius for box with side length 2100 cm
-  double rMax = 1050*sqrt(3);
+  // Define maximum radius for box with side length 21 m
+  double rMax = 10.5*lengthscale*sqrt(3);
 
   // Pick a constant solution value for constant test
   double solConst = 300.;
