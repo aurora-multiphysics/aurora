@@ -354,6 +354,9 @@ protected:
     MoabUserObjectTest("moabuserobject-changeunits.i") {
     // override lengthscale
     lengthscale=1000.0;
+    // override dagmc paramters
+    faceting_tol_expect = 1.e-2;
+    geom_tol_expect = 1.e-4;
   };
 };
 
