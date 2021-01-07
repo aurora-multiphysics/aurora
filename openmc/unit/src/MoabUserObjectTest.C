@@ -69,12 +69,16 @@ protected:
     MoabUserObjectTestBase("moabuserobject.i"),
     var_name("temperature"),
     tol(1.e-9),
+    faceting_tol_expect(1.e-4),
+    geom_tol_expect(1.e-6),
     lengthscale(100.0) {};
 
   MoabUserObjectTest(std::string inputfile) :
     MoabUserObjectTestBase(inputfile),
     var_name("temperature"),
     tol(1.e-9),
+    faceting_tol_expect(1.e-4),
+    geom_tol_expect(1.e-6),
     lengthscale(100.0) {};
 
   bool checkSystem(){
@@ -327,6 +331,10 @@ protected:
   // Define a tolerance for double comparisons
   double tol;
 
+  // Set the expected values for DagMC tags
+  double faceting_tol_expect;
+  double geom_tol_expect;
+
   // Lengthscale to convert between Moose and MOAB units:
   // must match up with parameter in user object
   double lengthscale;
@@ -348,7 +356,6 @@ protected:
     lengthscale=1000.0;
   };
 };
-
 
 class FindMoabSurfacesTest : public MoabUserObjectTest {
 protected:
@@ -438,7 +445,7 @@ TEST_F(MoabUserObjectTest, init)
   double faceting_tol;
   rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &faceting_tol);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  double diff = fabs(faceting_tol - 1.e-4);
+  double diff = fabs(faceting_tol - faceting_tol_expect);
   EXPECT_LT(diff,tol);
 
   rval = moabPtr->tag_get_handle("GEOMETRY_RESABS",tag_handle);
@@ -447,7 +454,7 @@ TEST_F(MoabUserObjectTest, init)
   double geom_tol;
   rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &geom_tol);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  diff = fabs(geom_tol - 1.e-6);
+  diff = fabs(geom_tol - geom_tol_expect);
   EXPECT_LT(diff,tol);
 
 }
