@@ -363,7 +363,147 @@ protected:
 class FindMoabSurfacesTest : public MoabUserObjectTest {
 protected:
   FindMoabSurfacesTest() :
-    MoabUserObjectTest("findsurfstest.i") {};
+    MoabUserObjectTest("findsurfstest.i") {
+
+    // Define the material names expected for this input file
+    mat_names.push_back("mat:copper");
+    mat_names.push_back("mat:air");
+    mat_names.push_back("mat:Graveyard");
+  };
+
+  // Define a struct to help test properties of entity sets
+  struct TagInfo {
+    std::string category; // value of category tag
+    int dim; // value of dimension tag
+    std::string name; // value of name tag
+    int id; // value of global id
+  };
+
+
+  void getTags(std::map< std::string, std::vector<TagInfo> >& tags_by_cat,
+               std::string category,
+               int dim,
+               std::vector<std::string> names){
+
+    // Number in this category
+    unsigned int numCat = names.size();
+    std::vector<TagInfo> catTags;
+    for(unsigned int iCat = 0; iCat<numCat; iCat++){
+      int id = iCat+1;
+      std::string name = names.at(iCat);
+      TagInfo tags = { category, dim , name, id };
+      catTags.push_back(tags);
+    }
+    tags_by_cat[category] = catTags;
+
+  }
+  void getTags(std::map< std::string, std::vector<TagInfo> >& tags_by_cat,
+               std::vector<std::string> names,
+               unsigned int nVol,unsigned  int nSurf){
+
+    // Ensure map empty
+    tags_by_cat.clear();
+
+    // Groups
+    std::string category = "Group";
+    int dim = 4;
+    getTags(tags_by_cat,category, dim, names);
+
+    // Volumes
+    category = "Volume";
+    dim = 3;
+    // Clear material names
+    names.clear();
+    names.resize(nVol,"");
+    getTags(tags_by_cat,category, dim, names);
+
+    // Surfaces
+    category = "Surface";
+    dim = 2;
+    names.resize(nSurf,"");
+    getTags(tags_by_cat,category, dim, names);
+
+  }
+
+  void checkAllTags(unsigned int nVol,unsigned int nSurf){
+    // Get the MOAB interface to check the data
+    std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+    moab::ErrorCode rval;
+
+    // Get root set
+    moab::EntityHandle rootset = moabPtr->get_root_set();
+
+    // Get tags to check sorted  by category
+    std::map< std::string, std::vector<TagInfo> > tags_by_cat;
+    getTags(tags_by_cat,mat_names,nVol,nSurf);
+
+    // Get tag handles
+    moab::Tag category_tag;
+    rval = moabPtr->tag_get_handle(CATEGORY_TAG_NAME,category_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    moab::Tag name_tag;
+    rval = moabPtr->tag_get_handle(NAME_TAG_NAME,name_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    moab::Tag geom_tag;
+    rval = moabPtr->tag_get_handle(GEOM_DIMENSION_TAG_NAME,geom_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    moab::Tag id_tag;
+    rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME,id_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    for( const auto& category : tags_by_cat){
+
+      std::string cat = category.first;
+
+      // Downcast category name
+      char namebuf[CATEGORY_TAG_SIZE];
+      memset(namebuf,'\0', CATEGORY_TAG_SIZE); // fill C char array with null
+      strncpy(namebuf,cat.c_str(), CATEGORY_TAG_SIZE); // Copy category data into namebuf
+      const void * data = namebuf;
+
+      // Get entity sets in this category
+      moab::Range ents;
+      rval = moabPtr->get_entities_by_type_and_tag(rootset,moab::MBENTITYSET,&category_tag, &data, 1, ents);
+
+      unsigned int nCat = category.second.size();
+      EXPECT_EQ(ents.size(),nCat);
+      if( ents.size()!= nCat ) continue;
+
+      // Get the values of the other tags
+      char names[nCat][NAME_TAG_SIZE];
+      rval = moabPtr->tag_get_data (name_tag,ents,&names);
+      if(cat =="Group")
+        EXPECT_EQ(rval,moab::MB_SUCCESS);
+      else
+        EXPECT_NE(rval,moab::MB_SUCCESS);
+
+      int dims[nCat];
+      rval = moabPtr->tag_get_data (geom_tag,ents,&dims);
+      EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+      int ids[nCat];
+      rval = moabPtr->tag_get_data (id_tag,ents,&ids);
+      EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+      // Check tag values
+      for(unsigned int iCat=0; iCat<nCat; iCat++){
+        TagInfo tags = category.second.at(iCat);
+
+        if(cat =="Group"){
+          std::string namecheck(names[iCat]);
+          EXPECT_EQ(namecheck,tags.name);
+        }
+        EXPECT_EQ(dims[iCat],tags.dim);
+        EXPECT_EQ(ids[iCat],tags.id);
+      }
+    }
+  }
+
+
+  std::vector<std::string> mat_names;
 };
 
 // Test the fixture set up
@@ -538,7 +678,10 @@ TEST_F(FindMoabSurfacesTest, constTemp)
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
 
-  // Check surfaces and volumes
+  // Check groups, volumes and surfaces
+  unsigned int nVol=3;
+  unsigned int nSurf=4;
+  checkAllTags(nVol,nSurf);
 
 }
 
