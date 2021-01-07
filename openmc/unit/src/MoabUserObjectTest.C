@@ -430,6 +430,9 @@ protected:
     std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
     moab::ErrorCode rval;
 
+    // Create a local geomtopotool
+    moab::GeomTopoTool GTT(moabPtr.get(), false);
+
     // Get root set
     moab::EntityHandle rootset = moabPtr->get_root_set();
 
@@ -453,7 +456,9 @@ protected:
 
     // Define some containers to perform set comparisons
     moab::Range vols;
+    moab::Range surfs;
     std::set<moab::EntityHandle> volsFromGroups;
+    std::set<moab::EntityHandle> surfsFromVols;
     std::set<moab::EntityHandle> trisFromSurfs;
 
     // Check each category in turn
@@ -471,8 +476,9 @@ protected:
       moab::Range ents;
       rval = moabPtr->get_entities_by_type_and_tag(rootset,moab::MBENTITYSET,&category_tag, &data, 1, ents);
 
-      // Save volumes for later comparisons
+      // Save volumes/surfaces for later comparisons
       if(cat =="Volume") vols = ents;
+      else if(cat =="Surface") surfs = ents;
 
       unsigned int nCat = category.second.size();
       EXPECT_EQ(ents.size(),nCat);
@@ -509,6 +515,7 @@ protected:
           rval = moabPtr->get_entities_by_handle(group,group_vols);
           EXPECT_EQ(rval,moab::MB_SUCCESS);
 
+          EXPECT_FALSE(group_vols.empty());
           for(auto vol: group_vols){
             // Vols should not be in more than one group
             bool found_vol = ( volsFromGroups.find(vol) != volsFromGroups.end() );
@@ -516,28 +523,35 @@ protected:
             volsFromGroups.insert(vol);
           }
         }
-        else if(cat =="Surface"){
+        else if(cat =="Volume"){
+          moab::EntityHandle vol = ents[iCat];
+          std::vector< moab::EntityHandle > vol_surfs;
+          rval = moabPtr->get_child_meshsets(vol,vol_surfs);
+          EXPECT_EQ(rval,moab::MB_SUCCESS);
 
+          EXPECT_FALSE(vol_surfs.empty());
+          surfsFromVols.insert(vol_surfs.begin(),vol_surfs.end());
+        }
+        else if(cat =="Surface"){
           // Save the volumes in the group
           moab::EntityHandle surf = ents[iCat];
           std::vector< moab::EntityHandle > tris;
           rval = moabPtr->get_entities_by_handle(surf,tris);
           EXPECT_EQ(rval,moab::MB_SUCCESS);
 
+          EXPECT_FALSE(tris.empty());
           for(auto tri: tris){
             // Each tri should only be in one surface
             bool found_tri = ( trisFromSurfs.find(tri) != trisFromSurfs.end() );
             EXPECT_FALSE(found_tri);
             trisFromSurfs.insert(tri);
           }
-
         }
-
 
         EXPECT_EQ(dims[iCat],tags.dim);
         EXPECT_EQ(ids[iCat],tags.id);
       }
-    }
+    } // End loop over categories
 
     // Check every volume is assigned to a group
     EXPECT_EQ(vols.size(),volsFromGroups.size());
@@ -546,9 +560,43 @@ protected:
       EXPECT_TRUE(found_vol);
     }
 
+    // Check surfaces are consistent
+    EXPECT_EQ(surfs.size(),surfsFromVols.size());
+    for(size_t isurf=0; isurf<surfs.size(); isurf++){
+      bool found_surf = ( surfsFromVols.find(surfs[isurf]) != surfsFromVols.end() );
+      EXPECT_TRUE(found_surf);
+
+      // Get the parent volumess of this surface
+      std::vector< moab::EntityHandle > parents;
+      rval = moabPtr->get_parent_meshsets(surfs[isurf],parents);
+      EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+      // Expect either one or two volumes
+      size_t nVols = parents.size();
+      EXPECT_LT(nVols,3);
+      EXPECT_GT(nVols,0);
+
+      std::vector<int> senses;
+      for(auto parent: parents){
+        // Check every parent is a known volume
+        bool found_parent = ( volsFromGroups.find(parent) != volsFromGroups.end() );
+        EXPECT_TRUE(found_parent);
+
+        // Check senses
+        int sense;
+        rval = GTT.get_sense(surfs[isurf],parent,sense);
+        EXPECT_EQ(rval,moab::MB_SUCCESS);
+        EXPECT_EQ(abs(sense),1);
+        senses.push_back(sense);
+      }
+      // Check parents are different and have opposite sense
+      if(nVols == 2){
+        EXPECT_NE(parents.at(0),parents.at(1));
+        EXPECT_NE(senses.at(0),senses.at(1));
+      }
+    }
 
   }
-
 
   std::vector<std::string> mat_names;
 };
