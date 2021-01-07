@@ -425,7 +425,7 @@ protected:
 
   }
 
-  void checkAllTags(unsigned int nVol,unsigned int nSurf){
+  void checkAllGeomsets(unsigned int nVol,unsigned int nSurf){
     // Get the MOAB interface to check the data
     std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
     moab::ErrorCode rval;
@@ -441,19 +441,22 @@ protected:
     moab::Tag category_tag;
     rval = moabPtr->tag_get_handle(CATEGORY_TAG_NAME,category_tag);
     ASSERT_EQ(rval,moab::MB_SUCCESS);
-
     moab::Tag name_tag;
     rval = moabPtr->tag_get_handle(NAME_TAG_NAME,name_tag);
     ASSERT_EQ(rval,moab::MB_SUCCESS);
-
     moab::Tag geom_tag;
     rval = moabPtr->tag_get_handle(GEOM_DIMENSION_TAG_NAME,geom_tag);
     ASSERT_EQ(rval,moab::MB_SUCCESS);
-
     moab::Tag id_tag;
     rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME,id_tag);
     ASSERT_EQ(rval,moab::MB_SUCCESS);
 
+    // Define some containers to perform set comparisons
+    moab::Range vols;
+    std::set<moab::EntityHandle> volsFromGroups;
+    std::set<moab::EntityHandle> trisFromSurfs;
+
+    // Check each category in turn
     for( const auto& category : tags_by_cat){
 
       std::string cat = category.first;
@@ -467,6 +470,9 @@ protected:
       // Get entity sets in this category
       moab::Range ents;
       rval = moabPtr->get_entities_by_type_and_tag(rootset,moab::MBENTITYSET,&category_tag, &data, 1, ents);
+
+      // Save volumes for later comparisons
+      if(cat =="Volume") vols = ents;
 
       unsigned int nCat = category.second.size();
       EXPECT_EQ(ents.size(),nCat);
@@ -493,13 +499,54 @@ protected:
         TagInfo tags = category.second.at(iCat);
 
         if(cat =="Group"){
+          // Check the name tag
           std::string namecheck(names[iCat]);
           EXPECT_EQ(namecheck,tags.name);
+
+          // Save the volumes in the group
+          moab::EntityHandle group = ents[iCat];
+          std::vector< moab::EntityHandle > group_vols;
+          rval = moabPtr->get_entities_by_handle(group,group_vols);
+          EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+          for(auto vol: group_vols){
+            // Vols should not be in more than one group
+            bool found_vol = ( volsFromGroups.find(vol) != volsFromGroups.end() );
+            EXPECT_FALSE(found_vol);
+            volsFromGroups.insert(vol);
+          }
         }
+        else if(cat =="Surface"){
+
+          // Save the volumes in the group
+          moab::EntityHandle surf = ents[iCat];
+          std::vector< moab::EntityHandle > tris;
+          rval = moabPtr->get_entities_by_handle(surf,tris);
+          EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+          for(auto tri: tris){
+            // Each tri should only be in one surface
+            bool found_tri = ( trisFromSurfs.find(tri) != trisFromSurfs.end() );
+            EXPECT_FALSE(found_tri);
+            trisFromSurfs.insert(tri);
+          }
+
+        }
+
+
         EXPECT_EQ(dims[iCat],tags.dim);
         EXPECT_EQ(ids[iCat],tags.id);
       }
     }
+
+    // Check every volume is assigned to a group
+    EXPECT_EQ(vols.size(),volsFromGroups.size());
+    for(size_t ivol=0; ivol<vols.size(); ivol++){
+      bool found_vol = ( volsFromGroups.find(vols[ivol]) != volsFromGroups.end() );
+      EXPECT_TRUE(found_vol);
+    }
+
+
   }
 
 
@@ -681,7 +728,9 @@ TEST_F(FindMoabSurfacesTest, constTemp)
   // Check groups, volumes and surfaces
   unsigned int nVol=3;
   unsigned int nSurf=4;
-  checkAllTags(nVol,nSurf);
+  checkAllGeomsets(nVol,nSurf);
+
+  // Check sense gtt data (parent/child)
 
 }
 
