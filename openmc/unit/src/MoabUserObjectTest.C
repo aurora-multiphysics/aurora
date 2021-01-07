@@ -294,6 +294,34 @@ protected:
 
   }
 
+  void setSolutionTest(){
+
+    // Set the mesh
+    ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+    // Get elems
+    std::vector<moab::EntityHandle> ents;
+    getElems(ents);
+
+    // Define maximum radius for box with side length 21 m
+    double rMax = 10.5*lengthscale*sqrt(3);
+
+    // Pick a constant solution value for constant test
+    double solConst = 300.;
+
+    // Pick a max solution value for non-trivial test
+    double solMax = 350.;
+
+    std::vector<double> scalefactors;
+    scalefactors.push_back(1.0);
+    scalefactors.push_back(5.0);
+
+    for(auto scale: scalefactors){
+      checkSetSolution(ents,rMax,solMax,solConst,scale,false);
+      checkSetSolution(ents,rMax,solMax,solConst,scale,true);
+    }
+  }
+
   std::string var_name;
 
   // Define a tolerance for double comparisons
@@ -309,6 +337,16 @@ protected:
 class BadMoabUserObjectTest : public MoabUserObjectTestBase {
 protected:
   BadMoabUserObjectTest() : MoabUserObjectTestBase("badmoabuserobject.i") {};
+};
+
+
+class MoabChangeUnitsTest : public MoabUserObjectTest {
+protected:
+  MoabChangeUnitsTest() :
+    MoabUserObjectTest("moabuserobject-changeunits.i") {
+    // override lengthscale
+    lengthscale=1000.0;
+  };
 };
 
 
@@ -421,31 +459,18 @@ TEST_F(MoabUserObjectTest, setSolution)
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
 
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  // Perform the test
+  setSolutionTest();
+}
 
-  // Get elems
-  std::vector<moab::EntityHandle> ents;
-  getElems(ents);
+// Repeat for different lengthscale
+TEST_F(MoabChangeUnitsTest, setSolution)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
 
-  // Define maximum radius for box with side length 21 m
-  double rMax = 10.5*lengthscale*sqrt(3);
-
-  // Pick a constant solution value for constant test
-  double solConst = 300.;
-
-  // Pick a max solution value for non-trivial test
-  double solMax = 350.;
-
-  std::vector<double> scalefactors;
-  scalefactors.push_back(1.0);
-  scalefactors.push_back(5.0);
-
-  for(auto scale: scalefactors){
-    checkSetSolution(ents,rMax,solMax,solConst,scale,false);
-    checkSetSolution(ents,rMax,solMax,solConst,scale,true);
-  }
-
+  // Perform the test
+  setSolutionTest();
 }
 
 // Test for MOAB mesh reseting
