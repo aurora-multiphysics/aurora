@@ -156,12 +156,11 @@ protected:
     ASSERT_EQ(rval,moab::MB_SUCCESS);
   }
 
-  double getSolution(double radius, double rMax, double max){
-    return max*exp(-radius/rMax);
+  double getSolution(double radius, double rMax, double max, double min){
+    return ((max-min)*exp(-radius/rMax)+min);
   }
 
-  void getSolutionData(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, std::vector<double>& solutionData){
-    double solMin = solMax*exp(-1.);
+  void getSolutionData(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solMin, std::vector<double>& solutionData){
 
     // Manufacture a solution based on radius of element centroid.
     for(const auto& ent : ents){
@@ -171,7 +170,7 @@ protected:
       ASSERT_TRUE(success) << errmsg;
       EXPECT_GT(radius,0.);
       EXPECT_LT(radius,rMax);
-      double solution=getSolution(radius,rMax,solMax);
+      double solution=getSolution(radius,rMax,solMax,solMin);
       EXPECT_GT(solution,solMin);
       EXPECT_LT(solution,solMax);
       solutionData.push_back(solution);
@@ -193,13 +192,13 @@ protected:
     return centroid.norm();
   }
 
-  void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double scalefactor=1.0, bool normToVol=false) {
+  void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solMin, double scalefactor=1.0, bool normToVol=false) {
 
     // Create a vector for solutionData
     std::vector<double> solutionData;
 
     // Populate a vector with some manufactured solution values
-    getSolutionData(ents,rMax,solMax,solutionData);
+    getSolutionData(ents,rMax,solMax,solMin,solutionData);
 
     // Check we can set the solution
     ASSERT_TRUE(moabUOPtr->setSolution(var_name,
@@ -218,7 +217,7 @@ protected:
 
   }
 
-  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solConst, double scalefactor=1.0, bool normToVol=false) {
+  void checkSetSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solMin, double solConst, double scalefactor=1.0, bool normToVol=false) {
 
 
     // Create a vector for solutionData
@@ -254,7 +253,7 @@ protected:
       }
       else{
         // Set a non-trival solution
-        setSolution(ents,rMax,solMax,scalefactor,normToVol);
+        setSolution(ents,rMax,solMax,solMin,scalefactor,normToVol);
       }
 
       // Check the solution we set is correct
@@ -279,7 +278,7 @@ protected:
           double radius = elemRadius(elem);
 
           // Get the expected solution for this element
-          solExpect = getSolution(radius,rMax,solMax);
+          solExpect = getSolution(radius,rMax,solMax,solMin);
           solExpect *= scalefactor;
 
           if(normToVol){
@@ -314,15 +313,17 @@ protected:
     double solConst = 300.;
 
     // Pick a max solution value for non-trivial test
+    // Pick a min solution value for non-trivial test
     double solMax = 350.;
+    double solMin = 300.;
 
     std::vector<double> scalefactors;
     scalefactors.push_back(1.0);
     scalefactors.push_back(5.0);
 
     for(auto scale: scalefactors){
-      checkSetSolution(ents,rMax,solMax,solConst,scale,false);
-      checkSetSolution(ents,rMax,solMax,solConst,scale,true);
+      checkSetSolution(ents,rMax,solMax,solMin,solConst,scale,false);
+      checkSetSolution(ents,rMax,solMax,solMin,solConst,scale,true);
     }
   }
 
