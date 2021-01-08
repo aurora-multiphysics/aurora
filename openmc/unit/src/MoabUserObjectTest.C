@@ -880,6 +880,40 @@ TEST_F(FindMoabSurfacesTest, constTemp)
   unsigned int nSurf=4;
   checkAllGeomsets(nVol,nSurf);
 
+  // Check volume->surf relationships
+
+  // Copper block
+  int vol_id=1;
+  std::set<int> surf_ids = {1};
+  checkSurfs(vol_id,surf_ids);
+
+  // Region of air
+  vol_id=2;
+  surf_ids = {1,2};
+  checkSurfs(vol_id,surf_ids);
+
+  // Graveyard
+  vol_id=3;
+  surf_ids = {3,4};
+  checkSurfs(vol_id,surf_ids);
+
+  // Test the temperature returned
+  for(int vol_id=1; vol_id<=int(nVol); vol_id++){
+    // Fetch the handle for this vol id
+    moab::EntityHandle vol_handle;
+    getVol(vol_id,vol_handle);
+
+    // Graveyard does not have a temperature set
+    if(vol_id == nVol){
+      EXPECT_THROW(moabUOPtr->getTemperature(vol_handle),std::out_of_range);
+    }
+    else{
+      double temp = moabUOPtr->getTemperature(vol_handle);
+      double dtemp = fabs(temp-300.);
+      EXPECT_LT(dtemp,tol);
+    }
+  }
+
 }
 
 TEST_F(FindMoabSurfacesTest, singleBin)
@@ -910,6 +944,40 @@ TEST_F(FindMoabSurfacesTest, singleBin)
   unsigned int nVol=3;
   unsigned int nSurf=4;
   checkAllGeomsets(nVol,nSurf);
+
+  // Check volume->surf relationships
+
+  // Copper block
+  int vol_id=1;
+  std::set<int> surf_ids = {1};
+  checkSurfs(vol_id,surf_ids);
+
+  // Region of air
+  vol_id=2;
+  surf_ids = {1,2};
+  checkSurfs(vol_id,surf_ids);
+
+  // Graveyard
+  vol_id=3;
+  surf_ids = {3,4};
+  checkSurfs(vol_id,surf_ids);
+
+  // Test the temperature returned
+  for(int vol_id=1; vol_id<=int(nVol); vol_id++){
+    // Fetch the handle for this vol id
+    moab::EntityHandle vol_handle;
+    getVol(vol_id,vol_handle);
+
+    // Graveyard does not have a temperature set
+    if(vol_id == nVol){
+      EXPECT_THROW(moabUOPtr->getTemperature(vol_handle),std::out_of_range);
+    }
+    else{
+      double temp = moabUOPtr->getTemperature(vol_handle);
+      double dtemp = fabs(temp-300.);
+      EXPECT_LT(dtemp,tol);
+    }
+  }
 
 }
 
