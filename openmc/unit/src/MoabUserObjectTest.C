@@ -142,6 +142,11 @@ protected:
     return true;
   }
 
+  double getRMax(){
+    // Define maximum radius for box with side length 21 m
+    return 10.5*lengthscale*sqrt(3);
+  }
+
   void getElems(std::vector<moab::EntityHandle>& ents){
 
     // Get the MOAB interface to check the data
@@ -157,10 +162,13 @@ protected:
   }
 
   double getSolution(double radius, double rMax, double max, double min){
-    return ((max-min)*exp(-radius/rMax)+min);
+    return ((max-min)*exp(-radius/rMax) + min);
   }
 
   void getSolutionData(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solMin, std::vector<double>& solutionData){
+
+    // Absolute max radius
+    double rAbsMax = getRMax();
 
     // Manufacture a solution based on radius of element centroid.
     for(const auto& ent : ents){
@@ -169,7 +177,7 @@ protected:
       bool success = calcRadius(moabUOPtr->moabPtr,ent,radius,errmsg);
       ASSERT_TRUE(success) << errmsg;
       EXPECT_GT(radius,0.);
-      EXPECT_LT(radius,rMax);
+      EXPECT_LT(radius,rAbsMax);
       double solution=getSolution(radius,rMax,solMax,solMin);
       EXPECT_GT(solution,solMin);
       EXPECT_LT(solution,solMax);
@@ -306,9 +314,6 @@ protected:
     std::vector<moab::EntityHandle> ents;
     getElems(ents);
 
-    // Define maximum radius for box with side length 21 m
-    double rMax = 10.5*lengthscale*sqrt(3);
-
     // Pick a constant solution value for constant test
     double solConst = 300.;
 
@@ -321,9 +326,12 @@ protected:
     scalefactors.push_back(1.0);
     scalefactors.push_back(5.0);
 
+    // Absolute max radius
+    double rAbsMax = getRMax();
+
     for(auto scale: scalefactors){
-      checkSetSolution(ents,rMax,solMax,solMin,solConst,scale,false);
-      checkSetSolution(ents,rMax,solMax,solMin,solConst,scale,true);
+      checkSetSolution(ents,rAbsMax,solMax,solMin,solConst,scale,false);
+      checkSetSolution(ents,rAbsMax,solMax,solMin,solConst,scale,true);
     }
   }
 
@@ -339,7 +347,6 @@ protected:
   // Lengthscale to convert between Moose and MOAB units:
   // must match up with parameter in user object
   double lengthscale;
-
 };
 
 // Test correct failure for ill-defined mesh
@@ -798,8 +805,9 @@ TEST_F(FindMoabSurfacesTest, singleBin)
   // Bin edges are 297.5, 302.5
   double solMax = 302.;
   double solMin = 298.;
-  double rMax = 10.5*lengthscale*sqrt(3);
-  setSolution(ents,rMax,solMax,solMin,1.0,false);
+  // Absolute max radius
+  double rAbsMax = getRMax();
+  setSolution(ents,rAbsMax,solMax,solMin,1.0,false);
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
@@ -810,6 +818,49 @@ TEST_F(FindMoabSurfacesTest, singleBin)
   checkAllGeomsets(nVol,nSurf);
 
 }
+
+TEST_F(FindMoabSurfacesTest, extraBin)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Manufacture a solution that results in one extra surface
+  // Bin edges are 297.5, 302.5
+  double solMax = 307.;
+  double solMin = 298.;
+  double rMax = 2.0*lengthscale/log(2.0);
+  setSolution(ents,rMax,solMax,solMin,1.0,false);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check groups, volumes and surfaces
+  unsigned int nVol=4;
+  unsigned int nSurf=5;
+  checkAllGeomsets(nVol,nSurf);
+
+  // Change boundary of temperature contour to intersect material boundary
+  rMax = 4.0*lengthscale/log(2.0);
+  setSolution(ents,rMax,solMax,solMin,1.0,false);
+
+  // Find the surfaces (and also test reset)
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check groups, volumes and surfaces
+  nVol=5;
+  nSurf=9;
+  checkAllGeomsets(nVol,nSurf);
+
+}
+
 
 // Check that a non-tet mesh fails
 TEST_F(BadMoabUserObjectTest, failinit)
