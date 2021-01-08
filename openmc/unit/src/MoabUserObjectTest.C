@@ -941,6 +941,29 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   unsigned int nSurf=5;
   checkAllGeomsets(nVol,nSurf);
 
+
+  // Check volume->surf relationships
+
+  // Copper block
+  int vol_id=1;
+  std::set<int> surf_ids = {1};
+  checkSurfs(vol_id,surf_ids);
+
+  // Region of air at cooler T
+  vol_id=2;
+  surf_ids = {1,2,3};
+  checkSurfs(vol_id,surf_ids);
+
+  // Region of air at hotter T
+  vol_id=3;
+  surf_ids = {3};
+  checkSurfs(vol_id,surf_ids);
+
+  // Graveyard
+  vol_id=4;
+  surf_ids = {4,5};
+  checkSurfs(vol_id,surf_ids);
+
   // Change boundary of temperature contour to intersect material boundary
   rMax = 4.0*lengthscale/log(2.0);
   setSolution(ents,rMax,solMax,solMin,1.0,false);
@@ -956,8 +979,8 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   // Check volume->surf relationships
 
   // Main block of copper at lower T
-  int vol_id=1;
-  std::set<int> surf_ids = {1,3,5};
+  vol_id=1;
+  surf_ids = {1,3,5};
   checkSurfs(vol_id,surf_ids);
 
   // Block of copper at higher T
