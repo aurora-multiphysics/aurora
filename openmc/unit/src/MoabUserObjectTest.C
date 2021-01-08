@@ -534,8 +534,7 @@ protected:
         else if(cat =="Volume"){
           moab::EntityHandle vol = ents[iCat];
           std::vector< moab::EntityHandle > vol_surfs;
-          rval = moabPtr->get_child_meshsets(vol,vol_surfs);
-          EXPECT_EQ(rval,moab::MB_SUCCESS);
+          getChildren(vol,vol_surfs);
 
           EXPECT_FALSE(vol_surfs.empty());
           surfsFromVols.insert(vol_surfs.begin(),vol_surfs.end());
@@ -605,6 +604,101 @@ protected:
     }
 
   }
+
+  void getEntFromID(int id,std::string cat,moab::EntityHandle& ent){
+
+    // Get the MOAB interface to check the data
+    std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+    moab::ErrorCode rval;
+
+    // Get root set
+    moab::EntityHandle rootset = moabPtr->get_root_set();
+
+    moab::Tag category_tag;
+    rval = moabPtr->tag_get_handle(CATEGORY_TAG_NAME,category_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    moab::Tag id_tag;
+    rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME,id_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    moab::Tag tags[2] = {category_tag,id_tag};
+
+    // Downcast category name
+    char namebuf[CATEGORY_TAG_SIZE];
+    memset(namebuf,'\0', CATEGORY_TAG_SIZE); // fill C char array with null
+    strncpy(namebuf,cat.c_str(), CATEGORY_TAG_SIZE); // Copy category data into namebuf
+    const void * name_data = namebuf;
+
+    // Downcast id
+    const void * id_data = &id;
+
+    // Store list of tag data
+    const void * data[2] = {name_data,id_data};
+
+    // Get entity sets with these tag values
+    moab::Range ents;
+    rval = moabPtr->get_entities_by_type_and_tag(rootset,moab::MBENTITYSET,tags, data, 2, ents);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    // Only expect one entity
+    ASSERT_EQ(ents.size(),1);
+
+    // Return the entity
+    ent = ents[0];
+  }
+
+  void getVol(int id,moab::EntityHandle& ent){
+    getEntFromID(id,"Volume",ent);
+  }
+
+
+  void getEntityID(moab::EntityHandle ent, int& id){
+
+    // Get the MOAB interface to check the data
+    std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+    moab::ErrorCode rval;
+
+    moab::Tag id_tag;
+    rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME,id_tag);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+    rval = moabPtr->tag_get_data(id_tag,&ent,1,&id);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+  }
+
+  void getChildren(moab::EntityHandle parent,std::vector< moab::EntityHandle > &children){
+    moab::ErrorCode rval = moabUOPtr->moabPtr->get_child_meshsets(parent,children);
+    ASSERT_EQ(rval,moab::MB_SUCCESS);
+  }
+
+  void checkSurfs(int vol_id, std::set<int> surf_ids){
+
+    // First fetch the handle for this vol id
+    moab::EntityHandle vol_handle;
+    getVol(vol_id,vol_handle);
+
+    // Now get the child surfaces
+    std::vector< moab::EntityHandle > surf_handles;
+    getChildren(vol_handle, surf_handles);
+
+    EXPECT_EQ(surf_handles.size(),surf_ids.size());
+
+    for( const auto& surf : surf_handles){
+      int id;
+      getEntityID(surf,id);
+      auto it_surf = surf_ids.find(id);
+      bool found_surf = ( it_surf!= surf_ids.end());
+      EXPECT_TRUE(found_surf);
+      // Expect one-to-one mapping, so delete
+      surf_ids.erase(it_surf);
+    }
+
+    // Found all the surfs
+    EXPECT_EQ(surf_ids.size(),0);
+
+  }
+
 
   std::vector<std::string> mat_names;
 };
@@ -858,6 +952,33 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   nVol=5;
   nSurf=9;
   checkAllGeomsets(nVol,nSurf);
+
+  // Check volume->surf relationships
+
+  // Main block of copper at lower T
+  int vol_id=1;
+  std::set<int> surf_ids = {1,3,5};
+  checkSurfs(vol_id,surf_ids);
+
+  // Block of copper at higher T
+  vol_id=2;
+  surf_ids={2,3,6};
+  checkSurfs(vol_id,surf_ids);
+
+  // Region of air at lower T
+  vol_id=3;
+  surf_ids ={4,5,6,7};
+  checkSurfs(vol_id,surf_ids);
+
+  // Region of air at higher T
+  vol_id=4;
+  surf_ids ={1,2,7};
+  checkSurfs(vol_id,surf_ids);
+
+  // Graveyard
+  vol_id=5;
+  surf_ids ={8,9};
+  checkSurfs(vol_id,surf_ids);
 
 }
 
