@@ -313,8 +313,8 @@ protected:
     double solConst = 300.;
 
     // Pick a max solution value for non-trivial test
-    // Pick a min solution value for non-trivial test
     double solMax = 350.;
+    // Pick a min solution value for non-trivial test
     double solMin = 300.;
 
     std::vector<double> scalefactors;
@@ -779,7 +779,35 @@ TEST_F(FindMoabSurfacesTest, constTemp)
   unsigned int nSurf=4;
   checkAllGeomsets(nVol,nSurf);
 
-  // Check sense gtt data (parent/child)
+}
+
+TEST_F(FindMoabSurfacesTest, singleBin)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Manufacture a solution that will map to a single temp bin
+  // Bin edges are 297.5, 302.5
+  double solMax = 302.;
+  double solMin = 298.;
+  double rMax = 10.5*lengthscale*sqrt(3);
+  setSolution(ents,rMax,solMax,solMin,1.0,false);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check groups, volumes and surfaces
+  unsigned int nVol=3;
+  unsigned int nSurf=4;
+  checkAllGeomsets(nVol,nSurf);
 
 }
 
