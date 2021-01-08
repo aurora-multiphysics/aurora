@@ -377,6 +377,16 @@ protected:
     mat_names.push_back("mat:copper");
     mat_names.push_back("mat:air");
     mat_names.push_back("mat:Graveyard");
+
+    // Max number of outputs
+    nOutput=10;
+
+    // How often should we skip write?
+    nSkip=0; // never skip
+
+    // Expected base name of file
+    output_base="moab_surfs";
+
   };
 
   // Define a struct to help test properties of entity sets
@@ -387,6 +397,19 @@ protected:
     int id; // value of global id
   };
 
+
+  virtual void TearDown() override {
+    // Delete any outputs which were created
+    std::string filename;
+    for(unsigned int iOutput=0; iOutput<nOutput; iOutput++){
+      filename = output_base + "_" + std::to_string(iOutput) +".h5m";
+      bool check_file_exists = file_exists(filename);
+      if(check_file_exists){
+        std::cout<<"Deleting file "<< filename<<std::endl;
+        deleteFile(filename);
+      }
+    }
+  };
 
   void getTags(std::map< std::string, std::vector<TagInfo> >& tags_by_cat,
                std::string category,
@@ -708,7 +731,61 @@ protected:
     }
   }
 
+  bool file_exists(std::string filename){
+    std::ifstream f(filename.c_str());
+    return f.good();
+  }
+
+  void deleteFile(std::string filename){
+    std::string err = "Failed to remove " + filename;
+    EXPECT_EQ(remove(filename.c_str()),0) << err;
+  }
+
+
+  void checkOutputAfterUpdate(unsigned int nUpdate){
+
+    // Keep track of how many times we write to file
+    unsigned int iWrite=0;
+
+    // Define size of write period
+    unsigned int writePeriod=nSkip+1;
+
+    std::string filename;
+    for(unsigned int iUpdate=0; iUpdate<nUpdate; iUpdate++){
+
+      // Set filename
+      filename = output_base + "_" + std::to_string(iWrite) +".h5m";
+
+      // File shouldn't exist yet.
+      std::string err = "File " + filename + " already exists";
+      EXPECT_FALSE(file_exists(filename)) << err;
+
+      // Update and find the surfaces
+      EXPECT_TRUE(moabUOPtr->update());
+
+      if(iWrite< nOutput && ( iUpdate % writePeriod) == 0 ){
+        // File should exist now
+        err = "File " + filename + " does not exist";
+        EXPECT_TRUE(file_exists(filename)) << err;
+        iWrite++;
+      }
+      else{
+        // We exceeded max write or we are skipping this iteration
+        // so file should not exist
+        err = "File " + filename + " already exists";
+        EXPECT_FALSE(file_exists(filename)) << err;
+      }
+    }
+  }
+
+  // Vector to hold material names
   std::vector<std::string> mat_names;
+
+  // Variables relating to output params
+  unsigned int nOutput;
+  unsigned int nSkip;
+  std::string output_base;
+
 };
 
 // Test the fixture set up
@@ -1051,6 +1128,30 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   vol_id=5;
   surf_ids ={8,9};
   checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
+
+}
+
+// Test for checking output
+TEST_F(FindMoabSurfacesTest, checkOutput)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Set a constant solution
+  double solConst = 300.;
+  setConstSolution(ents,solConst);
+
+  // How many times to update
+  unsigned int nUpdate=15;
+  checkOutputAfterUpdate(nUpdate);
 
 }
 

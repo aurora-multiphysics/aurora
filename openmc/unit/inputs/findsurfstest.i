@@ -37,6 +37,7 @@
     # match up with variable below for this test
     bin_varname = "temperature"
     material_names = 'copper air'
+    output_skins = true
   []
 []
 
