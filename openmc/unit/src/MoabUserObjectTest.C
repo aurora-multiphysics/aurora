@@ -672,7 +672,7 @@ protected:
     ASSERT_EQ(rval,moab::MB_SUCCESS);
   }
 
-  void checkSurfs(int vol_id, std::set<int> surf_ids){
+  void checkSurfsAndTemp(int vol_id, std::set<int> surf_ids, double temp_comp, bool isGraveyard=false){
 
     // First fetch the handle for this vol id
     moab::EntityHandle vol_handle;
@@ -697,8 +697,16 @@ protected:
     // Found all the surfs
     EXPECT_EQ(surf_ids.size(),0);
 
+    // Check temperature
+    if(isGraveyard){
+      EXPECT_THROW(moabUOPtr->getTemperature(vol_handle),std::out_of_range);
+    }
+    else{
+      double temp = moabUOPtr->getTemperature(vol_handle);
+      double dtemp = fabs(temp-temp_comp);
+      EXPECT_LT(dtemp,tol);
+    }
   }
-
 
   std::vector<std::string> mat_names;
 };
@@ -885,34 +893,18 @@ TEST_F(FindMoabSurfacesTest, constTemp)
   // Copper block
   int vol_id=1;
   std::set<int> surf_ids = {1};
-  checkSurfs(vol_id,surf_ids);
+  double tcheck=300.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Region of air
   vol_id=2;
   surf_ids = {1,2};
-  checkSurfs(vol_id,surf_ids);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Graveyard
   vol_id=3;
   surf_ids = {3,4};
-  checkSurfs(vol_id,surf_ids);
-
-  // Test the temperature returned
-  for(int vol_id=1; vol_id<=int(nVol); vol_id++){
-    // Fetch the handle for this vol id
-    moab::EntityHandle vol_handle;
-    getVol(vol_id,vol_handle);
-
-    // Graveyard does not have a temperature set
-    if(vol_id == nVol){
-      EXPECT_THROW(moabUOPtr->getTemperature(vol_handle),std::out_of_range);
-    }
-    else{
-      double temp = moabUOPtr->getTemperature(vol_handle);
-      double dtemp = fabs(temp-300.);
-      EXPECT_LT(dtemp,tol);
-    }
-  }
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
 
 }
 
@@ -950,34 +942,18 @@ TEST_F(FindMoabSurfacesTest, singleBin)
   // Copper block
   int vol_id=1;
   std::set<int> surf_ids = {1};
-  checkSurfs(vol_id,surf_ids);
+  double tcheck=300.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Region of air
   vol_id=2;
   surf_ids = {1,2};
-  checkSurfs(vol_id,surf_ids);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Graveyard
   vol_id=3;
   surf_ids = {3,4};
-  checkSurfs(vol_id,surf_ids);
-
-  // Test the temperature returned
-  for(int vol_id=1; vol_id<=int(nVol); vol_id++){
-    // Fetch the handle for this vol id
-    moab::EntityHandle vol_handle;
-    getVol(vol_id,vol_handle);
-
-    // Graveyard does not have a temperature set
-    if(vol_id == nVol){
-      EXPECT_THROW(moabUOPtr->getTemperature(vol_handle),std::out_of_range);
-    }
-    else{
-      double temp = moabUOPtr->getTemperature(vol_handle);
-      double dtemp = fabs(temp-300.);
-      EXPECT_LT(dtemp,tol);
-    }
-  }
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
 
 }
 
@@ -1009,28 +985,29 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   unsigned int nSurf=5;
   checkAllGeomsets(nVol,nSurf);
 
-
   // Check volume->surf relationships
 
   // Copper block
   int vol_id=1;
   std::set<int> surf_ids = {1};
-  checkSurfs(vol_id,surf_ids);
+  double tcheck=300.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Region of air at cooler T
   vol_id=2;
   surf_ids = {1,2,3};
-  checkSurfs(vol_id,surf_ids);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Region of air at hotter T
   vol_id=3;
   surf_ids = {3};
-  checkSurfs(vol_id,surf_ids);
+  tcheck=305.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Graveyard
   vol_id=4;
   surf_ids = {4,5};
-  checkSurfs(vol_id,surf_ids);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
 
   // Change boundary of temperature contour to intersect material boundary
   rMax = 4.0*lengthscale/log(2.0);
@@ -1049,27 +1026,31 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   // Main block of copper at lower T
   vol_id=1;
   surf_ids = {1,3,5};
-  checkSurfs(vol_id,surf_ids);
+  tcheck=300.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Block of copper at higher T
   vol_id=2;
   surf_ids={2,3,6};
-  checkSurfs(vol_id,surf_ids);
+  tcheck=305.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Region of air at lower T
   vol_id=3;
   surf_ids ={4,5,6,7};
-  checkSurfs(vol_id,surf_ids);
+  tcheck=300.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Region of air at higher T
   vol_id=4;
   surf_ids ={1,2,7};
-  checkSurfs(vol_id,surf_ids);
+  tcheck=305.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
   // Graveyard
   vol_id=5;
   surf_ids ={8,9};
-  checkSurfs(vol_id,surf_ids);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
 
 }
 
