@@ -389,6 +389,9 @@ protected:
 
   };
 
+  FindMoabSurfacesTest(std::string inputfile) :
+    MoabUserObjectTest(inputfile) {};
+
   // Define a struct to help test properties of entity sets
   struct TagInfo {
     std::string category; // value of category tag
@@ -712,9 +715,13 @@ protected:
       getEntityID(surf,id);
       auto it_surf = surf_ids.find(id);
       bool found_surf = ( it_surf!= surf_ids.end());
-      EXPECT_TRUE(found_surf);
+      std::string err  = "Unexpected surface "+std::to_string(id)
+        +" for volume "+std::to_string(vol_id);
+      EXPECT_TRUE(found_surf)<<err;
       // Expect one-to-one mapping, so delete
-      surf_ids.erase(it_surf);
+      if(found_surf){
+        surf_ids.erase(it_surf);
+      }
     }
 
     // Found all the surfs
@@ -785,6 +792,29 @@ protected:
   unsigned int nOutput;
   unsigned int nSkip;
   std::string output_base;
+
+};
+
+class FindSingleMatSurfs: public FindMoabSurfacesTest {
+protected:
+
+  FindSingleMatSurfs() :
+    FindMoabSurfacesTest("findsurfstest-singlemat.i") {
+
+    // Define the material names expected for this input file
+    mat_names.push_back("mat:copper");
+    mat_names.push_back("mat:Graveyard");
+
+    // Max number of outputs
+    nOutput=4;
+
+    // How often should we skip write?
+    nSkip=2;  // write every third
+
+    // Expected base name of file
+    output_base="random_name";
+
+  };
 
 };
 
@@ -1169,5 +1199,123 @@ TEST_F(BadMoabUserObjectTest, failinit)
 
   // Init should throw because we didn't pass in a tet mesh
   EXPECT_THROW(moabUOPtr->initMOAB(),std::runtime_error);
+
+}
+
+
+// Test for finding surfaces for single material
+TEST_F(FindSingleMatSurfs, constTemp)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Set a constant solution
+  double solConst = 340.;
+  setConstSolution(ents,solConst);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check groups, volumes and surfaces
+  unsigned int nVol=2;
+  unsigned int nSurf=3;
+  checkAllGeomsets(nVol,nSurf);
+
+  // Check volume->surf relationships
+
+  // Copper block
+  int vol_id=1;
+  std::set<int> surf_ids = {1};
+  checkSurfsAndTemp(vol_id,surf_ids,solConst);
+
+  // Graveyard
+  vol_id=2;
+  surf_ids = {2,3};
+  checkSurfsAndTemp(vol_id,surf_ids,solConst,true);
+
+}
+
+// Test for finding surfaces for many temperature bins
+TEST_F(FindSingleMatSurfs, manyBins)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Manufacture a solution that results in many nested surfaces
+  double solMax = 420;
+  double solMin = 340;
+  double rMax = 9.0/log(8)*lengthscale;
+  setSolution(ents,rMax,solMax,solMin,1.0,false);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check groups, volumes and surfaces
+  unsigned int nVol=6;
+  unsigned int nSurf=7;
+  checkAllGeomsets(nVol,nSurf);
+
+  // Check volume->surf relationships
+  std::set<int> surf_ids;
+  // Surfaces from outside to inside
+  std::vector<int> surfaces = {1,3,2,4,5};
+  // Width of temperature bins
+  double binWidth=20.0;
+  for(int iVol=1; iVol<nVol; iVol++){
+    surf_ids.clear();
+    int outer = surfaces.at(iVol-1);
+    surf_ids.insert(outer);
+    if(iVol<nVol-1){
+      int inner = surfaces.at(iVol);;
+      surf_ids.insert(inner);
+    }
+    double tcheck = solMin + double(iVol-1)*binWidth;
+    checkSurfsAndTemp(iVol,surf_ids,tcheck);
+  }
+
+  // Graveyard
+  int vol_id=nVol;
+  surf_ids = {6,7};
+  checkSurfsAndTemp(vol_id,surf_ids,0.,true);
+
+}
+
+// Test for checking output for different output params
+TEST_F(FindSingleMatSurfs, checkOutput)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Set a constant solution
+  double solConst = 340.;
+  setConstSolution(ents,solConst);
+
+  // How many times to update
+  unsigned int nUpdate=15;
+  checkOutputAfterUpdate(nUpdate);
 
 }
