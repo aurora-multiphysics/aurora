@@ -73,7 +73,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   bin_width = (var_max-var_min)/double(nVarBins);
   powMin = int(floor(log10(var_min)));
   powMax = int(ceil(log10(var_max)));
-  nPow = std::min(powMax-powMin, 1);
+  nPow = std::max(powMax-powMin, 1);
   if(nPow > nVarBins){
     mooseError("Please ensure number of powers for variable is less than the number of bins");
   }
@@ -946,7 +946,7 @@ void
 MoabUserObject::calcMidpointsLog()
 {
   double powDiff = 1./double(nMinor);
-  double powStart = double(powMin) - 0.5*powStart;
+  double powStart = double(powMin) - 0.5*powDiff;
   double var_now = pow(10,powStart);
   double prodDiff = pow(10,powDiff);
   for(unsigned int iVar=0; iVar<nVarBins; iVar++){

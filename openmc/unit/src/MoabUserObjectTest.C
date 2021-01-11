@@ -818,6 +818,29 @@ protected:
 
 };
 
+class FindLogBinSurfs: public FindMoabSurfacesTest {
+protected:
+
+  FindLogBinSurfs() :
+    FindMoabSurfacesTest("findsurfstest-logbins.i") {
+
+    // Define the material names expected for this input file
+    mat_names.push_back("mat:copper");
+    mat_names.push_back("mat:Graveyard");
+
+    // Max number of outputs
+    nOutput=10;
+
+    // How often should we skip write?
+    nSkip=0; // never skip
+
+    // Expected base name of file
+    output_base="moab_surfs";
+
+  };
+
+};
+
 // Test the fixture set up
 TEST_F(MoabUserObjectTest, setup)
 {
@@ -1317,5 +1340,67 @@ TEST_F(FindSingleMatSurfs, checkOutput)
   // How many times to update
   unsigned int nUpdate=15;
   checkOutputAfterUpdate(nUpdate);
+
+}
+
+// Test for finding surfaces for log binning
+TEST_F(FindLogBinSurfs, constTemp)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Set a constant solution
+  double solConst = 300.;
+  setConstSolution(ents,solConst);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check temperature
+  int vol_id=1;
+  std::set<int> surf_ids = {1};
+  double tcheck = pow(10,2.25);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+  // Set a constant solution
+  solConst = 400.;
+  setConstSolution(ents,solConst);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check temperature
+  tcheck = pow(10,2.75);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+  // Set a constant solution
+  solConst = 2000.;
+  setConstSolution(ents,solConst);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check temperature
+  tcheck = pow(10,3.25);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+  // Set a constant solution
+  solConst = 5000.;
+  setConstSolution(ents,solConst);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check temperature
+  tcheck = pow(10,3.75);
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
 }
