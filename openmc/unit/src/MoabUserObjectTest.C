@@ -1404,3 +1404,58 @@ TEST_F(FindLogBinSurfs, constTemp)
   checkSurfsAndTemp(vol_id,surf_ids,tcheck);
 
 }
+
+// Test for finding surfaces for many temperature bins on log scale
+TEST_F(FindLogBinSurfs, manyBins)
+{
+  EXPECT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get elems
+  std::vector<moab::EntityHandle> ents;
+  getElems(ents);
+
+  // Manufacture a solution that results in many nested surfaces
+  double solMax = 6000;
+  double solMin = 150;
+  double rMax = 2.5*lengthscale;
+  setSolution(ents,rMax,solMax,solMin,1.0,false);
+
+  // Find the surfaces
+  EXPECT_TRUE(moabUOPtr->update());
+
+  // Check groups, volumes and surfaces
+  unsigned int nVol=5;
+  unsigned int nSurf=6;
+  checkAllGeomsets(nVol,nSurf);
+
+  // Check volume->surf relationships
+  std::set<int> surf_ids;
+  // Surfaces from outside to inside
+  std::vector<int> surfaces = {1,3,2,4};
+  // Parameters to compare the temperature
+  double tnow = pow(10,2.25);
+  double proddiff = pow(10,0.5);
+  for(int iVol=1; iVol<nVol; iVol++){
+    surf_ids.clear();
+    int outer = surfaces.at(iVol-1);
+    surf_ids.insert(outer);
+    if(iVol<nVol-1){
+      int inner = surfaces.at(iVol);;
+      surf_ids.insert(inner);
+    }
+    checkSurfsAndTemp(iVol,surf_ids,tnow);
+    // Update temperature for next iteration;
+    tnow *= proddiff;
+  }
+
+  // Graveyard
+  int vol_id=nVol;
+  surf_ids = {5,6};
+  checkSurfsAndTemp(vol_id,surf_ids,0.,true);
+
+}
