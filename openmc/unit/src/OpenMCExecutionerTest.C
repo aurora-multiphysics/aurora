@@ -13,9 +13,9 @@
 #include "MoabUserObject.h"
 
 // Fixture to test the MOAB user object
-class OpenMCExecutioner : public InputFileTest{
+class OpenMCExecutionerTest : public InputFileTest{
 protected:
-  OpenMCExecutioner() :
+  OpenMCExecutionerTest() :
     InputFileTest("executioner.i"),
     isSetUp(false)
   {};
@@ -25,7 +25,7 @@ protected:
     // Call the base class method
     InputFileTest::SetUp();
 
-    if(appIsNull) return;
+    ASSERT_FALSE(appIsNull);
 
     try{
       app->setupOptions();
@@ -33,6 +33,8 @@ protected:
 
       // Get the executioner
       executionerPtr = app->getExecutioner();
+
+      ASSERT_NE(executionerPtr,nullptr);
 
       // Get the FE problem
       problemPtr = &(executionerPtr->feProblem());
@@ -59,10 +61,9 @@ protected:
 
 };
 
-TEST_F(OpenMCExecutioner,execute){
+TEST_F(OpenMCExecutionerTest,execute){
 
   ASSERT_TRUE(isSetUp);
-  ASSERT_NE(executionerPtr,nullptr);
   EXPECT_NO_THROW(executionerPtr->execute());
 
 }
