@@ -406,7 +406,7 @@ protected:
     std::string filename;
     for(unsigned int iOutput=0; iOutput<nOutput; iOutput++){
       filename = output_base + "_" + std::to_string(iOutput) +".h5m";
-      bool check_file_exists = file_exists(filename);
+      bool check_file_exists = fileExists(filename);
       if(check_file_exists){
         std::cout<<"Deleting file "<< filename<<std::endl;
         deleteFile(filename);
@@ -738,17 +738,6 @@ protected:
     }
   }
 
-  bool file_exists(std::string filename){
-    std::ifstream f(filename.c_str());
-    return f.good();
-  }
-
-  void deleteFile(std::string filename){
-    std::string err = "Failed to remove " + filename;
-    EXPECT_EQ(remove(filename.c_str()),0) << err;
-  }
-
-
   void checkOutputAfterUpdate(unsigned int nUpdate){
 
     // Keep track of how many times we write to file
@@ -765,7 +754,7 @@ protected:
 
       // File shouldn't exist yet.
       std::string err = "File " + filename + " already exists";
-      EXPECT_FALSE(file_exists(filename)) << err;
+      EXPECT_FALSE(fileExists(filename)) << err;
 
       // Update and find the surfaces
       EXPECT_TRUE(moabUOPtr->update());
@@ -773,14 +762,14 @@ protected:
       if(iWrite< nOutput && ( iUpdate % writePeriod) == 0 ){
         // File should exist now
         err = "File " + filename + " does not exist";
-        EXPECT_TRUE(file_exists(filename)) << err;
+        EXPECT_TRUE(fileExists(filename)) << err;
         iWrite++;
       }
       else{
         // We exceeded max write or we are skipping this iteration
         // so file should not exist
         err = "File " + filename + " already exists";
-        EXPECT_FALSE(file_exists(filename)) << err;
+        EXPECT_FALSE(fileExists(filename)) << err;
       }
     }
   }

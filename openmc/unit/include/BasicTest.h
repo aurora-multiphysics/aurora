@@ -80,4 +80,16 @@ class InputFileTest : public BasicTest {
     args+=" -i inputs/"+inputfile;
   };
 
+  // Some file utility methods
+  bool fileExists(std::string filename){
+    std::ifstream f(filename.c_str());
+    return f.good();
+  }
+
+  void deleteFile(std::string filename){
+    std::string err = "Failed to remove " + filename;
+    EXPECT_EQ(remove(filename.c_str()),0) << err;
+  }
+
+
 };
