@@ -11,7 +11,7 @@ class BasicTest : public ::testing::Test {
 
  protected:
 
- BasicTest() : args(""), appIsNull(true) {};
+  BasicTest() : args(""), appName("OpenMCApp"), appIsNull(true) {};
 
   virtual void SetUp() override {
 
@@ -36,7 +36,7 @@ class BasicTest : public ::testing::Test {
     }
 
     try {
-      app = AppFactory::createAppShared("OpenMCApp", argc, argv);
+      app = AppFactory::createAppShared(appName, argc, argv);
       appIsNull = ( app == nullptr );
     }
     catch(std::exception e){
@@ -57,6 +57,8 @@ class BasicTest : public ::testing::Test {
 
   // Pointer to our Moose App;
   std::shared_ptr<MooseApp> app;
+
+  std::string appName;
 
   bool appIsNull;
 
