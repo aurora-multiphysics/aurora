@@ -10,49 +10,21 @@
 #include "gtest/gtest.h"
 #include <memory>
 
-#include "MooseObject.h"
+#include "AuroraAppTest.h"
 
-TEST(RegistryTest, registryTest)
+TEST_F(AuroraAppBasicTest, registryTest)
 {
 
-  // Fetch a reference to all objects that been registered (in the global singleton)
-  const auto& allRegistered = Registry::allObjects();
-
   // Check we can find heat conduction
-  bool foundHeatConduction = Registry::isRegisteredObj("FunctionUserObject");
+  bool foundHeatConduction = Registry::isRegisteredObj("ADHeatConduction");
   EXPECT_TRUE(foundHeatConduction);
 
-  // Check Aurora exists in the registry
-  bool foundAurora = allRegistered.find("AuroraApp") != allRegistered.end();
-  ASSERT_TRUE(foundAurora);
+  // Check we can find the objects we need
+  std::vector<std::string> knownObjNames;
+  knownObjNames.push_back("FunctionUserObject");
+  knownObjNames.push_back("MoabMeshTransfer");
+  knownObjNames.push_back("VariableFunction");
 
-  // Get all objects registered to Aurora
-  const auto& auroraObjs = allRegistered.at("AuroraApp");
-
-  // Create a list of names of all objects we expect to see registered
-  std::map<std::string,bool> knownObjs;
-  knownObjs["FunctionUserObject"] = false;
-  knownObjs["MoabMeshTransfer"] = false;
-  knownObjs["VariableFunction"] = false;
-
-  // Check the objects match up
-  for( const auto & obj : auroraObjs) {
-    std::string objName = obj._classname;
-    bool isKnownObj = knownObjs.find(objName) != knownObjs.end();
-    EXPECT_TRUE(isKnownObj) << "Unknown object was registered";
-    if(isKnownObj){
-      // Shouldn't already have marked found
-      EXPECT_FALSE(knownObjs[objName]) << "Duplicate enties of object "<< objName;
-
-      // Mark that we found this object
-      knownObjs[objName] = true;
-    }
-  }
-
-  // Now should have found all known objects
-  for( const auto & knownObj : knownObjs){
-    EXPECT_TRUE(knownObj.second) << "Object "<< knownObj.first
-                                 << " was not registered to AuroraApp.";
-  }
+  checkKnownObjects(knownObjNames);
 
 }
