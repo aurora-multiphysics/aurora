@@ -58,7 +58,7 @@ protected:
       // Get the MOAB user object
       moabUOPtr = &(problemPtr->getUserObject<MoabUserObject>("moab"));
 
-      // Get the
+      // Get the input files
       fetchInputXML();
 
       isSetUp = true;
@@ -93,7 +93,7 @@ protected:
 
   void checkFilesExist(const std::vector<std::string>& fileList){
     for(const auto file : fileList ){
-      EXPECT_TRUE(fileExists(file));
+      EXPECT_TRUE(fileExists(file)) << file << " was not found";
     }
   }
 
@@ -118,66 +118,82 @@ TEST_F(OpenMCExecutionerTest,execute){
 
   EXPECT_FALSE(moabUOPtr->hasProblem());
 
-  // Run execute
-  EXPECT_NO_THROW(executionerPtr->execute());
+  // Run the test three times
+  for(unsigned int i=0; i<3; i++){
+    // Delete them for next time
+    deleteAll(openmcOutputFiles);
 
-  // Check if moabUOPtr now has an FEProblem set
-  EXPECT_TRUE(moabUOPtr->hasProblem());
+    // Run execute
+    EXPECT_NO_THROW(executionerPtr->execute());
 
-  // Check moose and openmc moabPtrs are the same
-  auto moabIt = openmc::model::moabPtrs.find(1);
-  ASSERT_NE(moabIt,openmc::model::moabPtrs.end());
-  EXPECT_EQ(openmc::model::moabPtrs[1], moabUOPtr->moabPtr);
+    // Check if moabUOPtr now has an FEProblem set
+    EXPECT_TRUE(moabUOPtr->hasProblem());
 
-  // Check we produced some output
-  checkFilesExist(openmcOutputFiles);
+    // Check moose and openmc moabPtrs are the same
+    auto moabIt = openmc::model::moabPtrs.find(1);
+    ASSERT_NE(moabIt,openmc::model::moabPtrs.end());
+    EXPECT_EQ(openmc::model::moabPtrs[1], moabUOPtr->moabPtr);
 
-  // Get the mesh and number of elems
-  MeshBase& mesh = problemPtr->mesh().getMesh();
-  size_t nMeshBins= mesh.n_elem();
-  EXPECT_EQ(nMeshBins,11972);
+    // Check we produced some output
+    std::vector<std::string> openmcOutputFilesCopy = openmcOutputFiles;
+    // summary file only gets produced in first iteration,
+    // so remove it from the list to check.
+    if(i>0){
+      auto it =find(openmcOutputFilesCopy.begin(),
+                    openmcOutputFilesCopy.end(),
+                    "summary.h5");
+      ASSERT_NE(it,openmcOutputFilesCopy.end());
+      openmcOutputFilesCopy.erase(it);
+    }
+    checkFilesExist(openmcOutputFilesCopy);
 
-  // Fetch the system details
-  System & sys = problemPtr->getSystem(var_name);
-  unsigned int iSys = sys.number();
-  unsigned int iVar = sys.variable_number(var_name);
-  // Get the size of solution vector
-  numeric_index_type 	solsize = sys.solution->size();
+    // Get the mesh and number of elems
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+    size_t nMeshBins= mesh.n_elem();
+    EXPECT_EQ(nMeshBins,11972);
 
-  // Get OpenMC results and check size
-  size_t nScores=1;
-  ASSERT_FALSE(openmc::model::tallies.empty());
-  openmc::Tally& tally = *(openmc::model::tallies.at(0));
-  xt::xtensor<double, 3> & results = tally.results_;
-  ASSERT_EQ(results.shape()[0],nMeshBins);
-  ASSERT_EQ(results.shape()[1],nScores);
-  ASSERT_EQ(results.shape()[2],3);
+    // Fetch the system details
+    System & sys = problemPtr->getSystem(var_name);
+    unsigned int iSys = sys.number();
+    unsigned int iVar = sys.variable_number(var_name);
+    // Get the size of solution vector
+    numeric_index_type 	solsize = sys.solution->size();
 
-  // Loop over the elements
-  for(size_t iBin=0; iBin<nMeshBins; iBin++){
+    // Get OpenMC results and check size
+    size_t nScores=1;
+    ASSERT_FALSE(openmc::model::tallies.empty());
+    openmc::Tally& tally = *(openmc::model::tallies.at(0));
+    xt::xtensor<double, 3> & results = tally.results_;
+    ASSERT_EQ(results.shape()[0],nMeshBins);
+    ASSERT_EQ(results.shape()[1],nScores);
+    ASSERT_EQ(results.shape()[2],3);
 
-    // Because of how the elems are created iBin = elem id
-    dof_id_type id = iBin;
+    // Loop over the elements
+    for(size_t iBin=0; iBin<nMeshBins; iBin++){
 
-    // Get a reference to the element with this ID
-    Elem& elem  = mesh.elem_ref(id);
+      // Because of how the elems are created iBin = elem id
+      dof_id_type id = iBin;
 
-    // Get the degree of freedom number for this element
-    dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
-    ASSERT_LT(soln_index,solsize);
+      // Get a reference to the element with this ID
+      Elem& elem  = mesh.elem_ref(id);
 
-    // Get the solution value for this element
-    double sol = double(sys.solution->el(soln_index));
+      // Get the degree of freedom number for this element
+      dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+      ASSERT_LT(soln_index,solsize);
 
-    // Get the solution for the corresponding bin
-    double solCompare = results(iBin,0,1);
-    // Normalise to volume
-    solCompare /= elem.volume();
-    solCompare *= scalefactor;
+      // Get the solution value for this element
+      double sol = double(sys.solution->el(soln_index));
 
-    double solDiff = fabs(sol-solCompare);
-    EXPECT_LT(solDiff,tol);
+      // Get the solution for the corresponding bin
+      double solCompare = results(iBin,0,1);
+      // Normalise to volume
+      solCompare /= elem.volume();
+      solCompare *= scalefactor;
 
+      double solDiff = fabs(sol-solCompare);
+      EXPECT_LT(solDiff,tol);
+
+    }
   }
 
 }
