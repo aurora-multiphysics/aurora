@@ -25,7 +25,10 @@ protected:
     openmcInputFiles.push_back("materials.xml");
     openmcInputFiles.push_back("tallies.xml");
     openmcInputFiles.push_back("dagmc.h5m");
-
+    openmcOutputFiles.push_back("summary.h5");
+    openmcOutputFiles.push_back("tallies.out");
+    openmcOutputFiles.push_back("statepoint.2.h5");
+    openmcOutputFiles.push_back("tally_1.2.vtk");
     scalefactor =16.0218;
   };
 
@@ -80,12 +83,23 @@ protected:
 
   }
 
-  virtual void TearDown() override {
-    for(const auto file : openmcInputFiles){
+  void deleteAll(const std::vector<std::string>& fileList){
+    for(const auto file : fileList ){
       if(fileExists(file)){
         deleteFile(file);
       }
     }
+  }
+
+  void checkFilesExist(const std::vector<std::string>& fileList){
+    for(const auto file : fileList ){
+      EXPECT_TRUE(fileExists(file));
+    }
+  }
+
+  virtual void TearDown() override {
+    deleteAll(openmcInputFiles);
+    deleteAll(openmcOutputFiles);
   }
 
   FEProblemBase* problemPtr;
@@ -93,6 +107,7 @@ protected:
   MoabUserObject* moabUOPtr;
   bool isSetUp;
   std::vector<std::string> openmcInputFiles;
+  std::vector<std::string> openmcOutputFiles;
   std::string var_name;
   double scalefactor;
 };
@@ -113,6 +128,9 @@ TEST_F(OpenMCExecutionerTest,execute){
   auto moabIt = openmc::model::moabPtrs.find(1);
   ASSERT_NE(moabIt,openmc::model::moabPtrs.end());
   EXPECT_EQ(openmc::model::moabPtrs[1], moabUOPtr->moabPtr);
+
+  // Check we produced some output
+  checkFilesExist(openmcOutputFiles);
 
   // Get the mesh and number of elems
   MeshBase& mesh = problemPtr->mesh().getMesh();
