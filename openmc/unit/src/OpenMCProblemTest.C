@@ -11,9 +11,9 @@
 #include "Executioner.h"
 #include "FEProblemBase.h"
 
-class FEProblemTest : public InputFileTest{
+class FEProblemTest : public OpenMCAppInputTest{
 protected:
-  FEProblemTest() : InputFileTest("feproblem.i") {};
+  FEProblemTest() : OpenMCAppInputTest("feproblem.i") {};
 };
 
 TEST_F(FEProblemTest, readInput)

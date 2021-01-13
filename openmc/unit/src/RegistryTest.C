@@ -9,7 +9,7 @@
 
 #include "BasicTest.h"
 
-TEST_F(BasicTest, registryTest)
+TEST_F(OpenMCAppBasicTest, registryTest)
 {
 
   ASSERT_FALSE(appIsNull);
@@ -52,9 +52,9 @@ TEST_F(BasicTest, registryTest)
 
 }
 
-class MinimalInputTest : public InputFileTest{
+class MinimalInputTest : public OpenMCAppInputTest{
 protected:
-  MinimalInputTest() : InputFileTest("minimal.i") {};
+  MinimalInputTest() : OpenMCAppInputTest("minimal.i") {};
 };
 
 TEST_F(MinimalInputTest, readInput)

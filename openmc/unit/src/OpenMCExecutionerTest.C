@@ -14,10 +14,10 @@
 #include "OpenMCExecutioner.h"
 
 // Fixture to test the MOAB user object
-class OpenMCExecutionerTest : public InputFileTest{
+class OpenMCExecutionerTest : public OpenMCAppInputTest{
 protected:
   OpenMCExecutionerTest() :
-    InputFileTest("executioner.i"),
+    OpenMCAppInputTest("executioner.i"),
     isSetUp(false),
     var_name("heating-local")
   {
@@ -35,7 +35,7 @@ protected:
   virtual void SetUp() override {
 
     // Call the base class method
-    InputFileTest::SetUp();
+    OpenMCAppInputTest::SetUp();
 
     ASSERT_FALSE(appIsNull);
 

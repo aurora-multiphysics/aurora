@@ -11,10 +11,13 @@ class BasicTest : public ::testing::Test {
 
  protected:
 
-  BasicTest() : args(""), appName("OpenMCApp"), appIsNull(true) {};
+  BasicTest(std::string appNameIn) : args(""), appName(appNameIn), appIsNull(true) {};
 
-  virtual void SetUp() override {
+  virtual void SetUp() override {};
 
+  virtual void TearDown() override {};
+
+  void createApp() {
     // Convert string arguments to char array
     char * cstr = new char [args.length()+1];
     std::strcpy (cstr, args.c_str());
@@ -47,10 +50,7 @@ class BasicTest : public ::testing::Test {
     // Deallocate memory for C arrays created with new
     delete argv;
     delete cstr;
-
   };
-
-  virtual void TearDown() override {};
 
   // Arguments for our app
   std::string args;
@@ -64,16 +64,25 @@ class BasicTest : public ::testing::Test {
 
 };
 
+class OpenMCAppBasicTest : public BasicTest {
+protected:
+
+  OpenMCAppBasicTest(): BasicTest("OpenMCApp") {};
+
+  virtual void SetUp() override {
+    createApp();
+  };
+};
 
 class InputFileTest : public BasicTest {
 
  protected:
 
-  InputFileTest(std::string inputfile) : tol(1.e-9) {
+  InputFileTest(std::string appName, std::string inputfile) :
+    BasicTest(appName),
+    tol(1.e-9) {
     setInputFile(inputfile);
   };
-
-  InputFileTest() : tol(1.e-9) {};
 
   void setInputFile(std::string inputfile){
     if(inputfile==""){
@@ -96,5 +105,15 @@ class InputFileTest : public BasicTest {
   // Define a tolerance for double comparisons
   double tol;
 
+};
 
+class OpenMCAppInputTest : public InputFileTest {
+protected:
+
+  OpenMCAppInputTest(std::string inputfile) :
+    InputFileTest("OpenMCApp",inputfile) {};
+
+  virtual void SetUp() override {
+    createApp();
+  };
 };

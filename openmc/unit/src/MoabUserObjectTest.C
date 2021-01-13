@@ -13,17 +13,17 @@
 #include "MoabUserObject.h"
 
 // Fixture to test the MOAB user object
-class MoabUserObjectTestBase : public InputFileTest{
+class MoabUserObjectTestBase : public OpenMCAppInputTest{
 protected:
   MoabUserObjectTestBase(std::string inputfile) :
-    InputFileTest(inputfile),
+    OpenMCAppInputTest(inputfile),
     foundMOAB(false)
   {};
 
   virtual void SetUp() override {
 
     // Call the base class method
-    InputFileTest::SetUp();
+    OpenMCAppInputTest::SetUp();
 
     if(appIsNull) return;
 
