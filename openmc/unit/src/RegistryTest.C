@@ -16,44 +16,7 @@ TEST_F(OpenMCAppBasicTest, registryTest)
   knownObjNames.push_back("OpenMCExecutioner");
   knownObjNames.push_back("MoabUserObject");
 
-  ASSERT_FALSE(appIsNull);
-
-  // Fetch a reference to all objects that been registered (in the global singleton)
-  const auto& allRegistered = Registry::allObjects();
-
-  // Check the app exists in the registry
-  bool foundApp = allRegistered.find(appName) != allRegistered.end();
-  ASSERT_TRUE(foundApp);
-
-  // Get all objects registered to the app
-  const auto& appObjs = allRegistered.at(appName);
-
-  // Create a list of names of all objects we expect to see registered
-  std::map<std::string,bool> knownObjs;
-  for(const auto objName : knownObjNames){
-    knownObjs[objName] = false;
-  }
-
-  // Check the objects match up
-  for( const auto & obj : appObjs) {
-    std::string objName = obj._classname;
-    bool isKnownObj = knownObjs.find(objName) != knownObjs.end();
-    EXPECT_TRUE(isKnownObj) << "Unknown object was registered";
-    if(isKnownObj){
-      // Shouldn't already have marked found
-      EXPECT_FALSE(knownObjs[objName]) << "Duplicate enties of object "<< objName;
-
-      // Mark that we found this object
-      knownObjs[objName] = true;
-    }
-  }
-
-  // Now should have found all known objects
-  for( const auto & knownObj : knownObjs){
-    EXPECT_TRUE(knownObj.second) << "Object "<< knownObj.first
-                                 << " was not registered to "<<  appName;
-  }
-
+  checkKnownObjects(knownObjNames);
 }
 
 class MinimalInputTest : public OpenMCAppInputTest{
