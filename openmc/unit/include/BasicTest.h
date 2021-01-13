@@ -67,11 +67,11 @@ class InputFileTest : public BasicTest {
 
  protected:
 
-  InputFileTest(std::string inputfile){
+  InputFileTest(std::string inputfile) : tol(1.e-9) {
     setInputFile(inputfile);
   };
 
-  InputFileTest(){};
+  InputFileTest() : tol(1.e-9) {};
 
   void setInputFile(std::string inputfile){
     if(inputfile==""){
@@ -90,6 +90,9 @@ class InputFileTest : public BasicTest {
     std::string err = "Failed to remove " + filename;
     EXPECT_EQ(remove(filename.c_str()),0) << err;
   }
+
+  // Define a tolerance for double comparisons
+  double tol;
 
 
 };

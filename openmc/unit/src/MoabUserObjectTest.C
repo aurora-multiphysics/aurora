@@ -68,7 +68,6 @@ protected:
   MoabUserObjectTest() :
     MoabUserObjectTestBase("moabuserobject.i"),
     var_name("temperature"),
-    tol(1.e-9),
     faceting_tol_expect(1.e-4),
     geom_tol_expect(1.e-6),
     lengthscale(100.0) {};
@@ -76,7 +75,6 @@ protected:
   MoabUserObjectTest(std::string inputfile) :
     MoabUserObjectTestBase(inputfile),
     var_name("temperature"),
-    tol(1.e-9),
     faceting_tol_expect(1.e-4),
     geom_tol_expect(1.e-6),
     lengthscale(100.0) {};
@@ -336,9 +334,6 @@ protected:
   }
 
   std::string var_name;
-
-  // Define a tolerance for double comparisons
-  double tol;
 
   // Set the expected values for DagMC tags
   double faceting_tol_expect;
