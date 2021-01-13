@@ -64,16 +64,6 @@ class BasicTest : public ::testing::Test {
 
 };
 
-class OpenMCAppBasicTest : public BasicTest {
-protected:
-
-  OpenMCAppBasicTest(): BasicTest("OpenMCApp") {};
-
-  virtual void SetUp() override {
-    createApp();
-  };
-};
-
 class InputFileTest : public BasicTest {
 
  protected:
@@ -105,15 +95,4 @@ class InputFileTest : public BasicTest {
   // Define a tolerance for double comparisons
   double tol;
 
-};
-
-class OpenMCAppInputTest : public InputFileTest {
-protected:
-
-  OpenMCAppInputTest(std::string inputfile) :
-    InputFileTest("OpenMCApp",inputfile) {};
-
-  virtual void SetUp() override {
-    createApp();
-  };
 };
