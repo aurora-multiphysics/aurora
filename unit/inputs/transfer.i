@@ -18,6 +18,7 @@
     type = FullSolveMultiApp
     app_type = OpenMCApp
     input_files = "transfer_sub.i"
+    library_path = ../openmc/lib
   []
 []
 
@@ -27,5 +28,10 @@
     direction = to_multiapp
     multi_app = openmc
     moabname = "moab"
+    apptype_from="AuroraApp"
   [../]
+[]
+
+[Outputs]
+  console=false
 []

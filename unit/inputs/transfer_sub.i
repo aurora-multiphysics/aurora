@@ -19,3 +19,7 @@
     bin_varname = "heating-local"
   []
 []
+
+#[Outputs]
+#  console=false
+#[]
