@@ -3,6 +3,7 @@
 #include "AppFactory.h"
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
+#include "base/OpenMCApp.h"
 
 InputParameters
 AuroraApp::validParams()
@@ -26,6 +27,7 @@ void
 AuroraApp::registerAll(Factory & f, ActionFactory & af, Syntax & s)
 {
   ModulesApp::registerAll(f, af, s);
+  OpenMCApp::registerAll(f, af, s);
   Registry::registerObjectsTo(f, {"AuroraApp"});
   Registry::registerActionsTo(af, {"AuroraApp"});
 
