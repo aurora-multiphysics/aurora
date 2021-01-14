@@ -28,3 +28,18 @@ TEST_F(AuroraAppBasicTest, registryTest)
   checkKnownObjects(knownObjNames);
 
 }
+
+class MinimalInputTest : public AuroraAppInputTest{
+protected:
+  MinimalInputTest() : AuroraAppInputTest("minimal.i") {};
+};
+
+TEST_F(MinimalInputTest, readInput)
+{
+  ASSERT_FALSE(appIsNull);
+
+  ASSERT_NO_THROW(app->setupOptions());
+  ASSERT_NO_THROW(app->runInputFile());
+
+}
+
