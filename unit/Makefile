@@ -59,6 +59,17 @@ APPLICATION_NAME   := aurora-unit
 BUILD_EXEC         := yes
 
 DEP_APPS    ?= $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME))
+
+OPENMC_APP_DIR = $(CURRENT_DIR)/../openmc
+OPENMC_APP_INC = -I$(OPENMC_APP_DIR)/include
+OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_APP_DIR)/lib -L$(OPENMC_APP_DIR)/lib -lopen_mc-opt
+
+include $(OPENMC_APP_DIR)/config.inc
+
+ADDITIONAL_INCLUDES += $(OPENMC_APP_INC) $(MOAB_INC)
+EXTERNAL_FLAGS += $(OPENMC_APP_LIB) $(MOAB_LIB)
+
+
 include $(FRAMEWORK_DIR)/app.mk
 
 # Find all the Aurora unit test source files and include their dependencies.
