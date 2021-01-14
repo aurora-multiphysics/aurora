@@ -53,17 +53,21 @@ class BasicTest : public ::testing::Test {
   };
 
   void checkKnownObjects(const std::vector<std::string>& knownObjNames){
+    checkKnownObjects(knownObjNames,appName);
+  }
+
+  void checkKnownObjects(const std::vector<std::string>& knownObjNames, std::string appNameTest){
     ASSERT_FALSE(appIsNull);
 
     // Fetch a reference to all objects that been registered (in the global singleton)
     const auto& allRegistered = Registry::allObjects();
 
     // Check the app exists in the registry
-    bool foundApp = allRegistered.find(appName) != allRegistered.end();
+    bool foundApp = allRegistered.find(appNameTest) != allRegistered.end();
     ASSERT_TRUE(foundApp);
 
     // Get all objects registered to the app
-    const auto& appObjs = allRegistered.at(appName);
+    const auto& appObjs = allRegistered.at(appNameTest);
 
     // Create a list of names of all objects we expect to see registered
     std::map<std::string,bool> knownObjs;
@@ -88,7 +92,7 @@ class BasicTest : public ::testing::Test {
     // Now should have found all known objects
     for( const auto & knownObj : knownObjs){
       EXPECT_TRUE(knownObj.second) << "Object "<< knownObj.first
-                                   << " was not registered to "<<  appName;
+                                   << " was not registered to "<<  appNameTest;
     }
   }
 

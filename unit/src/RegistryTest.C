@@ -19,13 +19,19 @@ TEST_F(AuroraAppBasicTest, registryTest)
   bool foundHeatConduction = Registry::isRegisteredObj("ADHeatConduction");
   EXPECT_TRUE(foundHeatConduction);
 
+
   // Check we can find the objects we need
   std::vector<std::string> knownObjNames;
   knownObjNames.push_back("FunctionUserObject");
   knownObjNames.push_back("MoabMeshTransfer");
   knownObjNames.push_back("VariableFunction");
-
   checkKnownObjects(knownObjNames);
+
+  knownObjNames.clear();
+  knownObjNames.push_back("OpenMCProblem");
+  knownObjNames.push_back("OpenMCExecutioner");
+  knownObjNames.push_back("MoabUserObject");
+  checkKnownObjects(knownObjNames,"OpenMCApp");
 
 }
 
@@ -42,4 +48,3 @@ TEST_F(MinimalInputTest, readInput)
   ASSERT_NO_THROW(app->runInputFile());
 
 }
-
