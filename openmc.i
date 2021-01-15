@@ -24,10 +24,11 @@
   []
 []
 
-[Outputs]
-  console = false
-  [my_console]
-    type = Console
-    output_screen = false
-  []
-[]
+#  Uncomment these lines to disable output to screen
+#[Outputs]
+#  console = false
+#  [my_console]
+#    type = Console
+#    output_screen = false
+#  []
+#[]

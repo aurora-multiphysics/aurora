@@ -525,6 +525,7 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
   std::set<dof_id_type> sol_indices;
 
   // Loop over mesh filter bins
+  bool hasNonZeroResult=false;
   for(unsigned int iBin=0; iBin< results.size(); iBin++){
 
     // Result for this bin
@@ -554,6 +555,14 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
 
     // Set the solution for this index
     sys.solution->set(index,result);
+
+    if(!hasNonZeroResult && fabs(result) > 1.e-9){
+      hasNonZeroResult=true;
+    }
+  }
+
+  if(!hasNonZeroResult){
+    mooseWarning("OpenMC results are everywhere zero.");
   }
 
   // Final check that there was a solution found for each element
