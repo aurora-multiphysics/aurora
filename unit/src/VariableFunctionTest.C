@@ -21,9 +21,11 @@ protected:
   virtual void SetUp() override {
 
     // Call the base class method
-    FunctionUserObjectTest::SetUp();
+    ASSERT_NO_THROW(FunctionUserObjectTest::SetUp());
+    ASSERT_NE(functionUOPtr,nullptr);
 
     // Get function object
+    ASSERT_NE(problemPtr,nullptr);
     ASSERT_TRUE(problemPtr->hasFunction(function_name));
     functionPtr = &(problemPtr->getFunction(function_name));
 

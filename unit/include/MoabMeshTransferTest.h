@@ -16,7 +16,7 @@ protected:
   virtual void SetUp() override {
 
     // Call the base class method
-    AuroraAppInputTest::SetUp();
+    ASSERT_NO_THROW(AuroraAppInputTest::SetUp());
 
     ASSERT_FALSE(appIsNull);
     ASSERT_NO_THROW(app->setupOptions());
@@ -68,9 +68,9 @@ protected:
 
   }
 
-  Executioner* executionerPtr;
-  FEProblemBase* problemPtr;
+  Executioner* executionerPtr=nullptr;
+  FEProblemBase* problemPtr=nullptr;
   std::shared_ptr< MoabMeshTransfer > mbMeshTransferPtr;
-  MoabUserObject* moabUOPtr;
+  MoabUserObject* moabUOPtr=nullptr;
 
 };

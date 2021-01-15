@@ -17,6 +17,7 @@ protected:
     };
 
     void setDefaults(){
+      functionUOPtr=nullptr;
       var_name="heating-local";
       sidelength=20.;
       sideoffset=10.;
@@ -24,10 +25,10 @@ protected:
       Tdiff=20.;
     }
 
-    virtual void SetUp() override {
+  virtual void SetUp() override {
 
     // Call the base class method
-    MoabMeshTransferTest::SetUp();
+    ASSERT_NO_THROW(MoabMeshTransferTest::SetUp());
 
     // Check setup was successful
     ASSERT_NE(mbMeshTransferPtr, nullptr);
