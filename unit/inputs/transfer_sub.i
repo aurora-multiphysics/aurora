@@ -16,7 +16,6 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
-    bin_varname = "heating-local"
   []
 []
 
