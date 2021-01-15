@@ -124,7 +124,7 @@ TEST_F(OpenMCExecutionerTest,execute){
     deleteAll(openmcOutputFiles);
 
     // Run execute
-    EXPECT_NO_THROW(executionerPtr->execute());
+    ASSERT_NO_THROW(executionerPtr->execute());
 
     // Check if moabUOPtr now has an FEProblem set
     EXPECT_TRUE(moabUOPtr->hasProblem());
