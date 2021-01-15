@@ -561,13 +561,13 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
     }
   }
 
-  if(!hasNonZeroResult){
-    mooseWarning("OpenMC results are everywhere zero.");
-  }
-
   // Final check that there was a solution found for each element
   if(sol_indices.size() != _elem_handle_to_id.size()){
     throw std::runtime_error("Mismatch in size of results vector and number of elements");
+  }
+
+  if(!hasNonZeroResult){
+    mooseWarning("OpenMC results are everywhere zero.");
   }
 
   sys.solution->close();
