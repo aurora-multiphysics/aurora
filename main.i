@@ -16,6 +16,7 @@
   num_steps = 5
   dt = 1
   solve_type = NEWTON
+  abort_on_solve_fail=True
 []
 
 [Variables]
@@ -132,11 +133,12 @@
 []
 
 [Outputs]
-  console = false
   exodus = true
   execute_on = 'timestep_end'
-  [my_console]
-    type = Console
-    output_screen = false
-  []
+#  Uncomment these lines to disable output to screen
+#  console = false
+#  [my_console]
+#    type = Console
+#    output_screen = false
+#  []
 []
