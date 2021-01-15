@@ -932,6 +932,28 @@ TEST_F(MoabUserObjectTest, setSolution)
   setSolutionTest();
 }
 
+// Test for setting FE problem solution
+TEST_F(MoabUserObjectTest, zeroSolution)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get number of elems
+  MeshBase& mesh = problemPtr->mesh().getMesh();
+  unsigned int nElem = mesh.n_elem();
+
+  // Set a solution that is everywhere 0.
+  // Normally generates a warning, but in these unit tests
+  // mooseWarning throws, which is handled safely and returns false
+  std::vector<double> zeroSol(nElem,0.);
+  EXPECT_FALSE(moabUOPtr->setSolution(var_name,zeroSol,1.0,false));
+
+}
+
+
 // Repeat for different lengthscale
 TEST_F(MoabChangeUnitsTest, setSolution)
 {
