@@ -15,7 +15,11 @@ class FunctionUserObjectTest : public MoabMeshTransferTest {
 protected:
   FunctionUserObjectTest() :
     MoabMeshTransferTest("function_user_object.i"),
-    var_name("heating-local")
+    var_name("heating-local"),
+    sidelength(20.),
+    sideoffset(10.),
+    T0(300.),
+    Tdiff(20.)
   {};
 
   virtual void SetUp() override {
@@ -38,15 +42,100 @@ protected:
 
   }
 
+  void getSolutionData(std::vector<double>& results,
+                       std::vector<Point>& centroids){
+
+    // Get the mesh
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+
+    // Loop over the elements
+    auto itelem = mesh.elements_begin();
+    auto endelem = mesh.elements_end();
+    for( ; itelem!=endelem; ++itelem){
+      Elem& elem = **itelem;
+      // Get the centroid for elem
+      Point centroid = getCentroid(elem);
+      // Manufacture a position-dependent solution
+      double result = calcSolution(centroid);
+      // Store
+      centroids.push_back(centroid);
+      results.push_back(result);
+    }
+  }
+
+  Point getCentroid(Elem &elem){
+    Point centroid(0.,0.,0.);
+    unsigned int nNodes = elem.n_nodes();
+    for(unsigned int iNode=0; iNode<nNodes; ++iNode){
+      // Get the point coords for this node
+      const Point& point = elem.point(iNode);
+      centroid += point;
+    }
+    centroid /= double(nNodes);
+    return centroid;
+  }
+
+  double calcSolution(Point p){
+
+    double sol=T0;
+    for(unsigned int i=0; i<3; i++){
+      double relpos = (p(i) + sideoffset)/sidelength;
+      EXPECT_GT(relpos,0.0);
+      EXPECT_LT(relpos,1.0);
+      sol += relpos*Tdiff;
+    }
+    EXPECT_GT(sol,T0-tol);
+    EXPECT_LT(sol,T0+3.0*Tdiff+tol);
+
+    return sol;
+  }
+
+  void evalFunction(Point& p, double& function_result){
+    function_result = functionUOPtr->value(p);
+  }
+
   FunctionUserObject* functionUOPtr;
   std::string var_name;
+  double sidelength;
+  double sideoffset;
+  double T0;
+  double Tdiff;
 
 };
 
-TEST_F(FunctionUserObjectTest, initMOAB)
+TEST_F(FunctionUserObjectTest, checkSolution)
 {
   // Check setup was successful
   EXPECT_NE(functionUOPtr, nullptr);
 
+  // Initialise mesh data in MOAB
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Manufacture a solution
+  std::vector<double> results;
+  std::vector<Point> centroids;
+  EXPECT_NO_THROW(getSolutionData(results,centroids));
+  ASSERT_EQ(results.size(),centroids.size());
+
+  // Set the solution
+  ASSERT_TRUE(moabUOPtr->setSolution(var_name,results,1.0,false));
+
+  // Now loop over the centroids and check function at each point
+  size_t nPoints = centroids.size();
+  for(size_t iPoint=0; iPoint<nPoints; iPoint++){
+    Point p = centroids.at(iPoint);
+    double result = results.at(iPoint);
+    // Evaluate the function at p
+    double function_result;
+    EXPECT_NO_THROW(evalFunction(p,function_result));
+    // Check
+    double diff = fabs(function_result-result);
+    EXPECT_LE(diff,tol);
+  }
+
+  // Now check a point outside the domain
+  Point pOutside(100.,100.,100.);
+  double dummy;
+  EXPECT_THROW(evalFunction(pOutside,dummy),std::logic_error);
+
 }
