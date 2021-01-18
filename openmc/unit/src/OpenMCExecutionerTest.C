@@ -14,29 +14,20 @@
 #include "OpenMCExecutioner.h"
 
 // Fixture to test the MOAB user object
-class OpenMCExecutionerTest : public OpenMCAppInputTest{
+class OpenMCExecutionerTest : public OpenMCAppRunTest{
 protected:
   OpenMCExecutionerTest() :
-    OpenMCAppInputTest("executioner.i"),
+    OpenMCAppRunTest("executioner.i"),
     isSetUp(false),
-    dagmcFilename("dagmc.h5m"),
     var_name("heating-local")
   {
-    openmcInputXMLFiles.push_back("settings.xml");
-    openmcInputXMLFiles.push_back("materials.xml");
-    openmcInputXMLFiles.push_back("tallies.xml");
-
-    openmcOutputFiles.push_back("summary.h5");
-    openmcOutputFiles.push_back("tallies.out");
-    openmcOutputFiles.push_back("statepoint.2.h5");
-    openmcOutputFiles.push_back("tally_1.2.vtk");
     scalefactor =16.0218;
   };
 
   virtual void SetUp() override {
 
     // Call the base class method
-    OpenMCAppInputTest::SetUp();
+    OpenMCAppRunTest::SetUp();
 
     ASSERT_FALSE(appIsNull);
 
@@ -59,9 +50,6 @@ protected:
       // Get the MOAB user object
       moabUOPtr = &(problemPtr->getUserObject<MoabUserObject>("moab"));
 
-      // Get the input xml files from dir input to current working dir
-      fetchInput(openmcInputXMLFiles);
-
       isSetUp = true;
     }
     catch(std::exception e){
@@ -70,49 +58,6 @@ protected:
 
   }
 
-  void fetchInputFile(std::string file, std::string newName=""){
-
-    std::string fileNow = "inputs/"+file;
-    ASSERT_TRUE(fileExists(fileNow));
-
-    if(newName=="") newName=file;
-
-    // This is ugly: system() can result in undefined behaviour. Fix me.
-    std::string command = "cp "+fileNow +" "+newName;
-    int retval = system(command.c_str());
-    EXPECT_EQ(retval,0);
-    ASSERT_TRUE(fileExists(newName));
-  }
-
-  void fetchInput(const std::vector<std::string>& inputFiles){
-    for(const auto file : inputFiles){
-      fetchInputFile(file);
-    }
-  }
-
-  void deleteIfFileExists(const std::string& file){
-    if(fileExists(file)){
-      deleteFile(file);
-    }
-  }
-
-  void deleteAll(const std::vector<std::string>& fileList){
-    for(const auto file : fileList ){
-      deleteIfFileExists(file);
-    }
-  }
-
-  void checkFilesExist(const std::vector<std::string>& fileList){
-    for(const auto file : fileList ){
-      EXPECT_TRUE(fileExists(file)) << file << " was not found";
-    }
-  }
-
-  virtual void TearDown() override {
-    deleteAll(openmcInputXMLFiles);
-    deleteAll(openmcOutputFiles);
-    deleteFile(dagmcFilename);
-  }
 
   void checkExecute(std::string dagfile){
 
@@ -204,9 +149,7 @@ protected:
   Executioner* executionerPtr;
   MoabUserObject* moabUOPtr;
   bool isSetUp;
-  std::vector<std::string> openmcInputXMLFiles;
-  std::vector<std::string> openmcOutputFiles;
-  std::string dagmcFilename;
+
   std::string var_name;
   double scalefactor;
 };

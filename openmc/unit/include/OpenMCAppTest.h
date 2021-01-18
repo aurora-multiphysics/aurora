@@ -22,3 +22,15 @@ protected:
     createApp();
   };
 };
+
+class OpenMCAppRunTest : public OpenMCRunTest {
+protected:
+
+  OpenMCAppRunTest(std::string inputfile) :
+    OpenMCRunTest("OpenMCApp",inputfile) {};
+
+  virtual void SetUp() override {
+    OpenMCRunTest::SetUp();
+    createApp();
+  };
+};
