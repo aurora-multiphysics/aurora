@@ -22,3 +22,15 @@ protected:
     createApp();
   };
 };
+
+class AuroraAppRunTest : public OpenMCRunTest {
+protected:
+
+  AuroraAppRunTest(std::string inputfile) :
+    OpenMCRunTest("AuroraApp",inputfile) {};
+
+  virtual void SetUp() override {
+    OpenMCRunTest::SetUp();
+    createApp();
+  };
+};

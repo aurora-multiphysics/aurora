@@ -36,7 +36,5 @@ main(int argc, char ** argv)
 
   registerApp(AuroraApp);
 
-  Moose::_throw_on_error = true;
-
   return RUN_ALL_TESTS();
 }

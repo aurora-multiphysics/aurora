@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "AuroraAppTest.h"
+#include "Executioner.h"
 
 TEST_F(AuroraAppBasicTest, registryTest)
 {
@@ -47,4 +48,40 @@ TEST_F(MinimalInputTest, readInput)
   ASSERT_NO_THROW(app->setupOptions());
   ASSERT_NO_THROW(app->runInputFile());
 
+}
+
+class FullRunTest : public AuroraAppRunTest{
+protected:
+  FullRunTest() : AuroraAppRunTest("aurora.i") {};
+
+  void checkFullRun(std::string dagfile){
+
+    // Get the current dagmc file
+    fetchInputFile(dagfile,dagmcFilename);
+
+    ASSERT_NO_THROW(app->run());
+
+    // Get the executioner
+    Executioner* executionerPtr = app->getExecutioner();
+    ASSERT_NE(executionerPtr,nullptr);
+
+    EXPECT_TRUE(executionerPtr->lastSolveConverged());
+  }
+
+};
+
+TEST_F(FullRunTest, UWUW)
+{
+  ASSERT_FALSE(appIsNull);
+
+  std::string dagFile = "dagmc_uwuw.h5m";
+  checkFullRun(dagFile);
+}
+
+TEST_F(FullRunTest, Legacy)
+{
+  ASSERT_FALSE(appIsNull);
+
+  std::string dagFile = "dagmc_legacy.h5m";
+  checkFullRun(dagFile);
 }
