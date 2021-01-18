@@ -41,10 +41,19 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
 OpenMCExecutioner::~OpenMCExecutioner()
 {
   // Close any open log files
-  // To-do : what happens if exception is throw? Will the file still close safely?
+  // To-do : what happens if exception is thrown?
+  // Will the file still close safely?
   if(!dagmclog.is_open()){
     dagmclog.close();
   }
+  if(openmc::model::moabPtrs.find(mesh_id)!=openmc::model::moabPtrs.end()){
+    openmc::model::moabPtrs.clear();
+  }
+  if(openmc::model::DAG!=nullptr) {
+    openmc::model::DAG = nullptr;
+  }
+  openmc_finalize();
+
 }
 
 void
