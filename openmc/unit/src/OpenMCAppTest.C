@@ -32,3 +32,34 @@ TEST_F(MinimalInputTest, readInput)
   ASSERT_NO_THROW(app->runInputFile());
 
 }
+
+class FullRunTest : public OpenMCAppRunTest{
+protected:
+  FullRunTest() : OpenMCAppRunTest("executioner.i") {};
+
+  void checkFullRun(std::string dagfile){
+
+    // Get the current dagmc file
+    fetchInputFile(dagfile,dagmcFilename);
+
+    ASSERT_NO_THROW(app->run());
+
+  }
+
+};
+
+TEST_F(FullRunTest, UWUW)
+{
+  ASSERT_FALSE(appIsNull);
+
+  std::string dagFile = "dagmc_uwuw.h5m";
+  checkFullRun(dagFile);
+}
+
+TEST_F(FullRunTest, Legacy)
+{
+  ASSERT_FALSE(appIsNull);
+
+  std::string dagFile = "dagmc_legacy.h5m";
+  checkFullRun(dagFile);
+}

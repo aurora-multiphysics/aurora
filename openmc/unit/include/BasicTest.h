@@ -15,9 +15,14 @@ class BasicTest : public ::testing::Test {
 
   virtual void SetUp() override {};
 
-  virtual void TearDown() override {};
+  virtual void TearDown() override {
+
+    app=nullptr;
+
+  };
 
   void createApp() {
+
     // Convert string arguments to char array
     char * cstr = new char [args.length()+1];
     std::strcpy (cstr, args.c_str());
@@ -100,7 +105,7 @@ class BasicTest : public ::testing::Test {
   std::string args;
 
   // Pointer to our Moose App;
-  std::shared_ptr<MooseApp> app;
+  std::shared_ptr<MooseApp> app=nullptr;
 
   std::string appName;
 
@@ -141,7 +146,7 @@ class InputFileTest : public BasicTest {
     // This is ugly: system() can result in undefined behaviour. Fix me.
     std::string command = "cp "+fileNow +" "+newName;
     int retval = system(command.c_str());
-    EXPECT_EQ(retval,0);
+    ASSERT_EQ(retval,0);
     ASSERT_TRUE(fileExists(newName));
   }
 
@@ -202,9 +207,10 @@ class OpenMCRunTest : public InputFileTest {
   }
 
   virtual void TearDown() override {
+    InputFileTest::TearDown();
     deleteAll(openmcInputXMLFiles);
     deleteAll(openmcOutputFiles);
-    deleteFile(dagmcFilename);
+    deleteIfFileExists(dagmcFilename);
   }
 
   std::vector<std::string> openmcInputXMLFiles;

@@ -26,3 +26,9 @@
     type = MoabUserObject
   []
 []
+
+# Worryingly this is needed when multiple app tests are run in sequence
+# presumably the console object does not get properly destroyed...
+[Outputs]
+  console=false
+[]
