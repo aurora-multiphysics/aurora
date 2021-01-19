@@ -9,7 +9,6 @@
 *-oprof
 *-prof
 *-devel
-*.e
 *.nav
 *.log
 *.aux
