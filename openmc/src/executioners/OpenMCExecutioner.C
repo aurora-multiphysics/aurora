@@ -258,7 +258,7 @@ OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
     // UWUW material library is indexed by a string of the form "mat:xxx/rho=xxx"
     std::string uwuw_mat = dmdPtr->volume_material_property_data_eh[vol_handle];
     if(uwuwPtr->material_library.count(uwuw_mat) != 0){
-      mat_id = uwuwPtr->material_library[uwuw_mat].metadata["mat_number"].asInt();
+      mat_id = uwuwPtr->material_library.get_material(uwuw_mat).metadata["mat_number"].asInt();
     }
     else{
       std::cerr<<"Couldn't find material "<<uwuw_mat<<" in the UWUW material library."<<std::endl;
@@ -800,13 +800,16 @@ OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
   // set BCs
   std::string bc_value = dmdPtr->get_surface_property("boundary", surf_handle);
   openmc::to_lower(bc_value);
+
   if (bc_value.empty() || bc_value == "transmit" || bc_value == "transmission") {
-    // set to transmission by default
-    surf.bc_ = openmc::Surface::BoundaryType::TRANSMIT;
+    // Leave the bc_ a nullptr
   } else if (bc_value == "vacuum") {
-    surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
+    surf.bc_ = std::make_shared<openmc::VacuumBC>();
   } else if (bc_value == "reflective" || bc_value == "reflect" || bc_value == "reflecting") {
-    surf.bc_ = openmc::Surface::BoundaryType::REFLECT;
+    surf.bc_ = std::make_shared<openmc::ReflectiveBC>();
+  } else if (bc_value == "white") {
+    std::cerr<<"White boundary condition not supported in DAGMC."<<std::endl;
+    return false;
   } else if (bc_value == "periodic") {
     std::cerr<<"Periodic boundary condition not supported in DAGMC."<<std::endl;
     return false;
@@ -825,7 +828,7 @@ OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
   // Check if this surface belongs to the graveyard
   if (graveyard && parent_vols.find(graveyard) != parent_vols.end()) {
     // Set graveyard surface's bcs to vacuum
-    surf.bc_ = openmc::Surface::BoundaryType::VACUUM;
+    surf.bc_ = std::make_shared<openmc::VacuumBC>();
   }
 
   return true;
