@@ -30,7 +30,14 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   tally_id(getParam<int32_t>("tally_id")),
   mesh_id(getParam<int32_t>("mesh_id")),
   redirect_dagout(getParam<bool>("redirect_dagout")),
-  dagmc_logname(getParam<std::string>("dagmc_logname"))
+  dagmc_logname(getParam<std::string>("dagmc_logname")),
+  _execute_timer(registerTimedSection("execute", 1)),
+  _init_timer(registerTimedSection("init", 1)),
+  _initmoab_timer(registerTimedSection("initmoab", 2)),
+  _initopenmc_timer(registerTimedSection("initopenmc", 2)),
+  _updateopenmc_timer(registerTimedSection("updateopenmc", 2)),
+  _run_timer(registerTimedSection("run", 1)),
+  _output_timer(registerTimedSection("output", 1))
 {
   // Units for heating are eV / source neutron
   // source_strength has units  neutron / s
@@ -60,6 +67,8 @@ void
 OpenMCExecutioner::execute()
 {
 
+  TIME_SECTION(_execute_timer);
+
   // Initialize here so it occurs after MultiApp transfers
   initialize();
 
@@ -70,6 +79,8 @@ OpenMCExecutioner::execute()
 void
 OpenMCExecutioner::initialize()
 {
+
+  TIME_SECTION(_init_timer);
 
   // Don't re-initialize, just update
   if(isInit){
@@ -101,6 +112,8 @@ bool
 OpenMCExecutioner::run()
 {
 
+  TIME_SECTION(_run_timer);
+
   // Run the simulation
   openmc_err = openmc_run();
   if (openmc_err) return false;
@@ -121,6 +134,7 @@ OpenMCExecutioner::run()
     try
       {
         _time = 1;
+        TIME_SECTION(_output_timer);
         _problem.execute(EXEC_FINAL);
         _problem.outputStep(EXEC_FINAL);
       }
@@ -145,6 +159,8 @@ OpenMCExecutioner::moab()
 bool
 OpenMCExecutioner::initMOAB()
 {
+
+  TIME_SECTION(_initmoab_timer);
 
   try
     {
@@ -178,6 +194,8 @@ OpenMCExecutioner::initMOAB()
 bool
 OpenMCExecutioner::initOpenMC()
 {
+
+  TIME_SECTION(_initopenmc_timer);
 
   // Check there is not an instance in memory already!
   if(openmc::model::moabPtrs.find(mesh_id)!=openmc::model::moabPtrs.end()){
@@ -281,6 +299,8 @@ OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
 bool
 OpenMCExecutioner::updateOpenMC()
 {
+
+  TIME_SECTION(_updateopenmc_timer);
 
   if(!resetOpenMC()){
     std::cerr<<"Failed to reset OpenMC"<<std::endl;

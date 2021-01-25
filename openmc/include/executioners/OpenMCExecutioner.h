@@ -184,6 +184,14 @@ private:
   // Todo: how to deal with threads?
   std::fstream dagmclog;
 
+  PerfID _execute_timer;
+  PerfID _init_timer;
+  PerfID _initmoab_timer;
+  PerfID _initopenmc_timer;
+  PerfID _updateopenmc_timer;
+  PerfID _run_timer;
+  PerfID _output_timer;
+
 
 };
 #endif // OPENMCEXECUTIONER_H

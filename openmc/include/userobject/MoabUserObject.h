@@ -240,4 +240,8 @@ private:
   unsigned int n_write; // Number of times file has been written to
   unsigned int n_its; // Store the number of times writeSurfaces is called
 
+  PerfID _init_timer;
+  PerfID _update_timer;
+  PerfID _setsolution_timer;
+
 };

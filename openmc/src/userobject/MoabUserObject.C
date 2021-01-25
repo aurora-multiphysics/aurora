@@ -51,7 +51,10 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   output_skins(getParam<bool>("output_skins")),
   output_base(getParam<std::string>("output_base")),
   n_output(getParam<unsigned int>("n_output")),
-  n_period(getParam<unsigned int>("n_skip")+1)
+  n_period(getParam<unsigned int>("n_skip")+1),
+  _init_timer(registerTimedSection("init", 2)),
+  _update_timer(registerTimedSection("update", 2)),
+  _setsolution_timer(registerTimedSection("setsolution", 2))
 {
   // Create MOAB interface
   moabPtr =  std::make_shared<moab::Core>();
@@ -115,6 +118,9 @@ MoabUserObject::system(std::string var_now)
 void
 MoabUserObject::initMOAB()
 {
+
+  TIME_SECTION(_init_timer);
+
   // Fetch spatial dimension from libMesh
   int dim = mesh().spatial_dimension() ;
 
@@ -149,6 +155,8 @@ bool
 MoabUserObject::update()
 {
 
+  TIME_SECTION(_update_timer);
+
   // Clear MOAB mesh data from last timestep
   reset();
 
@@ -168,6 +176,8 @@ MoabUserObject::update()
 bool
 MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, double scaleFactor, bool normToVol)
 {
+  TIME_SECTION(_setsolution_timer);
+
   // Will "throw" a mooseError if var_now not set
   // In normal run just causes a system exit, so don't catch these
   libMesh::System& sys = system(var_now);
