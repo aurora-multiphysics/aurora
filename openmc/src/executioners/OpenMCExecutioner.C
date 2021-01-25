@@ -121,6 +121,7 @@ OpenMCExecutioner::run()
     try
       {
         _time = 1;
+        _problem.execute(EXEC_FINAL);
         _problem.outputStep(EXEC_FINAL);
       }
     catch(std::exception &e)
