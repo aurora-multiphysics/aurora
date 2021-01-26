@@ -79,6 +79,7 @@
   [csv]
     type = CSV
     execute_on = 'final'
+    file_base = "perf_test"
   []
   [pgraph]
     type = PerfGraphOutput
