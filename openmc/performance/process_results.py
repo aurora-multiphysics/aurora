@@ -41,7 +41,7 @@ for nmpi in procs:
 # Plot specifications
 
 #Plot title
-title="Executioner run time"
+title="Time spent in OpenMCExecutioner::run"
 x_label="# Particles"
 y_label="Time / s"
 markers=["^","o","s"]
@@ -63,7 +63,6 @@ ax.set_ylabel(y_label)
 ax.set_xscale("log")
 ax.set_yscale("linear")
 
-#leghandles=[]
 nsets = len(all_datasets)
 
 for iset in range(nsets):
