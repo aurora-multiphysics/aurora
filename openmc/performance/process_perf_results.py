@@ -61,7 +61,7 @@ ax=fig.add_subplot(gs[0])
 ax.set_xlabel(x_label)
 ax.set_ylabel(y_label)
 ax.set_xscale("log")
-ax.set_yscale("linear")
+ax.set_yscale("log")
 
 nsets = len(all_datasets)
 
