@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import sys
 import numpy
+import os.path
 
 class PlotData():
     def __init__(self):
@@ -58,12 +59,16 @@ def getPlotData(info):
             labelbase="# MPI = "+str(nmpi)+" # threads = "+str(nthreads)
             label=labelbase+" (MOOSE)"
             cmplabel=labelbase+" (OpenMC)"
-            plotdata.labels.append(label)
-            plotdata.cmplabels.append(cmplabel)
 
             # Save all the data
-            plotdata.all_datasets.append(datasets)
-            plotdata.all_cmpdatasets.append(cmpdatasets)
+            if len(datasets)!=0 :
+                plotdata.labels.append(label)
+                plotdata.all_datasets.append(datasets)
+
+            if len(cmpdatasets)!=0 :
+                plotdata.cmplabels.append(cmplabel)
+                plotdata.all_cmpdatasets.append(cmpdatasets)
+
     return plotdata
 
 def makePlot(plotdata):
@@ -111,30 +116,31 @@ def makePlot(plotdata):
 
 def get_csv_data(filename):
     timers={}
-    with open(filename, "r") as f:
-        line = f.readline()
-        line = line.rstrip()
-        timer_keys = line.split(",")
-
-        ntimes=len(timer_keys)
-        all_times=[]
-        for i in range(ntimes):
-            all_times.append([])
-
-        while True:
+    if os.path.isfile(filename):
+        with open(filename, "r") as f:
             line = f.readline()
             line = line.rstrip()
-            if line == "":
-                break
+            timer_keys = line.split(",")
 
-            times=line.split(",")
-            if len(times) != ntimes:
-                print("datasets have different lengths")
-                sys.exit()
-
+            ntimes=len(timer_keys)
+            all_times=[]
             for i in range(ntimes):
-                time = times[i]
-                all_times[i].append(time)
+                all_times.append([])
+
+            while True:
+                line = f.readline()
+                line = line.rstrip()
+                if line == "":
+                    break
+
+                times=line.split(",")
+                if len(times) != ntimes:
+                    print("datasets have different lengths")
+                    sys.exit()
+
+                for i in range(ntimes):
+                    time = times[i]
+                    all_times[i].append(time)
 
         timers=dict(zip(timer_keys,all_times))
     return timers
