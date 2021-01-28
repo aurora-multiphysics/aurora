@@ -16,10 +16,53 @@ class PlotData():
         self.cmpdataset_name=""
         self.labels=[]
         self.cmplabels=[]
-
+        self.all_datasets=[]
+        self.all_cmpdatasets=[]
+        self.xdata=[]
         self.outfile=""
 
-def makePlot(all_datasets,all_cmpdatasets,plotdata=[]):
+class RunInfo():
+    def __init__(self):
+        self.filebase=""
+        self.comparefilebase=""
+        self.ext=".csv"
+        self.procs=[]
+        self.parts=[]
+        self.nthreads=1
+
+def getPlotData(info):
+    plotdata=PlotData()
+    plotdata.xdata=info.parts
+    plotdata.x_label="# Particles"
+    plotdata.y_label="Time / s"
+    plotdata.markers=["^","o","s"]
+    plotdata.colours=["red","green","blue"]
+
+    nthreads=info.nthreads
+    for nmpi in info.procs:
+
+        # Dictionaries to store the data for different numbers of processes
+        datasets={}
+        cmpdatasets={}
+
+        # Loop over runs with different numbers of particles
+        for np in info.parts:
+            append_datasets_from_file(info.filebase,np,nmpi,nthreads,info.ext,datasets)
+            append_datasets_from_file(info.comparefilebase,np,nmpi,nthreads,info.ext,cmpdatasets)
+
+        # Create legend lables
+        labelbase="# MPI = "+str(nmpi)
+        label=labelbase+" (MOOSE)"
+        cmplabel=labelbase+" (OpenMC)"
+        plotdata.labels.append(label)
+        plotdata.cmplabels.append(cmplabel)
+
+        # Save all the data
+        plotdata.all_datasets.append(datasets)
+        plotdata.all_cmpdatasets.append(cmpdatasets)
+    return plotdata
+
+def makePlot(plotdata):
     # Create a new plot
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(1,1)
@@ -37,21 +80,22 @@ def makePlot(all_datasets,all_cmpdatasets,plotdata=[]):
     #ax2.set_xscale("log")
     #ax2.set_yscale("log")
 
-    nsets = len(all_datasets)
+    nsets = len(plotdata.all_datasets)
     for iset in range(nsets):
-        data=all_datasets[iset][plotdata.dataset_name][0]
-        errs=all_datasets[iset][plotdata.dataset_name][1]
-        ax.errorbar(parts,data,yerr=errs,c=plotdata.colours[iset],marker=plotdata.markers[iset],label=plotdata.labels[iset])
+        data=plotdata.all_datasets[iset][plotdata.dataset_name][0]
+        errs=plotdata.all_datasets[iset][plotdata.dataset_name][1]
+        ax.errorbar(plotdata.xdata,data,yerr=errs,c=plotdata.colours[iset],marker=plotdata.markers[iset],label=plotdata.labels[iset])
 
-        cmpdata=all_cmpdatasets[iset][plotdata.cmpdataset_name][0]
-        cmperrs=all_cmpdatasets[iset][plotdata.cmpdataset_name][1]
-        ax.errorbar(parts,cmpdata,yerr=cmperrs,c=plotdata.colours[iset],mec=plotdata.colours[iset],mfc='none',marker=plotdata.markers[iset],label=plotdata.cmplabels[iset],ls="--")
+        cmpdata=plotdata.all_cmpdatasets[iset][plotdata.cmpdataset_name][0]
+        cmperrs=plotdata.all_cmpdatasets[iset][plotdata.cmpdataset_name][1]
+        ax.errorbar(plotdata.xdata,cmpdata,yerr=cmperrs,c=plotdata.colours[iset],mec=plotdata.colours[iset],mfc='none',marker=plotdata.markers[iset],label=plotdata.cmplabels[iset],ls="--")
 
     ax.legend(loc='upper left');
     #ax2.legend(loc='upper left');
     fig.suptitle(plotdata.title)
 
     # Save
+    print("Plotting",plotdata.outfile)
     plt.savefig(plotdata.outfile)
 
 
@@ -117,64 +161,35 @@ def append_datasets_from_file(filebase,np,nmpi,nthreads,ext,datasets):
     # Store timings against their keys
     append_datasets(timers,datasets)
 
+# Specify run parameters
+info=RunInfo();
+
 # Patterns for data files
-filebase="perf_test"
-comparefilebase="openmc_perf_test"
-ext=".csv"
+info.filebase="perf_test"
+info.comparefilebase="openmc_perf_test"
+#ext=".csv"
 
 # Run specifications
-procs=[1,2,4]
-parts=[100,1000,10000]
-nthreads=1
+info.procs=[1,2,4]
+info.parts=[100,1000,10000]
+info.nthreads=1
 
-# Get all the performance data in a dictionary
-all_datasets=[]
-all_cmpdatasets=[]
+# Get the data from file
+plotdata=getPlotData(info)
 
-# Place to keep legend text
-labels=[]
-cmplabels=[]
-
-for nmpi in procs:
-
-    # Dictionaries to store the data for different numbers of processes
-    datasets={}
-    cmpdatasets={}
-
-    # Loop over runs with different numbers of particles
-    for np in parts:
-        append_datasets_from_file(filebase,np,nmpi,nthreads,ext,datasets)
-        append_datasets_from_file(comparefilebase,np,nmpi,nthreads,ext,cmpdatasets)
-
-    # Create legend lables
-    labelbase="# MPI = "+str(nmpi)
-    label=labelbase+" (MOOSE)"
-    cmplabel=labelbase+" (OpenMC)"
-    labels.append(label)
-    cmplabels.append(cmplabel)
-
-    # Save all the data
-    all_datasets.append(datasets)
-    all_cmpdatasets.append(cmpdatasets)
-
-# Plot specifications
-
-plotdata=PlotData()
-
-#Plot title
+# Add specific plot specifications
 plotdata.title="Average time spent in OpenMCExecutioner::run vs. openmc_run"
-plotdata.x_label="# Particles"
-plotdata.y_label="Time / s"
-plotdata.markers=["^","o","s"]
-plotdata.colours=["red","green","blue"]
-plotdata.labels=labels
-plotdata.cmplabels=cmplabels
-
-# Specify the dataset we want
 plotdata.dataset_name="executioner_run_time"
 plotdata.cmpdataset_name="simulation"
-
-# Specify an output name
 plotdata.outfile=plotdata.dataset_name+".png"
 
-makePlot(all_datasets,all_cmpdatasets,plotdata)
+# Make plot
+makePlot(plotdata)
+
+plotdata.title="Average total application run time"
+plotdata.dataset_name="main_total_time"
+plotdata.cmpdataset_name="total"
+plotdata.outfile="total_runtime.png"
+
+# Make plot
+makePlot(plotdata)
