@@ -8,7 +8,7 @@ EXOFILE="copper_air_tetmesh.e"
 DAGMCFILE="dagmc.h5m"
 SETTINGSFILE="settings.xml"
 ORIGBASE="perf_test"
-        
+
 # Get OpenMC input files
 for FILE in $(ls ../*.xml); do
     cp $FILE .
@@ -25,6 +25,12 @@ PROCS=(1 2 4)
 # Define number of threads (just 1 for now).
 NTHREAD=1
 
+RUNS=5
+
+BATCHES=10
+SEDCOMMAND="s/(<)(batches) (\/)(>)/\1\2\4$BATCHES\1\3\2\4/g"
+sed -i -E "$SEDCOMMAND" $SETTINGSFILE
+
 # Loop over particles and numbers of processes
 for NPART in ${PARTS[@]}; do
 
@@ -39,18 +45,44 @@ for NPART in ${PARTS[@]}; do
         ORIGFILE="../$ORIGBASE.i"
         INPUTFILE="$INPUTBASE.i"
 
-        # Create an input file with the right file base
-        cp $ORIGFILE $INPUTFILE
-        SEDCOMMAND="s/(\\\")($ORIGBASE)(\\\")/\1$INPUTBASE\3/"
-        sed -i -E $SEDCOMMAND $INPUTFILE
-
-        # Define a log file for console output
+        # Create a log file for console output
         LOGFILE="$INPUTBASE.log"
+        echo "Performing $RUNS runs of $EXEC -i $INPUTFILE with $NMPI cores." > $LOGFILE
 
-        # Run exec with correct number of MPI
+        OUTFILE="$INPUTBASE.csv"
 
         echo "Running $EXEC with $NMPI cores with  input=$INPUTFILE and log=$LOGFILE"
-        mpirun -n $NMPI $EXEC -i $INPUTFILE > $LOGFILE 2>&1
+
+        for irun in `seq 1 $RUNS`; do
+
+            # Create an input file with the right file base
+            cp $ORIGFILE $INPUTFILE
+
+            # Set the pattern for output files
+            FILEBASE="${INPUTBASE}_${irun}"
+            SEDCOMMAND="s/(\\\")($ORIGBASE)(\\\")/\1$FILEBASE\3/"
+            sed -i -E $SEDCOMMAND $INPUTFILE
+
+            # Run exec with correct number of MPI
+            echo "   Run $irun of $RUNS"
+            echo "Run $irun" >> $LOGFILE
+            mpirun -n $NMPI $EXEC -i $INPUTFILE >> $LOGFILE 2>&1
+
+            # Combine output to one file
+            TMPFILE="$FILEBASE.csv"
+
+            # File headings for first run
+            if [ "$irun" -eq "1" ]
+            then
+                head -1 $TMPFILE > $OUTFILE
+            fi
+            # Append file with data
+            tail -1 $TMPFILE >> $OUTFILE
+
+            # Delete temporary file
+            rm $TMPFILE
+
+        done
     done
 done
 

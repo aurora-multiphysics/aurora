@@ -27,6 +27,8 @@ PROCS=(1 2 4)
 # Define number of threads (just 1 for now).
 NTHREAD=1
 
+RUNS=5
+
 # Modify the tally file to use a file for unstructured mesh
 SEDCOMMAND="s/(create=\\\")False(\\\")/\1True\2/g"
 sed -i -E $SEDCOMMAND $TALLYFILE
@@ -54,16 +56,33 @@ for NPART in ${PARTS[@]}; do
         LOGFILE="$BASE.log"
         OUTFILE="$BASE.csv"
 
-        # Run exec with correct number of MPI
-        echo "Running $EXEC with $NMPI cores with log=$LOGFILE and output=$OUTFILE"
-        mpirun -n $NMPI $EXEC > $LOGFILE 2>&1
+        # Logging
+        echo "Performing $RUNS runs of $EXEC with $NMPI cores with log=$LOGFILE and output=$OUTFILE"
+        echo "Performing $RUNS runs of $EXEC with $NMPI cores with output=$OUTFILE" > $LOGFILE
 
-        # Parse the hdf5 file for run times and write to csv file
-        ./get_openmc_runtimes.sh > $OUTFILE
+        for irun in `seq 1 $RUNS`; do
 
-        # Clean up before next run
-        rm statepoint.10.h5
-        rm tally_1.10.vtk
+            # Run exec with correct number of MPI
+            echo "   Run $irun of $RUNS"
+            echo "Run $irun" >> $LOGFILE
+            mpirun -n $NMPI $EXEC >> $LOGFILE 2>&1
+
+            # Parse the hdf5 file for run times and write to csv file
+            TMPFILE="tmp.txt"
+            ./get_openmc_runtimes.sh > $TMPFILE
+            if [ "$irun" -eq "1" ]
+            then
+                head -1 $TMPFILE > $OUTFILE
+            fi
+            # Append file with data
+            tail -1 $TMPFILE >> $OUTFILE
+
+            # Clean up before next run
+            rm $TMPFILE
+            rm statepoint.10.h5
+            rm tally_1.10.vtk
+        done
+
     done
 done
 
