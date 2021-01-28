@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# Start with definitions
+
 # Define executable
 EXEC="openmc"
 
@@ -11,6 +13,22 @@ SETTINGSFILE="settings.xml"
 TALLYFILE="tallies.xml"
 ORIGBASE="openmc_perf_test"
 
+# Define numbers of particles to loop over
+PARTS=(100 1000 10000)
+# Define numbers of processes to loop over
+PROCS=(1 2 4)
+# Define number of threads (just 1 for now).
+THREADS=(1 2 4 8)
+#NTHREAD=1
+
+# I only have 4 physical cores each with 2 threads, so cap at 8 procs
+MAXPROCS=8
+
+# Specify how many repeats to do of each configuration
+RUNS=5
+
+# End of definitions
+
 # Get OpenMC input files
 for FILE in $(ls ../*.xml); do
     cp $FILE .
@@ -19,15 +37,6 @@ done
 # create symbolic links to mesh files
 ln -s ../$DAGMCFILE
 ln -s $MESHPATH$MESHFILE
-
-# Define numbers of particles to loop over
-PARTS=(100 1000 10000)
-# Define numbers of processes to loop over
-PROCS=(1 2 4)
-# Define number of threads (just 1 for now).
-NTHREAD=1
-
-RUNS=5
 
 # Modify the tally file to use a file for unstructured mesh
 SEDCOMMAND="s/(create=\\\")False(\\\")/\1True\2/g"
@@ -52,39 +61,49 @@ for NPART in ${PARTS[@]}; do
 
     for NMPI in ${PROCS[@]}; do
 
-        BASE="${ORIGBASE}_np${NPART}_nmpi${NMPI}_nt${NTHREAD}"
-        LOGFILE="$BASE.log"
-        OUTFILE="$BASE.csv"
+        for NTHREAD in ${THREADS[@]}; do
 
-        # Logging
-        echo "Performing $RUNS runs of $EXEC with $NMPI cores with log=$LOGFILE and output=$OUTFILE"
-        echo "Performing $RUNS runs of $EXEC with $NMPI cores with output=$OUTFILE" > $LOGFILE
-
-        for irun in `seq 1 $RUNS`; do
-
-            # Run exec with correct number of MPI
-            echo "   Run $irun of $RUNS"
-            echo "Run $irun" >> $LOGFILE
-            mpirun -n $NMPI $EXEC >> $LOGFILE 2>&1
-
-            # Parse the hdf5 file for run times and write to csv file
-            TMPFILE="tmp.txt"
-            ./get_openmc_runtimes.sh > $TMPFILE
-            if [ "$irun" -eq "1" ]
-            then
-                head -1 $TMPFILE > $OUTFILE
+            TOTALPROCS=$((NMPI*NTHREAD))
+            if [ $TOTALPROCS  -gt $MAXPROCS ]; then
+                continue
             fi
-            # Append file with data
-            tail -1 $TMPFILE >> $OUTFILE
 
-            # Clean up before next run
-            rm $TMPFILE
-            rm statepoint.10.h5
-            rm tally_1.10.vtk
-        done
+            BASE="${ORIGBASE}_np${NPART}_nmpi${NMPI}_nt${NTHREAD}"
+            LOGFILE="$BASE.log"
+            OUTFILE="$BASE.csv"
 
-    done
-done
+            ## Logging
+            echo "Performing $RUNS runs of $EXEC with $NMPI MPI processes, $NTHREAD threads."
+            echo "  log = $LOGFILE"
+            echo "  output=$OUTFILE"
+            echo "Performing $RUNS runs of $EXEC with $NMPI MPI processes, $NTHREAD threads, and with output=$OUTFILE" > $LOGFILE
+
+            for irun in `seq 1 $RUNS`; do
+
+                # Run exec with correct number of MPI
+                echo "  Run $irun of $RUNS"
+                echo "Run $irun" >> $LOGFILE
+                mpirun -n $NMPI $EXEC -s $NTHREAD >> $LOGFILE 2>&1
+
+                # Parse the hdf5 file for run times and write to csv file
+                TMPFILE="tmp.txt"
+                ./get_openmc_runtimes.sh > $TMPFILE
+                if [ "$irun" -eq "1" ]; then
+                    head -1 $TMPFILE > $OUTFILE
+                fi
+
+                # Append file with data
+                tail -1 $TMPFILE >> $OUTFILE
+
+                # Clean up before next run
+                rm $TMPFILE
+                rm statepoint.10.h5
+                rm tally_1.10.vtk
+
+            done # End loop over runs
+        done # End loop over nthreads
+    done # End loop over nmpi
+done # End loop over particle numbers
 
 # Remove OpenMC input files
 for FILE in $(ls *.xml); do
