@@ -15,8 +15,27 @@ def get_csv_data(filename):
         timers=dict(zip(timer_keys,times))
     return timers
 
+def append_datasets(timers,datasets):
+    for key,time in timers.items():
+        #Strip quotes
+        key=key.strip("\"")
+        if not key in datasets :
+            datasets[key]=[]
+        datasets[key].append(float(time))
 
+def append_datasets_from_file(filebase,np,nmpi,nthreads,ext,datasets):
+    # Define csv filename
+    filename=filebase+"_np"+str(np)+"_nmpi"+str(nmpi)+"_nt"+str(nthreads)+ext
+    # Extract data from file
+    timers=get_csv_data(filename)
+    # Store timings against their keys
+    append_datasets(timers,datasets)
+
+# Patterns for data files
 filebase="perf_test"
+ext=".csv"
+
+# Run specifications
 procs=[1,2,4]
 parts=[100,1000,10000]
 nthreads=1
@@ -27,18 +46,12 @@ labels=[]
 
 for nmpi in procs:
 
+    # Dictionaries to store the data for different numbers of processes
     datasets={}
+
+    # Loop over runs with different numbers of particles
     for np in parts:
-        # Define csv filename
-        filename=filebase+"_np"+str(np)+"_nmpi"+str(nmpi)+"_nt"+str(nthreads)+".csv"
-        # Extract data from file
-        timers=get_csv_data(filename)
-
-        for key,time in timers.items():
-            if not key in datasets :
-                datasets[key]=[]
-            datasets[key].append(float(time))
-
+        append_datasets_from_file(filebase,np,nmpi,nthreads,ext,datasets)
 
     label="# MPI = "+str(nmpi)
     labels.append(label)
