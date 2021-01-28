@@ -28,6 +28,7 @@ class RunInfo():
         self.ext=".csv"
         self.procs=[]
         self.parts=[]
+        self.threads=[]
         self.nthreads=1
 
 def getPlotData(info):
@@ -38,28 +39,29 @@ def getPlotData(info):
     plotdata.markers=["^","o","s"]
     plotdata.colours=["red","green","blue"]
 
-    nthreads=info.nthreads
     for nmpi in info.procs:
 
-        # Dictionaries to store the data for different numbers of processes
-        datasets={}
-        cmpdatasets={}
+        for nthreads in info.threads:
 
-        # Loop over runs with different numbers of particles
-        for np in info.parts:
-            append_datasets_from_file(info.filebase,np,nmpi,nthreads,info.ext,datasets)
-            append_datasets_from_file(info.comparefilebase,np,nmpi,nthreads,info.ext,cmpdatasets)
+            # Dictionaries to store the data for different numbers of processes/threads
+            datasets={}
+            cmpdatasets={}
 
-        # Create legend lables
-        labelbase="# MPI = "+str(nmpi)
-        label=labelbase+" (MOOSE)"
-        cmplabel=labelbase+" (OpenMC)"
-        plotdata.labels.append(label)
-        plotdata.cmplabels.append(cmplabel)
+            # Loop over runs with different numbers of particles
+            for np in info.parts:
+                append_datasets_from_file(info.filebase,np,nmpi,nthreads,info.ext,datasets)
+                append_datasets_from_file(info.comparefilebase,np,nmpi,nthreads,info.ext,cmpdatasets)
 
-        # Save all the data
-        plotdata.all_datasets.append(datasets)
-        plotdata.all_cmpdatasets.append(cmpdatasets)
+            # Create legend lables
+            labelbase="# MPI = "+str(nmpi)+" # threads = "+str(nthreads)
+            label=labelbase+" (MOOSE)"
+            cmplabel=labelbase+" (OpenMC)"
+            plotdata.labels.append(label)
+            plotdata.cmplabels.append(cmplabel)
+
+            # Save all the data
+            plotdata.all_datasets.append(datasets)
+            plotdata.all_cmpdatasets.append(cmpdatasets)
     return plotdata
 
 def makePlot(plotdata):
@@ -171,8 +173,8 @@ info.comparefilebase="openmc_perf_test"
 
 # Run specifications
 info.procs=[1,2,4]
+info.threads=[1]
 info.parts=[100,1000,10000]
-info.nthreads=1
 
 # Get the data from file
 plotdata=getPlotData(info)
