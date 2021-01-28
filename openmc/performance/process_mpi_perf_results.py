@@ -21,7 +21,7 @@ plotdata=getPlotData(info)
 plotdata.title="Average time spent in OpenMCExecutioner::run vs. openmc_run"
 plotdata.dataset_name="executioner_run_time"
 plotdata.cmpdataset_name="simulation"
-plotdata.outfile=plotdata.dataset_name+".png"
+plotdata.outstem=plotdata.dataset_name
 
 # Make plot
 makePlot(plotdata)
@@ -29,7 +29,7 @@ makePlot(plotdata)
 plotdata.title="Average total application run time"
 plotdata.dataset_name="main_total_time"
 plotdata.cmpdataset_name="total"
-plotdata.outfile="total_runtime.png"
+plotdata.outstem="total_runtime"
 
 # Make plot
 makePlot(plotdata)

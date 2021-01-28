@@ -19,7 +19,9 @@ class PlotData():
         self.all_datasets=[]
         self.all_cmpdatasets=[]
         self.xdata=[]
-        self.outfile=""
+        self.outext=".png"
+        self.runtype=""
+        self.outstem=""
 
 class RunInfo():
     def __init__(self):
@@ -36,8 +38,8 @@ def getPlotData(info):
     plotdata.xdata=info.parts
     plotdata.x_label="# Particles"
     plotdata.y_label="Time / s"
-    plotdata.markers=["^","o","s"]
-    plotdata.colours=["red","green","blue"]
+    plotdata.markers=["^","o","s", "d"]
+    plotdata.colours=["red","green","blue", "orange"]
 
     for nmpi in info.procs:
 
@@ -92,13 +94,19 @@ def makePlot(plotdata):
         cmperrs=plotdata.all_cmpdatasets[iset][plotdata.cmpdataset_name][1]
         ax.errorbar(plotdata.xdata,cmpdata,yerr=cmperrs,c=plotdata.colours[iset],mec=plotdata.colours[iset],mfc='none',marker=plotdata.markers[iset],label=plotdata.cmplabels[iset],ls="--")
 
-    ax.legend(loc='upper left');
-    #ax2.legend(loc='upper left');
+    ax.legend(loc='upper left')
+    #ax2.legend(loc='upper left')
     fig.suptitle(plotdata.title)
 
+    # Specify outfile name
+    outfile=plotdata.outstem
+    if plotdata.runtype != "":
+        outfile+="_"+plotdata.runtype
+    outfile+=plotdata.outext
+
     # Save
-    print("Plotting",plotdata.outfile)
-    plt.savefig(plotdata.outfile)
+    print("Plotting",outfile)
+    plt.savefig(outfile)
 
 
 def get_csv_data(filename):
