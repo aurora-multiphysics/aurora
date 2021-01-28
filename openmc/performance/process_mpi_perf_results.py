@@ -8,7 +8,6 @@ info=RunInfo();
 # Patterns for data files
 info.filebase="perf_test"
 info.comparefilebase="openmc_perf_test"
-#ext=".csv"
 
 # Run specifications
 info.procs=[1,2,4]
