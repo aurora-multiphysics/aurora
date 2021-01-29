@@ -23,6 +23,7 @@ class PlotData():
         self.outext=".png"
         self.runtype=""
         self.outstem=""
+        self.ylim=[]
 
 class RunInfo():
     def __init__(self):
@@ -98,6 +99,9 @@ def makePlot(plotdata):
         cmpdata=plotdata.all_cmpdatasets[iset][plotdata.cmpdataset_name][0]
         cmperrs=plotdata.all_cmpdatasets[iset][plotdata.cmpdataset_name][1]
         ax.errorbar(plotdata.xdata,cmpdata,yerr=cmperrs,c=plotdata.colours[iset],mec=plotdata.colours[iset],mfc='none',marker=plotdata.markers[iset],label=plotdata.cmplabels[iset],ls="--")
+
+    if(len(plotdata.ylim) == 2):
+        ax.set_ylim(plotdata.ylim[0],plotdata.ylim[1])
 
     ax.legend(loc='upper left')
     #ax2.legend(loc='upper left')
