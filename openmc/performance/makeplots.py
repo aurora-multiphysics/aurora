@@ -39,8 +39,8 @@ def getPlotData(info):
     plotdata.xdata=info.parts
     plotdata.x_label="# Particles"
     plotdata.y_label="Time / s"
-    plotdata.markers=["^","o","s", "d"]
-    plotdata.colours=["red","green","blue", "orange"]
+    plotdata.markers=["^","o","s","d","p"]
+    plotdata.colours=["red","green","blue", "orange","purple"]
 
     for nmpi in info.procs:
 
