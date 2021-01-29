@@ -17,9 +17,8 @@ ORIGBASE="openmc_perf_test"
 PARTS=(100 1000 10000)
 # Define numbers of processes to loop over
 PROCS=(1 2 4)
-# Define number of threads (just 1 for now).
+# Define number of threads to loop over
 THREADS=(1 2 4 8)
-#NTHREAD=1
 
 # I only have 4 physical cores each with 2 threads, so cap at 8 procs
 MAXPROCS=8
@@ -48,6 +47,7 @@ sed -i -E $SEDCOMMAND $TALLYFILE
 SEDCOMMAND="s/(<)(filename) (\/)(>)/\1\2\4$MESHFILE\1\3\2\4/g"
 sed -i -E "$SEDCOMMAND" $TALLYFILE
 
+# Turn back on statepoint generation
 BATCHES=10
 SEDCOMMAND="s/(<)(batches) (\/)(>)/\1\2\4$BATCHES\1\3\2\4/g"
 sed -i -E "$SEDCOMMAND" $SETTINGSFILE
