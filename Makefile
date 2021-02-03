@@ -47,9 +47,11 @@ XFEM                        := no
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
+OPENMC_APP_NAME = open_mc
+OPENMC_APP_LIB_NAME = $(OPENMC_APP_NAME)-$(METHOD)
 OPENMC_APP_DIR = $(CURDIR)/openmc
 OPENMC_APP_INC = -I$(OPENMC_APP_DIR)/include
-OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_APP_DIR)/lib -L$(OPENMC_APP_DIR)/lib -lopen_mc-opt
+OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_APP_DIR)/lib -L$(OPENMC_APP_DIR)/lib -l$(OPENMC_APP_LIB_NAME)
 
 include $(OPENMC_APP_DIR)/config.inc
 
