@@ -510,7 +510,7 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
   // Done
   return true;
 
-};
+}
 
 int32_t
 OpenMCExecutioner::getFilterBin(int32_t iResultBin, const FilterInfo & filter)
@@ -539,7 +539,7 @@ OpenMCExecutioner::getFilterBin(int32_t iResultBin, const FilterInfo & filter)
   }
 
   return filter_bin_index;
-};
+}
 
 bool
 OpenMCExecutioner::decomposeIntoFilterBins(int32_t iResultBin,
@@ -563,7 +563,7 @@ OpenMCExecutioner::decomposeIntoFilterBins(int32_t iResultBin,
   }
 
   return true;
-};
+}
 
 
 bool
@@ -756,8 +756,8 @@ OpenMCExecutioner::completeSetup()
   // Copied code segment from openmc::read_input_xml()
 
   // Convert user IDs -> indices, assign temperatures
-  openmc::double_2dvec nuc_temps(openmc::data::nuclide_map.size());
-  openmc::double_2dvec thermal_temps(openmc::data::thermal_scatt_map.size());
+  std::vector<std::vector<double>> nuc_temps(openmc::data::nuclide_map.size());
+  std::vector<std::vector<double>> thermal_temps(openmc::data::thermal_scatt_map.size());
   openmc::finalize_geometry(nuc_temps, thermal_temps);
 
   if (openmc::settings::run_mode != openmc::RunMode::PLOTTING) {
