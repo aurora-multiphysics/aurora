@@ -173,7 +173,6 @@ OpenMCExecutioner::initMOAB()
 
       // Check if the user object already has a problem, e.g. through a transfer, in which case don't pass one in
       if(!moabUO.hasProblem()){
-        FEProblemBase& problem = feProblem();
         moabUO.setProblem(&feProblem());
         setProblemLocal=true;
       }
@@ -592,7 +591,7 @@ OpenMCExecutioner::reloadDAGMC()
   moab::ErrorCode rval;
 
   // Backup streambuffer of std out if redirecting
-  std::streambuf* stream_buffer_stdout;
+  std::streambuf* stream_buffer_stdout(nullptr);
 
   if(redirect_dagout){
     // Don't reopen log file
@@ -645,7 +644,7 @@ OpenMCExecutioner::reloadDAGMC()
   dmdPtr = std::make_unique<dagmcMetaData>(dagPtr, false, false);
   dmdPtr->load_property_data();
 
-  if(redirect_dagout){
+  if(redirect_dagout && stream_buffer_stdout!= nullptr){
     // Reset cout streambuffer
     std::cout.rdbuf(stream_buffer_stdout);
   }

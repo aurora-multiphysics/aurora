@@ -297,7 +297,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
   // Initialise an array for moab connectivity
   unsigned int nNodes = 4;
-  moab::EntityHandle conn[nNodes];
+  std::vector<moab::EntityHandle> conn(nNodes);
   moab::Range all_elems;
 
   // Iterate over elements in the mesh
@@ -336,7 +336,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
     // Create an element in MOAB database
     moab::EntityHandle ent(0);
-    rval = moabPtr->create_element(moab::MBTET,conn,nNodes,ent);
+    rval = moabPtr->create_element(moab::MBTET,conn.data(),nNodes,ent);
     if(rval!=moab::MB_SUCCESS){
       clearElemMaps();
       return rval;
@@ -495,10 +495,13 @@ MoabUserObject::setTags(moab::EntityHandle ent, std::string name, std::string ca
 moab::ErrorCode
 MoabUserObject::setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE)
 {
-  char namebuf[SIZE];
+  auto namebuf= new char[SIZE];
   memset(namebuf,'\0', SIZE); // fill C char array with null
   strncpy(namebuf,data.c_str(),SIZE-1);
-  return moabPtr->tag_set_data(tag,&ent,1,namebuf);
+  moab::ErrorCode rval = moabPtr->tag_set_data(tag,&ent,1,namebuf);
+  // deallocate memory
+  delete[] namebuf;
+  return rval;
 }
 
 moab::ErrorCode
@@ -698,7 +701,7 @@ MoabUserObject::sortElemsByResults()
 
         // Sort elems into a bin
         if(iBin < 0) underflowElems.insert(id);
-        else if(iBin >= nVarBins) overflowElems.insert(id);
+        else if(iBin >= int(nVarBins)) overflowElems.insert(id);
         else{
           unsigned int iSortBin = iMat*nVarBins + iBin;
           sortedElems.at(iSortBin).insert(id);
@@ -814,7 +817,7 @@ MoabUserObject::writeSurfaces()
   if(processor_id() != 0) return true;
 
   if(n_write >= n_output){
-    output_skins; // Don't write any more times
+    output_skins=false; // Don't write any more times
     return true;
   }
 
