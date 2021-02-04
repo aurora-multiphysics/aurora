@@ -22,7 +22,7 @@ VariableFunction::validParams()
 VariableFunction::VariableFunction(const InputParameters & parameters) :
   Function(parameters),
   userObjName("uoname")
-{};
+{}
 
 void
 VariableFunction::initialSetup()
@@ -37,5 +37,5 @@ VariableFunction::value(Real /*t*/, const Point & p) const
     return Real(meshFunction->value(p));
   }
   else return 0.;  
-};
+}
 
