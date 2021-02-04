@@ -531,12 +531,22 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
   // Fetch a reference to our system
   libMesh::System& sys = systems().get_system(iSysNow);
 
-  // Ensure we map our bins onto unique indices
-  std::set<dof_id_type> sol_indices;
+  // Keep track of whether we have non-trivial results on this processor.
+  bool procHasNonZeroResult=false;
 
-  // Loop over mesh filter bins
-  bool hasNonZeroResult=false;
-  for(unsigned int iBin=0; iBin< results.size(); iBin++){
+  // When we set the solution, we only want to set dofs that belong to this process
+  auto itelem  = mesh().local_elements_begin();
+  auto endelem = mesh().local_elements_end();
+  for( ; itelem!=endelem; ++itelem){
+
+    Elem& elem = **itelem;
+    dof_id_type id = elem.id();
+
+    // Fetch the mesh filter bin index
+    unsigned int iBin = elem_id_to_bin_index(id);
+    if( (iBin+1) > results.size() ){
+      throw std::runtime_error("Mismatch in size of results vector and number of elements");
+    }
 
     // Result for this bin
     double result = results.at(iBin);
@@ -544,39 +554,36 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
     // Scale the result
     result*=scaleFactor;
 
-    // Convert the bin index to a libmesh id
-    dof_id_type id = bin_index_to_elem_id(iBin);
-
     if(normToVol){
       // Fetch the volume of element
-      double vol = elemVolume(id);
+      double vol = elem.volume();
       // Normalise result to the element volume
       result /= vol;
     }
 
     // Get the solution index for this element
-    dof_id_type index = elem_id_to_soln_index(iSysNow,iVarNow,id);
-
-    // Check we haven't used this index already
-    if(sol_indices.find(index)!= sol_indices.end()){
-      mooseError("OpenMC indices non-uniquely map to solution indices.");
-    }
-    sol_indices.insert(index);
+    dof_id_type index = elem_to_soln_index(elem,iSysNow,iVarNow);
 
     // Set the solution for this index
     sys.solution->set(index,result);
 
-    if(!hasNonZeroResult && fabs(result) > 1.e-9){
-      hasNonZeroResult=true;
+    if(!procHasNonZeroResult && fabs(result) > 1.e-9){
+      procHasNonZeroResult=true;
     }
   }
 
-  // Final check that there was a solution found for each element
-  if(sol_indices.size() != _elem_handle_to_id.size()){
-    throw std::runtime_error("Mismatch in size of results vector and number of elements");
-  }
+  // Synchronise processes
+  comm().barrier();
 
-  if(!hasNonZeroResult){
+  // If we found a non-zero result on this process, tell all the other proceses
+  // Convert to int, and find maximum accross all procs
+  int hasNonZeroResultInt=int(procHasNonZeroResult);
+  comm().max(hasNonZeroResultInt);
+  // Convert back to bool
+  bool hasNonZeroResultGlobal = bool(hasNonZeroResultInt);
+
+  // Warn if there was no non-zero result accross all processes
+  if(!hasNonZeroResultGlobal){
     mooseWarning("OpenMC results are everywhere zero.");
   }
 
@@ -593,20 +600,10 @@ MoabUserObject::getTemperature(moab::EntityHandle vol)
   return volToTemp[vol];
 }
 
-double
-MoabUserObject::elemVolume(dof_id_type id)
-{
-  return mesh().elem_ref(id).volume();
-}
-
 dof_id_type
-MoabUserObject::elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, dof_id_type id)
+MoabUserObject::elem_to_soln_index(const Elem& elem,unsigned int iSysNow,  unsigned int iVarNow)
 {
-
-  // Get a reference to the element with this ID
-  Elem& elem  = mesh().elem_ref(id);
-
-  // Expect only one component, but check anyay
+    // Expect only one component, but check anyay
   unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
   if(n_components != 1){
     throw std::runtime_error("Unexpected number of expected solution components");
@@ -616,27 +613,24 @@ MoabUserObject::elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow
   dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
 
   return soln_index;
-
 }
 
-dof_id_type
-MoabUserObject::bin_index_to_elem_id(unsigned int index)
+unsigned int
+MoabUserObject::elem_id_to_bin_index(dof_id_type id)
 {
-  // Convert the bin index to an entity handle
-  if(index > _elem_handle_to_id.size() )
-    throw std::runtime_error("Bin index is out of range.");
 
-  // Conversion assumes ent handles were set contiguously in OpenMC
-  moab::EntityHandle ent = (_elem_handle_to_id.begin())->first + index;
+  // Convert the elem id to an entity handle
+  if(_id_to_elem_handle.find(id)==_id_to_elem_handle.end())
+    throw std::runtime_error("Elem id not matched to an entity handle");
+  moab::EntityHandle ent =  _id_to_elem_handle[id];
 
-  if(_elem_handle_to_id.find(ent)==_elem_handle_to_id.end())
-    throw std::runtime_error("Unknown entity handle");
+  // Conversion to index
+  moab::EntityHandle offset = (_elem_handle_to_id.begin())->first;
+  unsigned int index = ent - offset;
 
-  // Convert the entity handle to a libMesh id
-  dof_id_type id = _elem_handle_to_id[ent];
-
-  return id;
+  return index;
 }
+
 
 bool
 MoabUserObject::sortElemsByResults()
@@ -673,41 +667,56 @@ MoabUserObject::sortElemsByResults()
     // Get the subdomains for this material
     std::set<SubdomainID>& blocks = mat_blocks.at(iMat);
 
-    // Iterate over elements in this materials
-    auto itelem = mesh().active_subdomain_set_elements_begin(blocks);
-    auto endelem = mesh().active_subdomain_set_elements_end(blocks);
-    for( ; itelem!=endelem; ++itelem){
+    // Loop over subdomains
+    for( const auto block_id : blocks){
 
-      Elem& elem = **itelem;
-      dof_id_type id = elem.id();
+      // Iterate over elements in this material whose dofs belong to this proc
+      auto itelem = mesh().active_local_subdomain_elements_begin(block_id);
+      auto endelem = mesh().active_local_subdomain_elements_end(block_id);
+      for( ; itelem!=endelem; ++itelem){
 
-      // Check the number of components for this var
-      unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
-      if(n_components != 1){
-        std::cout<< "Unexpected number of expected solution components: "<<n_components<<std::endl;
-        return false;
-      }
+        Elem& elem = **itelem;
+        dof_id_type id = elem.id();
 
-      // Get the degree of freedom number for this var
-      dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
+        // Check the number of components for this var
+        unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
+        if(n_components != 1){
+          std::cout<< "Unexpected number of expected solution components: "<<n_components<<std::endl;
+          return false;
+        }
 
-      // Get the solution value
-      // NB this won't work for nodal variables.
-      // Need to devise alternative method here, e.g mesh_function
-      double result = sysPtr->solution->el(soln_index);
+        // Get the degree of freedom number for this var
+        dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
 
-      // Calculate the bin number for this value
-      int iBin = getResultsBin(result);
+        // Get the solution value
+        // NB this won't work for nodal variables.
+        // Need to devise alternative method here, e.g mesh_function
+        double result = sysPtr->solution->el(soln_index);
 
-      // Sort elems into a bin
-      if(iBin < 0) underflowElems.insert(id);
-      else if(iBin >= nVarBins) overflowElems.insert(id);
-      else{
-        unsigned int iSortBin = iMat*nVarBins + iBin;
-        sortedElems.at(iSortBin).insert(id);
+        // Calculate the bin number for this value
+        int iBin = getResultsBin(result);
+
+        // Sort elems into a bin
+        if(iBin < 0) underflowElems.insert(id);
+        else if(iBin >= nVarBins) overflowElems.insert(id);
+        else{
+          unsigned int iSortBin = iMat*nVarBins + iBin;
+          sortedElems.at(iSortBin).insert(id);
+        }
+
       }
     }
   }
+
+  // MPI communication
+  for( unsigned int iSortBin=0; iSortBin< sortedElems.size(); iSortBin++){
+    // Get a reference
+    std::set<dof_id_type>& sortedBinElems = sortedElems.at(iSortBin);
+    // Get the union of the set over all procs
+    communicateDofSet(sortedBinElems);
+  }
+  communicateDofSet(underflowElems);
+  communicateDofSet(overflowElems);
 
   // Report how many elems fell outside the range
   // TODO - Should it be an error?
@@ -721,6 +730,12 @@ MoabUserObject::sortElemsByResults()
 
   return true;
 
+}
+
+void
+MoabUserObject::communicateDofSet(std::set<dof_id_type>& dofset)
+{
+  comm().set_union(dofset);
 }
 
 bool
@@ -794,6 +809,9 @@ MoabUserObject::findSurfaces()
 bool
 MoabUserObject::writeSurfaces()
 {
+
+  // Only write to file on root process
+  if(processor_id() != 0) return true;
 
   if(n_write >= n_output){
     output_skins; // Don't write any more times

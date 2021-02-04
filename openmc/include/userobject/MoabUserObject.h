@@ -127,12 +127,8 @@ private:
   void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool normToVol);
 
   // Helper methods to convert between indices
-  dof_id_type elem_id_to_soln_index(unsigned int iSysNow, unsigned int iVarNow, dof_id_type id);
-  dof_id_type bin_index_to_elem_id(unsigned int index);
-
-  // Return the volume of an element (use for tally normalisation)
-  double elemVolume(dof_id_type id);
-
+  dof_id_type elem_to_soln_index(const Elem& elem,unsigned int iSysNow, unsigned int iVarNow);
+  unsigned int elem_id_to_bin_index(dof_id_type id);
   // Sort elems in to bins of a given temperature
   bool sortElemsByResults();
 
@@ -163,6 +159,8 @@ private:
   bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 
   bool writeSurfaces();
+
+  void communicateDofSet(std::set<dof_id_type>& dofset);
 
   // Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
