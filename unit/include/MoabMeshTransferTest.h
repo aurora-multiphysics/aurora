@@ -36,11 +36,11 @@ protected:
     // Check transfers
     std::vector< std::shared_ptr< Transfer > > transfers_from =
       problemPtr->getTransfers(Transfer::DIRECTION::FROM_MULTIAPP);
-    EXPECT_EQ(transfers_from.size(),0);
+    EXPECT_EQ(transfers_from.size(),size_t(0));
 
     std::vector< std::shared_ptr< Transfer > > transfers_to =
       problemPtr->getTransfers(Transfer::DIRECTION::TO_MULTIAPP);
-    ASSERT_EQ(transfers_to.size(),1);
+    ASSERT_EQ(transfers_to.size(),size_t(1));
 
     // Upcast transfer ptr
     mbMeshTransferPtr =
@@ -52,7 +52,7 @@ protected:
 
     // Get sub app ptr
     ASSERT_TRUE(multiAppPtr->hasApp());
-    ASSERT_EQ(multiAppPtr->numGlobalApps(),1);
+    ASSERT_EQ(multiAppPtr->numGlobalApps(),size_t(1));
     ASSERT_TRUE(multiAppPtr->hasLocalApp(0));
     MooseApp * subAppPtr = multiAppPtr->localApp(0);
     ASSERT_NE(subAppPtr, nullptr);

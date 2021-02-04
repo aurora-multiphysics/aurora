@@ -35,7 +35,7 @@ TEST_F(FunctionUserObjectTest, checkSolution)
     Point p = centroids.at(iPoint);
     double result = results.at(iPoint);
     // Evaluate the function at p
-    double function_result;
+    double function_result(0.);
     EXPECT_NO_THROW(evalFunction(p,function_result));
     // Check
     double diff = fabs(function_result-result);
@@ -47,10 +47,10 @@ TEST_F(FunctionUserObjectTest, checkSolution)
     unsigned int nNodes = elem.n_nodes();
     for(unsigned int iNode=0; iNode<nNodes; iNode++){
       Point pNode = elem.point(iNode);
-      double node_result;
+      double node_result(0.);
       EXPECT_NO_THROW(evalFunction(pNode,node_result));
       double nodediff = fabs(node_result-result);
-      EXPECT_LE(diff,tol) << "Result differs for node "<< iNode;
+      EXPECT_LE(nodediff,tol) << "Result differs for node "<< iNode;
     }
   }
 

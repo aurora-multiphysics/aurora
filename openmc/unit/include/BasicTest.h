@@ -47,7 +47,7 @@ class BasicTest : public ::testing::Test {
       app = AppFactory::createAppShared(appName, argc, argv);
       appIsNull = ( app == nullptr );
     }
-    catch(std::exception e){
+    catch(std::exception& e){
       std::cout<<e.what()<<std::endl;
       appIsNull = true;
     }
