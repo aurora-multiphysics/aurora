@@ -43,7 +43,7 @@ protected:
 
       foundMOAB = true;
     }
-    catch(std::exception e){
+    catch(std::exception& e){
       std::cout<<e.what()<<std::endl;
     }
 
@@ -81,9 +81,9 @@ protected:
 
   bool checkSystem(){
     try{
-      System & sys = getSys();
+      getSys();
     }
-    catch(std::runtime_error e){
+    catch(std::runtime_error& e){
       return false;
     }
     return true;
@@ -498,7 +498,7 @@ protected:
       // Downcast category name
       char namebuf[CATEGORY_TAG_SIZE];
       memset(namebuf,'\0', CATEGORY_TAG_SIZE); // fill C char array with null
-      strncpy(namebuf,cat.c_str(), CATEGORY_TAG_SIZE); // Copy category data into namebuf
+      strncpy(namebuf,cat.c_str(),cat.size()); // Copy category data into namebuf
       const void * data = namebuf;
 
       // Get entity sets in this category
@@ -509,24 +509,24 @@ protected:
       if(cat =="Volume") vols = ents;
       else if(cat =="Surface") surfs = ents;
 
-      unsigned int nCat = category.second.size();
+      size_t nCat = category.second.size();
       EXPECT_EQ(ents.size(),nCat);
       if( ents.size()!= nCat ) continue;
 
       // Get the values of the other tags
-      char names[nCat][NAME_TAG_SIZE];
-      rval = moabPtr->tag_get_data (name_tag,ents,&names);
+      auto names = new char[nCat][NAME_TAG_SIZE];
+      rval = moabPtr->tag_get_data (name_tag,ents,names);
       if(cat =="Group")
         EXPECT_EQ(rval,moab::MB_SUCCESS);
       else
         EXPECT_NE(rval,moab::MB_SUCCESS);
 
-      int dims[nCat];
-      rval = moabPtr->tag_get_data (geom_tag,ents,&dims);
+      std::vector<int> dims(nCat);
+      rval = moabPtr->tag_get_data (geom_tag,ents,dims.data());
       EXPECT_EQ(rval,moab::MB_SUCCESS);
 
-      int ids[nCat];
-      rval = moabPtr->tag_get_data (id_tag,ents,&ids);
+      std::vector<int> ids(nCat);
+      rval = moabPtr->tag_get_data (id_tag,ents,ids.data());
       EXPECT_EQ(rval,moab::MB_SUCCESS);
 
       // Check tag values
@@ -579,6 +579,9 @@ protected:
         EXPECT_EQ(dims[iCat],tags.dim);
         EXPECT_EQ(ids[iCat],tags.id);
       }
+      // Deallocate memory
+      delete[] names;
+
     } // End loop over categories
 
     // Check every volume is assigned to a group
@@ -601,8 +604,8 @@ protected:
 
       // Expect either one or two volumes
       size_t nVols = parents.size();
-      EXPECT_LT(nVols,3);
-      EXPECT_GT(nVols,0);
+      EXPECT_LT(nVols,size_t(3));
+      EXPECT_GT(nVols,size_t(0));
 
       std::vector<int> senses;
       for(auto parent: parents){
@@ -648,7 +651,7 @@ protected:
     // Downcast category name
     char namebuf[CATEGORY_TAG_SIZE];
     memset(namebuf,'\0', CATEGORY_TAG_SIZE); // fill C char array with null
-    strncpy(namebuf,cat.c_str(), CATEGORY_TAG_SIZE); // Copy category data into namebuf
+    strncpy(namebuf,cat.c_str(),cat.size()); // Copy category data into namebuf
     const void * name_data = namebuf;
 
     // Downcast id
@@ -663,7 +666,7 @@ protected:
     ASSERT_EQ(rval,moab::MB_SUCCESS);
 
     // Only expect one entity
-    ASSERT_EQ(ents.size(),1);
+    ASSERT_EQ(ents.size(),size_t(1));
 
     // Return the entity
     ent = ents[0];
@@ -720,7 +723,7 @@ protected:
     }
 
     // Found all the surfs
-    EXPECT_EQ(surf_ids.size(),0);
+    EXPECT_EQ(surf_ids.size(),size_t(0));
 
     // Check temperature
     if(isGraveyard){
@@ -869,22 +872,22 @@ TEST_F(MoabUserObjectTest, init)
   moab::Range ents;
   rval = moabPtr->get_entities_by_type(rootset,moab::MBENTITYSET,ents);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  ASSERT_EQ(ents.size(),1);
+  ASSERT_EQ(ents.size(),size_t(1));
   moab::EntityHandle meshset = ents.back();
 
   // Check nodes
   ents.clear();
   rval = moabPtr->get_entities_by_dimension(rootset,0,ents);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(ents.size(),2409);
+  EXPECT_EQ(ents.size(),size_t(2409));
 
   // Check elems
   ents.clear();
   rval = moabPtr->get_entities_by_dimension(rootset,3,ents);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(ents.size(),11972);
+  EXPECT_EQ(ents.size(),size_t(11972));
   size_t nTets = ents.num_of_type(moab::MBTET);
-  EXPECT_EQ(nTets,11972);
+  EXPECT_EQ(nTets,size_t(11972));
 
   // Check built-in tags
   moab::Tag tag_handle;
@@ -992,7 +995,7 @@ TEST_F(MoabUserObjectTest, reset)
     ents.clear();
     rval = moabPtr->get_entities_by_dimension(rootset,dim,ents);
     EXPECT_EQ(rval,moab::MB_SUCCESS);
-    EXPECT_EQ(ents.size(),0);
+    EXPECT_EQ(ents.size(),size_t(0));
   }
 
 }
@@ -1306,7 +1309,7 @@ TEST_F(FindSingleMatSurfs, manyBins)
   std::vector<int> surfaces = {1,3,2,4,5};
   // Width of temperature bins
   double binWidth=20.0;
-  for(int iVol=1; iVol<nVol; iVol++){
+  for(unsigned int iVol=1; iVol<nVol; iVol++){
     surf_ids.clear();
     int outer = surfaces.at(iVol-1);
     surf_ids.insert(outer);
@@ -1446,7 +1449,7 @@ TEST_F(FindLogBinSurfs, manyBins)
   // Parameters to compare the temperature
   double tnow = pow(10,2.25);
   double proddiff = pow(10,0.5);
-  for(int iVol=1; iVol<nVol; iVol++){
+  for(unsigned int iVol=1; iVol<nVol; iVol++){
     surf_ids.clear();
     int outer = surfaces.at(iVol-1);
     surf_ids.insert(outer);
