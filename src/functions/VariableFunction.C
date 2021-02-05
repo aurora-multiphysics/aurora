@@ -34,17 +34,33 @@ Real
 VariableFunction::value(Real /*t*/, const Point & p) const
 {
   Real value(0.);
+  bool exception=false;
+  std::string errmsg;
   {
     // If multi-threaded, execute one thread at a time because
     // meshFunction references the same UserObject
     // so need to avoid a data race
     // TODO: make this better
+
 #ifdef LIBMESH_HAVE_OPENMP
 #pragma omp critical
 #endif
-    if(meshFunction!=nullptr){
-      value = Real(meshFunction->value(p));
+    // We must catch any exceptions thrown within critical block
+    // and rethrow otherwise program will exit
+    try{
+      if(meshFunction!=nullptr && !exception){
+        value = Real(meshFunction->value(p));
+      }
+    }
+    catch(std::logic_error& e){
+      exception=true;
+      errmsg=e.what();
     }
   }
+
+  if(exception){
+    throw std::logic_error(errmsg);
+  }
+
   return value;
 }
