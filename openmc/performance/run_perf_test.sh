@@ -2,8 +2,11 @@
 
 # Start with definitions
 
+# Define the build method
+METHOD="opt"
+
 # Define executable
-EXEC="../open_mc-opt"
+EXEC="../open_mc-$METHOD"
 
 # Define input file strings
 EXOFILE="copper_air_tetmesh.e"
@@ -60,7 +63,7 @@ for NPART in ${PARTS[@]}; do
             fi
 
             # Set moose inputfile name
-            INPUTBASE="${ORIGBASE}_np${NPART}_nmpi${NMPI}_nt${NTHREAD}"
+            INPUTBASE="${ORIGBASE}-${METHOD}_np${NPART}_nmpi${NMPI}_nt${NTHREAD}"
             ORIGFILE="../$ORIGBASE.i"
             INPUTFILE="$INPUTBASE.i"
 
