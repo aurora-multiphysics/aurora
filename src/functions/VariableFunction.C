@@ -18,7 +18,7 @@ VariableFunction::validParams()
 
   return params;
 }
-  
+
 VariableFunction::VariableFunction(const InputParameters & parameters) :
   Function(parameters),
   userObjName("uoname")
@@ -33,9 +33,18 @@ VariableFunction::initialSetup()
 Real
 VariableFunction::value(Real /*t*/, const Point & p) const
 {
-  if(meshFunction!=nullptr){
-    return Real(meshFunction->value(p));
+  Real value(0.);
+  {
+    // If multi-threaded, execute one thread at a time because
+    // meshFunction references the same UserObject
+    // so need to avoid a data race
+    // TODO: make this better
+#ifdef LIBMESH_HAVE_OPENMP
+#pragma omp critical
+#endif
+    if(meshFunction!=nullptr){
+      value = Real(meshFunction->value(p));
+    }
   }
-  else return 0.;  
+  return value;
 }
-
