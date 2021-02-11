@@ -34,6 +34,8 @@ class RunInfo():
         self.parts=[]
         self.threads=[]
         self.nthreads=1
+        self.dataset_label="MOOSE"
+        self.cmpdataset_label="OpenMC"
 
 def getPlotData(info):
     plotdata=PlotData()
@@ -58,8 +60,8 @@ def getPlotData(info):
 
             # Create legend lables
             labelbase="# MPI = "+str(nmpi)+" # threads = "+str(nthreads)
-            label=labelbase+" (MOOSE)"
-            cmplabel=labelbase+" (OpenMC)"
+            label=labelbase+" ("+info.dataset_label+")"
+            cmplabel=labelbase+" ("+info.cmpdataset_label+")"
 
             # Save all the data
             if len(datasets)!=0 :
