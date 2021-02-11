@@ -16,6 +16,8 @@ validParams<OpenMCExecutioner>()
   params.addParam<int32_t>("mesh_id", 1, "OpenMC mesh ID for which we are providing the MOAB interface");
   params.addParam<bool>("redirect_dagout", true, "Switch to control whether dagmc output is written to file or not");
   params.addParam<std::string>("dagmc_logname", "/dev/null", "File to which to redirect DagMC output");
+  params.addParam<bool>("launch_threads", false, "Switch to control whether openmc should launch new child thread. NB Do not set true when MOOSE application is run iwth --n-threads > 0 !");
+  params.addParam<unsigned int>("n_threads", 1, "Number of threads to use if launch_threads = true");
   return params;
 }
 
@@ -29,6 +31,8 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   source_strength(getParam<double>("neutron_source")),
   tally_id(getParam<int32_t>("tally_id")),
   mesh_id(getParam<int32_t>("mesh_id")),
+  launch_threads(getParam<bool>("launch_threads")),
+  n_threads(getParam<unsigned int>("n_threads")),
   redirect_dagout(getParam<bool>("redirect_dagout")),
   dagmc_logname(getParam<std::string>("dagmc_logname")),
   _execute_timer(registerTimedSection("execute", 1)),
@@ -43,6 +47,12 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   // source_strength has units  neutron / s
   // convert to J / s
   scale_factor = source_strength * eVinJoules;
+
+  if(launch_threads && n_threads > 1){
+    if(libMesh::n_threads()>1){
+      mooseError("Do not run application with --n-threads and with OpenMCExecutioner setting launch_threads = true");
+    }
+  }
 }
 
 OpenMCExecutioner::~OpenMCExecutioner()
@@ -204,9 +214,39 @@ OpenMCExecutioner::initOpenMC()
   // Set OpenMC's copy of MOAB
   openmc::model::moabPtrs[mesh_id] = moab().moabPtr;
 
-  char * argv[] = {nullptr, nullptr};
-  openmc_err = openmc_init(1, argv, &_communicator.get());
+  // Emulate a command line
+  std::string args("dummy");
+  if(launch_threads && n_threads > 1){
+    args+=" -s "+std::to_string(n_threads);
+  }
+
+  // Convert string arguments to char array
+  char * cstr = new char [args.length()+1];
+  std::strcpy (cstr, args.c_str());
+
+  // Split string by whitespace delimiter
+  std::vector<char*> arg_list;
+  char * next;
+  next = strtok(cstr," ");
+  while (next != NULL){
+    arg_list.push_back(next);
+    next = strtok(NULL, " ");
+  }
+
+  // Create array of char*
+  size_t argc = arg_list.size();
+  char** argv = new char*[argc];
+  for (size_t i = 0; i < argc; i++){
+    argv[i]=arg_list.at(i);
+  }
+
+  // Initialise openmc with the command line args and MOOSE MPI communicator
+  openmc_err = openmc_init(argc, argv, &_communicator.get());
   if (openmc_err) return false;
+
+  // Deallocate memory for C array created with new
+  delete argv;
+  delete cstr;
 
   return initMaterials();
 

@@ -175,6 +175,12 @@ private:
   // Place to store graveyard entity handle
   moab::EntityHandle graveyard;
 
+  // Switch to control whether openmc should launch child threads
+  bool launch_threads;
+
+  // Number of threads to use if launch_threads = true
+  unsigned int n_threads;
+
   // Switch to control whether dagmc output is written to file or not.
   bool redirect_dagout;
 
@@ -191,7 +197,6 @@ private:
   PerfID _updateopenmc_timer;
   PerfID _run_timer;
   PerfID _output_timer;
-
 
 };
 #endif // OPENMCEXECUTIONER_H
