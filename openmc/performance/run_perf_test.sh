@@ -53,6 +53,11 @@ for NPART in ${PARTS[@]}; do
     # Loop over number of MPI
     for NMPI in ${PROCS[@]}; do
 
+        MPIOPT=""
+        if [ $NMPI -eq 1 ]; then
+            MPIOPT="--bind-to none"
+        fi
+
         # Loop over number of threads
         for NTHREAD in ${THREADS[@]}; do
 
@@ -96,7 +101,12 @@ for NPART in ${PARTS[@]}; do
                 sed -i -E $SEDCOMMAND $INPUTFILE
 
                 # Run exec with correct number of MPI and threads
-                mpirun -n $NMPI $EXEC --n-threads=$NTHREAD -i $INPUTFILE >> $LOGFILE 2>&1
+                echo "mpirun $MPIOPT  -np $NMPI $EXEC --n-threads=$NTHREAD -i $INPUTFILE" >> $LOGFILE
+                mpirun $MPIOPT  -np $NMPI $EXEC --n-threads=$NTHREAD -i $INPUTFILE >> $LOGFILE 2>&1
+                if [ $? -ne 0 ] ; then
+                    cat $LOGFILE
+                    exit 1
+                fi
 
                 # Combine output in one file
                 TMPFILE="$FILEBASE.csv"

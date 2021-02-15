@@ -17,6 +17,7 @@ ORIGBASE="openmc_perf_test"
 PARTS=(100 1000 10000)
 # Define numbers of processes to loop over
 PROCS=(1 2 4)
+
 # Define number of threads to loop over
 THREADS=(1 2 4 8)
 
@@ -61,6 +62,11 @@ for NPART in ${PARTS[@]}; do
 
     for NMPI in ${PROCS[@]}; do
 
+        MPIOPT=""
+        if [ $NMPI -eq 1 ]; then
+            MPIOPT="--bind-to none"
+        fi
+
         for NTHREAD in ${THREADS[@]}; do
 
             TOTALPROCS=$((NMPI*NTHREAD))
@@ -83,7 +89,12 @@ for NPART in ${PARTS[@]}; do
                 # Run exec with correct number of MPI
                 echo "  Run $irun of $RUNS"
                 echo "Run $irun" >> $LOGFILE
-                mpirun -n $NMPI $EXEC -s $NTHREAD >> $LOGFILE 2>&1
+                echo "mpirun $MPIOPT -np $NMPI $EXEC -s $NTHREAD" >> $LOGFILE
+                mpirun $MPIOPT -np $NMPI $EXEC -s $NTHREAD >> $LOGFILE 2>&1
+                if [ $? -ne 0 ] ; then
+                    cat $LOGFILE
+                    exit 1
+                fi
 
                 # Parse the hdf5 file for run times and write to csv file
                 TMPFILE="tmp.txt"
