@@ -12,6 +12,8 @@
 [Executioner]
   type = OpenMCExecutioner
   variable = 'heating-local'
+  launch_threads=true
+  n_threads=4
 []
 
 [Variables]
