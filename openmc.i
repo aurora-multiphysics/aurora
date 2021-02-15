@@ -12,6 +12,8 @@
   type = OpenMCExecutioner
   variable = 'heating-local'
   neutron_source = 1.0e18
+  launch_threads=true
+  n_threads=4
 []
 
 [UserObjects]
