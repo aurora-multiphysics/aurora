@@ -6,7 +6,7 @@ from makeplots import *
 info=RunInfo();
 
 # Patterns for data files
-info.filebase="perf_test"
+info.filebase="perf_test-opt"
 info.comparefilebase="openmc_perf_test"
 
 # Run specifications
