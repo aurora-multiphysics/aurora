@@ -90,6 +90,10 @@ MoabMeshTransfer::transfer()
 
       // Pass in the top level FE Problem
       moabUO.setProblem(&_fe_problem);
+
+      // Initialise objects which are require to bin elements by temperature
+      moabUO.initBinningData();
+
      }
   catch(std::exception &e)
     {

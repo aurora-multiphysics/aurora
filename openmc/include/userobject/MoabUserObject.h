@@ -50,6 +50,9 @@ class MoabUserObject : public UserObject
   // Initialise MOAB
   void initMOAB();
 
+  // Intialise objects needed to perform binning of elements
+  void initBinningData();
+
   // Clear mesh data
   void reset();
 
@@ -129,6 +132,7 @@ private:
   // Helper methods to convert between indices
   dof_id_type elem_to_soln_index(const Elem& elem,unsigned int iSysNow, unsigned int iVarNow);
   unsigned int elem_id_to_bin_index(dof_id_type id);
+
   // Sort elems in to bins of a given temperature
   bool sortElemsByResults();
 
@@ -200,6 +204,14 @@ private:
   unsigned int nSortBins; // Number of bins needed for sorting results (mats*varbins)
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
+
+  // System Variables
+  libMesh::System* sysPtr;
+  unsigned int iSysBin;
+  unsigned int iVarBin;
+
+  // A mesh function to evaluate temperature
+  //std::shared_ptr<MeshFunction> meshFunctionPtr;
 
   // Materials data
   std::vector<std::string> mat_names; // material names

@@ -635,6 +635,24 @@ MoabUserObject::elem_id_to_bin_index(dof_id_type id)
 }
 
 
+void
+MoabUserObject::initBinningData(){
+
+  // Don't attempt to bin results if we haven't been provided with a variable
+  if(!binElems) return;
+
+  // Get the system and variable number
+  try{
+    sysPtr = &system(var_name);
+    iSysBin = sysPtr->number();
+    iVarBin = sysPtr->variable_number(var_name);
+  }
+  catch(std::exception &e){
+    mooseError(e.what());
+  }
+
+}
+
 bool
 MoabUserObject::sortElemsByResults()
 {
@@ -642,22 +660,8 @@ MoabUserObject::sortElemsByResults()
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return false;
 
-  // 1) Clear any prior data;
+  // Clear any prior data;
   resetContainers();
-
-  // 2) Get the system and variable number
-  libMesh::System* sysPtr;
-  unsigned int iSysNow;
-  unsigned int iVarNow;
-  try{
-    sysPtr = &system(var_name);
-    iSysNow = sysPtr->number();
-    iVarNow = sysPtr->variable_number(var_name);
-  }
-  catch(std::exception &e){
-    std::cerr<<e.what()<<std::endl;
-    return false;
-  }
 
   // Set representing underflow bin
   std::set<dof_id_type> underflowElems;
@@ -682,14 +686,14 @@ MoabUserObject::sortElemsByResults()
         dof_id_type id = elem.id();
 
         // Check the number of components for this var
-        unsigned int n_components = elem.n_comp(iSysNow,iVarNow);
+        unsigned int n_components = elem.n_comp(iSysBin,iVarBin);
         if(n_components != 1){
           std::cout<< "Unexpected number of expected solution components: "<<n_components<<std::endl;
           return false;
         }
 
         // Get the degree of freedom number for this var
-        dof_id_type soln_index = elem.dof_number(iSysNow,iVarNow,0);
+        dof_id_type soln_index = elem.dof_number(iSysBin,iVarBin,0);
 
         // Get the solution value
         // NB this won't work for nodal variables.

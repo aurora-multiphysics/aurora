@@ -1007,6 +1007,7 @@ TEST_F(FindMoabSurfacesTest, constTemp)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1052,6 +1053,8 @@ TEST_F(FindMoabSurfacesTest, singleBin)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
+
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1101,6 +1104,7 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1199,6 +1203,7 @@ TEST_F(FindMoabSurfacesTest, checkOutput)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1241,6 +1246,7 @@ TEST_F(FindSingleMatSurfs, constTemp)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1281,6 +1287,7 @@ TEST_F(FindSingleMatSurfs, manyBins)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1334,6 +1341,7 @@ TEST_F(FindSingleMatSurfs, checkOutput)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1358,6 +1366,7 @@ TEST_F(FindLogBinSurfs, constTemp)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
@@ -1420,6 +1429,8 @@ TEST_F(FindLogBinSurfs, manyBins)
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
+
 
   // Set the mesh
   ASSERT_NO_THROW(moabUOPtr->initMOAB());
