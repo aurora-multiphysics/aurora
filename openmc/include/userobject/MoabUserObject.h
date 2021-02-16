@@ -18,6 +18,7 @@
 #include <libmesh/equation_systems.h>
 #include <libmesh/system.h>
 #include <libmesh/mesh_tools.h>
+#include <libmesh/mesh_function.h>
 
 // Forward Declarations
 class MoabUserObject;
@@ -148,10 +149,12 @@ private:
   inline int getResultsBinLin(double value);
   int getResultsBinLog(double value);
 
-  // Calculate the variable evaluatec at the bin midpoints
+  // Calculate the variable evaluated at the bin midpoints
   void calcMidpoints();
   void calcMidpointsLin();
   void calcMidpointsLog();
+
+  Point elemCentroid(Elem& elem);
 
   // Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
@@ -211,7 +214,7 @@ private:
   unsigned int iVarBin;
 
   // A mesh function to evaluate temperature
-  //std::shared_ptr<MeshFunction> meshFunctionPtr;
+  std::shared_ptr<MeshFunction> meshFunctionPtr;
 
   // Materials data
   std::vector<std::string> mat_names; // material names

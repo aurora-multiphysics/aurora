@@ -651,6 +651,15 @@ MoabUserObject::initBinningData(){
     mooseError(e.what());
   }
 
+  std::vector<unsigned int> var_nums(1,iVarBin);
+
+  meshFunctionPtr = std::make_shared<MeshFunction>(systems(),
+                                                   *(sysPtr->solution),
+                                                   sysPtr->get_dof_map(),
+                                                   var_nums);
+
+  meshFunctionPtr->init(Trees::BuildType::ELEMENTS);
+
 }
 
 bool
@@ -685,20 +694,11 @@ MoabUserObject::sortElemsByResults()
         Elem& elem = **itelem;
         dof_id_type id = elem.id();
 
-        // Check the number of components for this var
-        unsigned int n_components = elem.n_comp(iSysBin,iVarBin);
-        if(n_components != 1){
-          std::cout<< "Unexpected number of expected solution components: "<<n_components<<std::endl;
-          return false;
-        }
+        // Fetch the central point of this element
+        Point p = elemCentroid(elem);
 
-        // Get the degree of freedom number for this var
-        dof_id_type soln_index = elem.dof_number(iSysBin,iVarBin,0);
-
-        // Get the solution value
-        // NB this won't work for nodal variables.
-        // Need to devise alternative method here, e.g mesh_function
-        double result = sysPtr->solution->el(soln_index);
+        // Evaluate the mesh function on this point
+        double result = double((*meshFunctionPtr)(p));
 
         // Calculate the bin number for this value
         int iBin = getResultsBin(result);
@@ -737,6 +737,19 @@ MoabUserObject::sortElemsByResults()
 
   return true;
 
+}
+
+Point
+MoabUserObject::elemCentroid(Elem& elem){
+  Point centroid(0.,0.,0.);
+  unsigned int nNodes = elem.n_nodes();
+  for(unsigned int iNode=0; iNode<nNodes; ++iNode){
+    // Get the point coords for this node
+    const Point& point = elem.point(iNode);
+    centroid += point;
+  }
+  centroid /= double(nNodes);
+  return centroid;
 }
 
 void
