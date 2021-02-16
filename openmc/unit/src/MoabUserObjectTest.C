@@ -510,7 +510,7 @@ protected:
       else if(cat =="Surface") surfs = ents;
 
       size_t nCat = category.second.size();
-      EXPECT_EQ(ents.size(),nCat);
+      EXPECT_EQ(ents.size(),nCat) << "Disparity in category size for "<< cat;
       if( ents.size()!= nCat ) continue;
 
       // Get the values of the other tags
@@ -827,6 +827,54 @@ protected:
   };
 
 };
+
+class FindSurfsNodalTemp: public FindMoabSurfacesTest {
+protected:
+
+  FindSurfsNodalTemp() :
+    FindMoabSurfacesTest("nodal_temperature.i") {
+
+    // Define the material names expected for this input file
+    mat_names.push_back("mat:copper");
+    mat_names.push_back("mat:air");
+    mat_names.push_back("mat:Graveyard");
+
+  };
+
+  virtual void SetUp() override {
+
+    // Create app
+    OpenMCAppInputTest::SetUp();
+
+    if(appIsNull) return;
+
+    try{
+
+      if(app==nullptr) std::cout<<"oops"<<std::endl;
+
+      ASSERT_NO_THROW(app->run());
+
+      // Get the FE problem
+      problemPtr = &(app->getExecutioner()->feProblem());
+
+      // Check for MOAB user object
+      if(!(problemPtr->hasUserObject("moab")))
+        throw std::logic_error("Could not find MoabUserObject with name 'moab'. Please check your input file.");
+
+      // Get the MOAB user object
+      moabUOPtr = &(problemPtr->getUserObject<MoabUserObject>("moab"));
+
+      foundMOAB = true;
+     }
+    catch(std::exception& e){
+      std::cout<<e.what()<<std::endl;
+    }
+  }
+
+  virtual void TearDown() override {};
+
+};
+
 
 // Test the fixture set up
 TEST_F(MoabUserObjectTest, setup)
@@ -1222,6 +1270,53 @@ TEST_F(FindMoabSurfacesTest, checkOutput)
 
 }
 
+
+// Test for checking output
+TEST_F(FindSurfsNodalTemp, nodalTemperature)
+{
+  ASSERT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+  ASSERT_NO_THROW(moabUOPtr->initBinningData());
+
+  // Fix due to a warning which throws
+  Moose::_throw_on_error = false;
+
+  // Find the surfaces
+  ASSERT_TRUE(moabUOPtr->update());
+
+  Moose::_throw_on_error = true;
+
+  // Check groups, volumes and surfaces
+  unsigned int nVol=4;
+  unsigned int nSurf=5;
+  checkAllGeomsets(nVol,nSurf);
+
+  // Check volume->surf relationships
+
+  // Copper block
+  int vol_id=1;
+  std::set<int> surf_ids = {1};
+  double tcheck=300.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+  // Region of air at cooler T
+  vol_id=2;
+  surf_ids = {1,2,3};
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+  // Region of air at hotter T
+  vol_id=3;
+  surf_ids = {3};
+  tcheck=305.;
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+  // Graveyard
+  vol_id=4;
+  surf_ids = {4,5};
+  checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
+
+}
 
 // Check that a non-tet mesh fails
 TEST_F(BadMoabUserObjectTest, failinit)
