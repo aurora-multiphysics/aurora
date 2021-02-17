@@ -240,3 +240,5 @@ conf_vars.mk
 *.prof
 
 *moab_surfs*
+main_out.e
+openmc/example_out.e
