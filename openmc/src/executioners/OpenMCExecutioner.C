@@ -790,28 +790,14 @@ void
 OpenMCExecutioner::completeSetup()
 {
 
+  // Set the root universe
   openmc::model::root_universe = openmc::find_root_universe();
 
-  // Copied code segment from openmc::read_input_xml()
+  // Final geometry setup and assign temperatures
+  openmc::finalize_geometry();
 
-  // Convert user IDs -> indices, assign temperatures
-  std::vector<std::vector<double>> nuc_temps(openmc::data::nuclide_map.size());
-  std::vector<std::vector<double>> thermal_temps(openmc::data::thermal_scatt_map.size());
-  openmc::finalize_geometry(nuc_temps, thermal_temps);
-
-  if (openmc::settings::run_mode != openmc::RunMode::PLOTTING) {
-    openmc::simulation::time_read_xs.start();
-    if (openmc::settings::run_CE) {
-      // Read continuous-energy cross sections
-      openmc::read_ce_cross_sections(nuc_temps, thermal_temps);
-    } else {
-      // Create material macroscopic data for MGXS
-      openmc::set_mg_interface_nuclides_and_temps();
-      openmc::data::mg.init();
-      openmc::mark_fissionable_mgxs_materials();
-    }
-    openmc::simulation::time_read_xs.stop();
-  }
+  // Finalize cross sections having assigned temperatures
+  openmc::finalize_cross_sections();
 
 }
 
