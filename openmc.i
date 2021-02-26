@@ -11,7 +11,7 @@
 [Executioner]
   type = OpenMCExecutioner
   variable = 'heating-local'
-  neutron_source = 1.0e18
+  neutron_source = 1.0e16
   launch_threads=true
   n_threads=4
 []
@@ -23,6 +23,7 @@
     material_names = 'copper air'
     output_skins = true
     faceting_tol = 10
+    length_scale = 1.0
   []
 []
 
