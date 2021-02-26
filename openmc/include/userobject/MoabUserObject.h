@@ -218,6 +218,7 @@ private:
 
   // Materials data
   std::vector<std::string> mat_names; // material names
+  std::vector<std::string> openmc_mat_names; // material names
   std::vector< std::set<SubdomainID> > mat_blocks; // all element blocks assigned to mats
 
   // An entitiy handle to represent the set of all tets

@@ -20,7 +20,8 @@ validParams<MoabUserObject>()
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
 
   // Mesh metadata
-  params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of material names");
+  params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of MOOSE material names");
+  params.addParam<std::vector<std::string> >("material_openmc_names", std::vector<std::string>(), "List of OpenMC material names");
 
   // Dagmc params
   params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
@@ -46,6 +47,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   var_max(getParam<double>("var_max")),
   nVarBins(getParam<unsigned int>("n_bins")),
   mat_names(getParam<std::vector<std::string> >("material_names")),
+  openmc_mat_names(getParam<std::vector<std::string> >("material_openmc_names")),
   faceting_tol(getParam<double>("faceting_tol")),
   geom_tol(getParam<double>("geom_tol")),
   output_skins(getParam<bool>("output_skins")),
@@ -67,21 +69,34 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
 
   // Set variables relating to binning
   binElems = !( var_name == "" || mat_names.empty());
-  if(var_min <= 0.){
-    mooseError("var_min out of range! Please pick a value > 0");
+
+  if(binElems){
+    // If no alternative names were provided for openmc materials
+    // assume they are the same as in MOOSE
+    if(openmc_mat_names.empty()){
+      openmc_mat_names = mat_names;
+    }
+    if(openmc_mat_names.size() != mat_names.size() ){
+      mooseError("If both are provided, the vectors material_names and material_openmc_names should have identical lengths.");
+    }
+
+    if(var_min <= 0.){
+      mooseError("var_min out of range! Please pick a value > 0");
+    }
+    if(var_max <= var_min){
+      mooseError("Please pick a value for var_max > var_min");
+    }
+    bin_width = (var_max-var_min)/double(nVarBins);
+    powMin = int(floor(log10(var_min)));
+    powMax = int(ceil(log10(var_max)));
+    nPow = std::max(powMax-powMin, 1);
+    if(nPow > nVarBins){
+      mooseError("Please ensure number of powers for variable is less than the number of bins");
+    }
+    nMinor = nVarBins/nPow;
+    calcMidpoints();
   }
-  if(var_max <= var_min){
-    mooseError("Please pick a value for var_max > var_min");
-  }
-  bin_width = (var_max-var_min)/double(nVarBins);
-  powMin = int(floor(log10(var_min)));
-  powMax = int(ceil(log10(var_max)));
-  nPow = std::max(powMax-powMin, 1);
-  if(nPow > nVarBins){
-    mooseError("Please ensure number of powers for variable is less than the number of bins");
-  }
-  nMinor = nVarBins/nPow;
-  calcMidpoints();
+
 
   // Set variables relating to writing to file
   n_write=0;
@@ -777,7 +792,7 @@ MoabUserObject::findSurfaces()
     for(unsigned int iMat=0; iMat<nMatBins; iMat++){
 
       // Get the material name:
-      std::string mat_name = "mat:"+mat_names.at(iMat);
+      std::string mat_name = "mat:"+openmc_mat_names.at(iMat);
 
       // Create a material group
       moab::EntityHandle group_set;

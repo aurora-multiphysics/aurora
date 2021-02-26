@@ -62,13 +62,13 @@
 []
 
 [Materials]
-  [copper]
+  [copper_props]
     type = ADGenericConstantMaterial
     prop_names = 'thermal_conductivity specific_heat density'
     prop_values = '3.97 0.385 8.920' # W/cm*K, J/g-K, g/cm^3
     block = 1
   []
-  [air]
+  [air_props]
     type = ADGenericConstantMaterial
     prop_names = 'thermal_conductivity specific_heat density'
     prop_values = '0.26 1 0.001'
