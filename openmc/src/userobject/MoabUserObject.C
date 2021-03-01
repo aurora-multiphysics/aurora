@@ -1,5 +1,6 @@
 // Moose includes
 #include "MoabUserObject.h"
+#include "DisplacedProblem.h"
 
 registerMooseObject("OpenMCApp", MoabUserObject);
 
@@ -115,6 +116,9 @@ MoabUserObject::problem()
 MeshBase&
 MoabUserObject::mesh()
 {
+  if(problem().haveDisplaced()){
+    return problem().getDisplacedProblem()->mesh().getMesh();
+  }
   return problem().mesh().getMesh();
 }
 
