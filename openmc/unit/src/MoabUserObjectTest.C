@@ -10,6 +10,7 @@
 #include "OpenMCAppTest.h"
 #include "Executioner.h"
 #include "FEProblemBase.h"
+#include "VolumePostprocessor.h"
 #include "MoabUserObject.h"
 
 // Fixture to test the MOAB user object
@@ -850,8 +851,6 @@ protected:
 
     try{
 
-      if(app==nullptr) std::cout<<"oops"<<std::endl;
-
       ASSERT_NO_THROW(app->run());
 
       // Get the FE problem
@@ -872,6 +871,117 @@ protected:
   }
 
   virtual void TearDown() override {};
+
+};
+
+
+class DeformedMeshTest : public MoabUserObjectTestBase {
+protected:
+  DeformedMeshTest() :
+    MoabUserObjectTestBase("thermal-expansion.i"),
+    foundPP(false)
+  {};
+
+  virtual void SetUp() override {
+
+    // Create app
+    OpenMCAppInputTest::SetUp();
+
+    if(appIsNull) return;
+
+    try{
+
+      app->run();
+      //ASSERT_NO_THROW();
+
+      // Get the FE problem
+      problemPtr = &(app->getExecutioner()->feProblem());
+
+      // Check for MOAB user object
+      if(!(problemPtr->hasUserObject("moab")))
+        throw std::logic_error("Could not find MoabUserObject with name 'moab'. Please check your input file.");
+
+      // Get the MOAB user object
+      moabUOPtr = &(problemPtr->getUserObject<MoabUserObject>("moab"));
+
+      foundMOAB = true;
+
+      // Get the volumen post processors
+      processMeshVol = &(problemPtr->getUserObject<VolumePostprocessor>("volume_calc_orig"));
+      processDeformedMeshVol = &(problemPtr->getUserObject<VolumePostprocessor>("volume_calc_deformed"));
+
+      foundPP = (processMeshVol!= nullptr) && (processDeformedMeshVol!= nullptr);
+     }
+    catch(std::exception& e){
+      std::cout<<e.what()<<std::endl;
+    }
+  }
+
+  double getTotalVolume(std::shared_ptr<moab::Interface> moabPtr,
+                        const std::vector<moab::EntityHandle>& ents){
+
+    double sum(0.);
+    for(const auto& ent : ents){
+      double elemVol  = calcVolumeFromEnt(moabPtr,ent);
+      sum += elemVol;
+    }
+
+    return sum;
+  }
+
+
+  double calcVolumeFromEnt(std::shared_ptr<moab::Interface> moabPtr,
+                           moab::EntityHandle elem){
+
+    moab::ErrorCode rval;
+
+    // Fetch elem connectivity
+    std::vector<moab::EntityHandle> conn;
+    rval = moabPtr->get_connectivity(&elem, 1, conn);
+    if (rval != moab::MB_SUCCESS){
+      throw std::logic_error("Failed to get connectivity.");
+    }
+
+    // Fetch vertex coords
+    size_t nNodes = conn.size();
+    if(nNodes==0){
+      throw std::logic_error("Failed to get nodes.");
+    }
+
+    // Fetch the coordinates of the nodes
+    std::vector<double> nodeCoords(nNodes*3);
+    rval = moabPtr->get_coords(conn.data(), nNodes, nodeCoords.data());
+    if (rval != moab::MB_SUCCESS){
+      throw std::logic_error("Failed to get nodes' coords.");
+    }
+
+    // Convert nodes into points
+    std::vector<Point> points(nNodes);
+    for(size_t inode=0; inode<nNodes; ++inode){
+      for(int i=0; i<3; i++){
+        double coord = nodeCoords.at(3*inode +i);
+        (points.at(inode))(i) = coord;
+      }
+    }
+
+    // Get vectors for the sides of the tet
+    Point s1 = points.at(1) - points.at(0);
+    Point s2 = points.at(2) - points.at(0);
+    Point s3 = points.at(3) - points.at(0);
+
+    double vol = calcTetVolume(s1,s2,s3);
+    return vol;
+
+  }
+
+  // If u, v, and w are vectors for the sides of the tet, return volume
+  double calcTetVolume(const Point& u, const Point& v, const Point& w){
+    return fabs(u.cross(v) * w)/ 6.0;
+  }
+
+  VolumePostprocessor* processMeshVol;
+  VolumePostprocessor* processDeformedMeshVol;
+  bool foundPP;
 
 };
 
@@ -1572,5 +1682,52 @@ TEST_F(FindLogBinSurfs, manyBins)
   int vol_id=nVol;
   surf_ids = {5,6};
   checkSurfsAndTemp(vol_id,surf_ids,0.,true);
+
+}
+
+// Test to check we are using the deformed mesh if there is one
+TEST_F(DeformedMeshTest, checkDeformedMesh)
+{
+  ASSERT_FALSE(appIsNull);
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(foundPP);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Get the MOAB interface to check the data
+  std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+  ASSERT_NE(moabPtr,nullptr);
+
+  // Get root set
+  moab::EntityHandle rootset = moabPtr->get_root_set();
+
+  // Fetch the elements
+  std::vector<moab::EntityHandle> ents;
+  moab::ErrorCode rval = moabPtr->get_entities_by_type(rootset,moab::MBTET,ents);
+  ASSERT_EQ(rval,moab::MB_SUCCESS);
+
+  // Sanity check
+  EXPECT_EQ(ents.size(),size_t(3000));
+
+  // Calculate the volume of all the elements
+  double meshVolTest = getTotalVolume(moabPtr,ents);
+
+  // Compare manually calculated volume to the postprocessor values.
+  double meshVolOrig = processMeshVol->getValue();
+  double meshVolDef = processDeformedMeshVol->getValue();
+
+  // Check the original volume is 5x5x5 cube
+  EXPECT_LT(fabs(meshVolOrig-125.0),tol);
+
+  // Check the deformed mesh volume is bigger from thermal expansion
+  EXPECT_GT(meshVolDef,meshVolOrig);
+
+  // Check MOAB volume equals deformed mesh volume
+  EXPECT_LT(fabs(meshVolDef-meshVolTest),tol);
+
+  // Check the difference between deformed and original is above our tolerance
+  EXPECT_GT(meshVolTest-meshVolOrig,tol);
 
 }
