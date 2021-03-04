@@ -891,8 +891,7 @@ protected:
 
     try{
 
-      app->run();
-      //ASSERT_NO_THROW();
+      ASSERT_NO_THROW(app->run());
 
       // Get the FE problem
       problemPtr = &(app->getExecutioner()->feProblem());
@@ -906,7 +905,7 @@ protected:
 
       foundMOAB = true;
 
-      // Get the volumen post processors
+      // Get the volume post processors
       processMeshVol = &(problemPtr->getUserObject<VolumePostprocessor>("volume_calc_orig"));
       processDeformedMeshVol = &(problemPtr->getUserObject<VolumePostprocessor>("volume_calc_deformed"));
 
