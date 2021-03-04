@@ -130,9 +130,8 @@ private:
   // Helper method to setthe results in a given system and variable
   void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool normToVol);
 
-  // Helper methods to convert between indices
+  // Helper method to convert between elem / solution indices
   dof_id_type elem_to_soln_index(const Elem& elem,unsigned int iSysNow, unsigned int iVarNow);
-  unsigned int elem_id_to_bin_index(dof_id_type id);
 
   // Sort elems in to bins of a given temperature
   bool sortElemsByResults();
@@ -181,8 +180,8 @@ private:
   // Convert MOOSE units to dagmc length units
   double lengthscale;
 
-  // Map from libmesh id to MOAB element entity handle
-  std::map<dof_id_type,moab::EntityHandle> _id_to_elem_handle;
+  // Map from libmesh id to MOAB element entity handles
+  std::map<dof_id_type,std::vector<moab::EntityHandle> > _id_to_elem_handles;
 
   // Save the first tet entity handle
   moab::EntityHandle offset;

@@ -535,14 +535,17 @@ MoabUserObject::setTagData(moab::Tag tag, moab::EntityHandle ent, void* data)
 void
 MoabUserObject::clearElemMaps()
 {
-  _id_to_elem_handle.clear();
+  _id_to_elem_handles.clear();
   offset=0;
 }
 
 void
 MoabUserObject::addElem(dof_id_type id,moab::EntityHandle ent)
 {
-  _id_to_elem_handle[id]=ent;
+  if(_id_to_elem_handles.find(id)==_id_to_elem_handles.end()){
+    _id_to_elem_handles[id]=std::vector<moab::EntityHandle>();
+  }
+  (_id_to_elem_handles[id]).push_back(ent);
 }
 
 void
@@ -566,17 +569,26 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
     Elem& elem = **itelem;
     dof_id_type id = elem.id();
 
-    // Fetch the mesh filter bin index
-    unsigned int iBin = elem_id_to_bin_index(id);
-    if( (iBin+1) > results.size() ){
-      throw std::runtime_error("Mismatch in size of results vector and number of elements");
+    // Convert the elem id to a list of entity handles
+    if(_id_to_elem_handles.find(id)==_id_to_elem_handles.end())
+      throw std::runtime_error("Elem id not matched to an entity handle");
+    std::vector<moab::EntityHandle> ents =  _id_to_elem_handles[id];
+
+    // Sum over the result bins for this elem
+    double result=0.;
+    for(const auto ent : ents){
+      // Conversion to bin index
+      unsigned int binIndex = ent - offset;
+
+      if( (binIndex+1) > results.size() ){
+        throw std::runtime_error("Mismatch in size of results vector and number of elements");
+      }
+      // Add result for this bin
+      result += results.at(binIndex);
     }
 
-    // Result for this bin
-    double result = results.at(iBin);
-
     // Scale the result
-    result*=scaleFactor;
+    result *= scaleFactor;
 
     if(normToVol){
       // Fetch the volume of element
@@ -638,22 +650,6 @@ MoabUserObject::elem_to_soln_index(const Elem& elem,unsigned int iSysNow,  unsig
 
   return soln_index;
 }
-
-unsigned int
-MoabUserObject::elem_id_to_bin_index(dof_id_type id)
-{
-
-  // Convert the elem id to an entity handle
-  if(_id_to_elem_handle.find(id)==_id_to_elem_handle.end())
-    throw std::runtime_error("Elem id not matched to an entity handle");
-  moab::EntityHandle ent =  _id_to_elem_handle[id];
-
-  // Conversion to index
-  unsigned int index = ent - offset;
-
-  return index;
-}
-
 
 void
 MoabUserObject::initBinningData(){
@@ -900,9 +896,11 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
       // Loop over all the new neighbors
       for(auto& next : neighbors){
 
-        // Get the MOAB handle, and add to local set
-        moab::EntityHandle ent = _id_to_elem_handle[next];
-        local.insert(ent);
+        // Get the MOAB handles, and add to local set
+        std::vector<moab::EntityHandle> ents = _id_to_elem_handles[next];
+        for(const auto ent : ents){
+          local.insert(ent);
+        }
 
         // Get the libMesh element
         Elem& elem = mesh().elem_ref(next);
