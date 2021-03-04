@@ -187,6 +187,9 @@ private:
   // Reverse map
   std::map<dof_id_type,moab::EntityHandle> _id_to_elem_handle;
 
+  // Save the first tet entity handle
+  moab::EntityHandle offset;
+
   // Members required to sort elems into bins given a result evaluated on that elem
   std::string var_name; // Name of the MOOSE variable
 

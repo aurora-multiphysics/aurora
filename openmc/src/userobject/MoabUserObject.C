@@ -371,6 +371,9 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   // Add the elems to the full meshset
   rval = moabPtr->add_entities(meshset,all_elems);
 
+  // Save the first elem
+  offset = all_elems.front();
+
   return rval;
 }
 
@@ -534,6 +537,7 @@ MoabUserObject::clearElemMaps()
 {
   _elem_handle_to_id.clear();
   _id_to_elem_handle.clear();
+  offset=0;
 }
 
 void
@@ -647,7 +651,6 @@ MoabUserObject::elem_id_to_bin_index(dof_id_type id)
   moab::EntityHandle ent =  _id_to_elem_handle[id];
 
   // Conversion to index
-  moab::EntityHandle offset = (_elem_handle_to_id.begin())->first;
   unsigned int index = ent - offset;
 
   return index;
