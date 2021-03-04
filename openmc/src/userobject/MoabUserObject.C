@@ -162,9 +162,7 @@ MoabUserObject::initMOAB()
   if(rval!=moab::MB_SUCCESS)
     mooseError("Could not create nodes");
 
-  rval = createElems(node_id_to_handle);
-  if(rval!=moab::MB_SUCCESS)
-    mooseError("Could not create elems");
+  createElems(node_id_to_handle);
 
   // Find which elements belong to which materials
   findMaterials();
@@ -303,79 +301,124 @@ MoabUserObject::createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   return rval;
 }
 
-moab::ErrorCode
+void
 MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle)
 {
 
-  if(!hasProblem()) return moab::MB_FAILURE;
+  if(!hasProblem()){
+    mooseError("No FEProblem was set in MOABUserObject");
+  }
 
   moab::ErrorCode rval(moab::MB_SUCCESS);
 
   // Clear prior results.
   clearElemMaps();
 
-  // Initialise an array for moab connectivity
-  unsigned int nNodes = 4;
-  std::vector<moab::EntityHandle> conn(nNodes);
   moab::Range all_elems;
 
   // Iterate over elements in the mesh
   auto itelem = mesh().elements_begin();
   auto endelem = mesh().elements_end();
   for( ; itelem!=endelem; ++itelem){
+
+    // Get a reference to current elem
     Elem& elem = **itelem;
 
-    // Check all the elements are tets
+    // Get all sub-tetrahedra node sets for this element type
     ElemType type = elem.type();
-    if(type!=TET4){
-      rval = moab::MB_FAILURE;
-      return rval;
-    }
-
-    // Get the connectivity
-    std::vector< dof_id_type > conn_libmesh;
-    elem.connectivity	(0,libMesh::IOPackage::VTK,conn_libmesh);
-    if(conn_libmesh.size()!=nNodes){
-      rval = moab::MB_FAILURE;
-      return rval;
-    }
-
-    // Set MOAB connectivity
-    for(unsigned int iNode=0; iNode<nNodes;++iNode){
-      if(node_id_to_handle.find(conn_libmesh.at(iNode)) ==
-         node_id_to_handle.end()){
-        rval = moab::MB_FAILURE;
-        return rval;
-      }
-      conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
+    std::vector< std::vector<unsigned int> > nodeSets;
+    if(!getTetSets(type,nodeSets)){
+      mooseError("Could not find element (sub-)tetrahedra");
     }
 
     // Fetch ID
     dof_id_type id = elem.id();
 
-    // Create an element in MOAB database
-    moab::EntityHandle ent(0);
-    rval = moabPtr->create_element(moab::MBTET,conn.data(),nNodes,ent);
-    if(rval!=moab::MB_SUCCESS){
-      clearElemMaps();
-      return rval;
+    // Get the connectivity
+    std::vector< dof_id_type > conn_libmesh;
+    elem.connectivity(0,libMesh::IOPackage::VTK,conn_libmesh);
+    if(conn_libmesh.size()!=elem.n_nodes()){
+      mooseError("Element connectivity is inconsistent");
     }
 
-    // Save mapping between libMesh ids and moab handles
-    addElem(id,ent);
+    // Loop over sub tets
+    for(const auto& nodeSet: nodeSets){
 
-    // Save the handle for adding to entity sets
-    all_elems.insert(ent);
-  }
+      if(nodeSet.size() != nNodesPerTet){
+        mooseError("Wrong number of elements for sub-tetrahedron");
+      }
+
+      // Set MOAB connectivity
+      std::vector<moab::EntityHandle> conn(nNodesPerTet);
+      for(unsigned int iNode=0; iNode<nNodesPerTet;++iNode){
+
+        // Get the elem node index of the ith node of the sub-tet
+        unsigned int nodeIndex = nodeSet.at(iNode);
+        if(nodeIndex >= conn_libmesh.size()){
+          mooseError("Element index is out of range");
+        }
+
+        // Get node's entity handle
+        if(node_id_to_handle.find(conn_libmesh.at(nodeIndex)) ==
+           node_id_to_handle.end()){
+          mooseError("Could not find node entity handle");
+        }
+        conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
+      }
+
+      // Create an element in MOAB database
+      moab::EntityHandle ent(0);
+      rval = moabPtr->create_element(moab::MBTET,conn.data(),nNodesPerTet,ent);
+      if(rval!=moab::MB_SUCCESS){
+        std::string err="Could not create MOAB element: rval = "
+          +std::to_string(rval);
+        mooseError(err);
+      }
+
+      // Save mapping between libMesh ids and moab handles
+      addElem(id,ent);
+
+      // Save the handle for adding to entity sets
+      all_elems.insert(ent);
+    } // End loop over sub-tetrahedra for current elem
+
+  } // End loop over elems
 
   // Add the elems to the full meshset
   rval = moabPtr->add_entities(meshset,all_elems);
+  if(rval!=moab::MB_SUCCESS){
+    std::string err="Could not create meshset: rval = "
+      +std::to_string(rval);
+    mooseError(err);
+  }
 
   // Save the first elem
   offset = all_elems.front();
 
-  return rval;
 }
+
+bool
+MoabUserObject::getTetSets(ElemType type,
+                           std::vector< std::vector<unsigned int> >  &perms)
+{
+  perms.clear();
+
+  // Check all the elements are tets
+  if(type!=TET4 && type!=TET10){
+    return false;
+  }
+
+  if(type==TET4){
+    perms.push_back({0,1,2,3});
+  }
+  else{ // TET10
+    // For now fail
+    return false;
+  }
+
+  return true;
+}
+
 
 moab::ErrorCode
 MoabUserObject::createTags()
@@ -897,6 +940,7 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
       for(auto& next : neighbors){
 
         // Get the MOAB handles, and add to local set
+        // (May be more than one if this libMesh elem has sub-tetrahedra)
         std::vector<moab::EntityHandle> ents = _id_to_elem_handles[next];
         for(const auto ent : ents){
           local.insert(ent);

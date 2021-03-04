@@ -91,7 +91,7 @@ private:
 
   // Helper methods to set MOAB database
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
-  moab::ErrorCode createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
+  void createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   moab::ErrorCode createTags();
   moab::ErrorCode createGroup(unsigned int id, std::string name,moab::EntityHandle& group_set);
   moab::ErrorCode createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set);
@@ -111,6 +111,9 @@ private:
   moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
+
+  // Return all sets of node indices for sub-tetrahedra
+  bool getTetSets(ElemType type, std::vector< std::vector<unsigned int> > &perms);
 
   // Build the graveyard (needed by OpenMC)
   moab::ErrorCode buildGraveyard(unsigned int & vol_id, unsigned int & surf_id);
@@ -237,6 +240,9 @@ private:
   moab::Tag category_tag;
   moab::Tag name_tag;
   moab::Tag material_tag; // Moab tag handle corresponding to material label
+
+  // MOAB tets have 4 nodes
+  const unsigned int nNodesPerTet = 4;
 
   // DagMC settings
   double faceting_tol;
