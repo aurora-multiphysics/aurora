@@ -364,6 +364,13 @@ protected:
   };
 };
 
+// Test for second-order mesh
+class SecondOrderMoabUserObjectTest : public MoabUserObjectTest {
+protected:
+  SecondOrderMoabUserObjectTest() :
+    MoabUserObjectTest("secondordermesh.i") {};
+};
+
 class FindMoabSurfacesTest : public MoabUserObjectTest {
 protected:
   FindMoabSurfacesTest() :
@@ -1081,7 +1088,6 @@ TEST_F(MoabUserObjectTest, init)
 
 }
 
-
 // Test for setting FE problem solution
 TEST_F(MoabUserObjectTest, setSolution)
 {
@@ -1157,6 +1163,16 @@ TEST_F(MoabUserObjectTest, reset)
 
 }
 
+// Test for MOAB mesh initialisation
+TEST_F(SecondOrderMoabUserObjectTest, init)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+}
 
 // Test for finding surfaces
 TEST_F(FindMoabSurfacesTest, constTemp)
