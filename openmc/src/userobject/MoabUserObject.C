@@ -535,7 +535,6 @@ MoabUserObject::setTagData(moab::Tag tag, moab::EntityHandle ent, void* data)
 void
 MoabUserObject::clearElemMaps()
 {
-  _elem_handle_to_id.clear();
   _id_to_elem_handle.clear();
   offset=0;
 }
@@ -543,7 +542,6 @@ MoabUserObject::clearElemMaps()
 void
 MoabUserObject::addElem(dof_id_type id,moab::EntityHandle ent)
 {
-  _elem_handle_to_id[ent]=id;
   _id_to_elem_handle[id]=ent;
 }
 

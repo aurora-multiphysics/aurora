@@ -181,10 +181,7 @@ private:
   // Convert MOOSE units to dagmc length units
   double lengthscale;
 
-  // Map from MOAB element entity handles to libmesh ids.
-  std::map<moab::EntityHandle,dof_id_type> _elem_handle_to_id;
-
-  // Reverse map
+  // Map from libmesh id to MOAB element entity handle
   std::map<dof_id_type,moab::EntityHandle> _id_to_elem_handle;
 
   // Save the first tet entity handle
