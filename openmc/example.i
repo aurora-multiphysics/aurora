@@ -1,8 +1,6 @@
 [Mesh]
-  [meshcm]
-    type = FileMeshGenerator
-    file = copper_air_tetmesh.e
-  []
+  type = FileMesh
+  file = copper_air_tetmesh.e
 []
 
 [Problem]

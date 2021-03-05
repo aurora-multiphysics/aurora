@@ -1,9 +1,8 @@
 [Mesh]
-  [meshcm]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-  construct_side_list_from_node_list=true
+  type = FileMesh
+  file = copper_air_bcs_tetmesh.e
+  # Uncomment to use tet10 in MOOSE
+  # second_order=true
 []
 
 [Problem]
