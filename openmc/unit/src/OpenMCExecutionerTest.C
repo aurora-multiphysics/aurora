@@ -22,6 +22,7 @@ protected:
     var_name("heating-local")
   {
     scalefactor =16.0218;
+    nMeshBinsExpect=11972;
   };
 
   virtual void SetUp() override {
@@ -58,6 +59,86 @@ protected:
 
   }
 
+  void getSolExpect(std::vector<double>& solExpect)
+  {
+    solExpect.clear();
+
+    // Get OpenMC results and check size
+    size_t nScores=1;
+    ASSERT_FALSE(openmc::model::tallies.empty());
+    openmc::Tally& tally = *(openmc::model::tallies.at(0));
+    xt::xtensor<double, 3> & results = tally.results_;
+    ASSERT_EQ(results.shape()[0],nMeshBinsExpect);
+    ASSERT_EQ(results.shape()[1],nScores);
+    ASSERT_EQ(results.shape()[2],3);
+
+    // Get the mesh
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+
+    // Loop over the elements
+    for(size_t iBin=0; iBin<nMeshBinsExpect; iBin++){
+
+      // Because of how the elems are created iBin = elem id
+      dof_id_type id = iBin;
+
+      // Get a reference to the element with this ID
+      Elem& elem  = mesh.elem_ref(id);
+
+      // Get the solution for the corresponding bin
+      double solNow = results(iBin,0,1);
+
+      // Normalise to volume
+      solNow /= elem.volume();
+      solNow *= scalefactor;
+      solExpect.push_back(solNow);
+    }
+
+  }
+
+  void checkSolution(){
+
+    // Retrieve the expected solution
+    std::vector<double> solExpect;
+    getSolExpect(solExpect);
+
+    // Get the mesh and number of elems
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+    size_t nMeshBins= mesh.n_elem();
+    EXPECT_EQ(nMeshBins,nMeshBinsExpect);
+
+    // Fetch the system details
+    System & sys = problemPtr->getSystem(var_name);
+    unsigned int iSys = sys.number();
+    unsigned int iVar = sys.variable_number(var_name);
+    // Get the size of solution vector
+    numeric_index_type 	solsize = sys.solution->size();
+
+    // Loop over the elements
+    for(size_t iBin=0; iBin<nMeshBins; iBin++){
+
+      // Because of how the elems are created iBin = elem id
+      dof_id_type id = iBin;
+
+      // Get a reference to the element with this ID
+      Elem& elem  = mesh.elem_ref(id);
+
+      // Get the degree of freedom number for this element
+      dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+      ASSERT_LT(soln_index,solsize);
+
+      // Get the solution value for this element
+      double sol = double(sys.solution->el(soln_index));
+
+      // Get the solution for the corresponding bin
+      double solCompare = solExpect.at(iBin);
+
+      double solDiff = fabs(sol-solCompare);
+      if(sol>tol) solDiff/= sol;
+      EXPECT_LT(solDiff,tol)<< "solution = "<< sol
+                            << " solCompare = "<< solCompare;
+    } // End loop over elems
+
+  }
 
   void checkExecute(std::string dagfile){
 
@@ -93,57 +174,14 @@ protected:
       }
       checkFilesExist(openmcOutputFilesCopy);
 
-      // Get the mesh and number of elems
-      MeshBase& mesh = problemPtr->mesh().getMesh();
-      size_t nMeshBins= mesh.n_elem();
-      EXPECT_EQ(nMeshBins,11972);
+      // Check OpenMC results match up with MOOSE solution
+      checkSolution();
 
-      // Fetch the system details
-      System & sys = problemPtr->getSystem(var_name);
-      unsigned int iSys = sys.number();
-      unsigned int iVar = sys.variable_number(var_name);
-      // Get the size of solution vector
-      numeric_index_type 	solsize = sys.solution->size();
-
-      // Get OpenMC results and check size
-      size_t nScores=1;
-      ASSERT_FALSE(openmc::model::tallies.empty());
-      openmc::Tally& tally = *(openmc::model::tallies.at(0));
-      xt::xtensor<double, 3> & results = tally.results_;
-      ASSERT_EQ(results.shape()[0],nMeshBins);
-      ASSERT_EQ(results.shape()[1],nScores);
-      ASSERT_EQ(results.shape()[2],3);
-
-      // Loop over the elements
-      for(size_t iBin=0; iBin<nMeshBins; iBin++){
-
-        // Because of how the elems are created iBin = elem id
-        dof_id_type id = iBin;
-
-        // Get a reference to the element with this ID
-        Elem& elem  = mesh.elem_ref(id);
-
-        // Get the degree of freedom number for this element
-        dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
-        ASSERT_LT(soln_index,solsize);
-
-        // Get the solution value for this element
-        double sol = double(sys.solution->el(soln_index));
-
-        // Get the solution for the corresponding bin
-        double solCompare = results(iBin,0,1);
-        // Normalise to volume
-        solCompare /= elem.volume();
-        solCompare *= scalefactor;
-
-        double solDiff = fabs(sol-solCompare);
-        if(sol>tol) solDiff/= sol;
-        EXPECT_LT(solDiff,tol)<< "solution = "<< sol << " solCompare = "<< solCompare;
-
-      } // End test
     } // End iterations over test
 
   }
+
+  size_t nMeshBinsExpect;
 
   FEProblemBase* problemPtr;
   Executioner* executionerPtr;
