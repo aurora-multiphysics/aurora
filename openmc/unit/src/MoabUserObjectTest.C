@@ -67,18 +67,26 @@ protected:
 class MoabUserObjectTest : public MoabUserObjectTestBase {
 protected:
   MoabUserObjectTest() :
-    MoabUserObjectTestBase("moabuserobject.i"),
-    var_name("temperature"),
-    faceting_tol_expect(1.e-4),
-    geom_tol_expect(1.e-6),
-    lengthscale(100.0) {};
+    MoabUserObjectTestBase("moabuserobject.i")
+  {
+    setDefaults();
+  };
 
   MoabUserObjectTest(std::string inputfile) :
-    MoabUserObjectTestBase(inputfile),
-    var_name("temperature"),
-    faceting_tol_expect(1.e-4),
-    geom_tol_expect(1.e-6),
-    lengthscale(100.0) {};
+    MoabUserObjectTestBase(inputfile)
+  {
+    setDefaults();
+  };
+
+  virtual void setDefaults(){
+    var_name="temperature";
+    faceting_tol_expect=1.e-4;
+    geom_tol_expect=1.e-6;
+    lengthscale=100.0;
+    dimExpect=3;
+    nNodesExpect=2409;
+    nElemsExpect=11972;
+  }
 
   bool checkSystem(){
     try{
@@ -336,6 +344,11 @@ protected:
 
   std::string var_name;
 
+  // Exepcted mesh params
+  int dimExpect;
+  size_t nNodesExpect;
+  size_t nElemsExpect;
+
   // Set the expected values for DagMC tags
   double faceting_tol_expect;
   double geom_tol_expect;
@@ -343,6 +356,7 @@ protected:
   // Lengthscale to convert between Moose and MOAB units:
   // must match up with parameter in user object
   double lengthscale;
+
 };
 
 // Test correct failure for ill-defined mesh
@@ -1027,7 +1041,7 @@ TEST_F(MoabUserObjectTest, init)
   int dim;
   moab::ErrorCode rval = moabPtr->get_dimension(dim);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(dim,3);
+  EXPECT_EQ(dim,dimExpect);
 
   // Get root set
   moab::EntityHandle rootset = moabPtr->get_root_set();
@@ -1043,15 +1057,15 @@ TEST_F(MoabUserObjectTest, init)
   ents.clear();
   rval = moabPtr->get_entities_by_dimension(rootset,0,ents);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(ents.size(),size_t(2409));
+  EXPECT_EQ(ents.size(),nNodesExpect);
 
   // Check elems
   ents.clear();
   rval = moabPtr->get_entities_by_dimension(rootset,3,ents);
   EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(ents.size(),size_t(11972));
+  EXPECT_EQ(ents.size(),nElemsExpect);
   size_t nTets = ents.num_of_type(moab::MBTET);
-  EXPECT_EQ(nTets,size_t(11972));
+  EXPECT_EQ(nTets,nElemsExpect);
 
   // Check built-in tags
   moab::Tag tag_handle;
