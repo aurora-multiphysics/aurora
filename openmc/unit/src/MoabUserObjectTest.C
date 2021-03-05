@@ -517,6 +517,16 @@ protected:
     mat_names.push_back("mat:air");
     mat_names.push_back("mat:Graveyard");
 
+    setOutputDefaults();
+  };
+
+  FindMoabSurfacesTest(std::string inputfile) :
+    MoabUserObjectTest(inputfile) {
+    setOutputDefaults();
+  };
+
+  void setOutputDefaults(){
+
     // Max number of outputs
     nOutput=10;
 
@@ -525,11 +535,7 @@ protected:
 
     // Expected base name of file
     output_base="moab_surfs";
-
-  };
-
-  FindMoabSurfacesTest(std::string inputfile) :
-    MoabUserObjectTest(inputfile) {};
+  }
 
   // Define a struct to help test properties of entity sets
   struct TagInfo {
@@ -543,6 +549,7 @@ protected:
   virtual void TearDown() override {
     // Delete any outputs which were created
     std::string filename;
+
     for(unsigned int iOutput=0; iOutput<nOutput; iOutput++){
       filename = output_base + "_" + std::to_string(iOutput) +".h5m";
       bool check_file_exists = fileExists(filename);
@@ -916,6 +923,49 @@ protected:
     }
   }
 
+  void checkConstTempSurfs(double solConst,int nDegen=1){
+    EXPECT_FALSE(appIsNull);
+    ASSERT_TRUE(foundMOAB);
+    ASSERT_TRUE(setProblem());
+    ASSERT_NO_THROW(moabUOPtr->initBinningData());
+
+    // Set the mesh
+    ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+    // Get elems
+    std::vector<moab::EntityHandle> ents;
+    getElems(ents);
+
+    // Set a constant solution
+    setConstSolution(ents,solConst);
+
+    // Find the surfaces
+    ASSERT_TRUE(moabUOPtr->update());
+
+    // Check groups, volumes and surfaces
+    unsigned int nVol=3;
+    unsigned int nSurf=4;
+    checkAllGeomsets(nVol,nSurf);
+
+    // Check volume->surf relationships
+
+    // Copper block
+    int vol_id=1;
+    std::set<int> surf_ids = {1};
+    double tcheck=solConst*double(nDegen);
+    checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+    // Region of air
+    vol_id=2;
+    surf_ids = {1,2};
+    checkSurfsAndTemp(vol_id,surf_ids,tcheck);
+
+    // Graveyard
+    vol_id=3;
+    surf_ids = {3,4};
+    checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
+  }
+
   // Vector to hold material names
   std::vector<std::string> mat_names;
 
@@ -924,6 +974,21 @@ protected:
   unsigned int nSkip;
   std::string output_base;
 
+};
+
+// Repeat surfaces test for second order mesh
+class SecondOrderSurfacesTest : public FindMoabSurfacesTest {
+protected:
+
+  SecondOrderSurfacesTest() :
+    FindMoabSurfacesTest("findsurfstest-second.i") {
+
+    // Define the material names expected for this input file
+    mat_names.push_back("mat:copper");
+    mat_names.push_back("mat:air");
+    mat_names.push_back("mat:Graveyard");
+
+  }
 };
 
 class FindSingleMatSurfs: public FindMoabSurfacesTest {
@@ -1282,48 +1347,7 @@ TEST_F(SecondOrderMoabUserObjectTest, setSolution)
 // Test for finding surfaces
 TEST_F(FindMoabSurfacesTest, constTemp)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
-  // Get elems
-  std::vector<moab::EntityHandle> ents;
-  getElems(ents);
-
-  // Set a constant solution
-  double solConst = 300.;
-  setConstSolution(ents,solConst);
-
-  // Find the surfaces
-  EXPECT_TRUE(moabUOPtr->update());
-
-  // Check groups, volumes and surfaces
-  unsigned int nVol=3;
-  unsigned int nSurf=4;
-  checkAllGeomsets(nVol,nSurf);
-
-  // Check volume->surf relationships
-
-  // Copper block
-  int vol_id=1;
-  std::set<int> surf_ids = {1};
-  double tcheck=300.;
-  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
-
-  // Region of air
-  vol_id=2;
-  surf_ids = {1,2};
-  checkSurfsAndTemp(vol_id,surf_ids,tcheck);
-
-  // Graveyard
-  vol_id=3;
-  surf_ids = {3,4};
-  checkSurfsAndTemp(vol_id,surf_ids,tcheck,true);
-
+  checkConstTempSurfs(300);
 }
 
 TEST_F(FindMoabSurfacesTest, singleBin)
@@ -1500,6 +1524,11 @@ TEST_F(FindMoabSurfacesTest, checkOutput)
 
 }
 
+// Test for finding surfaces for second order mesh
+TEST_F(SecondOrderSurfacesTest, constTemp)
+{
+  checkConstTempSurfs(37.5,8);
+}
 
 // Test for checking output
 TEST_F(FindSurfsNodalTemp, nodalTemperature)

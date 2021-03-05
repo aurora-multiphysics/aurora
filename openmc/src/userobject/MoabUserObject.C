@@ -354,6 +354,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
         // Get the elem node index of the ith node of the sub-tet
         unsigned int nodeIndex = nodeSet.at(iNode);
+
         if(nodeIndex >= conn_libmesh.size()){
           mooseError("Element index is out of range");
         }
@@ -363,7 +364,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
            node_id_to_handle.end()){
           mooseError("Could not find node entity handle");
         }
-        conn[iNode]=node_id_to_handle[conn_libmesh.at(iNode)];
+        conn[iNode]=node_id_to_handle[conn_libmesh.at(nodeIndex)];
       }
 
       // Create an element in MOAB database
@@ -955,6 +956,9 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
 
         // Get the MOAB handles, and add to local set
         // (May be more than one if this libMesh elem has sub-tetrahedra)
+        if(_id_to_elem_handles.find(next)==_id_to_elem_handles.end()){
+          mooseError("No entity handles found for libmesh id.");
+        }
         std::vector<moab::EntityHandle> ents = _id_to_elem_handles[next];
         for(const auto ent : ents){
           local.insert(ent);
@@ -1105,6 +1109,8 @@ MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, 
   moab::Range rtris;  // The tris which are reversed with respect to their surfaces
   rval = skinner->find_skin(0,region,false,tris,&rtris);
   if(rval != moab::MB_SUCCESS) return false;
+  if(tris.size()==0 && rtris.size()==0) return false;
+
 
   // Create surface sets for the forwards tris
   VolData vdata = {volume_set,Sense::FORWARDS};
