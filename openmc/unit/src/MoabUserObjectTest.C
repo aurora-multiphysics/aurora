@@ -281,7 +281,9 @@ protected:
     return centroid.norm();
   }
 
-  void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax, double solMax, double solMin, double scalefactor=1.0, bool normToVol=false) {
+  void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax,
+                   double solMax, double solMin,
+                   double scalefactor=1.0, bool normToVol=false) {
 
     // Create a vector for solutionData
     std::vector<double> solutionData;
@@ -296,6 +298,41 @@ protected:
 
   }
 
+  void setSolution(const std::vector<moab::EntityHandle>& ents, double rMax,
+                   double solMax, double solMin,
+                   double scalefactor, bool normToVol,
+                   std::vector<double>& solExpect) {
+
+    setSolution(ents,rMax,solMax,solMin,scalefactor,normToVol);
+
+    // Save the solution we expect
+
+    // Get the mesh
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+
+    // Loop over the elements
+    auto itelem = mesh.elements_begin();
+    auto endelem = mesh.elements_end();
+    for( ; itelem!=endelem; ++itelem){
+      Elem& elem = **itelem;
+
+      // Get the midpoint radius
+      double radius = elemRadius(elem);
+
+      // Get the expected solution for this element
+      double solExpectNow = getSolution(radius,rMax,solMax,solMin);
+      solExpectNow *= scalefactor;
+
+      if(normToVol){
+        double volume = elem.volume();
+        solExpectNow /= volume;
+      }
+
+      solExpect.push_back(solExpectNow);
+    }
+
+  }
+
   void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst) {
 
     // Create a vector for constant solution
@@ -303,6 +340,56 @@ protected:
 
     // Check we can set the solution
     ASSERT_TRUE(moabUOPtr->setSolution(var_name,solutionData,1.0,false));
+
+
+  }
+
+  void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst,std::vector<double>& solExpect){
+
+    setConstSolution(ents,solConst);
+    solExpect.resize(ents.size(),solConst);
+
+  }
+
+
+  void checkSolution(const std::vector<double>& solExpect){
+
+    // Fetch the system details;
+    ASSERT_TRUE(checkSystem());
+    System & sys = getSys();
+    unsigned int iSys = sys.number();
+    unsigned int iVar = sys.variable_number(var_name);
+
+    // Get the size of solution vector
+    numeric_index_type 	solsize = sys.solution->size();
+
+    // Get the mesh
+    MeshBase& mesh = problemPtr->mesh().getMesh();
+
+    // Loop over the elements
+    auto itelem = mesh.elements_begin();
+    auto endelem = mesh.elements_end();
+    size_t iElem=0;
+    for( ; itelem!=endelem; ++itelem){
+      Elem& elem = **itelem;
+
+      // Get the degree of freedom number for this element
+      dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
+
+      ASSERT_LT(soln_index,solsize);
+
+      // Get the solution value for this element
+      double sol = double(sys.solution->el(soln_index));
+
+      // Get the solution we expect
+      double solExpectNow=solExpect.at(iElem);
+
+      // Compare
+      double solDiff = fabs(sol-solExpectNow);
+      EXPECT_LT(solDiff,tol);
+
+      iElem++;
+    }
 
   }
 
@@ -321,66 +408,21 @@ protected:
                                         dummySolutionData,
                                         scalefactor,normToVol));
 
-
-    // Fetch the system details;
-    ASSERT_TRUE(checkSystem());
-    System & sys = getSys();
-    unsigned int iSys = sys.number();
-    unsigned int iVar = sys.variable_number(var_name);
-
-    // Get the size of solution vector
-    numeric_index_type 	solsize = sys.solution->size();
-
-    // Get the mesh
-    MeshBase& mesh = problemPtr->mesh().getMesh();
-
     for(int i=0; i<2; i++){
+
+      std::vector<double> solExpect;
 
       if(i==0){
         // Set a constant solution
-        setConstSolution(ents,solConst);
+        setConstSolution(ents,solConst,solExpect);
       }
       else{
         // Set a non-trival solution
-        setSolution(ents,rMax,solMax,solMin,scalefactor,normToVol);
+        setSolution(ents,rMax,solMax,solMin,scalefactor,normToVol,solExpect);
       }
 
       // Check the solution we set is correct
-
-      // Loop over the elements
-      auto itelem = mesh.elements_begin();
-      auto endelem = mesh.elements_end();
-      for( ; itelem!=endelem; ++itelem){
-        Elem& elem = **itelem;
-
-        // Get the degree of freedom number for this element
-        dof_id_type soln_index = elem.dof_number(iSys,iVar,0);
-
-        ASSERT_LT(soln_index,solsize);
-
-        // Get the solution value for this element
-        double sol = double(sys.solution->el(soln_index));
-
-        double solExpect=solConst;
-        if(i>0){
-          // Get the midpoint radius
-          double radius = elemRadius(elem);
-
-          // Get the expected solution for this element
-          solExpect = getSolution(radius,rMax,solMax,solMin);
-          solExpect *= scalefactor;
-
-          if(normToVol){
-            double volume = elem.volume();
-            solExpect /= volume;
-          }
-        }
-
-        // Compare
-        double solDiff = fabs(sol-solExpect);
-        EXPECT_LT(solDiff,tol);
-
-      }
+      checkSolution(solExpect);
 
     }
 
@@ -1189,13 +1231,52 @@ TEST_F(MoabUserObjectTest, reset)
 
 }
 
-// Test for MOAB mesh initialisation
+// Test for second-order MOAB mesh initialisation
 TEST_F(SecondOrderMoabUserObjectTest, init)
 {
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
 
   initMoabTest();
+}
+
+// Test for second-order MOAB mesh solution
+TEST_F(SecondOrderMoabUserObjectTest, setSolution)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+
+  // Set the mesh
+  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+  // Create a vector for setting "openmc" solution
+  std::vector<double> solutionData;
+
+  // Create a vector for libmesh solution
+  std::vector<double> solutionCompareData;
+
+  // Generate solution data (const across sub-tets)
+  size_t elemDegen=8;
+  size_t nElemsLibMesh = nElemsExpect/elemDegen;
+  double solInitial=300.;
+  double solDiff=1.;
+  for(size_t iElem=0; iElem<nElemsLibMesh; iElem++){
+    double solNow = solInitial * solDiff*iElem;
+    solutionCompareData.push_back(solNow*elemDegen);
+    for(size_t iDegen=0; iDegen<elemDegen; iDegen++){
+      solutionData.push_back(solNow);
+    }
+  }
+
+  EXPECT_TRUE(moabUOPtr->setSolution(var_name,
+                                     solutionData,
+                                     1.0,
+                                     false));
+
+
+  checkSolution(solutionCompareData);
+
 }
 
 // Test for finding surfaces
