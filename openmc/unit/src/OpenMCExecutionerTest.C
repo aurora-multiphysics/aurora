@@ -13,17 +13,29 @@
 #include "MoabUserObject.h"
 #include "OpenMCExecutioner.h"
 
-// Fixture to test the MOAB user object
+// Fixture to test the OpenMCExecutioner
 class OpenMCExecutionerTest : public OpenMCAppRunTest{
 protected:
-  OpenMCExecutionerTest() :
-    OpenMCAppRunTest("executioner.i"),
-    isSetUp(false),
-    var_name("heating-local")
+
+  OpenMCExecutionerTest(std::string inputfile) :
+    OpenMCAppRunTest(inputfile)
   {
-    scalefactor =16.0218;
-    nMeshBinsExpect=11972;
+    setDefaults();
   };
+
+  OpenMCExecutionerTest() :
+    OpenMCAppRunTest("executioner.i")
+  {
+    setDefaults();
+  };
+
+  void setDefaults(){
+    isSetUp=false;
+    var_name="heating-local";
+    scalefactor=16.0218;
+    nMeshElemsExpect=11972;
+    nDegenBins=1;
+  }
 
   virtual void SetUp() override {
 
@@ -68,6 +80,8 @@ protected:
     ASSERT_FALSE(openmc::model::tallies.empty());
     openmc::Tally& tally = *(openmc::model::tallies.at(0));
     xt::xtensor<double, 3> & results = tally.results_;
+
+    size_t nMeshBinsExpect=nMeshElemsExpect*nDegenBins;
     ASSERT_EQ(results.shape()[0],nMeshBinsExpect);
     ASSERT_EQ(results.shape()[1],nScores);
     ASSERT_EQ(results.shape()[2],3);
@@ -76,20 +90,31 @@ protected:
     MeshBase& mesh = problemPtr->mesh().getMesh();
 
     // Loop over the elements
-    for(size_t iBin=0; iBin<nMeshBinsExpect; iBin++){
+    for(size_t iElem=0; iElem<nMeshElemsExpect; iElem++){
 
-      // Because of how the elems are created iBin = elem id
-      dof_id_type id = iBin;
+      // Because of how the elems are created iElem = elem id
+      dof_id_type id = iElem;
 
       // Get a reference to the element with this ID
       Elem& elem  = mesh.elem_ref(id);
 
-      // Get the solution for the corresponding bin
-      double solNow = results(iBin,0,1);
+      double solNow = 0.;
 
-      // Normalise to volume
-      solNow /= elem.volume();
+      // Sum over bins which map to the same element
+      for(size_t iDegen=0; iDegen<nDegenBins; iDegen++){
+
+        // Calculate bin index
+        size_t iBin = nDegenBins*iElem + iDegen;
+
+        // Get the solution for the corresponding bin
+        solNow+=results(iBin,0,1);
+      }
+
+      // Normalise
       solNow *= scalefactor;
+      solNow /= elem.volume();
+
+      // Save
       solExpect.push_back(solNow);
     }
 
@@ -100,11 +125,12 @@ protected:
     // Retrieve the expected solution
     std::vector<double> solExpect;
     getSolExpect(solExpect);
+    EXPECT_EQ(solExpect.size(),nMeshElemsExpect);
 
     // Get the mesh and number of elems
     MeshBase& mesh = problemPtr->mesh().getMesh();
     size_t nMeshBins= mesh.n_elem();
-    EXPECT_EQ(nMeshBins,nMeshBinsExpect);
+    EXPECT_EQ(nMeshBins,nMeshElemsExpect);
 
     // Fetch the system details
     System & sys = problemPtr->getSystem(var_name);
@@ -181,7 +207,8 @@ protected:
 
   }
 
-  size_t nMeshBinsExpect;
+  size_t nMeshElemsExpect;
+  size_t nDegenBins;
 
   FEProblemBase* problemPtr;
   Executioner* executionerPtr;
@@ -191,6 +218,21 @@ protected:
   std::string var_name;
   double scalefactor;
 };
+
+
+// Fixture to test the OpenMCExecutioner with a second order mesh
+class SecondOrderExecutionerTest: public OpenMCExecutionerTest {
+protected:
+
+  SecondOrderExecutionerTest() :
+    OpenMCExecutionerTest("executioner-second.i")
+  {
+    // Second-order mesh has 8 sub-tets for a single tet10
+    nDegenBins=8;
+  }
+
+};
+
 
 TEST_F(OpenMCExecutionerTest,executeUWUW){
 
@@ -204,6 +246,29 @@ TEST_F(OpenMCExecutionerTest,executeUWUW){
 }
 
 TEST_F(OpenMCExecutionerTest,executeLegacy){
+
+  ASSERT_TRUE(isSetUp);
+
+  EXPECT_FALSE(moabUOPtr->hasProblem());
+
+  std::string dagFile = "dagmc_legacy.h5m";
+  checkExecute(dagFile);
+
+}
+
+
+TEST_F(SecondOrderExecutionerTest,executeUWUW){
+
+  ASSERT_TRUE(isSetUp);
+
+  EXPECT_FALSE(moabUOPtr->hasProblem());
+
+  std::string dagFile = "dagmc_uwuw.h5m";
+  checkExecute(dagFile);
+
+}
+
+TEST_F(SecondOrderExecutionerTest,executeLegacy){
 
   ASSERT_TRUE(isSetUp);
 
