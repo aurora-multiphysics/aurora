@@ -412,8 +412,22 @@ MoabUserObject::getTetSets(ElemType type,
     perms.push_back({0,1,2,3});
   }
   else{ // TET10
-    // For now fail
-    return false;
+
+    // See libmesh cell_tet10.h for vertex labelling conventions
+
+    // One tet at each corner
+    perms.push_back({0,4,6,7});
+    perms.push_back({1,5,4,8});
+    perms.push_back({2,6,5,9});
+    perms.push_back({7,8,9,3});
+
+    // 4 tets from central octahedron (2 back-to-back square based pyramids)
+    // Central square is 4-5-9-7
+    // Arbitrary choice of diagonal: 4-9
+    perms.push_back({4,9,7,8});
+    perms.push_back({4,5,9,8});
+    perms.push_back({4,7,9,6});
+    perms.push_back({4,9,5,6});
   }
 
   return true;
