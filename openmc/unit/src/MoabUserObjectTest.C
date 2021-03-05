@@ -88,6 +88,80 @@ protected:
     nElemsExpect=11972;
   }
 
+  void initMoabTest()
+  {
+    // Set the mesh
+    ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+    // Get the MOAB interface to check the data
+    std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
+    ASSERT_NE(moabPtr,nullptr);
+
+    // Check dimension
+    int dim;
+    moab::ErrorCode rval = moabPtr->get_dimension(dim);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    EXPECT_EQ(dim,dimExpect);
+
+    // Get root set
+    moab::EntityHandle rootset = moabPtr->get_root_set();
+
+    // Get the mesh set
+    moab::Range ents;
+    rval = moabPtr->get_entities_by_type(rootset,moab::MBENTITYSET,ents);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    ASSERT_EQ(ents.size(),size_t(1));
+    moab::EntityHandle meshset = ents.back();
+
+    // Check nodes
+    ents.clear();
+    rval = moabPtr->get_entities_by_dimension(rootset,0,ents);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    EXPECT_EQ(ents.size(),nNodesExpect);
+
+    // Check elems
+    ents.clear();
+    rval = moabPtr->get_entities_by_dimension(rootset,3,ents);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    EXPECT_EQ(ents.size(),nElemsExpect);
+    size_t nTets = ents.num_of_type(moab::MBTET);
+    EXPECT_EQ(nTets,nElemsExpect);
+
+    // Check built-in tags
+    moab::Tag tag_handle;
+    rval = moabPtr->tag_get_handle(GEOM_DIMENSION_TAG_NAME,tag_handle);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+    rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME,tag_handle);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+    rval = moabPtr->tag_get_handle(CATEGORY_TAG_NAME,tag_handle);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+    rval = moabPtr->tag_get_handle(NAME_TAG_NAME,tag_handle);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+    // Check DagMC tags
+    rval = moabPtr->tag_get_handle("FACETING_TOL",tag_handle);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+    double faceting_tol;
+    rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &faceting_tol);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    double diff = fabs(faceting_tol - faceting_tol_expect);
+    EXPECT_LT(diff,tol);
+
+    rval = moabPtr->tag_get_handle("GEOMETRY_RESABS",tag_handle);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+
+    double geom_tol;
+    rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &geom_tol);
+    EXPECT_EQ(rval,moab::MB_SUCCESS);
+    diff = fabs(geom_tol - geom_tol_expect);
+    EXPECT_LT(diff,tol);
+
+  }
+
   bool checkSystem(){
     try{
       getSys();
@@ -382,7 +456,13 @@ protected:
 class SecondOrderMoabUserObjectTest : public MoabUserObjectTest {
 protected:
   SecondOrderMoabUserObjectTest() :
-    MoabUserObjectTest("secondordermesh.i") {};
+    MoabUserObjectTest("secondordermesh.i") {
+
+    // Override defaults
+    nNodesExpect=65;
+    nElemsExpect=192;
+
+  };
 };
 
 class FindMoabSurfacesTest : public MoabUserObjectTest {
@@ -1030,75 +1110,7 @@ TEST_F(MoabUserObjectTest, init)
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
 
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
-  // Get the MOAB interface to check the data
-  std::shared_ptr<moab::Interface> moabPtr = moabUOPtr->moabPtr;
-  ASSERT_NE(moabPtr,nullptr);
-
-  // Check dimension
-  int dim;
-  moab::ErrorCode rval = moabPtr->get_dimension(dim);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(dim,dimExpect);
-
-  // Get root set
-  moab::EntityHandle rootset = moabPtr->get_root_set();
-
-  // Get the mesh set
-  moab::Range ents;
-  rval = moabPtr->get_entities_by_type(rootset,moab::MBENTITYSET,ents);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-  ASSERT_EQ(ents.size(),size_t(1));
-  moab::EntityHandle meshset = ents.back();
-
-  // Check nodes
-  ents.clear();
-  rval = moabPtr->get_entities_by_dimension(rootset,0,ents);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(ents.size(),nNodesExpect);
-
-  // Check elems
-  ents.clear();
-  rval = moabPtr->get_entities_by_dimension(rootset,3,ents);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-  EXPECT_EQ(ents.size(),nElemsExpect);
-  size_t nTets = ents.num_of_type(moab::MBTET);
-  EXPECT_EQ(nTets,nElemsExpect);
-
-  // Check built-in tags
-  moab::Tag tag_handle;
-  rval = moabPtr->tag_get_handle(GEOM_DIMENSION_TAG_NAME,tag_handle);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-
-  rval = moabPtr->tag_get_handle(GLOBAL_ID_TAG_NAME,tag_handle);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-
-  rval = moabPtr->tag_get_handle(CATEGORY_TAG_NAME,tag_handle);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-
-  rval = moabPtr->tag_get_handle(NAME_TAG_NAME,tag_handle);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-
-  // Check DagMC tags
-  rval = moabPtr->tag_get_handle("FACETING_TOL",tag_handle);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-
-  double faceting_tol;
-  rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &faceting_tol);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-  double diff = fabs(faceting_tol - faceting_tol_expect);
-  EXPECT_LT(diff,tol);
-
-  rval = moabPtr->tag_get_handle("GEOMETRY_RESABS",tag_handle);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-
-  double geom_tol;
-  rval = moabPtr->tag_get_data(tag_handle, &meshset, 1, &geom_tol);
-  EXPECT_EQ(rval,moab::MB_SUCCESS);
-  diff = fabs(geom_tol - geom_tol_expect);
-  EXPECT_LT(diff,tol);
+  initMoabTest();
 
 }
 
@@ -1183,9 +1195,7 @@ TEST_F(SecondOrderMoabUserObjectTest, init)
   ASSERT_TRUE(foundMOAB);
   ASSERT_TRUE(setProblem());
 
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
+  initMoabTest();
 }
 
 // Test for finding surfaces
