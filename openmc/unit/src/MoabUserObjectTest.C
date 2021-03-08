@@ -647,6 +647,14 @@ protected:
     std::set<moab::EntityHandle> volsFromGroups;
     std::set<moab::EntityHandle> surfsFromVols;
     std::set<moab::EntityHandle> trisFromSurfs;
+    moab::EntityHandle graveyard(0);
+
+    // Save the bounding coords
+    double MAX=std::numeric_limits<double>::max();
+    double max[3]={-MAX,-MAX,-MAX};
+    double min[3]={MAX,MAX,MAX};
+    double maxGY[3]={-MAX,-MAX,-MAX};
+    double minGY[3]={MAX,MAX,MAX};
 
     // Check each category in turn
     for( const auto& category : tags_by_cat){
@@ -702,6 +710,12 @@ protected:
           rval = moabPtr->get_entities_by_handle(group,group_vols);
           EXPECT_EQ(rval,moab::MB_SUCCESS);
 
+          // Only expect 1 graveyard
+          if(namecheck=="mat:Graveyard"){
+            ASSERT_EQ(group_vols.size(),size_t(1));
+            graveyard=group_vols.front();
+          }
+
           EXPECT_FALSE(group_vols.empty());
           for(auto vol: group_vols){
             // Vols should not be in more than one group
@@ -717,9 +731,10 @@ protected:
 
           EXPECT_FALSE(vol_surfs.empty());
           surfsFromVols.insert(vol_surfs.begin(),vol_surfs.end());
+
         }
         else if(cat =="Surface"){
-          // Save the volumes in the group
+          // Save the tris in the surface
           moab::EntityHandle surf = ents[iCat];
           std::vector< moab::EntityHandle > tris;
           rval = moabPtr->get_entities_by_handle(surf,tris);
@@ -731,6 +746,25 @@ protected:
             bool found_tri = ( trisFromSurfs.find(tri) != trisFromSurfs.end() );
             EXPECT_FALSE(found_tri);
             trisFromSurfs.insert(tri);
+
+            // Get the coords of this tri
+            // 9 = 3 nodes * 3 dims
+            std::vector<double> nodeCoords(9);
+            moabPtr->get_coords	(&tri,1,nodeCoords.data());
+            // Loop over nodes of tri
+            for(size_t inode=0; inode<3; ++inode){
+              // Loop over x,y,z
+              for(int i=0; i<3; i++){
+                double coord = nodeCoords.at(3*inode +i);
+                if(coord>max[i]){
+                  max[i]=coord;
+                }
+                if(coord<min[i]){
+                  min[i]=coord;
+                }
+              }
+            }
+
           }
         }
 
@@ -749,13 +783,16 @@ protected:
       EXPECT_TRUE(found_vol);
     }
 
+    // Check we found a graveyard
+    EXPECT_NE(graveyard,0);
+
     // Check surfaces are consistent
     EXPECT_EQ(surfs.size(),surfsFromVols.size());
     for(size_t isurf=0; isurf<surfs.size(); isurf++){
       bool found_surf = ( surfsFromVols.find(surfs[isurf]) != surfsFromVols.end() );
       EXPECT_TRUE(found_surf);
 
-      // Get the parent volumess of this surface
+      // Get the parent volumes of this surface
       std::vector< moab::EntityHandle > parents;
       rval = moabPtr->get_parent_meshsets(surfs[isurf],parents);
       EXPECT_EQ(rval,moab::MB_SUCCESS);
@@ -766,6 +803,7 @@ protected:
       EXPECT_GT(nVols,size_t(0));
 
       std::vector<int> senses;
+      bool isGraveyard=false;
       for(auto parent: parents){
         // Check every parent is a known volume
         bool found_parent = ( volsFromGroups.find(parent) != volsFromGroups.end() );
@@ -777,12 +815,56 @@ protected:
         EXPECT_EQ(rval,moab::MB_SUCCESS);
         EXPECT_EQ(abs(sense),1);
         senses.push_back(sense);
+
+        // Check if this volume is the graveyard
+        if(parent == graveyard){
+          isGraveyard=true;
+        }
+
       }
       // Check parents are different and have opposite sense
       if(nVols == 2){
         EXPECT_NE(parents.at(0),parents.at(1));
         EXPECT_NE(senses.at(0),senses.at(1));
       }
+
+      if(isGraveyard){
+        // Set Graveyard BB
+
+        // Get the tris
+        std::vector< moab::EntityHandle > tris;
+        rval = moabPtr->get_entities_by_handle(surfs[isurf],tris);
+        EXPECT_EQ(rval,moab::MB_SUCCESS);
+        EXPECT_FALSE(tris.empty());
+        for(auto tri: tris){
+          // Get the coords of this tri
+          // 9 = 3 nodes * 3 dims
+          std::vector<double> nodeCoords(9);
+          moabPtr->get_coords	(&tri,1,nodeCoords.data());
+          // Loop over nodes of tri
+          for(size_t inode=0; inode<3; ++inode){
+            // Loop over x,y,z
+            for(int i=0; i<3; i++){
+              double coord = nodeCoords.at(3*inode +i);
+              if(coord>maxGY[i]){
+                maxGY[i]=coord;
+              }
+              if(coord<minGY[i]){
+                minGY[i]=coord;
+              }
+            }
+          }
+        }// End loop over tris
+
+      }
+    } // End loop over surfs
+
+    // Check the graveyard fully encompasses everything
+    // Loop over x,y,z
+    std::string err="Graveyard is not bounding box";
+    for(int i=0; i<3; i++){
+      EXPECT_LT(minGY[i]-tol,min[i])<<err;
+      EXPECT_GT(maxGY[i]+tol,max[i])<<err;
     }
 
   }
