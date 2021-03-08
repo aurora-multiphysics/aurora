@@ -240,12 +240,14 @@ MoabUserObject::findMaterials()
     // Get the element blocks corresponding to this mat.
     std::set<SubdomainID> blocks = mat_ptr->blockIDs();
 
-    // Check that all the blocks are unique
-    unsigned int nblks_before = unique_blocks.size();
-    unsigned int nblks_new = blocks.size();
-    unique_blocks.insert(blocks.begin(),blocks.end());
-    if(unique_blocks.size() != (nblks_before+nblks_new) ){
-      mooseError("Some blocks appear in more than one material.");
+    if(!blocks.empty()){
+      // Check that all the blocks are unique
+      unsigned int nblks_before = unique_blocks.size();
+      unsigned int nblks_new = blocks.size();
+      unique_blocks.insert(blocks.begin(),blocks.end());
+      if(unique_blocks.size() != (nblks_before+nblks_new) ){
+        mooseError("Some blocks appear in more than one material.");
+      }
     }
 
     // Save list
@@ -254,6 +256,17 @@ MoabUserObject::findMaterials()
 
   // Save number of materials
   nMatBins = mat_blocks.size();
+
+  if(nMatBins == 0){
+    mooseError("No materials were found.");
+  }
+  if(unique_blocks.empty()){
+    mooseError("No blocks were found. Please assign at least one block to a material.");
+  }
+
+  std::cout<<unique_blocks.size()<< " blocks were found"<<std::endl;
+
+
 }
 
 moab::ErrorCode
@@ -807,6 +820,15 @@ MoabUserObject::sortElemsByResults()
              << " elements fell outside the specified bin range for the variable "
              << var_name
              <<std::endl;
+  }
+
+  // Check everything adds up
+  size_t elemCountCheck=underflowElems.size() + overflowElems.size();
+  for(const auto & elemSet : sortedElems){
+    elemCountCheck += elemSet.size();
+  }
+  if(elemCountCheck != mesh().n_elem()){
+    mooseError("Disparity in number of sorted elements.");
   }
 
   return true;
