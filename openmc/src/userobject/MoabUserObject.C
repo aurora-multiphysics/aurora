@@ -1249,16 +1249,14 @@ moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned 
   BoundingBox bbox =  MeshTools::create_bounding_box(mesh());
 
   // Create inner surface from the box with normals pointing out of box
-  // Rescale by 1% to avoid having to imprint,
-  // scale and by moose -> openmc length unit conversion factor
-  double scalefactor = 1.01 * lengthscale;
+  // Rescale by 1% to avoid having to imprint
+  double scalefactor = 1.01;
   rval = createSurfaceFromBox(bbox,vdata,surf_id,true,scalefactor);
   if(rval != moab::MB_SUCCESS) return rval;
 
   // Create outer surface with face normals pointing into the box
-  // Rescale by 10% to create a volume, and
-  // scale and by moose -> openmc length unit conversion factor
-  scalefactor = 1.10 * lengthscale;
+  // Rescale by 10% to create a volume
+  scalefactor = 1.10;
   rval = createSurfaceFromBox(bbox,vdata,surf_id,false,scalefactor);
   return rval;
 }
@@ -1323,13 +1321,13 @@ MoabUserObject::createNodesFromBox(const BoundingBox& box,double factor,std::vec
 std::vector<Point>
 MoabUserObject::boxCoords(const BoundingBox& box, double factor)
 {
-  Point minpoint = box.min();
-  Point maxpoint = box.max();
+  Point minpoint = (box.min())*lengthscale;
+  Point maxpoint = (box.max())*lengthscale;
   Point diff = (maxpoint - minpoint)/2.0;
   Point origin = minpoint + diff;
 
-  // Rescale (half)sides of box
-  diff *= factor;
+  // Rescale sidelength of box by specified factor
+  diff *=factor;
 
   // modify minpoint
   minpoint = origin - diff;
