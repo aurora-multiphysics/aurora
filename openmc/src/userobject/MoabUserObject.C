@@ -28,6 +28,10 @@ validParams<MoabUserObject>()
   params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
   params.addParam<double>("geom_tol",1.e-6,"Geometry tolerance for DagMC");
 
+  params.addParam<double>("graveyard_scale_inner",1.01,"Graveyard inner surface scalefactor relative to aligned bounding box.");
+  params.addParam<double>("graveyard_scale_outer",1.10,"Graveyard outer surface scalefactor relative to aligned bounding box.");
+
+
   // Output params
   params.addParam<bool>("output_skins", false, "Switch to control whether MOAB should write skins to file.");
   params.addParam<std::string>("output_base", "moab_surfs", "Base filename for file writes (will be appended by integer");
@@ -51,6 +55,8 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   openmc_mat_names(getParam<std::vector<std::string> >("material_openmc_names")),
   faceting_tol(getParam<double>("faceting_tol")),
   geom_tol(getParam<double>("geom_tol")),
+  scalefactor_inner(getParam<double>("graveyard_scale_inner")),
+  scalefactor_outer(getParam<double>("graveyard_scale_outer")),
   output_skins(getParam<bool>("output_skins")),
   output_base(getParam<std::string>("output_base")),
   n_output(getParam<unsigned int>("n_output")),
@@ -96,6 +102,13 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     }
     nMinor = nVarBins/nPow;
     calcMidpoints();
+  }
+
+  if(scalefactor_inner < 1.0){
+    mooseError("Please set graveyard_scale_inner to a value greater than 1");
+  }
+  if(scalefactor_outer < scalefactor_inner){
+    mooseError("Please ensure graveyard_scale_outer exceeds graveyard_scale_inner");
   }
 
 
@@ -1249,15 +1262,11 @@ moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned 
   BoundingBox bbox =  MeshTools::create_bounding_box(mesh());
 
   // Create inner surface from the box with normals pointing out of box
-  // Rescale by 1% to avoid having to imprint
-  double scalefactor = 1.01;
-  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,scalefactor);
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,scalefactor_inner);
   if(rval != moab::MB_SUCCESS) return rval;
 
   // Create outer surface with face normals pointing into the box
-  // Rescale by 10% to create a volume
-  scalefactor = 1.10;
-  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,scalefactor);
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,scalefactor_outer);
   return rval;
 }
 

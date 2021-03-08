@@ -248,6 +248,10 @@ private:
   double faceting_tol;
   double geom_tol;
 
+  // Scalefactors applied to bounding box for inner and outer surfaces of graveyard
+  double scalefactor_inner;
+  double scalefactor_outer;
+
   // Store the temperature corresponding to the bin mipoint
   std::vector<double> midpoints;
 
