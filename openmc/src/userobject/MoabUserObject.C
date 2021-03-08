@@ -223,10 +223,16 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, 
 void
 MoabUserObject::findMaterials()
 {
+
+  // Don't need to do this step if we are not performing binning
+  if(!binElems) return;
+
   // Clear any prior data.
   mat_blocks.clear();
 
   std::set<SubdomainID> unique_blocks;
+
+  SubdomainID maxBlockID = mesh().n_subdomains();
 
   // Loop over the materials provided by the user
   for(const auto & mat : mat_names){
@@ -237,14 +243,26 @@ MoabUserObject::findMaterials()
       mooseError("Could not find material "+mat );
     }
 
+    if(mat_ptr->numBlocks()==0){
+      mooseError("Material "+mat+" does not have any blocks");
+    }
+
     // Get the element blocks corresponding to this mat.
     std::set<SubdomainID> blocks = mat_ptr->blockIDs();
 
     if(!blocks.empty()){
-      // Check that all the blocks are unique
+      // Check that all the blocks are unique and have appropriate values
       unsigned int nblks_before = unique_blocks.size();
       unsigned int nblks_new = blocks.size();
-      unique_blocks.insert(blocks.begin(),blocks.end());
+      for(const auto blk: blocks){
+        if(blk < 1 || blk > maxBlockID){
+          std::string errmsg="Block ID "+std::to_string(blk)+" for material "+mat
+            +" is inconsistent with mesh (max subdomains = "
+            +std::to_string(maxBlockID)+")";
+            mooseError(errmsg);
+        }
+        unique_blocks.insert(blk);
+      }
       if(unique_blocks.size() != (nblks_before+nblks_new) ){
         mooseError("Some blocks appear in more than one material.");
       }
@@ -263,9 +281,6 @@ MoabUserObject::findMaterials()
   if(unique_blocks.empty()){
     mooseError("No blocks were found. Please assign at least one block to a material.");
   }
-
-  std::cout<<unique_blocks.size()<< " blocks were found"<<std::endl;
-
 
 }
 
