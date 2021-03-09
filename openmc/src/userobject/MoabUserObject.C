@@ -31,12 +31,13 @@ validParams<MoabUserObject>()
   params.addParam<double>("graveyard_scale_inner",1.01,"Graveyard inner surface scalefactor relative to aligned bounding box.");
   params.addParam<double>("graveyard_scale_outer",1.10,"Graveyard outer surface scalefactor relative to aligned bounding box.");
 
-
   // Output params
   params.addParam<bool>("output_skins", false, "Switch to control whether MOAB should write skins to file.");
-  params.addParam<std::string>("output_base", "moab_surfs", "Base filename for file writes (will be appended by integer");
-  params.addParam<unsigned int>("n_output", 10, "Number of times to write to file if output_skins is true");
-  params.addParam<unsigned int>("n_skip", 0, "Number of iterations to skip between writes if output_skins is true and n_output>1");
+  params.addParam<bool>("output_full",  false, "Switch to control whether MOAB should write full mesh data to file.");
+  params.addParam<std::string>("output_base", "moab_surfs", "Base filename for surface file writes (will be appended by an integer");
+  params.addParam<std::string>("output_base_full", "moab_full", "Base filename for full mesh file writes (will be appended by an integer");
+  params.addParam<unsigned int>("n_output", 10, "Number of times to write to file if output_skins and/or output_full is true");
+  params.addParam<unsigned int>("n_skip", 0, "Number of iterations to skip between writes if output_skins and/or output_full is true and n_output>1");
 
   return params;
 }
@@ -58,7 +59,9 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   scalefactor_inner(getParam<double>("graveyard_scale_inner")),
   scalefactor_outer(getParam<double>("graveyard_scale_outer")),
   output_skins(getParam<bool>("output_skins")),
+  output_full(getParam<bool>("output_full")),
   output_base(getParam<std::string>("output_base")),
+  output_base_full(getParam<std::string>("output_base_full")),
   n_output(getParam<unsigned int>("n_output")),
   n_period(getParam<unsigned int>("n_skip")+1),
   _init_timer(registerTimedSection("init", 2)),
@@ -111,6 +114,16 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     mooseError("Please ensure graveyard_scale_outer exceeds graveyard_scale_inner");
   }
 
+  // Check output file names are sane
+  if(output_skins && output_base==""){
+    mooseError("Please provide a non-empty string for output_base when output_skins=true.");
+  }
+  if(output_full && output_base_full==""){
+    mooseError("Please provide a non-empty string for output_base_full when output_full=true.");
+  }
+  if(output_full && output_skins && output_base_full==output_base){
+    mooseError("Please provide unique non-empty strings for output_base_full and output_base.");
+  }
 
   // Set variables relating to writing to file
   n_write=0;
@@ -517,6 +530,8 @@ MoabUserObject::createGroup(unsigned int id, std::string name,moab::EntityHandle
   // Create a new mesh set
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,group_set);
   if(rval!=moab::MB_SUCCESS) return rval;
+
+  std::cout<<"Created group; id = "<< id << " name = "<< name<<std::endl;
 
   // Set the tags for this material
   return setTags(group_set,name,"Group",id,4);
@@ -943,15 +958,15 @@ MoabUserObject::findSurfaces()
   }
 
   // Optionally write to file
-  if(output_skins){
-    if(!writeSurfaces()) return false;
+  if(output_skins || output_full){
+    if(!write()) return false;
   }
 
   return true;
 }
 
 bool
-MoabUserObject::writeSurfaces()
+MoabUserObject::write()
 {
 
   // Only write to file on root process
@@ -959,20 +974,29 @@ MoabUserObject::writeSurfaces()
 
   if(n_write >= n_output){
     output_skins=false; // Don't write any more times
+    output_full=false; // Don't write any more times
     return true;
   }
 
   if( (n_its % n_period) == 0 ){
 
-    // Generate list of surfaces to write.
-    std::vector<moab::EntityHandle> surfs;
-    for( auto itsurf : surfsToVols){
-      surfs.push_back(itsurf.first);
+    if(output_skins){
+      // Generate list of surfaces to write.
+      std::vector<moab::EntityHandle> surfs;
+      for( auto itsurf : surfsToVols){
+        surfs.push_back(itsurf.first);
+      }
+      std::string filename = output_base + "_" + std::to_string(n_write) +".h5m";
+      std::cout << "Writing MOAB surface mesh to "<< filename << std::endl;
+      moab::ErrorCode rval = moabPtr->write_mesh(filename.c_str(),surfs.data(),surfs.size());
+      if(rval != moab::MB_SUCCESS) return false;
     }
-    std::string filename = output_base + "_" + std::to_string(n_write) +".h5m";
-    std::cout << "Writing MOAB mesh to "<< filename << std::endl;
-    moab::ErrorCode rval = moabPtr->write_mesh(filename.c_str(),surfs.data(),surfs.size());
-    if(rval != moab::MB_SUCCESS) return false;
+    if(output_full){
+      std::string filename = output_base_full + "_" + std::to_string(n_write) +".h5m";
+      std::cout << "Writing MOAB mesh to "<< filename << std::endl;
+      moab::ErrorCode rval = moabPtr->write_mesh(filename.c_str());
+      if(rval != moab::MB_SUCCESS) return false;
+    }
     n_write++;
   }
 

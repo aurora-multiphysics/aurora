@@ -167,7 +167,7 @@ private:
   // Find the surfaces for the provided range and add to group
   bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 
-  bool writeSurfaces();
+  bool write();
 
   void communicateDofSet(std::set<dof_id_type>& dofset);
 
@@ -257,7 +257,9 @@ private:
 
   // Settings to control the optional writing of surfaces to file.
   bool output_skins;
+  bool output_full;
   std::string output_base;
+  std::string output_base_full;
   unsigned int n_output; // Number of writes
   unsigned int n_period; // Period of writes (skip every n_period -1)
   unsigned int n_write; // Number of times file has been written to
