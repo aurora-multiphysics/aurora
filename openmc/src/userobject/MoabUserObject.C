@@ -531,8 +531,6 @@ MoabUserObject::createGroup(unsigned int id, std::string name,moab::EntityHandle
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,group_set);
   if(rval!=moab::MB_SUCCESS) return rval;
 
-  std::cout<<"Created group; id = "<< id << " name = "<< name<<std::endl;
-
   // Set the tags for this material
   return setTags(group_set,name,"Group",id,4);
 }
@@ -1285,12 +1283,12 @@ moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned 
   // Find a bounding box
   BoundingBox bbox =  MeshTools::create_bounding_box(mesh());
 
-  // Create inner surface from the box with normals pointing out of box
-  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,scalefactor_inner);
+  // Create inner surface with normals pointing into of box
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,scalefactor_inner);
   if(rval != moab::MB_SUCCESS) return rval;
 
-  // Create outer surface with face normals pointing into the box
-  rval = createSurfaceFromBox(bbox,vdata,surf_id,false,scalefactor_outer);
+  // Create outer surface with face normals pointing out of the box
+  rval = createSurfaceFromBox(bbox,vdata,surf_id,true,scalefactor_outer);
   return rval;
 }
 
