@@ -273,6 +273,7 @@ OpenMCExecutioner::initMatNames()
 {
   for (const auto& mat : openmc::model::materials) {
     std::string mat_name = mat->name_;
+    openmc::to_lower(mat_name);
     int32_t id = mat->id_;
     if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
       std::cerr<<"More than one material found with name "
@@ -281,7 +282,7 @@ OpenMCExecutioner::initMatNames()
                <<std::endl;
       return false;
     }
-    mat_names_to_id[mat->name_] = id;
+    mat_names_to_id[mat_name] = id;
   }
   return true;
 }
