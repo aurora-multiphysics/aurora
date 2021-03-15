@@ -133,28 +133,19 @@ protected:
 
   }
 
-  // Backwards compatible overloaded version
-  void getSolExpect(std::vector<double>& solExpect){
-    std::vector<double> dummy;
-    getSolExpect(0,solExpect,dummy);
-  }
-
-  void checkSolution(){
-
-    // Retrieve the expected solution
-    std::vector<double> solExpect;
-    getSolExpect(solExpect);
-    EXPECT_EQ(solExpect.size(),nMeshElemsExpect);
+  void checkSolution(std::string var_name_now, std::vector<double>& solExpect){
 
     // Get the mesh and number of elems
     MeshBase& mesh = problemPtr->mesh().getMesh();
     size_t nMeshBins= mesh.n_elem();
     EXPECT_EQ(nMeshBins,nMeshElemsExpect);
 
+    ASSERT_TRUE(problemPtr->hasVariable(var_name_now));
+
     // Fetch the system details
-    System & sys = problemPtr->getSystem(var_name);
+    System & sys = problemPtr->getSystem(var_name_now);
     unsigned int iSys = sys.number();
-    unsigned int iVar = sys.variable_number(var_name);
+    unsigned int iVar = sys.variable_number(var_name_now);
     // Get the size of solution vector
     numeric_index_type 	solsize = sys.solution->size();
 
@@ -183,6 +174,30 @@ protected:
                             << " solCompare = "<< solCompare;
     } // End loop over elems
 
+  }
+
+  void checkSolution(int iScore, std::string var_name_now, std::string err_name){
+
+    // Retrieve the expected solution
+    std::vector<double> solExpect;
+    std::vector<double> errExpect;
+    getSolExpect(iScore,solExpect,errExpect);
+    EXPECT_EQ(solExpect.size(),nMeshElemsExpect);
+    EXPECT_EQ(errExpect.size(),nMeshElemsExpect);
+
+    // Check solution vector matches OpenMC results
+    checkSolution(var_name_now,solExpect);
+
+    // Check errors if requested
+    if(err_name !=""){
+      checkSolution(err_name,errExpect);
+    }
+
+  }
+
+  // Overloaded version with defaults
+  void checkSolution(){
+    checkSolution(0,var_name,"");
   }
 
   void checkExecute(std::string dagfile){
