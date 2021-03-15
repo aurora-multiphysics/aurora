@@ -35,6 +35,7 @@ protected:
     scalefactor=16.0218;
     nMeshElemsExpect=11972;
     nDegenBins=1;
+    nScores=1;
   }
 
   virtual void SetUp() override {
@@ -71,12 +72,13 @@ protected:
 
   }
 
-  void getSolExpect(std::vector<double>& solExpect)
+
+  void getSolExpect(int iScore, std::vector<double>& solExpect,
+                    std::vector<double>& errExpect)
   {
     solExpect.clear();
 
     // Get OpenMC results and check size
-    size_t nScores=1;
     ASSERT_FALSE(openmc::model::tallies.empty());
     openmc::Tally& tally = *(openmc::model::tallies.at(0));
     xt::xtensor<double, 3> & results = tally.results_;
@@ -99,6 +101,7 @@ protected:
       Elem& elem  = mesh.elem_ref(id);
 
       double solNow = 0.;
+      double errNow = 0.;
 
       // Sum over bins which map to the same element
       for(size_t iDegen=0; iDegen<nDegenBins; iDegen++){
@@ -107,17 +110,33 @@ protected:
         size_t iBin = nDegenBins*iElem + iDegen;
 
         // Get the solution for the corresponding bin
-        solNow+=results(iBin,0,1);
+        solNow+=results(iBin,iScore,1);
+
+        // Get the error for the corresponding bin
+        double err =results(iBin,iScore,1);
+        errNow+= err*err;
       }
+
+      // Error is sum of squares
+      errNow = sqrt(errNow);
 
       // Normalise
       solNow *= scalefactor;
       solNow /= elem.volume();
+      errNow *= scalefactor;
+      errNow /= elem.volume();
 
       // Save
       solExpect.push_back(solNow);
+      errExpect.push_back(errNow);
     }
 
+  }
+
+  // Backwards compatible overloaded version
+  void getSolExpect(std::vector<double>& solExpect){
+    std::vector<double> dummy;
+    getSolExpect(0,solExpect,dummy);
   }
 
   void checkSolution(){
@@ -209,6 +228,7 @@ protected:
 
   size_t nMeshElemsExpect;
   size_t nDegenBins;
+  size_t nScores;
 
   FEProblemBase* problemPtr;
   Executioner* executionerPtr;
