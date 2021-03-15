@@ -20,22 +20,40 @@ protected:
   OpenMCExecutionerTest(std::string inputfile) :
     OpenMCAppRunTest(inputfile)
   {
-    setDefaults();
+    init();
   };
 
   OpenMCExecutionerTest() :
     OpenMCAppRunTest("executioner.i")
   {
+    init();
+  }
+
+  void init()
+  {
     setDefaults();
+    setScoreList();
+  };
+
+  // Helper struct
+  struct VarData{
+    std::string var_name;
+    std::string err_name;
+    double scale;
+    int iScore;
   };
 
   void setDefaults(){
     isSetUp=false;
-    var_name="heating-local";
     scalefactor=16.0218;
     nMeshElemsExpect=11972;
     nDegenBins=1;
-    nScores=1;
+  }
+
+  // Set all the cases we want to test
+  virtual void setScoreList(){
+    VarData var = {"heating-local","",scalefactor,0};
+    scores.push_back(var);
   }
 
   virtual void SetUp() override {
@@ -73,7 +91,8 @@ protected:
   }
 
 
-  void getSolExpect(int iScore, std::vector<double>& solExpect,
+  void getSolExpect(int iScore,double scale,
+                    std::vector<double>& solExpect,
                     std::vector<double>& errExpect)
   {
     solExpect.clear();
@@ -85,7 +104,7 @@ protected:
 
     size_t nMeshBinsExpect=nMeshElemsExpect*nDegenBins;
     ASSERT_EQ(results.shape()[0],nMeshBinsExpect);
-    ASSERT_EQ(results.shape()[1],nScores);
+    ASSERT_EQ(results.shape()[1],scores.size());
     ASSERT_EQ(results.shape()[2],3);
 
     // Get the mesh
@@ -121,9 +140,9 @@ protected:
       errNow = sqrt(errNow);
 
       // Normalise
-      solNow *= scalefactor;
+      solNow *= scale;
       solNow /= elem.volume();
-      errNow *= scalefactor;
+      errNow *= scale;
       errNow /= elem.volume();
 
       // Save
@@ -176,28 +195,30 @@ protected:
 
   }
 
-  void checkSolution(int iScore, std::string var_name_now, std::string err_name){
+  void checkSolution(VarData var){
 
     // Retrieve the expected solution
     std::vector<double> solExpect;
     std::vector<double> errExpect;
-    getSolExpect(iScore,solExpect,errExpect);
+    getSolExpect(var.iScore,var.scale,solExpect,errExpect);
     EXPECT_EQ(solExpect.size(),nMeshElemsExpect);
     EXPECT_EQ(errExpect.size(),nMeshElemsExpect);
 
     // Check solution vector matches OpenMC results
-    checkSolution(var_name_now,solExpect);
+    checkSolution(var.var_name,solExpect);
 
     // Check errors if requested
-    if(err_name !=""){
-      checkSolution(err_name,errExpect);
+    if(var.err_name !=""){
+      checkSolution(var.err_name,errExpect);
     }
 
   }
 
-  // Overloaded version with defaults
-  void checkSolution(){
-    checkSolution(0,var_name,"");
+
+  void checkSolutions(){
+    for(const auto& score : scores){
+      checkSolution(score);
+    }
   }
 
   void checkExecute(std::string dagfile){
@@ -234,8 +255,8 @@ protected:
       }
       checkFilesExist(openmcOutputFilesCopy);
 
-      // Check OpenMC results match up with MOOSE solution
-      checkSolution();
+      // Check OpenMC results match up with MOOSE solutions
+      checkSolutions();
 
     } // End iterations over test
 
@@ -243,14 +264,15 @@ protected:
 
   size_t nMeshElemsExpect;
   size_t nDegenBins;
-  size_t nScores;
 
   FEProblemBase* problemPtr;
   Executioner* executionerPtr;
   MoabUserObject* moabUOPtr;
   bool isSetUp;
 
-  std::string var_name;
+  // List of scores to check
+  std::vector<VarData> scores;
+
   double scalefactor;
 };
 
