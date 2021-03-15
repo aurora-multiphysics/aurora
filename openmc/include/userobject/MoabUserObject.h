@@ -48,6 +48,9 @@ class MoabUserObject : public UserObject
   // Check if problem has been set
   bool hasProblem(){ return !( _problem_ptr == nullptr ); };
 
+  // Get a reference to the FE problem
+  FEProblemBase& problem();
+
   // Initialise MOAB
   void initMOAB();
 
@@ -86,8 +89,6 @@ private:
   EquationSystems & systems();
 
   System& system(std::string var_now);
-
-  FEProblemBase& problem();
 
   // Helper methods to set MOAB database
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);

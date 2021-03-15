@@ -9,13 +9,28 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variable = 'heating-local'
+  variables = 'heating-local flux'
+  score_names = 'heating-local flux'
+  tally_ids = '1 1'
+  err_variables = 'heating-local-err flux-err'
   launch_threads=true
   n_threads=4
 []
 
-[Variables]
+[AuxVariables]
   [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [heating-local-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux-err]
       order = CONSTANT
       family = MONOMIAL
   []

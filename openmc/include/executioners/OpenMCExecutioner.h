@@ -55,7 +55,7 @@ public:
 
 private:
 
-  // Helper struct
+  // Helper struct to store information about filters
   struct FilterInfo{
     int32_t index; //Global index
     int32_t id; // Unique ID
@@ -64,16 +64,41 @@ private:
     std::string type; // Type of filter
   };
 
+  // Helper struct to store information about scores
+  struct ScoreData {
+    // Name of the score to extract
+    std::string score_name;
+    // Name of the variable in which we will store the score mean
+    std::string var_name;
+    // Name of the variable in which we will store the score std deviation
+    std::string err_name;
+    // Switch to control if we save the error
+    bool saveErr;
+    // Factor by which we need to multiply results to get desired units
+    double scale_factor;
+    // Index for the score in the tally
+    int index;
+  };
+
   // Methods
 
   // Get the moab user object
   MoabUserObject& moab();
+
+  // Initialise structures to store information about scores
+  void initScoreData();
 
   // Initialise MOAB/OpenMC
   void initialize();
 
   // Run OpenMC and get results
   bool run();
+
+  // Pass results into FEProblem
+  bool processResults();
+
+  // Output the results
+  bool output();
 
   // Update MOAB with any results from MOOSE
   void update();
@@ -90,6 +115,12 @@ private:
   // Set up map of names to ids
   bool initMatNames();
 
+  // Set up score indices
+  bool initScoreIndices();
+
+  // Add score variables to the FE problem
+  void addVariables();
+
   // Return the openmc id of the material
   bool getMatID(moab::EntityHandle vol_handle, int& mat_id);
 
@@ -97,7 +128,11 @@ private:
   bool updateOpenMC();
 
   // Process Tallies from OpenMC
-  bool getResults(std::vector< double > &results_by_elem);
+  bool getResults(std::map<std::string,std::vector< double > > & var_results_by_elem);
+  // Set solution in FEProblem variable
+  bool setSolution(std::vector< double > & results_by_elem,
+                   std::string var_name,
+                   double scale_factor);
 
   // Helper methods to extract tally results
   bool setFilterInfo(openmc::Tally& tally,
@@ -152,20 +187,11 @@ private:
   // Hold OpenMC error code
   int openmc_err;
 
-  // Name of the variable in which we will store the tally data
-  std::string var_name;
-
-  // Name of the score to extract
-  std::string score_name;
-
   // Strength of fusion neutron source in neutrons/s
   double source_strength;
 
-  // Factor by which we need to multiply results
-  double scale_factor;
-
-  // OpenMC ID of the tally we will use
-  int32_t tally_id;
+  // Map of OpenMC IDs of the tallies to list of score and variable names
+  std::map<int32_t, std::vector<ScoreData> > tally_ids_to_scores;
 
   // OpenMC ID of the mesh to which we pass data
   int32_t mesh_id;
@@ -174,6 +200,9 @@ private:
 
   // Place to store graveyard entity handle
   moab::EntityHandle graveyard;
+
+  // Switch to control if we should automatically add variables to FEProblem
+  bool add_variables;
 
   // Switch to control whether openmc should launch child threads
   bool launch_threads;

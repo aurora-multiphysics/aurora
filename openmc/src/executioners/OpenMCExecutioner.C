@@ -8,12 +8,26 @@ InputParameters
 validParams<OpenMCExecutioner>()
 {
   InputParameters params = validParams<Transient>();
-  params.addRequiredParam<std::string>(
-      "variable", "Variable name to store the results of tally");
-  params.addParam<std::string>("score_name", "heating-local", "Name of the OpenMC score we want to extract");
-  params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
-  params.addParam<int32_t>("tally_id", 1, "OpenMC tally ID to extract results from.");
+
+  // Location for results
+  params.addParam<std::vector<std::string>>("variables", std::vector<std::string>(1,"heating-local"),
+                                            "List of aux variable names in which to store the means of scores");
+  params.addParam<std::vector<std::string>>("err_variables", std::vector<std::string>() ,
+                                            "Optional list of aux variable names in which to store the std deviation  of scores");
+  params.addParam<bool>("add_variables", true,
+                        "Switch to control whether to automatically add variables to FE problem if they don't exist already");
+
+  // OpenMC data params
+  params.addParam<std::vector<std::string>>("score_names", std::vector<std::string>(1,"heating-local"),
+                                            "List of the OpenMC score names we want to extract");
+  params.addParam<std::vector<int32_t>>("tally_ids", std::vector<int32_t>(1,1),
+                                            "List of OpenMC tally IDs from which to extract scores");
   params.addParam<int32_t>("mesh_id", 1, "OpenMC mesh ID for which we are providing the MOAB interface");
+
+  // Normalisation of source strength
+  params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
+
+  // Run settings
   params.addParam<bool>("redirect_dagout", true, "Switch to control whether dagmc output is written to file or not");
   params.addParam<std::string>("dagmc_logname", "/dev/null", "File to which to redirect DagMC output");
   params.addParam<bool>("launch_threads", false, "Switch to control whether openmc should launch new child thread. NB Do not set true when MOOSE application is run iwth --n-threads > 0 !");
@@ -26,11 +40,9 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   setProblemLocal(false),
   isInit(false),
   useUWUW(true),
-  var_name(getParam<std::string>("variable")),
-  score_name(getParam<std::string>("score_name")),
   source_strength(getParam<double>("neutron_source")),
-  tally_id(getParam<int32_t>("tally_id")),
   mesh_id(getParam<int32_t>("mesh_id")),
+  add_variables(getParam<bool>("add_variables")),
   launch_threads(getParam<bool>("launch_threads")),
   n_threads(getParam<unsigned int>("n_threads")),
   redirect_dagout(getParam<bool>("redirect_dagout")),
@@ -43,16 +55,14 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   _run_timer(registerTimedSection("run", 1)),
   _output_timer(registerTimedSection("output", 1))
 {
-  // Units for heating are eV / source neutron
-  // source_strength has units  neutron / s
-  // convert to J / s
-  scale_factor = source_strength * eVinJoules;
 
   if(launch_threads && n_threads > 1){
     if(libMesh::n_threads()>1){
       mooseError("Do not run application with --n-threads and with OpenMCExecutioner setting launch_threads = true");
     }
   }
+
+  initScoreData();
 }
 
 OpenMCExecutioner::~OpenMCExecutioner()
@@ -70,7 +80,6 @@ OpenMCExecutioner::~OpenMCExecutioner()
     openmc::model::DAG = nullptr;
   }
   openmc_finalize();
-
 }
 
 void
@@ -84,6 +93,63 @@ OpenMCExecutioner::execute()
 
   if(!run()) mooseError("Failed to run OpenMC");
 
+  if(!processResults()) mooseError("Failed to process results");
+
+  if(!output())  mooseError("Failed to output results.");
+
+}
+
+void
+OpenMCExecutioner::initScoreData()
+{
+  std::vector<std::string> vars
+    = getParam<std::vector<std::string>>("variables");
+  std::vector<std::string> err_vars
+    = getParam<std::vector<std::string>>("err_variables");
+  std::vector<std::string> scores
+    = getParam<std::vector<std::string>>("score_names");
+  std::vector<int32_t> tally_ids
+    = getParam<std::vector<int32_t>>("tally_ids");
+
+  size_t nVars = vars.size();
+  if(scores.size() != nVars){
+    mooseError("Please ensure the number of variables and score_names provided match.");
+  }
+  if(tally_ids.size() != nVars){
+    mooseError("Please ensure the number of variables and tally_ids provided match.");
+  }
+  if(!err_vars.empty() && err_vars.size() != nVars){
+    mooseError("If provided, please ensure the number of variables and error variables provided match.");
+  }
+
+  // Initialise tally / score information
+  for(size_t iVar=0; iVar<nVars; iVar++){
+    int32_t tally_id = tally_ids.at(iVar);
+    std::string score_name = scores.at(iVar);
+    std::string var_name = vars.at(iVar);
+    std::string err_name = err_vars.empty() ? "" : err_vars.at(iVar);
+    bool saveErr = (err_name != "");
+
+    // Most scores are per source particle.
+    // source_strength has units  neutron / s
+    // Scale by source strength to get units of s^-1
+    double scale_factor = source_strength;
+
+    // Should we add support for more scores?
+    if(score_name == "heating" || score_name== "heating-local"){
+      // Units for heating are eV / source neutron
+      // convert to J / s
+      scale_factor *=  eVinJoules;
+    }
+
+    ScoreData score = { score_name, var_name, err_name, saveErr, scale_factor, -1 };
+    // First time we see this tally id, create an entry
+    if(tally_ids_to_scores.find(tally_id)== tally_ids_to_scores.end()){
+      tally_ids_to_scores[tally_id] = std::vector<ScoreData>();
+    }
+    // Add this score
+    tally_ids_to_scores[tally_id].push_back(score);
+  }
 }
 
 void
@@ -101,6 +167,12 @@ OpenMCExecutioner::initialize()
   if(!initMOAB()) mooseError("Failed to initialize MOAB");
 
   if(!initOpenMC()) mooseError("Failed to initialize OpenMC");
+
+  if(!initMaterials()) mooseError("Failed to initialize material data");
+
+  if(!initScoreIndices()) mooseError("Failed to initialize score indices");
+
+  //addVariables();
 
   isInit = true;
 }
@@ -121,24 +193,44 @@ OpenMCExecutioner::update()
 bool
 OpenMCExecutioner::run()
 {
-
   TIME_SECTION(_run_timer);
-
   // Run the simulation
   openmc_err = openmc_run();
   if (openmc_err) return false;
+  else return true;
+}
 
-  // Fetch the tallied results
-  std::vector< double > results_by_elem;
-  if(!getResults(results_by_elem)) return false;
-  if(results_by_elem.empty()) return false;
+bool
+OpenMCExecutioner::processResults()
+{
+  // Fetch the tallied results from openmc
+  std::map<std::string,std::vector< double > > var_results_by_elem;
+  if(!getResults(var_results_by_elem)) return false;
 
-  // Pass the results into moab user object
-  if(!moab().setSolution(var_name,results_by_elem,scale_factor,true)){
-    std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
-    return false;
+  // Pass results into FEProblem
+  for(const auto & tally_scores : tally_ids_to_scores){
+    for(const auto & score : tally_scores.second){
+      if(!setSolution(var_results_by_elem[score.var_name],
+                      score.var_name,
+                      score.scale_factor)){
+        return false;
+      }
+      if(score.saveErr){
+        if(!setSolution(var_results_by_elem[score.err_name],
+                        score.err_name,
+                        score.scale_factor)){
+          return false;
+        }
+      }
+    }
   }
 
+  return true;
+}
+
+bool
+OpenMCExecutioner::output()
+{
   if(setProblemLocal){
     // If the problem belongs to this executioner, we need to set the output here
     try
@@ -150,10 +242,23 @@ OpenMCExecutioner::run()
       }
     catch(std::exception &e)
       {
-        std::cerr<<"Failed to output results."<<std::endl;
-        std::cerr<<e.what()<<std::endl;
         return false;
       }
+  }
+  return true;
+}
+
+bool
+OpenMCExecutioner::setSolution(std::vector< double > & results_by_elem,
+                               std::string var_name,
+                               double scale_factor)
+{
+  if(results_by_elem.empty()) return false;
+
+  // Pass the results into moab user object
+  if(!moab().setSolution(var_name,results_by_elem,scale_factor,true)){
+    std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
+    return false;
   }
 
   return true;
@@ -174,7 +279,6 @@ OpenMCExecutioner::initMOAB()
 
   try
     {
-
       if(!(feProblem().hasUserObject("moab")))
         throw std::logic_error("Could not find MoabUserObject with name 'moab'. Please check your input file.");
 
@@ -197,7 +301,6 @@ OpenMCExecutioner::initMOAB()
     }
 
   return true;
-
 }
 
 bool
@@ -248,7 +351,7 @@ OpenMCExecutioner::initOpenMC()
   delete argv;
   delete cstr;
 
-  return initMaterials();
+  return true;
 
 }
 
@@ -286,6 +389,84 @@ OpenMCExecutioner::initMatNames()
   }
   return true;
 }
+
+bool
+OpenMCExecutioner::initScoreIndices()
+{
+  // Loop over tally id
+  for(auto & tally_scores : tally_ids_to_scores){
+
+    // Get the tally id
+    int tally_id = tally_scores.first;
+
+    // Get the tally index from the id
+    int32_t t_index(0);
+    openmc_err = openmc_get_tally_index(tally_id,&t_index);
+    if (openmc_err) return false;
+
+    // Fetch a reference to the tally object in openmc
+    openmc::Tally& tally = *(openmc::model::tallies.at(t_index));
+
+    // Fetch all the scores' names and indices for this openmc tally
+    std::map<std::string,int> score_name_to_index;
+    size_t nScores = (tally.scores_).size();
+    for(unsigned int iScore=0; iScore<nScores; iScore++){
+      std::string name = tally.score_name(iScore);
+      score_name_to_index[name]=iScore;
+    }
+
+    // Loop over scores we want to retrieve and set their indices
+    for(auto & score : tally_scores.second){
+      std::string name = score.score_name;
+      if(score_name_to_index.find(name)==score_name_to_index.end()){
+        openmc::set_errmsg("Failed to find '"+name+"' score.");
+        return false;
+      }
+      score.index = score_name_to_index[name];
+    }
+  }
+
+  return true;
+}
+
+void
+OpenMCExecutioner::addVariables()
+{
+  if(!add_variables) return;
+
+  // Get a reference to the FEProblem
+  FEProblemBase& problem = moab().problem();
+
+  // Get ValidParams for const monomial variables
+  Factory& factory = problem.getMooseApp().getFactory();
+  InputParameters params = factory.getValidParams("MooseVariableConstMonomial");
+
+  // Loop over tally IDS
+  for(const auto & tally_scores : tally_ids_to_scores){
+    // Loop over scores for single tally ID
+    for(const auto & score : tally_scores.second){
+      // Add main variable
+      if(!problem.hasVariable(score.var_name)){
+        problem.addAuxVariable("MooseVariableConstMonomial",
+                               score.var_name,
+                               params);
+      }
+      // Add std dev variable
+      if(score.saveErr){
+        if(!problem.hasVariable(score.err_name)){
+          problem.addAuxVariable("MooseVariableConstMonomial",
+                                 score.err_name,
+                                 params);
+        }
+      }
+    }// End loop over scores for this tally ID
+  }// End loop over tally IDs
+
+  // Reinitialise equation systems
+  problem.es().reinit();
+
+}
+
 
 bool
 OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
@@ -369,98 +550,108 @@ OpenMCExecutioner::updateOpenMC()
 }
 
 bool
-OpenMCExecutioner::getResults(std::vector< double > &results_by_elem)
+OpenMCExecutioner::getResults(std::map<std::string,std::vector< double > > & var_results_by_elem)
 {
 
-  // Get the tally index
-  int32_t t_index(0);
-  openmc_err = openmc_get_tally_index(tally_id,&t_index);
-  if (openmc_err) return false;
-
-  // Fetch a reference to the tally
-  openmc::Tally& tally = *(openmc::model::tallies.at(t_index));
-
-  // Fetch the index of the score we are interested in
-  int heatScoreIndex=-1;
-
-  // Fetch the number of tally scores
-  size_t nScores = (tally.scores_).size();
-  // Loop over score indices
-  for(unsigned int iScore=0; iScore<nScores; iScore++){
-    // Get the score name
-    std::string name = tally.score_name(iScore);
-    if(name == score_name){
-      // Found the score we want
-      heatScoreIndex = int(iScore);
-      break;
-    }
-  }
-  if(heatScoreIndex == -1){
-    openmc::set_errmsg("Failed to find '"+score_name+"' score.");
-    return false;
-  }
-
-  //Fetch a reference to the indices of the filters;
-  std::map<int32_t, FilterInfo> filters_by_id;
-  int32_t nFilterBins;
-  int32_t meshFilter;
-  if(!setFilterInfo(tally,filters_by_id,meshFilter,nFilterBins)){
-    return false;
-  }
-
-  size_t nMeshBins = filters_by_id[meshFilter].nbins;
-
   // Clear any previous data if there was any
-  results_by_elem.clear();
+  var_results_by_elem.clear();
 
-  // Resize results vector
-  results_by_elem.resize(nMeshBins,0.);
+  // Loop over tally id
+  for(const auto & tally_scores : tally_ids_to_scores){
+    // Get the tally id
+    int tally_id = tally_scores.first;
 
-  // Get a reference to the tally results
-  xt::xtensor<double, 3> & results = tally.results_;
+    // Get the tally index
+    int32_t t_index(0);
+    openmc_err = openmc_get_tally_index(tally_id,&t_index);
+    if (openmc_err) return false;
 
-  // Check shape
-  if(nFilterBins != int32_t(results.shape()[0])){
-    openmc::set_errmsg("Results shape is inconsistent with number of filter bins.");
-    return false;
-  }
-  else if (nScores != results.shape()[1] ){
-    openmc::set_errmsg("Results shape is inconsistent with number of scores.");
-    return false;
-  }
-  else if (3 != results.shape()[2] ){
-    openmc::set_errmsg("Results shape is inconsistent with expected tally values.");
-    return false;
-  }
+    // Fetch a reference to the tally
+    openmc::Tally& tally = *(openmc::model::tallies.at(t_index));
 
-  // Loop over results
-  for(int32_t iresult=0; iresult<nFilterBins; iresult++){
+    // Fetch the number of tally scores
+    size_t nScores = (tally.scores_).size();
 
-    std::map<int32_t,int32_t> filter_id_to_bin_index;
-    if(!decomposeIntoFilterBins(iresult,
-                                filters_by_id,
-                                filter_id_to_bin_index)){
-      openmc::set_errmsg("Failed to decompose results index into filter indices");
+    //Fetch a reference to the indices of the filters;
+    std::map<int32_t, FilterInfo> filters_by_id;
+    int32_t nFilterBins;
+    int32_t meshFilter;
+    if(!setFilterInfo(tally,filters_by_id,meshFilter,nFilterBins)){
       return false;
     }
 
-    int32_t meshIndex = -1;
-    if(filter_id_to_bin_index.find(meshFilter)!=filter_id_to_bin_index.end()){
-      meshIndex = filter_id_to_bin_index[meshFilter];
+    // Get a reference to the tally results and check shape
+    xt::xtensor<double, 3> & results = tally.results_;
+    if(nFilterBins != int32_t(results.shape()[0])){
+      openmc::set_errmsg("Results shape is inconsistent with number of filter bins.");
+      return false;
     }
-    if(meshIndex == -1){
-      openmc::set_errmsg("Failed to set filter bin indices");
+    else if (nScores != results.shape()[1] ){
+      openmc::set_errmsg("Results shape is inconsistent with number of scores.");
+      return false;
+    }
+    else if (3 != results.shape()[2] ){
+      openmc::set_errmsg("Results shape is inconsistent with expected tally values.");
       return false;
     }
 
-    // Get the heat score result.
-    // Last index: 0-> internal placeholder, 1-> mean, 2-> stddev
-    double result = results(iresult,heatScoreIndex,1);
+    // Get the number of mesh bins
+    size_t nMeshBins = filters_by_id[meshFilter].nbins;
 
-    // Add to sum for this mesh element
-    results_by_elem.at(meshIndex) += result;
+    // Initialise storage for results by variable name
+    for(const auto & score : tally_scores.second){
+      std::string var_name = score.var_name;
+      std::string err_name = score.err_name;
+      var_results_by_elem[var_name]=std::vector<double>(nMeshBins,0.);
+      if(score.saveErr){
+        var_results_by_elem[err_name]=std::vector<double>(nMeshBins,0.);
+      }
+    }
 
-  }
+    // Loop over results
+    for(int32_t iresult=0; iresult<nFilterBins; iresult++){
+
+      std::map<int32_t,int32_t> filter_id_to_bin_index;
+      if(!decomposeIntoFilterBins(iresult,
+                                  filters_by_id,
+                                  filter_id_to_bin_index)){
+        openmc::set_errmsg("Failed to decompose results index into filter indices");
+        return false;
+      }
+
+      // Get the mesh bin
+      int32_t meshIndex = -1;
+      if(filter_id_to_bin_index.find(meshFilter)!=filter_id_to_bin_index.end()){
+        meshIndex = filter_id_to_bin_index[meshFilter];
+      }
+      if(meshIndex == -1){
+        openmc::set_errmsg("Failed to set filter bin indices");
+        return false;
+      }
+
+      // Get results for each score for this mesh bin
+      for(auto & score : tally_scores.second){
+
+        // Last index: 0-> internal placeholder, 1-> mean, 2-> stddev
+        double result = results(iresult,score.index,1);
+        double err = results(iresult,score.index,2);
+
+        // Add to mean for this mesh element
+        // (may be multiple filter bin contributions)
+        var_results_by_elem[score.var_name].at(meshIndex) += result;
+
+        if(score.saveErr){
+          // Sum squares of errors
+          double err_now = var_results_by_elem[score.err_name].at(meshIndex);
+          err_now = sqrt(err_now*err_now + err*err);
+          // Reset error
+          var_results_by_elem[score.err_name].at(meshIndex) = err_now;
+        }
+      }
+
+    } // End loop over results vector
+
+  } // End loop over tallies
 
   return true;
 }

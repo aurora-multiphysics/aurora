@@ -10,7 +10,6 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variable = 'heating-local'
 []
 
 [Variables]

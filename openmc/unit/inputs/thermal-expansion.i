@@ -136,7 +136,6 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
-    # match up with variable below for this test
     length_scale = 1.0
   []
 []
