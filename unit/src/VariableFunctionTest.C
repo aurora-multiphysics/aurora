@@ -55,7 +55,7 @@ TEST_F(VariableFunctionTest, checkSolution)
   ASSERT_EQ(results.size(),centroids.size());
 
   // Set the solution
-  ASSERT_TRUE(moabUOPtr->setSolution(var_name,results,1.0,false));
+  ASSERT_TRUE(moabUOPtr->setSolution(var_name,results,1.0,false,false));
 
   // Get the mesh
   MeshBase& mesh = problemPtr->mesh().getMesh();
