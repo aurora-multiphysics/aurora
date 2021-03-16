@@ -8,7 +8,7 @@
   </filter>
   <tally id="1">
     <filters>1</filters>
-    <scores>heating-local</scores>
+    <scores>heating-local flux</scores>
     <estimator>tracklength</estimator>
   </tally>
 </tallies>

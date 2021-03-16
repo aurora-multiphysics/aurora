@@ -48,6 +48,7 @@ protected:
     scalefactor=16.0218;
     nMeshElemsExpect=11972;
     nDegenBins=1;
+    nScores=2;
   }
 
   // Set all the cases we want to test
@@ -104,8 +105,9 @@ protected:
 
     size_t nMeshBinsExpect=nMeshElemsExpect*nDegenBins;
     ASSERT_EQ(results.shape()[0],nMeshBinsExpect);
-    ASSERT_EQ(results.shape()[1],scores.size());
+    ASSERT_EQ(results.shape()[1],nScores);
     ASSERT_EQ(results.shape()[2],3);
+    ASSERT_LT(iScore,nScores);
 
     // Get the mesh
     MeshBase& mesh = problemPtr->mesh().getMesh();
@@ -264,6 +266,7 @@ protected:
 
   size_t nMeshElemsExpect;
   size_t nDegenBins;
+  size_t nScores;
 
   FEProblemBase* problemPtr;
   Executioner* executionerPtr;
@@ -276,6 +279,22 @@ protected:
   double scalefactor;
 };
 
+// Fixture to test multiple scores
+class ManyScoresExecutionerTest: public OpenMCExecutionerTest {
+protected:
+
+  ManyScoresExecutionerTest() :
+    OpenMCExecutionerTest("executioner-many-scores.i")
+  {};
+
+  virtual void setScoreList() override{
+    VarData var = {"heating-local","heating-local-errs",scalefactor,0};
+    scores.push_back(var);
+    var = {"flux","flux-errs",1.0,1};
+    scores.push_back(var);
+  }
+
+};
 
 // Fixture to test the OpenMCExecutioner with a second order mesh
 class SecondOrderExecutionerTest: public OpenMCExecutionerTest {
@@ -313,6 +332,16 @@ TEST_F(OpenMCExecutionerTest,executeLegacy){
 
 }
 
+TEST_F(ManyScoresExecutionerTest,execute){
+
+  ASSERT_TRUE(isSetUp);
+
+  EXPECT_FALSE(moabUOPtr->hasProblem());
+
+  std::string dagFile = "dagmc_legacy.h5m";
+  checkExecute(dagFile);
+
+}
 
 TEST_F(SecondOrderExecutionerTest,executeUWUW){
 
