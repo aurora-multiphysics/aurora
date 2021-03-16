@@ -3,7 +3,6 @@
     type = FileMeshGenerator
     file = copper_air_bcs_tetmesh.e
   []
-  construct_side_list_from_node_list=true
 []
 
 [Problem]
