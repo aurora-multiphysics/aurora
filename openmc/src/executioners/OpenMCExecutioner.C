@@ -570,6 +570,9 @@ OpenMCExecutioner::getResults(std::map<std::string,std::vector< double > > & var
     // Fetch a reference to the tally
     openmc::Tally& tally = *(openmc::model::tallies.at(t_index));
 
+    // Get sample size (number of batches)
+    int nSample =  tally.n_realizations_;
+
     // Fetch the number of tally scores
     size_t nScores = (tally.scores_).size();
 
@@ -633,20 +636,34 @@ OpenMCExecutioner::getResults(std::map<std::string,std::vector< double > > & var
       // Get results for each score for this mesh bin
       for(auto & score : tally_scores.second){
 
-        // Last index: 0-> internal placeholder, 1-> mean, 2-> variance
-        double result = results(iresult,score.index,1);
-        double err = results(iresult,score.index,2);
+        // Last index: 0-> internal placeholder, 1-> sum, 2-> sum_sq
+        double sum = results(iresult,score.index,1);
+        double sumsq = results(iresult,score.index,2);
 
         // Add to mean for this mesh element
         // (may be multiple filter bin contributions)
-        var_results_by_elem[score.var_name].at(meshIndex) += result;
+        var_results_by_elem[score.var_name].at(meshIndex) += sum/double(nSample);
 
         if(score.saveErr){
-          var_results_by_elem[score.err_name].at(meshIndex) += err;
+          var_results_by_elem[score.err_name].at(meshIndex) += sumsq/double(nSample);
         }
       }
 
     } // End loop over results vector
+
+    // Post-processing to get variance
+    for(auto & score : tally_scores.second){
+      if(score.saveErr){
+        for(size_t iMeshBin=0; iMeshBin<nMeshBins; iMeshBin++){
+          // Get the mean for this bin
+          double mean = var_results_by_elem[score.var_name].at(iMeshBin);
+          // Subtract mean squared to get variance of sample
+          var_results_by_elem[score.err_name].at(iMeshBin) -= mean*mean;
+          // Divide by N-1 to get variance of the mean
+          var_results_by_elem[score.err_name].at(iMeshBin) /= (nSample-1);
+        }
+      }
+    }
 
   } // End loop over tallies
 

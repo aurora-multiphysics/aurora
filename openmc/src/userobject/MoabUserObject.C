@@ -696,19 +696,14 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
         throw std::runtime_error("Mismatch in size of results vector and number of elements");
       }
 
-      double binResult = results.at(binIndex);
-      // Add result for this bin
-      // if(isErr){
-      //   // Combine errors in quadrature
-      //   result += binResult*binResult;
-      // }
-      // else{
-      result += binResult;
-      //}
+      result += results.at(binIndex);
     }
 
-    // Sqrt of squared errs
     if(isErr){
+      // result is a [sum of] variance[s]: sqrt to get the error.
+      // NB: for second order mesh this is equivalent to summing errors in quadrature,
+      // so won't quite be equivalent to the variance of the mean on the original mesh,
+      // but difference should be small for large sample size.
       result=sqrt(result);
     }
 

@@ -49,6 +49,7 @@ protected:
     nMeshElemsExpect=11972;
     nDegenBins=1;
     nScores=2;
+    nBatches=2;
   }
 
   // Set all the cases we want to test
@@ -108,11 +109,13 @@ protected:
     ASSERT_EQ(results.shape()[1],nScores);
     ASSERT_EQ(results.shape()[2],3);
     ASSERT_LT(iScore,nScores);
+    EXPECT_EQ(nBatches,tally.n_realizations_);
 
     // Get the mesh
     MeshBase& mesh = problemPtr->mesh().getMesh();
 
     // Loop over the elements
+    // NB this only works because we don't have additional filters
     for(size_t iElem=0; iElem<nMeshElemsExpect; iElem++){
 
       // Because of how the elems are created iElem = elem id
@@ -130,14 +133,22 @@ protected:
         // Calculate bin index
         size_t iBin = nDegenBins*iElem + iDegen;
 
-        // Get the solution for the corresponding bin
-        solNow+=results(iBin,iScore,1);
+        // Get the result for the corresponding bin
+        double mean = results(iBin,iScore,1)/double(nBatches);
 
-        // Get the error squared for the corresponding bin
-        errNow+= results(iBin,iScore,2);
+        // Calculate variance of the mean for this bin
+        double var = results(iBin,iScore,2)/double(nBatches);
+        var -= mean*mean;
+        var /= (nBatches-1);
+
+        // The solution is the sum over degenerate bins
+        solNow+= results(iBin,iScore,1)/double(nBatches);
+
+        // Get the sum of variances
+        errNow+= var;
       }
 
-      // Error is sqrt of sum of squares
+      // Error is sqrt of sum of variances
       errNow = sqrt(errNow);
 
       // Normalise
@@ -266,6 +277,7 @@ protected:
   size_t nMeshElemsExpect;
   size_t nDegenBins;
   size_t nScores;
+  int nBatches;
 
   FEProblemBase* problemPtr;
   Executioner* executionerPtr;
