@@ -336,12 +336,10 @@ protected:
   void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst) {
 
     // Create a vector for constant solution
-    std::vector<double> solutionData(ents.size(),solConst);    // Create a vector for solutionData
+    std::vector<double> solutionData(ents.size(),solConst);
 
     // Check we can set the solution
     ASSERT_TRUE(moabUOPtr->setSolution(var_name,solutionData,1.0,false,false));
-
-
   }
 
   void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst,std::vector<double>& solExpect){
@@ -458,6 +456,23 @@ protected:
       checkSetSolution(ents,rAbsMax,solMax,solMin,solConst,scale,false);
       checkSetSolution(ents,rAbsMax,solMax,solMin,solConst,scale,true);
     }
+  }
+
+
+  void setErrorsTest(int nDegen=1){
+    // Set the mesh
+    ASSERT_NO_THROW(moabUOPtr->initMOAB());
+
+    // Create a vector for constant solution
+    double value=4.0;
+    std::vector<double> errData(nElemsExpect,value);
+
+    // Check we can set the solution
+    ASSERT_TRUE(moabUOPtr->setSolution(var_name,errData,1.0,true,false));
+
+    size_t nElemsLibMesh = nElemsExpect/nDegen;
+    std::vector<double> solExpect(nElemsLibMesh,sqrt(value*double(nDegen)));
+    checkSolution(solExpect);
   }
 
   std::string var_name;
@@ -1345,6 +1360,16 @@ TEST_F(MoabUserObjectTest, setSolution)
 }
 
 // Test for setting FE problem solution
+TEST_F(MoabUserObjectTest, setErrors)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Perform the test
+  setErrorsTest();
+}
+
+// Test for setting FE problem solution
 TEST_F(MoabUserObjectTest, zeroSolution)
 {
   ASSERT_TRUE(foundMOAB);
@@ -1364,7 +1389,6 @@ TEST_F(MoabUserObjectTest, zeroSolution)
   EXPECT_FALSE(moabUOPtr->setSolution(var_name,zeroSol,1.0,false,false));
 
 }
-
 
 // Repeat for different lengthscale
 TEST_F(MoabChangeUnitsTest, setSolution)
@@ -1457,6 +1481,17 @@ TEST_F(SecondOrderMoabUserObjectTest, setSolution)
   checkSolution(solutionCompareData);
 
 }
+
+// Test for second-order MOAB mesh error solution
+TEST_F(SecondOrderMoabUserObjectTest, setErrors)
+{
+  ASSERT_TRUE(foundMOAB);
+  ASSERT_TRUE(setProblem());
+
+  // Perform the test
+  setErrorsTest(8);
+}
+
 
 // Test for finding surfaces
 TEST_F(FindMoabSurfacesTest, constTemp)
