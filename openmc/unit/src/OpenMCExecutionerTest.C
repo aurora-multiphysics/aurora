@@ -133,12 +133,11 @@ protected:
         // Get the solution for the corresponding bin
         solNow+=results(iBin,iScore,1);
 
-        // Get the error for the corresponding bin
-        double err =results(iBin,iScore,1);
-        errNow+= err*err;
+        // Get the error squared for the corresponding bin
+        errNow+= results(iBin,iScore,2);
       }
 
-      // Error is sum of squares
+      // Error is sqrt of sum of squares
       errNow = sqrt(errNow);
 
       // Normalise
@@ -305,6 +304,11 @@ protected:
   {
     // Second-order mesh has 8 sub-tets for a single tet10
     nDegenBins=8;
+  }
+
+  virtual void setScoreList() override{
+    VarData var = {"heating-local","heating-local-errs",scalefactor,0};
+    scores.push_back(var);
   }
 
 };

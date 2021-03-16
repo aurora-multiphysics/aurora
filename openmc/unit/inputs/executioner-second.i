@@ -10,12 +10,20 @@
 
 [Executioner]
   type = OpenMCExecutioner
+  variables = 'heating-local'
+  score_names = 'heating-local'
+  tally_ids = '1'
+  err_variables = 'heating-local-err'
 []
 
 [Variables]
   [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [heating-local-err]
+    order = CONSTANT
+    family = MONOMIAL
   []
 []
 

@@ -217,7 +217,7 @@ MoabUserObject::update()
 
 // Pass the results for named variable into the libMesh systems solution
 bool
-MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, double scaleFactor, bool normToVol)
+MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, double scaleFactor,bool isErr,bool normToVol)
 {
   TIME_SECTION(_setsolution_timer);
 
@@ -229,7 +229,7 @@ MoabUserObject::setSolution(std::string var_now,std::vector< double > &results, 
 
   try
     {
-      setSolution(iSys,iVar,results,scaleFactor,normToVol);
+      setSolution(iSys,iVar,results,scaleFactor,isErr,normToVol);
 
       problem().copySolutionsBackwards();
 
@@ -661,7 +661,7 @@ MoabUserObject::addElem(dof_id_type id,moab::EntityHandle ent)
 }
 
 void
-MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::vector< double > &results, double scaleFactor, bool normToVol)
+MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::vector< double > &results, double scaleFactor, bool isErr, bool normToVol)
 {
 
   if(!hasProblem())
@@ -695,8 +695,21 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
       if( (binIndex+1) > results.size() ){
         throw std::runtime_error("Mismatch in size of results vector and number of elements");
       }
+
+      double binResult = results.at(binIndex);
       // Add result for this bin
-      result += results.at(binIndex);
+      // if(isErr){
+      //   // Combine errors in quadrature
+      //   result += binResult*binResult;
+      // }
+      // else{
+      result += binResult;
+      //}
+    }
+
+    // Sqrt of squared errs
+    if(isErr){
+      result=sqrt(result);
     }
 
     // Scale the result

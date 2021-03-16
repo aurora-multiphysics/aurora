@@ -294,7 +294,7 @@ protected:
     // Check we can set the solution
     ASSERT_TRUE(moabUOPtr->setSolution(var_name,
                                        solutionData,
-                                       scalefactor,normToVol));
+                                       scalefactor,false,normToVol));
 
   }
 
@@ -339,7 +339,7 @@ protected:
     std::vector<double> solutionData(ents.size(),solConst);    // Create a vector for solutionData
 
     // Check we can set the solution
-    ASSERT_TRUE(moabUOPtr->setSolution(var_name,solutionData,1.0,false));
+    ASSERT_TRUE(moabUOPtr->setSolution(var_name,solutionData,1.0,false,false));
 
 
   }
@@ -400,13 +400,15 @@ protected:
     std::vector<double> dummySolutionData;
 
     // Expect failure due to wrong var name
-    EXPECT_THROW(moabUOPtr->setSolution("dummy",dummySolutionData,scalefactor,normToVol),
+    EXPECT_THROW(moabUOPtr->setSolution("dummy",
+                                        dummySolutionData,
+                                        scalefactor,false,normToVol),
                  std::runtime_error);
 
     // Expect failure due to empty solution
     EXPECT_FALSE(moabUOPtr->setSolution(var_name,
                                         dummySolutionData,
-                                        scalefactor,normToVol));
+                                        scalefactor,false,normToVol));
 
     for(int i=0; i<2; i++){
 
@@ -1359,7 +1361,7 @@ TEST_F(MoabUserObjectTest, zeroSolution)
   // Normally generates a warning, but in these unit tests
   // mooseWarning throws, which is handled safely and returns false
   std::vector<double> zeroSol(nElem,0.);
-  EXPECT_FALSE(moabUOPtr->setSolution(var_name,zeroSol,1.0,false));
+  EXPECT_FALSE(moabUOPtr->setSolution(var_name,zeroSol,1.0,false,false));
 
 }
 
@@ -1448,6 +1450,7 @@ TEST_F(SecondOrderMoabUserObjectTest, setSolution)
   EXPECT_TRUE(moabUOPtr->setSolution(var_name,
                                      solutionData,
                                      1.0,
+                                     false,
                                      false));
 
 

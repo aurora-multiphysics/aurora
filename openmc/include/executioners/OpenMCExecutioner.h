@@ -132,7 +132,8 @@ private:
   // Set solution in FEProblem variable
   bool setSolution(std::vector< double > & results_by_elem,
                    std::string var_name,
-                   double scale_factor);
+                   double scale_factor,
+                   bool isErr);
 
   // Helper methods to extract tally results
   bool setFilterInfo(openmc::Tally& tally,

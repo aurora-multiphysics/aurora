@@ -212,13 +212,13 @@ OpenMCExecutioner::processResults()
     for(const auto & score : tally_scores.second){
       if(!setSolution(var_results_by_elem[score.var_name],
                       score.var_name,
-                      score.scale_factor)){
+                      score.scale_factor,false)){
         return false;
       }
       if(score.saveErr){
         if(!setSolution(var_results_by_elem[score.err_name],
                         score.err_name,
-                        score.scale_factor)){
+                        score.scale_factor,true)){
           return false;
         }
       }
@@ -251,12 +251,13 @@ OpenMCExecutioner::output()
 bool
 OpenMCExecutioner::setSolution(std::vector< double > & results_by_elem,
                                std::string var_name,
-                               double scale_factor)
+                               double scale_factor,
+                               bool isErr)
 {
   if(results_by_elem.empty()) return false;
 
   // Pass the results into moab user object
-  if(!moab().setSolution(var_name,results_by_elem,scale_factor,true)){
+  if(!moab().setSolution(var_name,results_by_elem,scale_factor,isErr,true)){
     std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
     return false;
   }
@@ -632,7 +633,7 @@ OpenMCExecutioner::getResults(std::map<std::string,std::vector< double > > & var
       // Get results for each score for this mesh bin
       for(auto & score : tally_scores.second){
 
-        // Last index: 0-> internal placeholder, 1-> mean, 2-> stddev
+        // Last index: 0-> internal placeholder, 1-> mean, 2-> variance
         double result = results(iresult,score.index,1);
         double err = results(iresult,score.index,2);
 
@@ -641,11 +642,7 @@ OpenMCExecutioner::getResults(std::map<std::string,std::vector< double > > & var
         var_results_by_elem[score.var_name].at(meshIndex) += result;
 
         if(score.saveErr){
-          // Sum squares of errors
-          double err_now = var_results_by_elem[score.err_name].at(meshIndex);
-          err_now = sqrt(err_now*err_now + err*err);
-          // Reset error
-          var_results_by_elem[score.err_name].at(meshIndex) = err_now;
+          var_results_by_elem[score.err_name].at(meshIndex) += err;
         }
       }
 

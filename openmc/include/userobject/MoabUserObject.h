@@ -64,7 +64,7 @@ class MoabUserObject : public UserObject
   bool update();
 
   // Pass the OpenMC results into the libMesh systems solution
-  bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool normToVol=true);
+  bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool isErr=false, bool normToVol=true);
 
   double getTemperature(moab::EntityHandle vol);
 
@@ -131,8 +131,8 @@ private:
   // Add an element to maps
   void addElem(dof_id_type id,moab::EntityHandle ent);
 
-  // Helper method to setthe results in a given system and variable
-  void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool normToVol);
+  // Helper method to set the results in a given system and variable
+  void setSolution(unsigned int iSysNow, unsigned int iVarNow,std::vector< double > &results, double scaleFactor, bool isErr, bool normToVol);
 
   // Helper method to convert between elem / solution indices
   dof_id_type elem_to_soln_index(const Elem& elem,unsigned int iSysNow, unsigned int iVarNow);
