@@ -157,6 +157,9 @@ private:
   void calcMidpointsLin();
   void calcMidpointsLog();
 
+  // Return the bin index of a given relative density
+  int getRelDensityBin(double value);
+
   Point elemCentroid(Elem& elem);
 
   // Clear the containers of elements grouped into bins of constant temp
@@ -190,24 +193,26 @@ private:
   // Save the first tet entity handle
   moab::EntityHandle offset;
 
-  // Members required to sort elems into bins given a result evaluated on that elem
+  // Data members relating to binning in temperature
   std::string var_name; // Name of the MOOSE variable
-
   bool binElems; // Whether or not to perform binning
   bool logscale; // Whether or not to bin in a log scale
-
   double var_min; // Minimum value of our variable
   double var_max; // Maximum value of our variable for binning on a linear scale
   double bin_width; // Fixed bin width for binning on a linear scale
-
   int powMin; // Minimum power of 10
   int powMax; // Maximum power of 10
-
   unsigned int nVarBins; // Number of variable bins to use
   unsigned int nPow; // Number of powers of 10 to bin in for binning on a log scale
   unsigned int nMinor; // Number of minor divisions for binning on a log scale
   unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
   unsigned int nSortBins; // Number of bins needed for sorting results (mats*varbins)
+  // Data members relating to  binning in density
+  bool binByDensity; // Switch to determine if we should bin by material density
+  double rel_den_min; // Minimum relative density diff
+  double rel_den_max; // Max relative density diff
+  double rel_den_bw; // Relative density diff bin width
+  unsigned int nDenBins; // Number of relative density bins
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
 

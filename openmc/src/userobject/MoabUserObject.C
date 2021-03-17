@@ -19,6 +19,10 @@ validParams<MoabUserObject>()
   params.addParam<double>("var_max", 597.5,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
+  params.addParam<bool>("bin_density", false, "Determine if elements should be additionally binned by material density");
+  params.addParam<double>("rel_den_min", -0.01,"Minimum difference in density relative to original material density");
+  params.addParam<double>("rel_den_max",  0.01,"Maximum difference in density relative to original material density");
+  params.addParam<unsigned int>("n_density_bins", 10, "Number of relative density bins");
 
   // Mesh metadata
   params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of MOOSE material names");
@@ -27,7 +31,6 @@ validParams<MoabUserObject>()
   // Dagmc params
   params.addParam<double>("faceting_tol",1.e-4,"Faceting tolerance for DagMC");
   params.addParam<double>("geom_tol",1.e-6,"Geometry tolerance for DagMC");
-
   params.addParam<double>("graveyard_scale_inner",1.01,"Graveyard inner surface scalefactor relative to aligned bounding box.");
   params.addParam<double>("graveyard_scale_outer",1.10,"Graveyard outer surface scalefactor relative to aligned bounding box.");
 
@@ -52,6 +55,10 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   var_min(getParam<double>("var_min")),
   var_max(getParam<double>("var_max")),
   nVarBins(getParam<unsigned int>("n_bins")),
+  binByDensity(getParam<bool>("bin_density")),
+  rel_den_min(getParam<double>("rel_den_min")),
+  rel_den_max(getParam<double>("rel_den_max")),
+  nDenBins(getParam<unsigned int>("n_density_bins")),
   mat_names(getParam<std::vector<std::string> >("material_names")),
   openmc_mat_names(getParam<std::vector<std::string> >("material_openmc_names")),
   faceting_tol(getParam<double>("faceting_tol")),
@@ -105,6 +112,20 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     }
     nMinor = nVarBins/nPow;
     calcMidpoints();
+
+    if(binByDensity){
+      if(rel_den_max < rel_den_min){
+        mooseError("Relative density bin range is ill-defined");
+      }
+      if(nDenBins < 1){
+        mooseError("Number of density bins must exceed 0.");
+      }
+      rel_den_bw = (rel_den_max-rel_den_min)/double(nDenBins);
+    }
+    else{
+      nDenBins=1;
+      rel_den_bw = std::numeric_limits<double>::max();
+    }
   }
 
   if(scalefactor_inner < 1.0){
@@ -1203,6 +1224,11 @@ MoabUserObject::calcMidpointsLog()
   }
 }
 
+inline int
+MoabUserObject::getRelDensityBin(double value)
+{
+  return int(floor((value-rel_den_min)/rel_den_bw));
+}
 
 bool
 MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set)
