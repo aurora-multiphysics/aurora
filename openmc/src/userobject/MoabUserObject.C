@@ -1135,7 +1135,7 @@ MoabUserObject::groupLocalElems(std::set<dof_id_type> elems, std::vector<moab::R
 void
 MoabUserObject::resetContainers()
 {
-  nSortBins = nMatBins*nVarBins;
+  nSortBins = nMatBins*nDenBins*nVarBins;
   sortedElems.clear();
   sortedElems.resize(nSortBins);
   volToTemp.clear();
@@ -1204,11 +1204,7 @@ MoabUserObject::calcMidpoints()
 void
 MoabUserObject::calcMidpointsLin()
 {
-  double var_now = var_min - bin_width/2.0;
-  for(unsigned int iVar=0; iVar<nVarBins; iVar++){
-    var_now += bin_width;
-    midpoints.push_back(var_now);
-  }
+  calcMidpointsLin(var_min,bin_width,nVarBins,midpoints);
 }
 
 void
@@ -1228,6 +1224,22 @@ inline int
 MoabUserObject::getRelDensityBin(double value)
 {
   return int(floor((value-rel_den_min)/rel_den_bw));
+}
+
+void
+MoabUserObject::calcDenMidpoints()
+{
+  calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,denmidpoints);
+}
+
+void
+MoabUserObject::calcMidpointsLin(double var_min_in, double bin_width_in,int nbins_in,std::vector<double>& midpoints_in)
+{
+  double var_now = var_min_in - bin_width_in/2.0;
+  for(unsigned int iVar=0; iVar<nbins_in; iVar++){
+    var_now += bin_width_in;
+    midpoints_in.push_back(var_now);
+  }
 }
 
 bool

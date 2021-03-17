@@ -151,14 +151,18 @@ private:
   int getResultsBin(double value);
   inline int getResultsBinLin(double value);
   int getResultsBinLog(double value);
+  // Return the bin index of a given relative density
+  int getRelDensityBin(double value);
 
   // Calculate the variable evaluated at the bin midpoints
   void calcMidpoints();
   void calcMidpointsLin();
   void calcMidpointsLog();
+  // Calculate the density evaluated at the bin midpoints
+  void calcDenMidpoints();
 
-  // Return the bin index of a given relative density
-  int getRelDensityBin(double value);
+  // Calculate a generic variable midpoints given binning params
+  void calcMidpointsLin(double var_min_in, double bin_width_in,int nbins_in,std::vector<double>& midpoints_in);
 
   Point elemCentroid(Elem& elem);
 
@@ -205,14 +209,20 @@ private:
   unsigned int nVarBins; // Number of variable bins to use
   unsigned int nPow; // Number of powers of 10 to bin in for binning on a log scale
   unsigned int nMinor; // Number of minor divisions for binning on a log scale
-  unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
-  unsigned int nSortBins; // Number of bins needed for sorting results (mats*varbins)
+  // Store the temperature corresponding to the bin mipoint
+  std::vector<double> midpoints;
+
   // Data members relating to  binning in density
   bool binByDensity; // Switch to determine if we should bin by material density
   double rel_den_min; // Minimum relative density diff
   double rel_den_max; // Max relative density diff
   double rel_den_bw; // Relative density diff bin width
   unsigned int nDenBins; // Number of relative density bins
+  unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
+  // Store the relative density corresponding to the bin mipoint
+  std::vector<double> denmidpoints;
+
+  unsigned int nSortBins; // Number of bins needed for sorting results (mats*densitybins*varbins)
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
 
@@ -262,9 +272,6 @@ private:
   // Scalefactors applied to bounding box for inner and outer surfaces of graveyard
   double scalefactor_inner;
   double scalefactor_outer;
-
-  // Store the temperature corresponding to the bin mipoint
-  std::vector<double> midpoints;
 
   // Settings to control the optional writing of surfaces to file.
   bool output_skins;
