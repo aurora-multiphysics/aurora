@@ -15,6 +15,8 @@ TEST_F(OpenMCAppBasicTest, registryTest)
   knownObjNames.push_back("OpenMCProblem");
   knownObjNames.push_back("OpenMCExecutioner");
   knownObjNames.push_back("MoabUserObject");
+  knownObjNames.push_back("OpenMCDensity");
+  knownObjNames.push_back("ADOpenMCDensity");
 
   checkKnownObjects(knownObjNames);
 }
