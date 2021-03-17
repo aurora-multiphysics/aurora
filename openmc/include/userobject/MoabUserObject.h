@@ -243,6 +243,7 @@ private:
   std::vector<std::string> mat_names; // material names
   std::vector<std::string> openmc_mat_names; // material names
   std::vector< std::set<SubdomainID> > mat_blocks; // all element blocks assigned to mats
+  std::vector<double> initialDensities; // vector for initial densities if binning by density
 
   // An entitiy handle to represent the set of all tets
   moab::EntityHandle meshset;

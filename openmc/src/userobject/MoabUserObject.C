@@ -1,5 +1,7 @@
 // Moose includes
 #include "MoabUserObject.h"
+#include "OpenMCDensity.h"
+#include "ADOpenMCDensity.h"
 #include "DisplacedProblem.h"
 
 registerMooseObject("OpenMCApp", MoabUserObject);
@@ -276,6 +278,7 @@ MoabUserObject::findMaterials()
 
   // Clear any prior data.
   mat_blocks.clear();
+  initialDensities.clear();
 
   std::set<SubdomainID> unique_blocks;
 
@@ -288,6 +291,24 @@ MoabUserObject::findMaterials()
 
     if(mat_ptr == nullptr){
       mooseError("Could not find material "+mat );
+    }
+
+    if(binByDensity){
+      // Sadly AD mats and non-AD mats do not inherit from same object
+      auto openmc_den_ptr = std::dynamic_pointer_cast<OpenMCDensity>(mat_ptr);
+      auto ad_openmc_den_ptr = std::dynamic_pointer_cast<ADOpenMCDensity>(mat_ptr);
+      if(openmc_den_ptr == nullptr && ad_openmc_den_ptr == nullptr){
+        mooseError("Please use (AD)OpenMCDensity object to represent materials with dynamic densities.");
+      }
+      // Retrieve initial density
+      double density=0.;
+      if(openmc_den_ptr != nullptr){
+        density = openmc_den_ptr->origDensity();
+      }
+      else if(ad_openmc_den_ptr != nullptr){
+        density = ad_openmc_den_ptr->origDensity();
+      }
+      initialDensities.push_back(density);
     }
 
     if(mat_ptr->numBlocks()==0){
@@ -1142,7 +1163,6 @@ MoabUserObject::resetContainers()
   // Update the serial solution
   sysPtr->solution->localize(*serial_solution);
 }
-
 
 void
 MoabUserObject::reset()
