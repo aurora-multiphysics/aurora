@@ -10,7 +10,10 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variable = 'heating-local'
+  variables = 'heating-local flux'
+  score_names = 'heating-local flux'
+  tally_ids = '1 1'
+  err_variables = 'heating-local-err flux-err'
   neutron_source = 1.0e16
   launch_threads=true
   n_threads=4

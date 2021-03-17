@@ -43,7 +43,33 @@
   []
 []
 
+[Postprocessors]
+  [total-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+    execute_on = "final"
+  []
+  [total-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+    execute_on = "final"
+  []
+  [copper-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+    block = 1
+    execute_on = "final"
+  []
+  [copper-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+    block = 1
+    execute_on = "final"
+  []
+[]
+
 [Outputs]
   exodus = true
+  csv = true
   execute_on = "final"
 []

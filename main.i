@@ -7,12 +7,11 @@
 
 [Problem]
   type = FEProblem
-  solve = true
 []
 
 [Executioner]
   type = Transient
-  num_steps = 20
+  num_steps = 10
   dt = 1
   solve_type = NEWTON
   abort_on_solve_fail=True
@@ -28,6 +27,18 @@
 
 [AuxVariables]
   [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [heating-local-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux-err]
       order = CONSTANT
       family = MONOMIAL
   []
@@ -121,8 +132,30 @@
   [../]
 []
 
+[Postprocessors]
+  [total-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+  []
+  [total-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+  []
+  [copper-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+    block = 1
+  []
+  [copper-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+    block = 1
+  []
+[]
+
 [Outputs]
   exodus = true
+  csv = true
   execute_on = 'timestep_end'
 #  Uncomment these lines to disable output to screen
 #  console = false
