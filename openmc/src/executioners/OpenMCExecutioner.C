@@ -26,6 +26,8 @@ validParams<OpenMCExecutioner>()
 
   // Normalisation of source strength
   params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
+  params.addParam<bool>("no_scaling", false,
+                        "Optionally turn off scaling by neutron source strength and unit conversion factors (useful for direct comparison with openmc results)");
 
   // Run settings
   params.addParam<bool>("redirect_dagout", true, "Switch to control whether dagmc output is written to file or not");
@@ -111,6 +113,8 @@ OpenMCExecutioner::initScoreData()
   std::vector<int32_t> tally_ids
     = getParam<std::vector<int32_t>>("tally_ids");
 
+  bool noScale = getParam<bool>("no_scaling");
+
   size_t nVars = vars.size();
   if(scores.size() != nVars){
     mooseError("Please ensure the number of variables and score_names provided match.");
@@ -130,16 +134,20 @@ OpenMCExecutioner::initScoreData()
     std::string err_name = err_vars.empty() ? "" : err_vars.at(iVar);
     bool saveErr = (err_name != "");
 
-    // Most scores are per source particle.
-    // source_strength has units  neutron / s
-    // Scale by source strength to get units of s^-1
-    double scale_factor = source_strength;
+    // Set scale factors
+    double scale_factor = 1.0;
+    if(!noScale){
+      // Most scores are per source particle.
+      // source_strength has units  neutron / s
+      // Scale by source strength to get units of s^-1
+      scale_factor *= source_strength;
 
-    // Should we add support for more scores?
-    if(score_name == "heating" || score_name== "heating-local"){
-      // Units for heating are eV / source neutron
-      // convert to J / s
-      scale_factor *=  eVinJoules;
+      // Should we add support for more scores?
+      if(score_name == "heating" || score_name== "heating-local"){
+        // Units for heating are eV / source neutron
+        // convert to J / s
+        scale_factor *=  eVinJoules;
+      }
     }
 
     ScoreData score = { score_name, var_name, err_name, saveErr, scale_factor, -1 };
