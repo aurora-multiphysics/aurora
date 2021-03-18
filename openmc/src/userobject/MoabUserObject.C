@@ -800,6 +800,35 @@ MoabUserObject::getTemperature(moab::EntityHandle vol)
   return volToTemp[vol];
 }
 
+void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_out,
+                                           std::vector<std::string>& tails,
+                                           std::vector<double>& initial_densities,
+                                           std::vector<double>& rel_densities)
+{
+  // Set the list of materials names we expect to find in openmc
+  mat_names_out=openmc_mat_names;
+
+  // If we are not binning by density exit now
+  if(!binByDensity) return;
+
+  // Set the original densities
+  initial_densities = initialDensities;
+
+  // Calculate relative densities for each bin midpoint
+  calcDenMidpoints(rel_densities);
+  if(rel_densities.size()!=nDenBins){
+    mooseError("Inconsistency in number of relative density bins.");
+  }
+
+  // Get the name modifiers
+  tails.clear();
+  for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+    std::string tail ="_"+std::to_string(iDen);
+    tails.push_back(tail);
+  }
+}
+
+
 dof_id_type
 MoabUserObject::elem_to_soln_index(const Elem& elem,unsigned int iSysNow,  unsigned int iVarNow)
 {
@@ -1347,8 +1376,9 @@ MoabUserObject::getSortBin(int iVarBin, int iDenBin, int iMat,int nVarBinsIn, in
   return iSortBin;
 }
 
+
 void
-MoabUserObject::calcDenMidpoints()
+MoabUserObject::calcDenMidpoints(std::vector<double>& denmidpoints)
 {
   calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,denmidpoints);
 }

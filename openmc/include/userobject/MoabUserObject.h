@@ -66,7 +66,14 @@ class MoabUserObject : public UserObject
   // Pass the OpenMC results into the libMesh systems solution
   bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool isErr=false, bool normToVol=true);
 
+  // Retrieve the temperature of a volume
   double getTemperature(moab::EntityHandle vol);
+
+  // Retrieve a list of original material names, initial and relative densities
+  void getMaterialsDensities(std::vector<std::string>& mat_names_out,
+                             std::vector<std::string>& tails,
+                             std::vector<double>& initial_densities,
+                             std::vector<double>& rel_densities);
 
   // Publically available pointer to MOAB interface
   std::shared_ptr<moab::Interface> moabPtr;
@@ -179,7 +186,7 @@ private:
   void calcMidpointsLin();
   void calcMidpointsLog();
   // Calculate the density evaluated at the bin midpoints
-  void calcDenMidpoints();
+  void calcDenMidpoints(std::vector<double>& denmidpoints);
 
   // Calculate a generic variable midpoints given binning params
   void calcMidpointsLin(double var_min_in, double bin_width_in,int nbins_in,std::vector<double>& midpoints_in);
@@ -240,8 +247,6 @@ private:
   double rel_den_bw; // Relative density diff bin width
   unsigned int nDenBins; // Number of relative density bins
   unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
-  // Store the relative density corresponding to the bin mipoint
-  std::vector<double> denmidpoints;
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
 
