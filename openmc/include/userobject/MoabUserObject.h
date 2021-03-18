@@ -165,7 +165,14 @@ private:
   inline int getResultsBinLin(double value);
   int getResultsBinLog(double value);
   // Return the bin index of a given relative density
-  int getRelDensityBin(double value);
+  inline int getRelDensityBin(double value);
+
+  // Map material, density and temp bin indices onto a linearised index
+  int getSortBin(int iVarBin, int iDenBin, int iMat,
+                 int nVarBinsIn, int nDenBinsIn,int nMatsIn);
+  int getSortBin(int iVarBin, int iDenBin, int iMat){
+    return getSortBin(iVarBin,iDenBin,iMat,nVarBins,nDenBins,nMatBins);
+  }
 
   // Calculate the variable evaluated at the bin midpoints
   void calcMidpoints();
@@ -235,8 +242,6 @@ private:
   unsigned int nMatBins; // Number of distinct subdomains (e.g. vols, mats)
   // Store the relative density corresponding to the bin mipoint
   std::vector<double> denmidpoints;
-
-  unsigned int nSortBins; // Number of bins needed for sorting results (mats*densitybins*varbins)
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
 
