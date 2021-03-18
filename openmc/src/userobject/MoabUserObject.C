@@ -21,6 +21,7 @@ validParams<MoabUserObject>()
   params.addParam<double>("var_max", 597.5,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
+  params.addParam<std::string>("density_name", "", "Variable name for density by whose results elements should be binned.");
   params.addParam<bool>("bin_density", false, "Determine if elements should be additionally binned by material density");
   params.addParam<double>("rel_den_min", -0.01,"Minimum difference in density relative to original material density");
   params.addParam<double>("rel_den_max",  0.01,"Maximum difference in density relative to original material density");
@@ -57,7 +58,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   var_min(getParam<double>("var_min")),
   var_max(getParam<double>("var_max")),
   nVarBins(getParam<unsigned int>("n_bins")),
-  binByDensity(getParam<bool>("bin_density")),
+  den_var_name(getParam<std::string>("density_name")),
   rel_den_min(getParam<double>("rel_den_min")),
   rel_den_max(getParam<double>("rel_den_max")),
   nDenBins(getParam<unsigned int>("n_density_bins")),
@@ -88,6 +89,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
 
   // Set variables relating to binning
   binElems = !( var_name == "" || mat_names.empty());
+  binByDensity = !( den_var_name == "" || !binElems );
 
   if(binElems){
     // If no alternative names were provided for openmc materials
@@ -818,51 +820,127 @@ MoabUserObject::initBinningData(){
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return;
 
+  // Create mesh functions for each variable we are bining by
+  setMeshFunction(var_name);
+  if(binByDensity){
+    setMeshFunction(den_var_name);
+  }
+
+}
+
+NumericVector<Number>&
+MoabUserObject::getSerialisedSolution(libMesh::System* sysPtr)
+{
+  if(sysPtr==nullptr) mooseError("System pointer is null");
+
+  // Get the index of this system
+  unsigned int iSysNow = sysPtr->number();
+
+  // Look up if we already have the serial solution
+  if(serial_solutions.find(iSysNow)==serial_solutions.end()){
+    // Initialize the serial solution vector
+    // N.B. For big problems this is going to be a memory bottleneck
+    auto serial_solution = NumericVector<Number>::build(comm());
+    serial_solution->init(sysPtr->n_dofs(), false, SERIAL);
+
+    // Pull down a full copy of this vector on every processor
+    sysPtr->solution->localize(*serial_solution);
+
+    // Move the unique pointer to the map
+    serial_solutions[iSysNow] = std::move(serial_solution);
+  }
+
+  // Return a reference
+  NumericVector<Number>& solution_ref = *(serial_solutions[iSysNow]);
+  return solution_ref;
+}
+
+void
+MoabUserObject::setMeshFunction(std::string var_name_in)
+{
+
+  libMesh::System* sysPtr;
+  unsigned int iVarNow;
+
   // Get the system and variable number
   try{
-    sysPtr = &system(var_name);
-    iSysBin = sysPtr->number();
-    iVarBin = sysPtr->variable_number(var_name);
+    sysPtr = &system(var_name_in);
+    iVarNow = sysPtr->variable_number(var_name_in);
   }
   catch(std::exception &e){
     mooseError(e.what());
   }
 
-  std::vector<unsigned int> var_nums(1,iVarBin);
+  std::vector<unsigned int> var_nums(1,iVarNow);
 
-  // Initialize the serial solution vector
-  // N.B. For big problems this is going to be a memory bottleneck
-  serial_solution = NumericVector<Number>::build(comm());
-  serial_solution->init(sysPtr->n_dofs(), false, SERIAL);
+  // Fetch the serialised solution for this system
+  NumericVector<Number>& serial_solution = getSerialisedSolution(sysPtr);
 
-  // Pull down a full copy of this vector on every processor so we can get values in parallel
-  sysPtr->solution->localize(*serial_solution);
+  // Create the mesh function
+  meshFunctionPtrs[var_name_in] =
+    std::make_shared<MeshFunction>(systems(),
+                                   serial_solution,
+                                   sysPtr->get_dof_map(),
+                                   var_nums);
 
-  meshFunctionPtr = std::make_shared<MeshFunction>(systems(),
-                                                   *(serial_solution),
-                                                   sysPtr->get_dof_map(),
-                                                   var_nums);
-
-  meshFunctionPtr->init(Trees::BuildType::ELEMENTS);
-
-  meshFunctionPtr->enable_out_of_mesh_mode(-1.0);
+  // Initialise mesh function
+  meshFunctionPtrs[var_name_in]->init(Trees::BuildType::ELEMENTS);
+  meshFunctionPtrs[var_name_in]->enable_out_of_mesh_mode(-1.0);
 
 }
+
+double
+MoabUserObject::evalMeshFunction(std::shared_ptr<MeshFunction> meshFunctionPtr,
+                                 const Point& p)
+{
+
+  // Evaluate the mesh function on this point
+  double result = double((*meshFunctionPtr)(p));
+
+  if(result<0.){
+    // If we got a negative result, understand why
+    const PointLocatorBase& locator = meshFunctionPtr->get_point_locator();
+    const Elem * elemPtr = locator(p);
+    if(elemPtr == nullptr){
+      mooseError("Point is out of mesh");
+          }
+    else{
+      mooseError("Negative result found in solution vector");
+    }
+  }
+
+  return result;
+
+}
+
+std::shared_ptr<MeshFunction>
+MoabUserObject::getMeshFunction(std::string var_name_in)
+{
+  if(meshFunctionPtrs.find(var_name_in) ==meshFunctionPtrs.end()){
+    std::string err;
+    err="No mesh function initialised for variable "+var_name_in;
+    mooseError(err);
+  }
+  if(meshFunctionPtrs[var_name_in]==nullptr){
+    std::string err;
+    err="Mesh function ptr for variable "+var_name_in + "is null";
+    mooseError(err);
+  }
+  return meshFunctionPtrs[var_name_in];
+}
+
 
 bool
 MoabUserObject::sortElemsByResults()
 {
-
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return false;
 
-  // Ensure we have a valid mesh function
-  if(meshFunctionPtr == nullptr){
-    mooseError("Mesh function is uninitialised.");
-  }
-
-  // Clear any prior data;
+   // Clear any prior data;
   resetContainers();
+
+  // Get the mesh function for temperature
+  std::shared_ptr<MeshFunction> meshFunctionPtr = getMeshFunction(var_name);
 
   // Set representing underflow bin
   std::set<dof_id_type> underflowElems;
@@ -890,19 +968,7 @@ MoabUserObject::sortElemsByResults()
         Point p = elemCentroid(elem);
 
         // Evaluate the mesh function on this point
-        double result = double((*meshFunctionPtr)(p));
-
-        if(result<0.){
-          // If we got a negative result, understand why
-          const PointLocatorBase& locator = meshFunctionPtr->get_point_locator();
-          const Elem * elemPtr = locator(p);
-          if(elemPtr == nullptr){
-            mooseError("Point is out of mesh");
-          }
-          else{
-            mooseError("Negative result found in solution vector");
-          }
-        }
+        double result = evalMeshFunction(meshFunctionPtr,p);
 
         // Calculate the bin number for this value
         int iBin = getResultsBin(result);
@@ -1160,8 +1226,12 @@ MoabUserObject::resetContainers()
   sortedElems.clear();
   sortedElems.resize(nSortBins);
   volToTemp.clear();
-  // Update the serial solution
-  sysPtr->solution->localize(*serial_solution);
+
+  // Update the serial solutions
+  for(const auto& sol :  serial_solutions){
+    System & sys = 	systems().get_system(sol.first);
+    sys.solution->localize(*sol.second);
+  }
 }
 
 void

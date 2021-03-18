@@ -137,6 +137,19 @@ private:
   // Helper method to convert between elem / solution indices
   dof_id_type elem_to_soln_index(const Elem& elem,unsigned int iSysNow, unsigned int iVarNow);
 
+  // Get a serialised version of solution for a given system
+  NumericVector<Number>& getSerialisedSolution(libMesh::System* sysPtr);
+
+  // Create and save a mesh function for the provided variable
+  void setMeshFunction(std::string var_name_in);
+
+  // Evaluate a mesh function at a point
+  double evalMeshFunction(std::shared_ptr<MeshFunction> meshFunctionPtr,
+                          const Point& p);
+
+  // Fetch the mesh function associated with a variable
+  std::shared_ptr<MeshFunction> getMeshFunction(std::string var_name_in);
+
   // Sort elems in to bins of a given temperature
   bool sortElemsByResults();
 
@@ -213,6 +226,7 @@ private:
   std::vector<double> midpoints;
 
   // Data members relating to  binning in density
+  std::string den_var_name; // Name of the MOOSE variable containing the density
   bool binByDensity; // Switch to determine if we should bin by material density
   double rel_den_min; // Minimum relative density diff
   double rel_den_max; // Max relative density diff
@@ -226,18 +240,14 @@ private:
 
   std::vector<std::set<dof_id_type> > sortedElems; // Container for elems sorted by variable bin and materials
 
-  // System Variables
-  libMesh::System* sysPtr;
-  unsigned int iSysBin;
-  unsigned int iVarBin;
-
-  // A mesh function to evaluate temperature
-  std::shared_ptr<MeshFunction> meshFunctionPtr;
+  // A map to store mesh functions against their variable name
+  std::map<std::string, std::shared_ptr<MeshFunction> > meshFunctionPtrs;
 
   // A place to store the entire solution
   // N.B. For big problems this is going to be a memory bottleneck
   // TODO: We will need to come up with a better solution
-  std::unique_ptr<NumericVector<Number>> serial_solution;
+  // Map is from systems index
+  std::map<unsigned int, std::unique_ptr<NumericVector<Number> > > serial_solutions;
 
   // Materials data
   std::vector<std::string> mat_names; // material names
