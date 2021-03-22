@@ -153,6 +153,9 @@ private:
   // Pass in mesh, new surfaces, setup metadata
   bool reloadDAGMC();
 
+  // Update materials
+  bool updateMaterials();
+
   // Set up OpenMC cells, surfaces
   bool setupCells();
   bool setupSurfaces();
@@ -181,6 +184,9 @@ private:
 
   // Save whether initialised
   bool isInit;
+
+  // Save if we have updated the materials
+  bool matsUpdated;
 
   // Save whether we have a UWUW material library
   bool useUWUW;

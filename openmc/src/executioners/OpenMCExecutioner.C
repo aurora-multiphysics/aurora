@@ -41,6 +41,7 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   Transient(parameters),
   setProblemLocal(false),
   isInit(false),
+  matsUpdated(false),
   useUWUW(true),
   source_strength(getParam<double>("neutron_source")),
   mesh_id(getParam<int32_t>("mesh_id")),
@@ -375,9 +376,7 @@ OpenMCExecutioner::initMaterials()
     useUWUW = false;
   }
 
-  // Didn't find a material library in dagmc.h5m file
-  if(!useUWUW) return initMatNames();
-  else return true;
+  return initMatNames();
 }
 
 bool
@@ -394,7 +393,25 @@ OpenMCExecutioner::initMatNames()
                <<std::endl;
       return false;
     }
+
+    if(useUWUW){
+      std::string prop="mat:";
+      std::string delim="/";
+      size_t pos=mat_name.find(prop);
+      if(pos!=std::string::npos){
+        size_t prop_size =prop.size()+pos;
+        size_t new_size = mat_name.size()-prop_size;
+        mat_name = mat_name.substr(prop_size,new_size);
+      }
+      pos =mat_name.find(delim);
+      if(pos!=std::string::npos){
+        size_t new_size = mat_name.size()-delim.size();
+        mat_name = mat_name.substr(0,new_size);
+      }
+    }
+
     mat_names_to_id[mat_name] = id;
+
   }
   return true;
 }
@@ -501,20 +518,7 @@ OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
     return true;
   }
 
-
-  // Find id for non-void mats
-  if(useUWUW){
-    // UWUW material library is indexed by a string of the form "mat:xxx/rho=xxx"
-    std::string uwuw_mat = dmdPtr->volume_material_property_data_eh[vol_handle];
-    if(uwuwPtr->material_library.count(uwuw_mat) != 0){
-      mat_id = uwuwPtr->material_library.get_material(uwuw_mat).metadata["mat_number"].asInt();
-    }
-    else{
-      std::cerr<<"Couldn't find material "<<uwuw_mat<<" in the UWUW material library."<<std::endl;
-      return false;
-    }
-  }
-  else if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
+  if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
     mat_id = mat_names_to_id[mat_name];
   }
   else{
@@ -523,7 +527,6 @@ OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
   }
 
   return true;
-
 }
 
 bool
@@ -904,6 +907,49 @@ OpenMCExecutioner::reloadDAGMC()
   }
 
   return true;
+}
+
+bool
+OpenMCExecutioner::updateMaterials()
+{
+  // Only update materials once
+  if(matsUpdated) return true;
+
+  // Retrieve material data
+  std::vector<std::string> mat_names;
+  std::vector<std::string> tails;
+  std::vector<double> initial_densities;
+  std::vector<double> rel_densities;
+  moab().getMaterialsDensities(mat_names,tails,initial_densities,rel_densities);
+
+  // First check if we find the original material_names
+  std::map<int32_t,std::string> orig_index_to_moose_index;
+
+  // for(auto mat : mat_names){
+  //   int
+
+  // }
+  // mat_name -> id -> index
+
+
+
+  // Return if no relative_densities
+
+  // Check consistency of sizes
+
+  // Clear existing material data
+
+  // Get the original xml string
+
+  // Loop over child nodes in xml string
+  // // Loop over relative densities
+  // //  // Create mat
+  // //  // Update ID
+  // //  // Update_name
+  // //  // Update density
+  // //  // Update mat lib index
+
+  return matsUpdated;
 }
 
 bool
