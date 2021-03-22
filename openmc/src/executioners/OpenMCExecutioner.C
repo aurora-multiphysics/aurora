@@ -909,11 +909,11 @@ OpenMCExecutioner::reloadDAGMC()
   return true;
 }
 
-bool
+void
 OpenMCExecutioner::updateMaterials()
 {
   // Only update materials once
-  if(matsUpdated) return true;
+  if(matsUpdated) return;
 
   // Retrieve material data
   std::vector<std::string> mat_names;
@@ -922,34 +922,103 @@ OpenMCExecutioner::updateMaterials()
   std::vector<double> rel_densities;
   moab().getMaterialsDensities(mat_names,tails,initial_densities,rel_densities);
 
-  // First check if we find the original material_names
-  std::map<int32_t,std::string> orig_index_to_moose_index;
+  // First check if we can find the original material names
+  std::map<int32_t,size_t> orig_index_to_moose_index;
+  int32_t maxOrigID=0;
+  for(size_t iMat=0; iMat<mat_names.size(); iMat++){
+    std::string mat_name = mat_names.at(iMat);
+    if(mat_names_to_id.find(mat_name)==mat_names_to_id.end()){
+      std::string err="Could not find material "+mat_name;
+      mooseError(err);
+    }
+    int32_t mat_id = mat_names_to_id[mat_name];
+    if(openmc::model::material_map.find(mat_id)==
+       openmc::model::material_map.end()){
+      std::string err="Could not find material id "+mat_id;
+      mooseError(err);
+    }
+    if(mat_id>maxOrigID) maxOrigID=mat_id;
+    int32_t mat_index = openmc::model::material_map[mat_id];
+    // Save
+    orig_index_to_moose_index[mat_index]=iMat;
+  }
 
-  // for(auto mat : mat_names){
-  //   int
-
-  // }
-  // mat_name -> id -> index
-
-
-
-  // Return if no relative_densities
+  // Return if no relative_densities -> we are not binning by density
+  if(rel_densities.empty()){
+    matsUpdated = true;
+    return;
+  }
 
   // Check consistency of sizes
+  if(rel_densities.size() != tails.size()){
+    mooseError("Error setting updated material metadata.");
+  }
 
   // Clear existing material data
+  openmc::free_memory_material();
+  mat_names_to_id.clear();
 
   // Get the original xml string
+  pugi::xml_document doc;
+  if(useUWUW){
+    bool found_dagmc_mats = openmc::read_uwuw_materials(doc);
+    if(!found_dagmc_mats)
+      mooseError("Failed to extract UWUW material xml string");
+  }
+  else{
+    std::string filename = openmc::settings::path_input + "materials.xml";
+    if (!openmc::file_exists(filename)) {
+      mooseError("Material XML file '" + filename + "' does not exist!");
+    }
+    // Parse materials.xml file and get root element
+    doc.load_file(filename.c_str());
+  }
 
   // Loop over child nodes in xml string
-  // // Loop over relative densities
-  // //  // Create mat
-  // //  // Update ID
-  // //  // Update_name
-  // //  // Update density
-  // //  // Update mat lib index
+  pugi::xml_node root = doc.document_element();
+  int32_t iOrigMat=0;
+  for (pugi::xml_node material_node : root.children("material")) {
+    // Get moose's index for this material
+    size_t iMat = orig_index_to_moose_index.at(iOrigMat);
+    // Get the original density
+    double origDen = initial_densities.at(iMat);
+    // Get the original name
+    std::string origName = mat_names.at(iMat);
 
-  return matsUpdated;
+    // Loop over relative densities in decreasing order so we never
+    // simultaneously try to create any Material with the same ID
+    for(size_t iDen=rel_densities.size()-1; iDen>=0; iDen--){
+
+      // Create new material in place
+      openmc::model::materials.push_back(std::make_unique<openmc::Material>(material_node));
+
+      // Get a reference to our mat
+      openmc::Material& mat = *openmc::model::materials.back();
+
+      // Update ID
+      int32_t oldID = mat.id();
+      int32_t newID = iDen*(maxOrigID) + oldID;
+      mat.set_id(newID);
+
+      // Update_name
+      std::string new_name = origName + tails.at(iDen);
+      mat.set_name(new_name);
+
+      // Update mat lib index
+      mat_names_to_id[new_name]=newID;
+
+      // Update density
+      double relDiff = rel_densities.at(iDen);
+      double newDen = (1.0+relDiff)*origDen;
+      mat.set_density(newDen,"g/cm3");
+    }
+
+    // Increment counter over original mat indices
+    iOrigMat++;
+  }
+
+  // Success!
+  matsUpdated = true;
 }
 
 bool

@@ -18,6 +18,7 @@
 #include "openmc/cross_sections.h"
 #include "openmc/dagmc.h" // model::DAG
 #include "openmc/error.h"
+#include "openmc/file_utils.h"
 #include "openmc/geometry.h" // overlap_check_count
 #include "openmc/geometry_aux.h" // finalize geometry
 #include "openmc/material.h"
@@ -154,7 +155,7 @@ private:
   bool reloadDAGMC();
 
   // Update materials
-  bool updateMaterials();
+  void updateMaterials();
 
   // Set up OpenMC cells, surfaces
   bool setupCells();
