@@ -16,16 +16,18 @@ validParams<MoabUserObject>()
   params.addParam<double>("length_scale", 100.,"Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.");
 
   // Params relating to binning
+  // Temperature binning
   params.addParam<std::string>("bin_varname", "", "Variable name by whose results elements should be binned.");
   params.addParam<double>("var_min", 297.5,"Minimum value to define range of bins.");
   params.addParam<double>("var_max", 597.5,"Max value to define range of bins.");
   params.addParam<bool>("logscale", false, "Switch to determine if logarithmic binning should be used.");
   params.addParam<unsigned int>("n_bins", 60, "Number of bins");
+  // Density binning
   params.addParam<std::string>("density_name", "", "Variable name for density by whose results elements should be binned.");
   params.addParam<bool>("bin_density", false, "Determine if elements should be additionally binned by material density");
-  params.addParam<double>("rel_den_min", -0.01,"Minimum difference in density relative to original material density");
-  params.addParam<double>("rel_den_max",  0.01,"Maximum difference in density relative to original material density");
-  params.addParam<unsigned int>("n_density_bins", 10, "Number of relative density bins");
+  params.addParam<double>("rel_den_min", -0.1,"Minimum difference in density relative to original material density");
+  params.addParam<double>("rel_den_max",  0.1,"Maximum difference in density relative to original material density");
+  params.addParam<unsigned int>("n_density_bins", 5, "Number of relative density bins");
 
   // Mesh metadata
   params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of MOOSE material names");
@@ -812,6 +814,7 @@ void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_o
   if(!binByDensity) return;
 
   // Set the original densities
+  // TODO convert to g/cm3 if not already in these units...
   initial_densities = initialDensities;
 
   // Calculate relative densities for each bin midpoint
@@ -1088,14 +1091,15 @@ MoabUserObject::findSurfaces()
       // Loop over density bins
       for(unsigned int iDen=0; iDen<nDenBins; iDen++){
 
+        std::string density_mat_name=mat_name;
         // Update mat name if we have more than one density bin
         if(binByDensity){
-          mat_name+="_"+std::to_string(iDen);
+          density_mat_name+="_"+std::to_string(iDen);
         }
 
         // Create a material group
         moab::EntityHandle group_set;
-        rval = createGroup(iMat+1,mat_name,group_set);
+        rval = createGroup(iMat+1,density_mat_name,group_set);
         if(rval != moab::MB_SUCCESS) return false;
 
         // Loop over temperature bins
@@ -1178,7 +1182,6 @@ MoabUserObject::write()
 
   n_its++;
   return true;
-
 }
 
 void

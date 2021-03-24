@@ -156,6 +156,7 @@ private:
 
   // Update materials
   void updateMaterials();
+  void updateMaterialDensities();
 
   // Set up OpenMC cells, surfaces
   bool setupCells();
@@ -204,7 +205,11 @@ private:
   // OpenMC ID of the mesh to which we pass data
   int32_t mesh_id;
 
+  // Convenience map of mat name string to its id
   std::map<std::string,int32_t> mat_names_to_id;
+
+  // Convenience map of mat name string to its id
+  std::map<int32_t,double> mat_id_to_density;
 
   // Place to store graveyard entity handle
   moab::EntityHandle graveyard;

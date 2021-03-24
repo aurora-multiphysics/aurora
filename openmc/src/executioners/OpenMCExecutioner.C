@@ -838,6 +838,8 @@ OpenMCExecutioner::resetOpenMC()
   openmc::data::nuclides.clear();
   openmc::data::nuclide_map = nuclide_map_copy;
 
+  updateMaterials();
+
   return true;
 }
 
@@ -957,6 +959,7 @@ OpenMCExecutioner::updateMaterials()
   // Clear existing material data
   openmc::free_memory_material();
   mat_names_to_id.clear();
+  mat_id_to_density.clear();
 
   // Get the original xml string
   pugi::xml_document doc;
@@ -978,6 +981,12 @@ OpenMCExecutioner::updateMaterials()
   pugi::xml_node root = doc.document_element();
   int32_t iOrigMat=0;
   for (pugi::xml_node material_node : root.children("material")) {
+    if(orig_index_to_moose_index.find(iOrigMat) ==
+       orig_index_to_moose_index.end()){
+      std::string err = "Unknown material index "
+        +std::to_string(iOrigMat);
+      mooseError(err);
+    }
     // Get moose's index for this material
     size_t iMat = orig_index_to_moose_index.at(iOrigMat);
     // Get the original density
@@ -987,7 +996,7 @@ OpenMCExecutioner::updateMaterials()
 
     // Loop over relative densities in decreasing order so we never
     // simultaneously try to create any Material with the same ID
-    for(size_t iDen=rel_densities.size()-1; iDen>=0; iDen--){
+    for(int iDen=int(rel_densities.size())-1; iDen>=0; iDen--){
 
       // Create new material in place
       openmc::model::materials.push_back(std::make_unique<openmc::Material>(material_node));
@@ -1004,13 +1013,15 @@ OpenMCExecutioner::updateMaterials()
       std::string new_name = origName + tails.at(iDen);
       mat.set_name(new_name);
 
-      // Update mat lib index
-      mat_names_to_id[new_name]=newID;
-
       // Update density
       double relDiff = rel_densities.at(iDen);
       double newDen = (1.0+relDiff)*origDen;
-      mat.set_density(newDen,"g/cm3");
+
+      // Save updated density (we will update later)
+      mat_id_to_density[newID]=newDen;
+
+      // Update mat lib index
+      mat_names_to_id[new_name]=newID;
     }
 
     // Increment counter over original mat indices
@@ -1020,6 +1031,21 @@ OpenMCExecutioner::updateMaterials()
   // Success!
   matsUpdated = true;
 }
+
+void
+OpenMCExecutioner::updateMaterialDensities()
+{
+  for(auto& mat: openmc::model::materials){
+    // Look up densities saved by id
+    int32_t m_id= mat->id_;
+    if(mat_id_to_density.find(m_id)!=mat_id_to_density.end()){
+      double newDen = mat_id_to_density[m_id];
+      // Set new density
+      mat->set_density(newDen,"g/cm3");
+    }
+  }
+}
+
 
 bool
 OpenMCExecutioner::setupCells()
@@ -1127,6 +1153,10 @@ OpenMCExecutioner::completeSetup()
 
   // Finalize cross sections having assigned temperatures
   openmc::finalize_cross_sections();
+
+  // This occurs here because some material attributes are not properly
+  // initialised until after finalize_cross_sections is called.
+  updateMaterialDensities();
 
 }
 
