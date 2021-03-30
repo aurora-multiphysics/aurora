@@ -6,7 +6,8 @@
 EXEC="openmc"
 
 # Define input file strings
-MESHPATH="../../supplementary/openmc/legacy-mats/"
+MESHPATH="../../"
+MESHFILEORIG="moab_full_0.h5m"
 MESHFILE="copper_air_tetmesh_cm.h5m"
 DAGMCFILE="dagmc.h5m"
 SETTINGSFILE="settings.xml"
@@ -35,8 +36,8 @@ for FILE in $(ls ../*.xml); do
 done
 
 # create symbolic links to mesh files
-ln -s ../$DAGMCFILE
-ln -s $MESHPATH$MESHFILE
+ln -s $MESHPATH$MESHFILEORIG $MESHFILE
+ln -s $MESHFILE $DAGMCFILE
 
 # Modify the tally file to use a file for unstructured mesh
 SEDCOMMAND="s/(create=\\\")False(\\\")/\1True\2/g"

@@ -24,6 +24,7 @@
 [UserObjects]
   [moab]
     type = MoabUserObject
+    length_scale = 1.0
   []
 []
 

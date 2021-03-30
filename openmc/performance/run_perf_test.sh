@@ -9,7 +9,10 @@ METHOD="opt"
 EXEC="../open_mc-$METHOD"
 
 # Define input file strings
+EXOFILEORIG="copper_air_bcs_tetmesh.e"
 EXOFILE="copper_air_tetmesh.e"
+MESHPATH="../../"
+MESHFILEORIG="moab_full_0.h5m"
 DAGMCFILE="dagmc.h5m"
 SETTINGSFILE="settings.xml"
 ORIGBASE="perf_test"
@@ -35,8 +38,8 @@ for FILE in $(ls ../*.xml); do
 done
 
 # create symbolic links to mesh files
-ln -s ../$DAGMCFILE
-ln -s ../$EXOFILE
+ln -s $MESHPATH$MESHFILEORIG $DAGMCFILE
+ln -s $MESHPATH$EXOFILEORIG $EXOFILE
 
 # Turn back on statepoint generation to match OpenMC perf runs
 BATCHES=10
