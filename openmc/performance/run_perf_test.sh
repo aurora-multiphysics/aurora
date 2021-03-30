@@ -11,7 +11,8 @@ EXEC="../open_mc-$METHOD"
 # Define input file strings
 EXOFILEORIG="copper_air_bcs_tetmesh.e"
 EXOFILE="copper_air_tetmesh.e"
-MESHPATH="../../"
+EXOPATH="../../"
+MESHPATH="./"
 MESHFILEORIG="moab_full_0.h5m"
 DAGMCFILE="dagmc.h5m"
 SETTINGSFILE="settings.xml"
@@ -39,7 +40,7 @@ done
 
 # create symbolic links to mesh files
 ln -s $MESHPATH$MESHFILEORIG $DAGMCFILE
-ln -s $MESHPATH$EXOFILEORIG $EXOFILE
+ln -s $EXOPATH$EXOFILEORIG $EXOFILE
 
 # Turn back on statepoint generation to match OpenMC perf runs
 BATCHES=10

@@ -6,7 +6,7 @@
 EXEC="openmc"
 
 # Define input file strings
-MESHPATH="../../"
+MESHPATH="./"
 MESHFILEORIG="moab_full_0.h5m"
 MESHFILE="copper_air_tetmesh_cm.h5m"
 DAGMCFILE="dagmc.h5m"
