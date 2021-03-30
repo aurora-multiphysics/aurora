@@ -242,4 +242,5 @@ conf_vars.mk
 *moab_surfs*
 *moab_full*
 main_out.e
+main_temp_mech_out.e
 openmc/example_out.e
