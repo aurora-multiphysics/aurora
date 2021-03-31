@@ -219,6 +219,11 @@ private:
   // A mesh function to evaluate temperature
   std::shared_ptr<MeshFunction> meshFunctionPtr;
 
+  // A place to store the entire solution
+  // N.B. For big problems this is going to be a memory bottleneck
+  // TODO: We will need to come up with a better solution
+  std::unique_ptr<NumericVector<Number>> serial_solution;
+
   // Materials data
   std::vector<std::string> mat_names; // material names
   std::vector<std::string> openmc_mat_names; // material names

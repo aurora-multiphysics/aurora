@@ -773,7 +773,6 @@ MoabUserObject::elem_to_soln_index(const Elem& elem,unsigned int iSysNow,  unsig
 
 void
 MoabUserObject::initBinningData(){
-
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return;
 
@@ -789,12 +788,22 @@ MoabUserObject::initBinningData(){
 
   std::vector<unsigned int> var_nums(1,iVarBin);
 
+  // Initialize the serial solution vector
+  // N.B. For big problems this is going to be a memory bottleneck
+  serial_solution = NumericVector<Number>::build(comm());
+  serial_solution->init(sysPtr->n_dofs(), false, SERIAL);
+
+  // Pull down a full copy of this vector on every processor so we can get values in parallel
+  sysPtr->solution->localize(*serial_solution);
+
   meshFunctionPtr = std::make_shared<MeshFunction>(systems(),
-                                                   *(sysPtr->solution),
+                                                   *(serial_solution),
                                                    sysPtr->get_dof_map(),
                                                    var_nums);
 
   meshFunctionPtr->init(Trees::BuildType::ELEMENTS);
+
+  meshFunctionPtr->enable_out_of_mesh_mode(-1.0);
 
 }
 
@@ -804,6 +813,11 @@ MoabUserObject::sortElemsByResults()
 
   // Don't attempt to bin results if we haven't been provided with a variable
   if(!binElems) return false;
+
+  // Ensure we have a valid mesh function
+  if(meshFunctionPtr == nullptr){
+    mooseError("Mesh function is uninitialised.");
+  }
 
   // Clear any prior data;
   resetContainers();
@@ -836,6 +850,18 @@ MoabUserObject::sortElemsByResults()
         // Evaluate the mesh function on this point
         double result = double((*meshFunctionPtr)(p));
 
+        if(result<0.){
+          // If we got a negative result, understand why
+          const PointLocatorBase& locator = meshFunctionPtr->get_point_locator();
+          const Elem * elemPtr = locator(p);
+          if(elemPtr == nullptr){
+            mooseError("Point is out of mesh");
+          }
+          else{
+            mooseError("Negative result found in solution vector");
+          }
+        }
+
         // Calculate the bin number for this value
         int iBin = getResultsBin(result);
 
@@ -850,6 +876,9 @@ MoabUserObject::sortElemsByResults()
       }
     }
   }
+
+  // Wait for all processes to finish
+  comm().barrier();
 
   // MPI communication
   for( unsigned int iSortBin=0; iSortBin< sortedElems.size(); iSortBin++){
@@ -1089,6 +1118,8 @@ MoabUserObject::resetContainers()
   sortedElems.clear();
   sortedElems.resize(nSortBins);
   volToTemp.clear();
+  // Update the serial solution
+  sysPtr->solution->localize(*serial_solution);
 }
 
 
