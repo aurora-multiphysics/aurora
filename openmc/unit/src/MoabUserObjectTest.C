@@ -642,8 +642,36 @@ TEST_F(FindDensitySurfsTest,linearDensity)
   nVol = 6;
   nSurf = 11;
   linearDensityTest(denOrig,relDiff,temp,nVol,nSurf);
+
+  // Repeat for out of bounds density
+  relDiff = 0.12;
+  double denMin = denOrig*(1.0-relDiff);
+  double denMax = denOrig*(1.0+relDiff);
+  setLinearSolution(density_name,denMin,denMax,0);
+  EXPECT_THROW(moabUOPtr->update(),std::runtime_error);
 }
 
+// Test linearly varying density and temp
+TEST_F(FindDensitySurfsTest,linearDensityTemp)
+{
+  init();
+
+  // Varying temp across single bin
+  double denOrig = 8.920;
+  double relDiff = 0.04;
+  double tempMin = 300.;
+  double tempMax = 302.;
+  unsigned int nVol = 4;
+  unsigned int nSurf = 7;
+  linearDensityTempTest(denOrig,relDiff,tempMin,tempMax,nVol,nSurf);
+
+  // Varying temp across two bins
+  tempMin = 301.;
+  tempMax = 303.;
+  nVol = 7;
+  nSurf = 19;
+  linearDensityTempTest(denOrig,relDiff,tempMin,tempMax,nVol,nSurf);
+}
 
 // Test to check we are using the deformed mesh if there is one
 TEST_F(DeformedMeshTest, checkDeformedMesh)

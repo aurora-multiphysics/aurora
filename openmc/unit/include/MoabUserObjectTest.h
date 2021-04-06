@@ -1291,6 +1291,26 @@ protected:
     checkAllGeomsets(nVol,nSurf);
   }
 
+  void linearDensityTempTest(double denOrig,double relDiff,
+                             double tempMin,double tempMax,
+                             unsigned int nVol,unsigned int nSurf)
+  {
+    double denMin = denOrig*(1.0-relDiff);
+    double denMax = denOrig*(1.0+relDiff);
+
+    // Set a linearly varying density along x
+    setLinearSolution(density_name,denMin,denMax,0);
+
+    // Set a linearly varying density along y
+    setLinearSolution(var_name,tempMin,tempMax,1);
+
+    // Find the surfaces
+    ASSERT_TRUE(moabUOPtr->update());
+
+    // Check groups, volumes and surfaces
+    checkAllGeomsets(nVol,nSurf);
+  }
+
   std::string density_name;
   unsigned int nDenBins;
   std::vector<std::string> base_names;
