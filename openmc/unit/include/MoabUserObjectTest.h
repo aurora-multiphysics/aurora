@@ -333,20 +333,19 @@ protected:
 
   }
 
-  void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst) {
-
+  // Helper function to create a constant solution
+  void setConstSolution(size_t solSize, double solConst, std::string var_name_in) {
     // Create a vector for constant solution
-    std::vector<double> solutionData(ents.size(),solConst);
+    std::vector<double> solutionData(solSize,solConst);
 
     // Check we can set the solution
-    ASSERT_TRUE(moabUOPtr->setSolution(var_name,solutionData,1.0,false,false));
+    ASSERT_TRUE(moabUOPtr->setSolution(var_name_in,solutionData,1.0,false,false));
   }
 
-  void setConstSolution(const std::vector<moab::EntityHandle>& ents, double solConst,std::vector<double>& solExpect){
-
-    setConstSolution(ents,solConst);
-    solExpect.resize(ents.size(),solConst);
-
+  // Overloaded version
+  void setConstSolution(size_t solSize, double solConst,std::vector<double>& solExpect){
+    setConstSolution(solSize,solConst,var_name);
+    solExpect.resize(solSize,solConst);
   }
 
 
@@ -414,7 +413,7 @@ protected:
 
       if(i==0){
         // Set a constant solution
-        setConstSolution(ents,solConst,solExpect);
+        setConstSolution(ents.size(),solConst,solExpect);
       }
       else{
         // Set a non-trival solution
@@ -584,6 +583,17 @@ protected:
     }
   };
 
+  void init()
+  {
+    EXPECT_FALSE(appIsNull);
+    ASSERT_TRUE(foundMOAB);
+    ASSERT_TRUE(setProblem());
+    ASSERT_NO_THROW(moabUOPtr->initBinningData());
+
+    // Set the mesh
+    ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  }
+
   void getTags(std::map< std::string, std::vector<TagInfo> >& tags_by_cat,
                std::string category,
                int dim,
@@ -733,7 +743,6 @@ protected:
             graveyard=group_vols.front();
           }
 
-          EXPECT_FALSE(group_vols.empty());
           for(auto vol: group_vols){
             // Vols should not be in more than one group
             bool found_vol = ( volsFromGroups.find(vol) != volsFromGroups.end() );
@@ -1034,20 +1043,9 @@ protected:
   }
 
   void checkConstTempSurfs(double solConst,unsigned int nVol,unsigned int nSurf,int nDegen=1){
-    EXPECT_FALSE(appIsNull);
-    ASSERT_TRUE(foundMOAB);
-    ASSERT_TRUE(setProblem());
-    ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-    // Set the mesh
-    ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
-    // Get elems
-    std::vector<moab::EntityHandle> ents;
-    getElems(ents);
 
     // Set a constant solution
-    setConstSolution(ents,solConst);
+    setConstSolution(nElemsExpect*nDegen,solConst,var_name);
 
     // Find the surfaces
     ASSERT_TRUE(moabUOPtr->update());
@@ -1208,6 +1206,54 @@ protected:
 
   virtual void TearDown() override {};
 
+};
+
+class FindDensitySurfsTestBase: public FindMoabSurfacesTest {
+protected:
+
+  FindDensitySurfsTestBase(std::string inputfile):
+    FindMoabSurfacesTest(inputfile)
+  {
+    density_name="density_local";
+    nDenBins=5;
+  }
+
+  virtual void setBaseNames(){};
+
+  virtual void setMatNames(){
+    for(const auto name : base_names){
+      for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+        std::string new_name = name+"_"+std::to_string(iDen);
+        mat_names.push_back(new_name);
+      }
+    }
+    mat_names.push_back("mat:Graveyard");
+  };
+
+  std::string density_name;
+  unsigned int nDenBins;
+  std::vector<std::string> base_names;
+};
+
+class FindDensitySurfsTest: public FindDensitySurfsTestBase {
+protected:
+  FindDensitySurfsTest() :
+    FindDensitySurfsTestBase("densitysurfstest.i")
+  {
+    setBaseNames();
+    setMatNames();
+  };
+
+  virtual void setBaseNames() override {
+    base_names.push_back("mat:copper");
+  };
+
+};
+
+class FindDensitySurfsFailMin: public FindDensitySurfsTestBase {
+protected:
+  FindDensitySurfsFailMin() :
+    FindDensitySurfsTestBase("densitysurfstest-failmin.i"){};
 };
 
 

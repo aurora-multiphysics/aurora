@@ -175,6 +175,7 @@ TEST_F(SecondOrderMoabUserObjectTest, setErrors)
 // Test for finding surfaces
 TEST_F(FindMoabSurfacesTest, constTemp)
 {
+  init();
   checkConstTempSurfs(300,3,4);
 }
 
@@ -234,13 +235,7 @@ TEST_F(FindMoabSurfacesTest, singleBin)
 
 TEST_F(FindMoabSurfacesTest, extraBin)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  init();
 
   // Get elems
   std::vector<moab::EntityHandle> ents;
@@ -338,31 +333,21 @@ TEST_F(FindMoabSurfacesTest, extraBin)
 // Test for checking output
 TEST_F(FindMoabSurfacesTest, checkOutput)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
-  // Get elems
-  std::vector<moab::EntityHandle> ents;
-  getElems(ents);
+  init();
 
   // Set a constant solution
   double solConst = 300.;
-  setConstSolution(ents,solConst);
+  setConstSolution(nElemsExpect,solConst,var_name);
 
   // How many times to update
   unsigned int nUpdate=15;
   checkOutputAfterUpdate(nUpdate);
-
 }
 
 // Test for finding surfaces for second order mesh
 TEST_F(SecondOrderSurfacesTest, constTemp)
 {
+  init();
   checkConstTempSurfs(37.5,3,4,8);
 }
 
@@ -433,19 +418,14 @@ TEST_F(BadMoabUserObjectTest, failinit)
 // Test for finding surfaces for single material
 TEST_F(FindSingleMatSurfs, constTemp)
 {
+  init();
   checkConstTempSurfs(340,2,3);
 }
 
 // Test for finding surfaces for many temperature bins
 TEST_F(FindSingleMatSurfs, manyBins)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  init();
 
   // Get elems
   std::vector<moab::EntityHandle> ents;
@@ -497,21 +477,11 @@ TEST_F(FindSingleMatSurfs, manyBins)
 // Test for checking output for different output params
 TEST_F(FindSingleMatSurfs, checkOutput)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
-  // Get elems
-  std::vector<moab::EntityHandle> ents;
-  getElems(ents);
+  init();
 
   // Set a constant solution
   double solConst = 340.;
-  setConstSolution(ents,solConst);
+  setConstSolution(nElemsExpect,solConst,var_name);
 
   // How many times to update
   unsigned int nUpdate=15;
@@ -520,7 +490,7 @@ TEST_F(FindSingleMatSurfs, checkOutput)
 }
 
 // Test for correct initialisation of offset box
-TEST_F(FindOffsetSurfs, init)
+TEST_F(FindOffsetSurfs, testInit)
 {
   EXPECT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
@@ -533,27 +503,18 @@ TEST_F(FindOffsetSurfs, init)
 // Test for finding surfaces for an offset box
 TEST_F(FindOffsetSurfs, update)
 {
+  init();
   checkConstTempSurfs(300,2,3);
 }
 
 // Test for finding surfaces for log binning
 TEST_F(FindLogBinSurfs, constTemp)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
-
-  // Get elems
-  std::vector<moab::EntityHandle> ents;
-  getElems(ents);
+  init();
 
   // Set a constant solution
   double solConst = 300.;
-  setConstSolution(ents,solConst);
+  setConstSolution(nElemsExpect,solConst,var_name);
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
@@ -569,7 +530,7 @@ TEST_F(FindLogBinSurfs, constTemp)
 
   // Set a constant solution
   solConst = 400.;
-  setConstSolution(ents,solConst);
+  setConstSolution(nElemsExpect,solConst,var_name);
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
@@ -580,7 +541,7 @@ TEST_F(FindLogBinSurfs, constTemp)
 
   // Set a constant solution
   solConst = 2000.;
-  setConstSolution(ents,solConst);
+  setConstSolution(nElemsExpect,solConst,var_name);
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
@@ -591,7 +552,7 @@ TEST_F(FindLogBinSurfs, constTemp)
 
   // Set a constant solution
   solConst = 5000.;
-  setConstSolution(ents,solConst);
+  setConstSolution(nElemsExpect,solConst,var_name);
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
@@ -605,14 +566,7 @@ TEST_F(FindLogBinSurfs, constTemp)
 // Test for finding surfaces for many temperature bins on log scale
 TEST_F(FindLogBinSurfs, manyBins)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-  ASSERT_NO_THROW(moabUOPtr->initBinningData());
-
-
-  // Set the mesh
-  ASSERT_NO_THROW(moabUOPtr->initMOAB());
+  init();
 
   // Get elems
   std::vector<moab::EntityHandle> ents;
@@ -662,6 +616,13 @@ TEST_F(FindLogBinSurfs, manyBins)
   volinfo.isGraveyard=true;
   checkSurfsAndTemp(volinfo);
 
+}
+
+TEST_F(FindDensitySurfsTest,constDensity)
+{
+  init();
+  setConstSolution(nElemsExpect,8.920,density_name);
+  checkConstTempSurfs(300.,2,3);
 }
 
 // Test to check we are using the deformed mesh if there is one
