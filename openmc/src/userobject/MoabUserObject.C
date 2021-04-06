@@ -977,7 +977,7 @@ MoabUserObject::sortElemsByResults()
   if(binByDensity){
     denMeshFunctionPtr= getMeshFunction(den_var_name);
   }
-  
+
   // Outer loop over materials
   for(unsigned int iMat=0; iMat<nMatBins; iMat++){
 
@@ -1012,7 +1012,7 @@ MoabUserObject::sortElemsByResults()
 
         // Evaluate the temp mesh function on this point
         double temp_result = evalMeshFunction(meshFunctionPtr,p);
-        
+
         // Calculate the bin number for this value
         int iBin = getResultsBin(temp_result);
 
@@ -1092,14 +1092,17 @@ MoabUserObject::findSurfaces()
       for(unsigned int iDen=0; iDen<nDenBins; iDen++){
 
         std::string density_mat_name=mat_name;
+
         // Update mat name if we have more than one density bin
         if(binByDensity){
           density_mat_name+="_"+std::to_string(iDen);
         }
 
+        unsigned int group_id = iMat*nDenBins + iDen + 1;
+
         // Create a material group
         moab::EntityHandle group_set;
-        rval = createGroup(iMat+1,density_mat_name,group_set);
+        rval = createGroup(group_id,density_mat_name,group_set);
         if(rval != moab::MB_SUCCESS) return false;
 
         // Loop over temperature bins
@@ -1497,7 +1500,7 @@ moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned 
 
   // Create the graveyard set
   moab::EntityHandle graveyard;
-  unsigned int id = nMatBins+1;
+  unsigned int id = nMatBins*nDenBins+1;
   std::string mat_name = "mat:Graveyard";
   rval = createGroup(id,mat_name,graveyard);
   if(rval != moab::MB_SUCCESS) return rval;
