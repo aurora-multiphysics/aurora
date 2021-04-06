@@ -1212,6 +1212,9 @@ protected:
   {
     density_name="density_local";
     nDenBins=5;
+    // sides of box
+    xMinSav=-10.0*lengthscale;
+    xMaxSav=10.0*lengthscale;
   }
 
   virtual void setBaseNames(){};
@@ -1226,9 +1229,74 @@ protected:
     mat_names.push_back("mat:Graveyard");
   };
 
+  double getLinSol(double x, double xMin, double xMax, double solMin, double solMax)
+  {
+    double xRel = (x-xMin)/(xMax-xMin);
+    double sol = xRel * (solMax-solMin) + solMin;
+    return sol;
+  }
+
+  void getLinearSolution(const std::vector<moab::EntityHandle>& ents,
+                         std::vector<double>& solutionData,
+                         double solMin, double solMax,unsigned int iAxis)
+  {
+    ASSERT_LT(iAxis,3);
+    // Manufacture a linearly varying solution based on i-coord of element centroid.
+    for(const auto& ent : ents){
+      std::string errmsg;
+      Point centroid;
+      bool success = getCentroid(moabUOPtr->moabPtr,ent,centroid,errmsg);
+      ASSERT_TRUE(success) << errmsg;
+      double solNow = getLinSol(centroid(iAxis),xMinSav,xMaxSav,solMin,solMax);
+      ASSERT_GT(solNow,solMin);
+      ASSERT_LT(solNow,solMax);
+      solutionData.push_back(solNow);
+    }
+  }
+
+
+  void setLinearSolution(std::string var_name_in,
+                         double solMin, double solMax,unsigned int iAxis){
+
+    // Get elems
+    std::vector<moab::EntityHandle> ents;
+    getElems(ents);
+
+    // Populate a vector with some manufactured solution values
+    std::vector<double> solutionData;
+    getLinearSolution(ents,solutionData,solMin,solMax,iAxis);
+
+    // Set the solution
+    ASSERT_TRUE(moabUOPtr->setSolution(var_name_in,
+                                       solutionData,
+                                       1.0,false,false));
+  }
+
+  void linearDensityTest(double denOrig,double relDiff,double temp,
+                         unsigned int nVol,unsigned int nSurf)
+  {
+    double denMin = denOrig*(1.0-relDiff);
+    double denMax = denOrig*(1.0+relDiff);
+
+    // Set a linearly varying density along x
+    setLinearSolution(density_name,denMin,denMax,0);
+
+    // Set a constant temp
+    setConstSolution(nElemsExpect,temp,var_name);
+
+    // Find the surfaces
+    ASSERT_TRUE(moabUOPtr->update());
+
+    // Check groups, volumes and surfaces
+    checkAllGeomsets(nVol,nSurf);
+  }
+
   std::string density_name;
   unsigned int nDenBins;
   std::vector<std::string> base_names;
+  double xMinSav;
+  double xMaxSav;
+
 };
 
 class FindDensitySurfsTest: public FindDensitySurfsTestBase {

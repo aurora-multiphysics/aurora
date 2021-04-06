@@ -625,6 +625,26 @@ TEST_F(FindDensitySurfsTest,constDensity)
   checkConstTempSurfs(300.,2,3);
 }
 
+// Test linearly varying density
+TEST_F(FindDensitySurfsTest,linearDensity)
+{
+  init();
+
+  double temp = 300.;
+  double denOrig = 8.920;
+  double relDiff = 0.04;
+  unsigned int nVol = 4;
+  unsigned int nSurf = 7;
+  linearDensityTest(denOrig,relDiff,temp,nVol,nSurf);
+
+  // Repeat test for more bins
+  relDiff = 0.08;
+  nVol = 6;
+  nSurf = 11;
+  linearDensityTest(denOrig,relDiff,temp,nVol,nSurf);
+}
+
+
 // Test to check we are using the deformed mesh if there is one
 TEST_F(DeformedMeshTest, checkDeformedMesh)
 {
