@@ -177,34 +177,10 @@ protected:
     return problemPtr->getSystem(var_name);
   }
 
-
-  double calcRadius(const std::vector<double>& nodeCoords)
-  {
-    size_t nCoords = nodeCoords.size();
-    if(nCoords % 3 != 0)
-      throw std::logic_error("Invalid vector size");
-    size_t nNodes = nCoords/3;
-
-    // Compute the centroid of the element vertices
-    double centroid[3] = {0.,0.,0.};
-    for(size_t inode=0; inode<nNodes; ++inode){
-      for(int i=0; i<3; i++){
-        double coord = nodeCoords.at(3*inode +i);
-        centroid[i]+= coord;
-      }
-    }
-
-    double radius = sqrt( centroid[0]*centroid[0]
-                   + centroid[1]*centroid[1]
-                   + centroid[2]*centroid[2] ) / double(nNodes);
-
-    return radius;
-  }
-
-  bool getNodes(std::shared_ptr<moab::Interface> moabPtr,
-                moab::EntityHandle elem,
-                std::vector<double>& nodeCoords,
-                std::string& errmsg){
+  bool getCentroid(std::shared_ptr<moab::Interface> moabPtr,
+                   moab::EntityHandle elem,
+                   Point & centroid,
+                   std::string& errmsg){
 
     moab::ErrorCode rval;
 
@@ -223,12 +199,20 @@ protected:
       return false;
     }
 
-    nodeCoords.clear();
-    nodeCoords.resize(nNodes*3);
+    std::vector<double> nodeCoords(nNodes*3);
     rval = moabPtr->get_coords(conn.data(), nNodes, nodeCoords.data());
     if (rval != moab::MB_SUCCESS){
       errmsg="Failed to get nodes' coords.";
       return false;
+    }
+
+    // Compute the centroid of the element vertices
+    centroid = Point(0.,0.,0.);
+    for(size_t inode=0; inode<nNodes; ++inode){
+      for(int i=0; i<3; i++){
+        double coord = nodeCoords.at(3*inode +i);
+        centroid(i)+= coord /double(nNodes);
+      }
     }
 
     return true;
@@ -265,10 +249,10 @@ protected:
     // Manufacture a solution based on radius of element centroid.
     for(const auto& ent : ents){
       std::string errmsg;
-      std::vector<double> nodeCoords;
-      bool success = getNodes(moabUOPtr->moabPtr,ent,nodeCoords,errmsg);
+      Point centroid;
+      bool success = getCentroid(moabUOPtr->moabPtr,ent,centroid,errmsg);
       ASSERT_TRUE(success) << errmsg;
-      double radius = calcRadius(nodeCoords);
+      double radius = centroid.norm();
       EXPECT_GT(radius,0.);
       EXPECT_LT(radius,rAbsMax);
       double solution=getSolution(radius,rMax,solMax,solMin);
