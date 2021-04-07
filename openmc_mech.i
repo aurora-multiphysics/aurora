@@ -27,7 +27,6 @@
     material_names = 'copper_density air_density'
     material_openmc_names = 'copper air'
     output_skins = true
-    faceting_tol = 10
     length_scale = 1.0
   []
 []

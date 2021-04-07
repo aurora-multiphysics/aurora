@@ -26,7 +26,6 @@
     material_names = 'copper_props air_props'
     material_openmc_names = 'copper air'
     output_skins = true
-    faceting_tol = 10
     length_scale = 1.0
   []
 []
