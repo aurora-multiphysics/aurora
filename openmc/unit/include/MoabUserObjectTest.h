@@ -1217,6 +1217,8 @@ protected:
     xMaxSav=10.0*lengthscale;
   }
 
+  virtual void setDensities(){};
+
   virtual void setBaseNames(){};
 
   virtual void setMatNames(){
@@ -1314,6 +1316,9 @@ protected:
   std::string density_name;
   unsigned int nDenBins;
   std::vector<std::string> base_names;
+  std::vector<double> orig_densities;
+  double relDenMin;
+  double relDenMax;
   double xMinSav;
   double xMaxSav;
 
@@ -1324,8 +1329,16 @@ protected:
   FindDensitySurfsTest() :
     FindDensitySurfsTestBase("densitysurfstest.i")
   {
+    setDensities();
     setBaseNames();
     setMatNames();
+  };
+
+
+  virtual void setDensities() override {
+    orig_densities.push_back(8.920);
+    relDenMin=-0.1;
+    relDenMax=0.1;
   };
 
   virtual void setBaseNames() override {
