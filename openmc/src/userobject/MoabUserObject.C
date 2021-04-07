@@ -807,11 +807,20 @@ void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_o
                                            std::vector<double>& initial_densities,
                                            std::vector<double>& rel_densities)
 {
+  // We shouldn't be calling this if we didn't provide any materials
+  if(openmc_mat_names.empty())
+    mooseError("No material names were provided.");
+
   // Set the list of materials names we expect to find in openmc
   mat_names_out=openmc_mat_names;
 
   // If we are not binning by density exit now
   if(!binByDensity) return;
+
+  // We shouldn't call this function until after initMOAB
+  // due to timing of intialisation of MOOSE materials)
+  if(initialDensities.size()!=openmc_mat_names.size())
+    mooseError("Initial densities not yet initialised.");
 
   // Set the original densities
   // TODO convert to g/cm3 if not already in these units...
