@@ -1313,6 +1313,51 @@ protected:
     checkAllGeomsets(nVol,nSurf);
   }
 
+  void matMetadataTest()
+  {
+    // Retrieve material data
+    std::vector<std::string> mat_names_check;
+    std::vector<std::string> tails;
+    std::vector<double> initial_densities;
+    std::vector<double> rel_densities;
+    ASSERT_NO_THROW(moabUOPtr->getMaterialsDensities(mat_names_check,tails,initial_densities,rel_densities));
+
+    // Materials should be the same
+    size_t nMats = base_names.size();
+    ASSERT_EQ(mat_names_check.size(),nMats);
+    for(auto name: mat_names_check){
+      std::string err="Failed to find material "+name;
+      name = "mat:"+name;
+      auto pos = find(base_names.begin(),base_names.end(),name);
+      bool found_name = (pos != base_names.end());
+      EXPECT_TRUE(found_name)<<err;
+    }
+
+    // Compare initial densities of materials
+    ASSERT_EQ(initial_densities.size(),nMats);
+    ASSERT_EQ(orig_densities.size(), nMats);
+    for(size_t iMat=0; iMat<nMats; iMat++){
+      EXPECT_EQ(initial_densities.at(iMat),orig_densities.at(iMat));
+    }
+
+    ASSERT_GT(nDenBins,0);
+    double binWidth=  (relDenMax-relDenMin)/double(nDenBins);
+    ASSERT_GT(binWidth,0.);
+
+    double relDenNow = relDenMin - 0.5*binWidth;
+    ASSERT_EQ(tails.size(),nDenBins);
+    ASSERT_EQ(rel_densities.size(),nDenBins);
+    for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+      // Check mat name modifier
+      std::string tail_cmp = "_"+std::to_string(iDen);
+      EXPECT_EQ(tails.at(iDen),tail_cmp);
+      // Check relative density change of density bin
+      relDenNow+=binWidth;
+      EXPECT_EQ(rel_densities.at(iDen),relDenNow);
+    }
+
+  }
+
   std::string density_name;
   unsigned int nDenBins;
   std::vector<std::string> base_names;
@@ -1334,6 +1379,13 @@ protected:
     setMatNames();
   };
 
+  FindDensitySurfsTest(std::string inputfile) :
+    FindDensitySurfsTestBase(inputfile)
+  {
+    setDensities();
+    setBaseNames();
+    setMatNames();
+  };
 
   virtual void setDensities() override {
     orig_densities.push_back(8.920);
@@ -1347,10 +1399,10 @@ protected:
 
 };
 
-class FindDensitySurfsFailMin: public FindDensitySurfsTestBase {
+class FindDensitySurfsUnitTest: public FindDensitySurfsTest {
 protected:
-  FindDensitySurfsFailMin() :
-    FindDensitySurfsTestBase("densitysurfstest-failmin.i"){};
+  FindDensitySurfsUnitTest() :
+    FindDensitySurfsTest("densitysurfstest-changeunits.i"){};
 };
 
 

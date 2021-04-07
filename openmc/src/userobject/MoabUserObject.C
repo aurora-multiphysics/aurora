@@ -28,6 +28,7 @@ validParams<MoabUserObject>()
   params.addParam<double>("rel_den_min", -0.1,"Minimum difference in density relative to original material density");
   params.addParam<double>("rel_den_max",  0.1,"Maximum difference in density relative to original material density");
   params.addParam<unsigned int>("n_density_bins", 5, "Number of relative density bins");
+   params.addParam<double>("density_scale", 1.,"Scale factor to convert densities from from MOOSE to OpenMC (latter is g/cc).");
 
   // Mesh metadata
   params.addParam<std::vector<std::string> >("material_names", std::vector<std::string>(), "List of MOOSE material names");
@@ -55,6 +56,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
   UserObject(parameters),
   _problem_ptr(nullptr),
   lengthscale(getParam<double>("length_scale")),
+  densityscale(getParam<double>("density_scale")),
   var_name(getParam<std::string>("bin_varname")),
   logscale(getParam<bool>("logscale")),
   var_min(getParam<double>("var_min")),
@@ -822,9 +824,14 @@ void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_o
   if(initialDensities.size()!=openmc_mat_names.size())
     mooseError("Initial densities not yet initialised.");
 
-  // Set the original densities
-  // TODO convert to g/cm3 if not already in these units...
+  // Set the original densities of materials
   initial_densities = initialDensities;
+  // Convert to g/cm3 if not already in these units
+  if(densityscale!= 1.0){
+    for(size_t iMat=0; iMat<initial_densities.size(); iMat++){
+      initial_densities.at(iMat) *= densityscale;
+    }
+  }
 
   // Calculate relative densities for each bin midpoint
   calcDenMidpoints(rel_densities);

@@ -218,6 +218,9 @@ private:
   // Convert MOOSE units to dagmc length units
   double lengthscale;
 
+  // Convert MOOSE density units to openmc density units
+  double densityscale;
+
   // Map from libmesh id to MOAB element entity handles
   std::map<dof_id_type,std::vector<moab::EntityHandle> > _id_to_elem_handles;
 
