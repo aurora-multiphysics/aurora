@@ -384,7 +384,10 @@ OpenMCExecutioner::initMatNames()
 {
   for (const auto& mat : openmc::model::materials) {
     std::string mat_name = mat->name_;
+    // We store as lower case because this used to be a convention in OpenMC
+    // (to do - revisit?)
     openmc::to_lower(mat_name);
+
     int32_t id = mat->id_;
     if(mat_names_to_id.find(mat_name) !=mat_names_to_id.end()){
       std::cerr<<"More than one material found with name "
@@ -409,9 +412,7 @@ OpenMCExecutioner::initMatNames()
         mat_name = mat_name.substr(0,new_size);
       }
     }
-
     mat_names_to_id[mat_name] = id;
-
   }
   return true;
 }
@@ -929,6 +930,7 @@ OpenMCExecutioner::updateMaterials()
   int32_t maxOrigID=0;
   for(size_t iMat=0; iMat<mat_names.size(); iMat++){
     std::string mat_name = mat_names.at(iMat);
+    openmc::to_lower(mat_name);
     if(mat_names_to_id.find(mat_name)==mat_names_to_id.end()){
       std::string err="Could not find material "+mat_name;
       mooseError(err);
@@ -1020,7 +1022,8 @@ OpenMCExecutioner::updateMaterials()
       // Save updated density (we will update later)
       mat_id_to_density[newID]=newDen;
 
-      // Update mat lib index
+      // Update mat lib index (save as lowercase)
+      openmc::to_lower(new_name);
       mat_names_to_id[new_name]=newID;
     }
 
