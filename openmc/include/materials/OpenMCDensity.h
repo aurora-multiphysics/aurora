@@ -20,6 +20,6 @@ public:
 
   OpenMCDensity(const InputParameters & params);
 
-  const Real origDensity(){ return _orig_density; };
+  const Real origDensity(){ return _initial_density; };
 
 };
