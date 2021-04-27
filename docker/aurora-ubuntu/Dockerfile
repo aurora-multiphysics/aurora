@@ -5,7 +5,7 @@
 ARG compile_cores=1
 
 # Get MOOSE image
-FROM aurora-deps-ubuntu
+FROM helenbrooks/aurora-deps-ubuntu
 
 RUN cd /home && \
     git clone https://github.com/aurora-multiphysics/aurora.git && \
