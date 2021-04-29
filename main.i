@@ -1,3 +1,5 @@
+# Example input for neutronics + heat conduction
+# Usage: ./aurora-opt -i main.i
 [Mesh]
   type = FileMesh
   file = copper_air_bcs_tetmesh.e
