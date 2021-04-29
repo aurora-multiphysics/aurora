@@ -20,8 +20,8 @@ jobs:
       - name: PrintGithubContext
         run: echo $PRCOMMITSHA
       - name: DockerBuildTestPR
-        if:  ${{ github.event.pull_request.head.sha != "" }}
+        if:  ${{ github.event.pull_request.head.sha != '' }}
         run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$PRCOMMITSHA docker/aurora-ubuntu/
       - name:  DockerBuildTestPush
-        if:  ${{ github.event.pull_request.head.sha == "" }}
+        if:  ${{ github.event.pull_request.head.sha == '' }}
         run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$GITHUB_SHA docker/aurora-ubuntu/
