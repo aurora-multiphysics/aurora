@@ -18,4 +18,4 @@ jobs:
       - name: PrintSHA
         run: echo $GITHUB_SHA
       - name: DockerBuildTest
-        run: docker build -t ci-aurora-ubuntu --build-arg=$GITHUB_SHA docker/aurora-ubuntu/
+        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$GITHUB_SHA docker/aurora-ubuntu/
