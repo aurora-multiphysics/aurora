@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     name: BuildTestUbuntu
     env:
-      COMMIT-SHA : ${{ github.event.pull_request.head.sha }}
+      COMMITSHA : ${{ github.event.pull_request.head.sha }}
     steps:
       # First check out the repository to get the docker file
       - name: Checkout
         uses: actions/checkout@v2
       # Now build in a container with all deps
       - name: PrintGithubContext
-        run: echo $COMMIT-SHA
+        run: echo $COMMITSHA
       - name: DockerBuildTest
-        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$COMMIT-SHA docker/aurora-ubuntu/
+        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$COMMITSHA docker/aurora-ubuntu/
