@@ -14,9 +14,6 @@ jobs:
       # First check out the repository to get the docker file
       - name: Checkout
         uses: actions/checkout@v2
-      - name: GetPWD
-        run: echo $PWD
+      # Now build in a container with all deps
       - name: DockerBuildTest
-        run: docker build -t aurora-ubuntu:$(date +%s) docker/aurora-ubuntu/
-      - name: DockerImages
-        run: docker images
+        run: docker build -t ci-aurora-ubuntu --build-arg=${GITHUB_SHA} docker/aurora-ubuntu/
