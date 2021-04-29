@@ -1,0 +1,20 @@
+on: [push]
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  docker-build-test-ubuntu:
+    runs-on: ubuntu-latest
+    name: BuildTestUbuntu
+    steps:
+      # First check out the repository to get the docker file
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: GetPWD
+        run: echo $PWD
+      - name: DockerBuildTest
+        run: docker build -t aurora-ubuntu:$(date +%s) docker/aurora-ubuntu/
+      - name: DockerImages
+        run: docker images
