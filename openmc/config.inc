@@ -1,6 +1,6 @@
 OPENMC_DIR = $(shell which openmc | sed 's/\/bin\/openmc//')
 OPENMC_INCDIR = $(OPENMC_DIR)/include
-OPENMC_LIBDIR = $(OPENMC_DIR)/lib
+OPENMC_LIBDIR = $(shell find ${OPENMC_DIR} -name libopenmc.so | sed 's/\/libopenmc.so//' )
 OPENMC_INC = -I$(OPENMC_INCDIR)
 OPENMC_LIB = -Wl,-rpath,$(OPENMC_LIBDIR) -L$(OPENMC_LIBDIR) -lopenmc
 
