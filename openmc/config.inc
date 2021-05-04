@@ -4,8 +4,9 @@ OPENMC_LIBDIR = $(OPENMC_DIR)/lib
 OPENMC_INC = -I$(OPENMC_INCDIR)
 OPENMC_LIB = -Wl,-rpath,$(OPENMC_LIBDIR) -L$(OPENMC_LIBDIR) -lopenmc
 
-HDF5_INCDIR = $(shell dpkg -L libhdf5-dev | grep 'hdf5.h$$' |  sed 's/\/hdf5.h//')
-HDF5_INC = -I$(HDF5_INCDIR)
+HDF5_INCDIR_DEB = $(shell dpkg -L libhdf5-dev 2>/dev/null | grep 'hdf5.h$$' | sed 's/\/hdf5.h//')
+HDF5_INCDIR_RH = $(shell rpm -ql hdf5-devel 2>/dev/null | grep 'hdf5.h$$' | sed 's/\/hdf5.h//')
+HDF5_INC = -I$(HDF5_INCDIR_DEB) -I$(HDF5_INCDIR_RH)
 
 MOAB_DIR =  $(shell which mbconvert | sed 's/\/bin\/mbconvert//')
 MOAB_INCDIR = $(MOAB_DIR)/include
