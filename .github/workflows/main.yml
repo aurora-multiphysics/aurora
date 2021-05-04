@@ -27,3 +27,22 @@ jobs:
       - name:  DockerBuildTestPush
         if:  ${{ github.event.pull_request.head.sha == '' }}
         run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$GITHUB_SHA docker/aurora-ubuntu/
+
+  docker-build-test-fedora:
+    runs-on: ubuntu-latest
+    name: BuildTestFedora
+    env:
+      PRCOMMITSHA : ${{ github.event.pull_request.head.sha }}
+    steps:
+      # First check out the repository to get the docker file
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Now build in a container with all deps
+      - name: PrintGithubContext
+        run: echo $PRCOMMITSHA
+      - name: DockerBuildTestPR
+        if:  ${{ github.event.pull_request.head.sha != '' }}
+        run: docker build -t ci-aurora-fedora --build-arg build_git_sha=$PRCOMMITSHA docker/aurora-fedora/
+      - name:  DockerBuildTestPush
+        if:  ${{ github.event.pull_request.head.sha == '' }}
+        run: docker build -t ci-aurora-fedora --build-arg build_git_sha=$GITHUB_SHA docker/aurora-fedora/
