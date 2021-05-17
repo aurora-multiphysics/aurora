@@ -235,15 +235,14 @@ The second example performs neutronics + heat conduction + thermal expansion.
 
 ### Input parameters
 
-Documentation for all possible input parameters for AuroraApp-registered MOOSE objects can be found here.
-
-Coming soon...
+Documentation for all possible input parameters for AuroraApp-registered MOOSE objects can be found [here](https://aurora-multiphysics.github.io/aurora/#input-file-syntax).
 
 ### API documentation
 
 This section may be of interest if you are a developer looking to implement a new feature.
 
-Coming soon...
+Please follow [this link](https://aurora-multiphysics.github.io/aurora/#api-documentation) to find API code documentation.
+
 
 ## Bugs / Problems / Feature Requests / Contact
 
