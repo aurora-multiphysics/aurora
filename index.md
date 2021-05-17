@@ -1,0 +1,3 @@
+# AURORA Documentation
+
+Here is the landing page for some documentation...
