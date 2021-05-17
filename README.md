@@ -12,7 +12,7 @@ For more information on OpenMC see: [https://docs.openmc.org/en/stable/]
 
 ## License
 
-GPL v2.1, see [here](Licence.md).
+This source code is licensed under GPL v2.1, see [here](LICENSE).
 
 ## Installation
 
