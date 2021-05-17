@@ -10,6 +10,7 @@ Extensions:
         active: True
         name: Aurora App
         repo: https://github.com/aurora-multiphysics/aurora
+        home: https://aurora-multiphysics.github.io/aurora/
     MooseDocs.extensions.appsyntax:
         executable: ${ROOT_DIR}
         remove: !include ${MOOSE_DIR}/framework/doc/remove.yml
