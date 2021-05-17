@@ -1,0 +1,129 @@
+<!DOCTYPE html><head><meta charset="UTF-8"><title>FVBodyForce | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../contrib/katex/katex.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/katex_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script><script type="text/javascript" src="../../contrib/katex/katex.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="e8a717f5-fd46-4ff0-b39a-d2348bd12a04"><i class="material-icons">menu</i></a><ul class="sidenav" id="e8a717f5-fd46-4ff0-b39a-d2348bd12a04"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">fvkernels</span><a href="#" class="breadcrumb">FVBodyForce</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="2c627fb9-20b5-42c5-a3f6-d08c91a3eb4a" data-section-level="1" data-section-text="FVBodyForce"><h1 id="fvbodyforce">FVBodyForce</h1><section class="scrollspy" id="34d3072a-4cda-4594-b381-3350d0765814" data-section-level="2" data-section-text="Description"><h2 id="description">Description</h2><p><code>FVBodyForce</code> implements a force term in momentum transport or structural mechanics or a source term in species/mass transport. The strong form, given a domain <span class="moose-katex-inline-equation" id="moose-equation-b1a8a87c-bd4d-4526-8506-31029bd789db"><script>var element = document.getElementById("moose-equation-b1a8a87c-bd4d-4526-8506-31029bd789db");katex.render("\\Omega", element, {displayMode:false,throwOnError:false});</script></span> is defined as</p><p><span class="moose-katex-block-equation"><span class="moose-katex-equation table-cell" id="moose-equation-a021fc31-f2d1-43a7-bfe9-77d129ec6482"></span><script>var element = document.getElementById("moose-equation-a021fc31-f2d1-43a7-bfe9-77d129ec6482");katex.render("\\underbrace{-f}_{\\textrm{FVBodyForce}} + \\sum_{i=1}^n \\beta_i = 0 \\in \\Omega", element, {displayMode:true,throwOnError:false});</script></span> where <span class="moose-katex-inline-equation" id="moose-equation-2de8429b-4a46-43b8-a3b0-43c77d147dd0"><script>var element = document.getElementById("moose-equation-2de8429b-4a46-43b8-a3b0-43c77d147dd0");katex.render("f", element, {displayMode:false,throwOnError:false});</script></span> is the source term (negative if a sink) and the second term on the left hand side represents the strong forms of other kernels.</p><p>The Jacobian term for this kernel is zero: <span class="moose-katex-inline-equation" id="moose-equation-77bee9b8-61f8-4680-afa2-6b0cd5327e31"><script>var element = document.getElementById("moose-equation-77bee9b8-61f8-4680-afa2-6b0cd5327e31");katex.render("\\frac{\\partial R_i(u_h)}{\\partial u_j} = 0", element, {displayMode:false,throwOnError:false});</script></span>, since it is assumed that <span class="moose-katex-inline-equation" id="moose-equation-ac30b7c5-42a3-4f0a-aee9-a63c4db50212"><script>var element = document.getElementById("moose-equation-ac30b7c5-42a3-4f0a-aee9-a63c4db50212");katex.render("f", element, {displayMode:false,throwOnError:false});</script></span> <em></em>is not** a function of the unknown <span class="moose-katex-inline-equation" id="moose-equation-92129b74-9fa0-499d-a566-a6f9ee65c82c"><script>var element = document.getElementById("moose-equation-92129b74-9fa0-499d-a566-a6f9ee65c82c");katex.render("u", element, {displayMode:false,throwOnError:false});</script></span>.</p><p>The force is constructed through a user supplied constant <span class="moose-katex-inline-equation" id="moose-equation-042cfeb6-15c5-4767-b762-b2a780b8cf1c"><script>var element = document.getElementById("moose-equation-042cfeb6-15c5-4767-b762-b2a780b8cf1c");katex.render("c", element, {displayMode:false,throwOnError:false});</script></span>, <a href="../../syntax/Functions/index.html">function</a> value evaluated at the current time and quadrature point <span class="moose-katex-inline-equation" id="moose-equation-1ac10872-bd3f-4897-963c-8edbd0ca7242"><script>var element = document.getElementById("moose-equation-1ac10872-bd3f-4897-963c-8edbd0ca7242");katex.render("f", element, {displayMode:false,throwOnError:false});</script></span>, and/or <a href="../../syntax/Postprocessors/index.html">postprocessor</a> value <span class="moose-katex-inline-equation" id="moose-equation-47f5aa6a-868f-4cbc-817e-976a6d379dae"><script>var element = document.getElementById("moose-equation-47f5aa6a-868f-4cbc-817e-976a6d379dae");katex.render("p", element, {displayMode:false,throwOnError:false});</script></span>. The constant <span class="moose-katex-inline-equation" id="moose-equation-9f216aa3-5643-410f-826b-907b39ea902a"><script>var element = document.getElementById("moose-equation-9f216aa3-5643-410f-826b-907b39ea902a");katex.render("c", element, {displayMode:false,throwOnError:false});</script></span>, supplied through the parameter <code>value</code>, may also be controlled over the course of a transient simulation with a <a href="../../syntax/Controls/index.html"><code>Controls</code></a> block.  <span class="moose-katex-inline-equation" id="moose-equation-2b64cd48-3827-4fbf-8356-975852bb8331"><script>var element = document.getElementById("moose-equation-2b64cd48-3827-4fbf-8356-975852bb8331");katex.render("c", element, {displayMode:false,throwOnError:false});</script></span>, <span class="moose-katex-inline-equation" id="moose-equation-ff4ce82d-d299-4176-83a2-4262c10d7003"><script>var element = document.getElementById("moose-equation-ff4ce82d-d299-4176-83a2-4262c10d7003");katex.render("f", element, {displayMode:false,throwOnError:false});</script></span>, <span class="moose-katex-inline-equation" id="moose-equation-422888e9-28d6-4719-980d-c017fe08195d"><script>var element = document.getElementById("moose-equation-422888e9-28d6-4719-980d-c017fe08195d");katex.render("p", element, {displayMode:false,throwOnError:false});</script></span> are supplied through the input parameters <code>value</code>, <code>function</code>, and <code>postprocessor</code> respectively. Not supplying <span class="moose-katex-inline-equation" id="moose-equation-381ef39b-f6c4-421b-b93d-fa3ebb58232d"><script>var element = document.getElementById("moose-equation-381ef39b-f6c4-421b-b93d-fa3ebb58232d");katex.render("c", element, {displayMode:false,throwOnError:false});</script></span>, <span class="moose-katex-inline-equation" id="moose-equation-83ed3993-ce44-47c0-aaa3-860778ea1476"><script>var element = document.getElementById("moose-equation-83ed3993-ce44-47c0-aaa3-860778ea1476");katex.render("f", element, {displayMode:false,throwOnError:false});</script></span>, or <span class="moose-katex-inline-equation" id="moose-equation-2d0a815a-d729-4848-b492-62772decd220"><script>var element = document.getElementById("moose-equation-2d0a815a-d729-4848-b492-62772decd220");katex.render("p", element, {displayMode:false,throwOnError:false});</script></span> through its corresponding parameter is equivalent to setting its value to unity.</p></section><section class="scrollspy" id="861cb7d1-693c-4e11-bdaa-96384343b717" data-section-level="2" data-section-text="Example Syntax"><h2 id="example-syntax">Example Syntax</h2><p>The case below demonstrates the use of <code>FVBodyForce</code> where the force term is supplied based upon a function form:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[FVKernels]
+  [diff]
+    type = FVDiffusion
+    variable = u
+    coeff = coeff
+  []
+  [force]
+    type = FVBodyForce
+    variable = u
+    function = force
+  []
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#d12829e4-131e-4e39-89ff-c633856e3f2e">(../../../SoftwareDownloads/moose/test/tests/fvkernels/fv_adapt/transient-adapt.i)</a></section><section class="scrollspy" id="83101d48-cf6b-48a8-9926-83bcfc874276" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="b2bdb606-2f08-4b94-8850-0659d26be21f" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">variable</span><span class="moose-parameter-header-description">The name of the finite volume variable this kernel applies to</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>NonlinearVariableName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the finite volume variable this kernel applies to</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="e99a330d-4aa2-44b9-9b1c-e8aca60edb6c" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">block</span><span class="moose-parameter-header-description">The list of block ids (SubdomainID) that this object will be applied</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;SubdomainName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The list of block ids (SubdomainID) that this object will be applied</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">function</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">A function that describes the body force</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>FunctionName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>A function that describes the body force</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">ghost_layers</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">The number of layers of elements to ghost.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned short</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The number of layers of elements to ghost.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">postprocessor</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">A postprocessor whose value is multiplied by the body force</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>PostprocessorName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>A postprocessor whose value is multiplied by the body force</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_point_neighbors</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether to use point neighbors, which introduces additional ghosting to that used for simple face neighbors.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether to use point neighbors, which introduces additional ghosting to that used for simple face neighbors.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">value</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">Coefficient to multiply by the body force term</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Coefficient to multiply by the body force term</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="386981b5-f50d-4147-9727-71415d2430a3" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">implicit</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Determines whether this object is calculated using an implicit or explicit form</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Determines whether this object is calculated using an implicit or explicit form</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation. Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation. Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section><section id="775b0853-873a-4c71-b826-c7073970ad3b" data-section-level="3" data-section-text="Tagging Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">extra_matrix_tags</span><span class="moose-parameter-header-description">The extra tags for the matrices this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;TagName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The extra tags for the matrices this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">extra_vector_tags</span><span class="moose-parameter-header-description">The extra tags for the vectors this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;TagName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The extra tags for the vectors this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">matrix_tags</span><span class="moose-parameter-header-default">system</span><span class="moose-parameter-header-description">The tag for the matrices this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>system</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>nontime, system</p><p class="moose-parameter-description"><span>Description:</span>The tag for the matrices this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">vector_tags</span><span class="moose-parameter-header-default">nontime</span><span class="moose-parameter-header-description">The tag for the vectors this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>nontime</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>nontime, time</p><p class="moose-parameter-description"><span>Description:</span>The tag for the vectors this Kernel should fill</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Tagging Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="d12829e4-131e-4e39-89ff-c633856e3f2e"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/fvkernels/fv_adapt/transient-adapt.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [gen]
+    type = GeneratedMeshGenerator
+    dim = 2
+    nx = 10
+    ny = 10
+    elem_type = QUAD4
+  []
+[]
+
+[Variables]
+  [u]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [v][]
+[]
+
+[Functions]
+  [force]
+    type = ParsedFunction
+    value = t
+  []
+[]
+
+[Kernels]
+  [diff]
+    type = Diffusion
+    variable = v
+  []
+  [force]
+    type = BodyForce
+    variable = v
+    function = force
+  []
+[]
+
+[FVKernels]
+  [diff]
+    type = FVDiffusion
+    variable = u
+    coeff = coeff
+  []
+  [force]
+    type = FVBodyForce
+    variable = u
+    function = force
+  []
+[]
+
+[FVBCs]
+  [right]
+    type = FVDirichletBC
+    variable = u
+    boundary = right
+    value = 1
+  []
+  [left]
+    type = FVDirichletBC
+    variable = u
+    boundary = left
+    value = 0
+  []
+[]
+
+[BCs]
+  [right]
+    type = DirichletBC
+    variable = v
+    boundary = right
+    value = 1
+  []
+  [left]
+    type = DirichletBC
+    variable = v
+    boundary = left
+    value = 0
+  []
+[]
+
+[Materials]
+  [diff]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;coeff&#x27;
+    prop_values = &#x27;1&#x27;
+  []
+[]
+
+[Executioner]
+  type = Transient
+  num_steps = 2
+  dt = 1
+  solve_type = &#x27;NEWTON&#x27;
+[]
+
+[Problem]
+  kernel_coverage_check = false
+[]
+
+[Adaptivity]
+  marker = box
+  initial_steps = 1
+  [Markers]
+    [box]
+      bottom_left = &#x27;0.3 0.3 0&#x27;
+      inside = refine
+      top_right = &#x27;0.6 0.6 0&#x27;
+      outside = do_nothing
+      type = BoxMarker
+    []
+  []
+[]
+
+[Outputs]
+  exodus = true
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#34d3072a-4cda-4594-b381-3350d0765814" class="tooltipped" data-position="left" data-tooltip="Description">Description</a></li><li><a href="#861cb7d1-693c-4e11-bdaa-96384343b717" class="tooltipped" data-position="left" data-tooltip="Example Syntax">Example Syntax</a></li><li><a href="#83101d48-cf6b-48a8-9926-83bcfc874276" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
