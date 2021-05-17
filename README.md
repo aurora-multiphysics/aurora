@@ -12,6 +12,7 @@ For more information on OpenMC see: [https://docs.openmc.org/en/stable/]
 
 ## License
 
+GPL v2.1, see [here](Licence.md).
 
 ## Installation
 
@@ -34,7 +35,7 @@ If you intend to run in parallel using either MPI or thread (or both) please ens
 
 2) OpenMC dependencies
 
-  a. HDF5
+  - a. HDF5
   
   On Debian:
 ```
@@ -45,7 +46,7 @@ apt-get install -y libhdf5-dev
 dnf -y install hdf5-devel
 ```
 
-  b. [MOAB](https://bitbucket.org/fathomteam/moab).
+  - b. [MOAB](https://bitbucket.org/fathomteam/moab).
 ```
 git clone https://bitbucket.org/fathomteam/moab && \
     cd moab && \
@@ -62,38 +63,38 @@ git clone https://bitbucket.org/fathomteam/moab && \
     make check && \
     make install
 ```
-  c. [ (Optionally) Double Down](https://github.com/pshriwise/double-down) - if you want to leverage Intel Embree's ray tracing kernels within DAGMC. First install [Embree ](https://github.com/embree/embree) and its dependencies.
-```
-# Embree dependencies
-sudo apt-get -y install libglfw3-dev libtbb-dev pkg-config
+  - c. [ (Optionally) Double Down](https://github.com/pshriwise/double-down) - if you want to leverage Intel Embree's ray tracing kernels within DAGMC. First install [Embree ](https://github.com/embree/embree) and its dependencies.
+	```
+	# Embree dependencies
+	sudo apt-get -y install libglfw3-dev libtbb-dev pkg-config
 
-# Build Embree
-git clone https://github.com/embree/embree.git && \
-    cd embree && \
-    git checkout v3.6.1 && \
-    mkdir build && \
-    cd build && \
-    cmake ../ \
-    -DCMAKE_CXX_COMPILER=$CXX \
-    -DCMAKE_C_COMPILER=$CC \
-    -DEMBREE_ISPC_SUPPORT=0 && \
-    make -j $compile_cores && \
-    make install 
+	# Build Embree
+	git clone https://github.com/embree/embree.git && \
+		cd embree && \
+		git checkout v3.6.1 && \
+		mkdir build && \
+		cd build && \
+		cmake ../ \
+		-DCMAKE_CXX_COMPILER=$CXX \
+		-DCMAKE_C_COMPILER=$CC \
+		-DEMBREE_ISPC_SUPPORT=0 && \
+		make -j $compile_cores && \
+		make install 
 
-# Build DoubleDown
-    git clone https://github.com/pshriwise/double-down && \
-    cd double-down && \
-    mkdir build && \
-    cd build && \
-    cmake ../ \
-    -DMOAB_DIR=/home/moab \
-    -DEMBREE_DIR=/PATH-TO-EMBREE/ \
-    -DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
-    make -j $compile_cores && \
-    make install
-```
+	# Build DoubleDown
+		git clone https://github.com/pshriwise/double-down && \
+		cd double-down && \
+		mkdir build && \
+		cd build && \
+		cmake ../ \
+		-DMOAB_DIR=/home/moab \
+		-DEMBREE_DIR=/PATH-TO-EMBREE/ \
+		-DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
+		make -j $compile_cores && \
+		make install
+	```
 
-  d. [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
+  - d. [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
 Ensure to configure with Double Down if you want this library to be used.
 ```
 mkdir dagmc-bld && \
@@ -225,11 +226,11 @@ Finally, the exodus file should contain a tetrahedral mesh of the geometry of in
 There are two examples provided in the root aurora directory. 
 The first example performs a simple neutronics + heat conduction simulation.
 ```
-$ ./aurora-opt -i main.i
+./aurora-opt -i main.i
 ```
 The second example performs neutronics + heat conduction + thermal expansion.
 ```
-$ ./aurora-opt -i main_temp_mech.i
+./aurora-opt -i main_temp_mech.i
 ```
 
 ### Input parameters
@@ -258,14 +259,14 @@ If you would like to contribute to the code, please adhere to the following proc
 
 3) Create a branch in your fork for your changes.
 ```
-$ git checkout -b <my_branch_name>
+git checkout -b <my_branch_name>
 ```
 
 4) Make your changes, commit and push to your fork on GitHub.
 ```
-$ git add < modified files>
-$ git commit -m 'Here is a concise statement of changes'
-$ git push
+git add < modified files>
+git commit -m 'Here is a concise statement of changes'
+git push
 ```
 (If the changeset is large this is best split over several commits, one commit for each notable feature change).
 
@@ -274,7 +275,7 @@ $ git push
 6) Make sure your branch is up-to-date with any changes in the main branch of the aurora-multiphysics/aurora repository so that merging your changes is a smooth process. It is easy to stay in sync as follows:
 - Configure a remote.
 ```
-$ git remote add upstream https://github.com/aurora-multiphysics/aurora.git
+git remote add upstream https://github.com/aurora-multiphysics/aurora.git
 ```
 (Check this worked with `git remote -v`.)
 - Fetch upstream changes into your local fork:
