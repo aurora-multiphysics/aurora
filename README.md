@@ -116,7 +116,7 @@ mkdir dagmc-bld && \
 ```
 
 4) OpenMC
-  Curently AURORA depends on the following fork of OpenMC [https://github.com/helen-brooks/openmc.git], and the branch `external-mesh`:
+  Curently AURORA depends on [this fork](https://github.com/helen-brooks/openmc.git) of OpenMC, and the branch `external-mesh`:
   ```
     mkdir openmc-bld && \
     cd openmc-bld && \
@@ -134,11 +134,11 @@ mkdir dagmc-bld && \
     make -j $compile_cores && \
     make -j $compile_cores install
   ```  
-  Further detailed installation instructions for OpenMC can be found [https://docs.openmc.org/en/stable/usersguide/install.html](here).
+  Further detailed installation instructions for OpenMC can be found [here](https://docs.openmc.org/en/stable/usersguide/install.html).
   Please ensure you configure with support for DagMC enabled, and support for MPI/threads enabled if you intend to run in parallel.
 
 3) MOOSE ( + PETSc /  libMesh )
-  Please follow the installation instructions [https://mooseframework.inl.gov/getting_started/installation/install_moose.html](here):
+  Please follow these [installation instructions ](https://mooseframework.inl.gov/getting_started/installation/install_moose.html).
   
 #### B. Environment
 
@@ -149,7 +149,7 @@ Optionally you may want to set `MOOSE_JOBS` to the number of cores on your syste
 
 In addition it is expected that the following MOAB / DAGMC / OpenMC executables can be found in your PATH: `openmc` ; `mbconvert`; `make_watertight`.
 
-Finally, in order to run AURORA, you will need to have set the variable `OPENMC_CROSS_SECTIONS` to point to a cross_sections.xml file, see [https://docs.openmc.org/en/stable/usersguide/cross_sections.html#environment-variable](here) for more details.
+Finally, in order to run AURORA, you will need to have set the variable `OPENMC_CROSS_SECTIONS` to point to a cross_sections.xml file, see [here](https://docs.openmc.org/en/stable/usersguide/cross_sections.html#environment-variable) for more details.
 
 #### C. Build
 In case you skipped to this section, ensure you have set up your dependencies and environment as per sections A,B (or you are working in a pre-built docker container for these, see below).
@@ -174,7 +174,7 @@ cd aurora/data && \
    tar xzvf endfb71_hdf5.tgz && \
    export OPENMC_CROSS_SECTIONS=/PATH-TO-AURORA/aurora/data/endfb71_hdf5/cross_sections.xml 
 ```
-See [https://openmc.discourse.group/t/nuclear-data-dependent-zero-result-for-heating-local-tally/833](this discussion) for further details. Now you can run the tests as follows
+See [this discussion](https://openmc.discourse.group/t/nuclear-data-dependent-zero-result-for-heating-local-tally/833) for further details. Now you can run the tests as follows
 ```
 cd aurora && \
 ./run_unit_tests
@@ -192,7 +192,7 @@ docker pull helenbrooks/aurora-ubuntu
 ```
 docker pull helenbrooks/aurora-fedora
 ```
-Then just `docker run` the image you pulled and you're good to go. (For those users not experienced with docker, take a look at this [https://docs.docker.com/get-started/](tutorial).)
+Then just `docker run` the image you pulled and you're good to go. (For those users not experienced with docker, take a look at this [tutorial](https://docs.docker.com/get-started/).)
 
 Alternatively you may want to install AURORA from source, but with pre-built dependencies.
 (e.g. perhaps you want to implement a new feature). In this case the relevant images are:
@@ -207,19 +207,19 @@ for Fedora users. Spin up the image, and then follow the installation instructio
 
 ## Usage / Examples
 
-We recommend that you familiarise yourself with both OpenMC and MOOSE before trying AURORA, since AURORA (currently) depends on having input for both. Both OpenMC and MOOSE provide a number of examples [https://docs.openmc.org/en/stable/examples/index.html](here) and [https://mooseframework.inl.gov/getting_started/examples_and_tutorials/index.html](here).
+We recommend that you familiarise yourself with both OpenMC and MOOSE before trying AURORA, since AURORA (currently) depends on having input for both. Both OpenMC and MOOSE provide a number of examples [here](https://docs.openmc.org/en/stable/examples/index.html) and [here](https://mooseframework.inl.gov/getting_started/examples_and_tutorials/index.html).
 
 Specifically, OpenMC requires that the following files exist in your run directory:
- - settings.xml
- - materials.xml
- - tallies.xml
- - dagmc.h5m
+ - `settings.xml`
+ - `materials.xml`
+ - `tallies.xml`
+ - `dagmc.h5m`
 
-The dagmc.h5m file is a surface mesh file, in length units assumed to be cm. This [https://svalinn.github.io/DAGMC/usersguide/trelis_workflow.html](guide) provides details on the workflow to create such a file.
+The `dagmc.h5m` file is a surface mesh file, in length units assumed to be cm. This [guide](https://svalinn.github.io/DAGMC/usersguide/trelis_workflow.html) provides details on the workflow to create such a file.
 
 The AURORA application itself requires two input files, and an exodus file. For details on the syntax of these input files, see the following section.
 
-The first input file controls the main driver application (which performs the FEA), and the second input file (referenced by the first) controls the sub-app that calls OpenMC. We recommend you have read [https://mooseframework.inl.gov/syntax/MultiApps/index.html](this guide) on multiapps before proceeding. 
+The first input file controls the main driver application (which performs the FEA), and the second input file (referenced by the first) controls the sub-app that calls OpenMC. We recommend you have read [this guide](https://mooseframework.inl.gov/syntax/MultiApps/index.html) on multiapps before proceeding. 
 
 Finally, the exodus file should contain a tetrahedral mesh of the geometry of interest. Currently this geometry needs to be the same as that in the dagmc.h5m file, however in future we intend to support the case where the FEA geometry is a subset of the OpenMC geometry. It is possible to use different lengthscales between the exodus and dagmc files, in which case the parameter `length_scale` for the  `MoabUserObject` should be set (e.g. to convert from m in the exodus file into cm in dagmc.h5m this parameter would be 100). Note that although MOOSE generically is unit-agnostic, it is necessary to have consistency with physical material properties. Thus, if you use m in your exodus file, ensure all length-dimensionful material properties are also given values in units of m. 
 
@@ -253,11 +253,11 @@ If you experience any problems with the code, or find a bug, or would like a new
 
 If you would like to contribute to the code, please adhere to the following process.
 
-1) Open an issue on GitHub, see [https://github.com/aurora-multiphysics/aurora/issues](here) detailing the change you would like to make. (This avoids multiple developers working on the same problem, and highlights your needs to us.)
+1) [Open an issue](https://github.com/aurora-multiphysics/aurora/issues) on GitHub, detailing the change you would like to make. (This avoids multiple developers working on the same problem, and highlights your needs to us.)
 
-2) Create a fork of the repository and clone onto your machine, see [https://docs.github.com/en/enterprise/2.13/user/articles/fork-a-repo#:~:text=A%20fork%20is%20a%20copy,point%20for%20your%20own%20idea.].
+2) Create a fork of the repository and clone onto your machine, see [here](https://docs.github.com/en/enterprise/2.13/user/articles/fork-a-repo#:~:text=A%20fork%20is%20a%20copy,point%20for%20your%20own%20idea).
 
-3) Create a branch in your fork for your changes.
+3) Create a branch in the local copy of your fork.
 ```
 git checkout -b <my_branch_name>
 ```
@@ -298,7 +298,7 @@ git switch <my_branch_name>
 ```
 git rebase main
 ```
-For a nice explanation of rebasing, see https://git-scm.com/book/en/v2/Git-Branching-Rebasing. It's possible you may at this point have to deal with conflicts; manually edit the files which are in conflict to resolve them, then run:
+For a nice explanation of rebasing, see [here](https://git-scm.com/book/en/v2/Git-Branching-Rebasing). It's possible you may at this point have to deal with conflicts; manually edit the files which are in conflict to resolve them, then run:
 ```
 git rebase --continue
 ```
