@@ -1,0 +1,184 @@
+<!DOCTYPE html><head><meta charset="UTF-8"><title>framework_srs.md | Aurora App</title><link href="../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../media/framework/github-logo.png" class="github-mark"></img><img src="../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="b1e8ecee-929c-433b-a0fa-79963c268d6f"><i class="material-icons">menu</i></a><ul class="sidenav" id="b1e8ecee-929c-433b-a0fa-79963c268d6f"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><span class="breadcrumb">sqa</span><a href="#" class="breadcrumb">framework_srs</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><p class="moose-disabled">!template load file=srs.md.template project=Framework</p><p class="moose-disabled">
+
+!template! item key=system-purpose
+!include sqa/system_purpose.md
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=system-scope
+!include sqa/system_scope.md
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=system-context
+[!ac](MOOSE) is a command-line driven application. This is typical for a high-performance software
+that is designed to run across several nodes of a cluster system. As such, all of the usage
+of the software is through any standard terminal program generally available on all supported
+operating systems. Similarly, for the purpose of interacting through the software, there is only
+a single user, &quot;the user&quot;, which interacts with the software through the command-line. MOOSE does
+not maintain any back-end database or interact with any system daemons. It is a executable,
+which may be launched from the command line and writes out various result files as it runs.
+
+!media media/sqa/usage_diagram_uml.svg
+       id=usage_diagram
+       caption=Usage of [!ac](MOOSE) and [!ac](MOOSE)-based applications.
+       style=width:50%;
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=system-functions
+Since [!ac](MOOSE) is a command-line driven application, all functionality provided in the framework
+is operated through the use of standard UNIX command line flags and the extendable MOOSE input file.
+The framework is completely extendable so individual design pages should be consulted for specific
+behaviors of each user-defined object.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=user-characteristics
+
+- +Framework Developers+: These are the core developers of the framework. They will be responsible
+  for following and enforcing the appropriate software development standards. They will be
+  responsible for designing, implementing and maintaining the software.
+
+- +Developers+: A Scientist or Engineer that utilizes the framework to build his or her own
+  application. This user will typically have a background in modeling and simulation techniques
+  and/or numerical analysis but may only have a limited skill-set when it comes to object-oriented
+  coding and the C++ language. This is our primary focus group.  In many cases these developers will
+  be encouraged to give their code back to the framework maintainers.
+
+- +Analysts+: These are users that will run the code and perform various analysis on the simulations
+  they perform.  These users may interact with developers of the system requesting new features and
+  reporting bugs found and will typically make heavy use of the input file format.
+
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=assumptions-and-dependencies
+!include sqa/assumptions_and_dependencies.md
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=definitions
+- +Verification+: (1) The process of: evaluating a system or component to determine whether the
+  products of a given development phase satisfy the conditions imposed at the start of that
+  phase. (2) Formal proof of program correctness (e.g., requirements, design, implementation reviews,
+  system tests) [!citep](ISO-systems-software).
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=acronyms
+!acronym list
+!template-end!</p><p class="moose-disabled">
+
+
+!template! item key=system-requirements
+The creation of the requirements for [!ac](MOOSE) is an ongoing progress as new objects are added.
+The [#functional-requirements] are generated from test specifications, which are required with
+each addition to the MOOSE framework or its modules.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=minimum-requirements
+- A [!ac](POSIX) compliant Unix including the two most recent versions of MacOS and most current
+  versions of Linux.
+- 4 GB of RAM for optimized compilation (8 GB for debug compilation), 2 GB per core execution
+- 100 GB disk space
+- C++11 compatible compiler (GCC, Clang)
+- Python 3.6+
+- Git
+!template-end!</p><p class="moose-disabled">
+
+!template item key=functional-requirements
+!sqa requirements link=False collections=FUNCTIONAL category=framework</p><p class="moose-disabled">
+
+!template item key=usability-requirements
+!sqa requirements link=False collections=USABILITY category=framework</p><p class="moose-disabled">
+
+!template item key=performance-requirements
+!sqa requirements link=False collections=PERFORMANCE category=framework</p><p class="moose-disabled">
+
+!template item key=system-interfaces-requirements
+!sqa requirements link=False collections=SYSTEM category=framework</p><p class="moose-disabled">
+
+!template! item key=human-system-integration
+[!ac](MOOSE) is a command line driven application which conforms to all standard terminal
+behaviors. Specific human system interaction accommodations shall be a function of the end-user&#x27;s
+terminal. MOOSE does support optional coloring within the terminal&#x27;s ability to display color,
+which may be disabled.
+!template-end!</p><p class="moose-disabled">
+
+
+!template! item key=maintainability
+- The latest working version (defined as the version that passes all tests in the current regression
+  test suite) shall be publicly available at all times through the repository host provider.
+- Flaws identified in the system shall be reported and tracked in a ticket or issue based system. The
+  technical lead will determine the severity and priority of all reported issues and assign resources
+  at his or her discretion to resolve identified issues.
+- The software maintainers will entertain all proposed changes to the system in a timely manner
+  (within two business days).
+- The core framework in its entirety will be made publicly available under the [!ac](LGPL)
+  version 2.0 license.
+!template-end!</p><p class="moose-disabled">
+
+
+!template item key=reliability
+The regression test suite will cover at least 80% of all lines of code at all times. Known
+regressions will be recorded and tracked (see [#maintainability]) to an independent and
+satisfactory resolution.
+!template-end!</p><p class="moose-disabled">
+
+!template item key=information-management
+The core framework in its entirety will be made publicly available on an appropriate repository
+hosting site. Backups and security services will be provided by the hosting service.
+!template-end!</p><p class="moose-disabled">
+
+!template item key=verification
+The regression test suite will employ several verification tests using comparison against known
+analytical solutions, the method of manufactured solutions, and convergence rate analysis.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=system-modes
+[!ac](MOOSE) applications normally run in normal execution  mode when an input file is supplied. However
+there are a few other modes that can be triggered with various command line flags as indicated here:
+
+| Command Line Flag | Description of mode |
+| :- | :- |
+| `-i &lt;input_file&gt;` | Normal execution mode |
+| `--split-mesh &lt;splits&gt;` | Read the mesh block splitting the mesh into two or more pieces for use in a subsequent run |
+| `--use-split` | (inplies -i flag) Execute the the simulation but use pre-split mesh files instead of the mesh from the input file |
+| `--yaml` | Output all object descriptions and available parameters in YAML format |
+| `--json` | Output all object descriptions and available parameters in JSON format |
+| `--syntax` | Output all registered syntax |
+| `--registry` | Output all known objects and actions |
+| `--registry-hit` | Output all known objects and actions in HIT format |
+| `--mesh-only` (implies -i flag) | Run only the mesh related tasks and output the final mesh that would be used for the simulation |
+| `--start-in-debugger &lt;debugger&gt;` | Start the simulation attached to the supplied debugger |
+
+!alert note
+The list of system-modes may not be extensive as the system is designed to be extendable to end-user applications.
+The complete list of command line options for applications can be obtained by running the executable with
+zero arguments. See the [command line usage](command_line_usage.md optional=True).
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=physical-characteristics
+[!ac](MOOSE) is software only with no associated physical media. See [#system-requirements] for a description
+of the minimum required hardware necessary for running a [!ac](MOOSE)-based application.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=environmental-conditions
+Not Applicable
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=system-security
+[!ac](MOOSE) based applications have no requirements or special needs related to system-security. The framework
+is designed to run completely in user-space with no elevated privileges required nor recommended.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=policies-and-regulations
+[!ac](MOOSE)-based applications must comply with all export control restrictions.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=system-life-cycle
+[!ac](MOOSE)-based development follows various agile methods. The system is continuously built and deployed in
+a piecemeal fashion since objects within the system are more or less independent. Every new object requires a test,
+which in turn requires an associated requirement and design description. Some [!ac](MOOSE)-based development
+teams follow the [!ac](NQA-1) standards.
+!template-end!</p><p class="moose-disabled">
+
+!template! item key=packaging
+No special requirements are needed for packaging or shipping any media containing [!ac](MOOSE) source code. However,
+some [!ac](MOOSE)-based applications maybe be export controlled in which case all export control restrictions must
+be adhered to when packaging and shipping media.
+!template-end!</p></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../js/init.js"></script><script type="text/javascript" src="../js/navigation.js"></script><script type="text/javascript" src="../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../js/search_index.js"></script>

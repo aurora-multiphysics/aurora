@@ -1,3 +1,10 @@
-!config navigation breadcrumbs=False scrollspy=False
+# Aurora Input File Syntax
 
-# AuroraApp
+## AuroraApp
+
+!syntax complete groups=AuroraApp level=2
+
+## OpenMCApp
+
+!syntax complete groups=OpenMCApp level=2
+

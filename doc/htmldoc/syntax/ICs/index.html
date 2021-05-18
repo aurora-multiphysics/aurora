@@ -1,0 +1,195 @@
+<!DOCTYPE html><head><meta charset="UTF-8"><title>ICs System | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="e27c4a7b-421f-458a-ac73-bb6c9127f54d"><i class="material-icons">menu</i></a><ul class="sidenav" id="e27c4a7b-421f-458a-ac73-bb6c9127f54d"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">syntax</a><a href="." class="breadcrumb">ICs</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="8dba819f-5678-4084-a50d-6f6e3bbdbcd1" data-section-level="1" data-section-text="ICs System"><h1 id="ics-system">ICs System</h1><section class="scrollspy" id="e04ecc18-e109-4aaf-924c-441d1bdb6bcb" data-section-level="2" data-section-text="Description"><h2 id="description">Description</h2><p>The <code>ICs</code> block within an input file is utilized to define the initial (starting) conditions for the variables within your simulation. Initial conditions may be applied to both the &quot;unknowns&quot; (nonlinear or scalar variables) or auxiliary variables. The interface for defining an Initial Condition is to support a function that returns a value at a &quot;Point&quot;, and optionally higher order derivatives at that point (e.g. Gradient, Second).</p></section><section class="scrollspy" id="a390409c-be04-4207-8bbb-4bbaddd554ab" data-section-level="2" data-section-text="ICs Block"><h2 id="ics-block">ICs Block</h2><p>The preferred syntax is to create a top-level &quot;ICs&quot; block with subblocks defining the initial conditions for one or more variables.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[ICs]
+  [./u_ic]
+    type = FunctionIC
+    variable = &#x27;u&#x27;
+    function = parsed_function
+  [../]
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#90c4ff3f-a4b9-46ed-bf14-c56046d56de0">(../../../SoftwareDownloads/moose/test/tests/ics/function_ic/parsed_function.i)</a></section><section class="scrollspy" id="2b65dd93-75b7-4ef1-b7b2-69d27dee138a" data-section-level="2" data-section-text="ICs from an Exodus File"><h2 id="ics-from-an-exodus-file">ICs from an Exodus File</h2><p>MOOSE contains a shortcut syntax for reading solutions from an Exodus file for the initial condition from right within the <a class="moose-source-filename tooltipped modal-trigger" href="#74dfc7fa-8ea4-4735-b1a2-fd9b9a349a90"></a>. The name of the variable and the time step from which to read the solution must be supplied.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Variables]
+  active = &#x27;u v&#x27;
+
+  [./u]
+    order = FIRST
+    family = LAGRANGE
+    initial_from_file_var = u
+    initial_from_file_timestep = 6
+  [../]
+
+  [./v]
+    order = FIRST
+    family = LAGRANGE
+    [./InitialCondition]
+      type = BoundingBoxIC
+      x1 = 0.0
+      x2 = 1.0
+      y1 = 0.0
+      y2 = 1.0
+      inside = 3.0
+      outside = 1.0
+    [../]
+  [../]
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#03356c39-d6e3-4577-a847-f2adb6ed3d7e">(../../../SoftwareDownloads/moose/test/tests/ics/from_exodus_solution/nodal_part2.i)</a></section><section class="scrollspy" id="e6672cfd-b7cb-4c9b-b899-bf3abebeb03a" data-section-level="2" data-section-text="Initial Condition Coupling"><h2 id="initial-condition-coupling">Initial Condition Coupling</h2><p>Initial Conditions objects in MOOSE can couple to other variables in the system. When this occurs MOOSE will automatically evaluate dependencies and evaluate initial conditions in an order that supports the valid inspection of variables when computing initial conditions for other variables.</p></section><section class="scrollspy" id="d7078ae6-23a4-436b-b146-4f83807e3f31" data-section-level="2" data-section-text="Gradients"><h2 id="gradients">Gradients</h2><p>Some shape function families support gradient degrees of freedom (Hermite). To properly initialize these DOFs, the initial condition system has an optional override for supplying gradient values.</p></section><section class="scrollspy" id="c4d1f75f-90a5-4b08-a9f5-2ce1c428ffdb" data-section-level="2" data-section-text="Inspecting Current Node or Element Pointers"><h2 id="inspecting-current-node-or-element-pointers">Inspecting Current Node or Element Pointers</h2><p>The initial condition system uses a generic projection algorithm for setting the initial condition for each supported discritization scheme. In the general case, the projection system may choose to sample anywhere within the domain and not necessarily right on a mesh node or at an element center position. However, for common FE discritizations suchs as Lagrange, all of the initial condition samples are taken at nodes. To support these common cases, InitialCondition derived objects have access to pointers to both current nodes and current elements. These will be non-null when samples are taken at the corresponding mesh entity and null otherwise.</p></section><section class="scrollspy" id="d6eba3a6-ae9e-40f4-b019-15e55e11408c" data-section-level="2" data-section-text="Sanity checks on ICs"><h2 id="sanity-checks-on-ics">Sanity checks on ICs</h2><ul class="browser-default"><li><p>Multiple initial conditions may not be applied to the same variable on the same block </p></li><li><p>Multiple initial conditions may not be applied to the same variable on the same boundary </p></li><li><p>Global initial conditions will conflict with subdomain or boundary restricted ICs on the same variable</p></li></ul></section><section class="scrollspy" id="73237cfb-4f56-4c57-ab78-b3ba6ea7592d" data-section-level="2" data-section-text="Block / Boundary Restrictions"><h2 id="block-boundary-restrictions">Block/Boundary Restrictions</h2><p>The ICs system support both the <a href="../../source/interfaces/BlockRestrictable.html">BlockRestrictable Interface</a> and <a href="../../source/interfaces/BoundaryRestrictable.html">BoundaryRestrictable Interface</a> interfaces.  When using nodal variables with block restriction, there is an ambiguity that can occur at inter-block interfaces where a node sits in elements of two or more different blocks.  To resolve this ambiguity on multi-block nodes, MOOSE chooses the IC object defined on the lowest block ID for a node to &quot;win&quot; along the interface; the winning object&#x27;s variable <em>must</em> be defined on the block - otherwise the IC for the next lowest block ID for the node is used - and so forth until one has the variable defined.</p></section><section class="scrollspy" id="0b17bbb1-5e9e-49b7-90f2-beb68d309349" data-section-level="2" data-section-text="Available Objects"><h2 id="available-objects">Available Objects</h2><ul class="moose-syntax-list collection with-header"><li class="collection-header">Moose App</li><li class="collection-item"><a href="../../source/ics/ArrayConstantIC.html">ArrayConstantIC</a>Sets constant component values for an array field variable.</li><li class="collection-item"><a href="../../source/ics/ArrayFunctionIC.html">ArrayFunctionIC</a>An initial condition that uses a normal function of x, y, z to produce values (and optionally gradients) for a field variable.</li><li class="collection-item"><a href="../../source/ics/BoundingBoxIC.html">BoundingBoxIC</a>BoundingBoxIC allows setting the initial condition of a value inside and outside of a specified box. The box is aligned with the x, y, z axes</li><li class="collection-item"><a href="../../source/ics/ConstantIC.html">ConstantIC</a>Sets a constant field value.</li><li class="collection-item"><a href="../../source/ics/FunctionIC.html">FunctionIC</a>An initial condition that uses a normal function of x, y, z to produce values (and optionally gradients) for a field variable.</li><li class="collection-item"><a href="../../source/ics/FunctionScalarIC.html">FunctionScalarIC</a>Initializes a scalar variable using a function.</li><li class="collection-item"><a href="../../source/ics/RandomIC.html">RandomIC</a>Initialize a variable with randomly generated numbers following either a uniform distribution or a user-defined distribution</li><li class="collection-item"><a href="../../source/ics/ScalarComponentIC.html">ScalarComponentIC</a>Initial condition to set different values on each component of scalar variable.</li><li class="collection-item"><a href="../../source/ics/ScalarConstantIC.html">ScalarConstantIC</a>Initalize a scalar variable with a constant value prescribed by an input parameter.</li><li class="collection-item"><a href="../../source/ics/VectorConstantIC.html">VectorConstantIC</a>Sets constant component values for a vector field variable.</li><li class="collection-item"><a href="../../source/ics/VectorFunctionIC.html">VectorFunctionIC</a>Sets component values for a vector field variable based on a vector function.</li></ul></section><section class="scrollspy" id="9fd7307b-e0e7-46b7-83b1-72c5476b9592" data-section-level="2" data-section-text="Available Actions"><h2 id="available-actions">Available Actions</h2><ul class="moose-syntax-list collection with-header"><li class="collection-header">Moose App</li><li class="collection-item"><a href="../../source/actions/AddInitialConditionAction.html">AddInitialConditionAction</a>Add an InitialCondition object to the simulation.</li></ul></section></section><div class="moose-modal modal" id="90c4ff3f-a4b9-46ed-bf14-c56046d56de0"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/ics/function_ic/parsed_function.i)</h4><pre class="moose-pre"><code class="language-text">#
+# Test the automatically generated gradients in ParsedFunction and the gradient pass-through in FunctionIC
+# OLD MOOSE behavior was for parsed_function to behave the sam eas parsed_zerograd_function
+# NEW MOOSE behavior is for parsed_function to behave the same as parsed_grad_function
+#
+
+[Mesh]
+  type = GeneratedMesh
+  dim = 2
+  xmin = 0
+  xmax = 3.141
+  ymin = 0
+  ymax = 3.141
+  nx = 10
+  ny = 10
+[]
+
+[Variables]
+  [./u]
+    order = THIRD
+    family = HERMITE
+  [../]
+[]
+
+[Functions]
+  [./parsed_function]
+    type = ParsedFunction
+    value = &#x27;sin(x)-cos(y/2)&#x27;
+  [../]
+  [./parsed_grad_function]
+    type =ParsedGradFunction
+    value = &#x27;sin(x)-cos(y/2)&#x27;
+    grad_x = &#x27;cos(x)&#x27;
+    grad_y = &#x27;sin(y/2)/2&#x27;
+  [../]
+  [./parsed_zerograd_function]
+    type = ParsedGradFunction
+    value = &#x27;sin(x)-cos(y/2)&#x27;
+    grad_x = &#x27;0&#x27;
+    grad_y = &#x27;0&#x27;
+  [../]
+[]
+
+[ICs]
+  [./u_ic]
+    type = FunctionIC
+    variable = &#x27;u&#x27;
+    function = parsed_function
+  [../]
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[Problem]
+  solve = false
+[]
+
+[Outputs]
+  file_base = parsed
+  [./OverSampling]
+    type = Exodus
+    refinements = 3
+  [../]
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="74dfc7fa-8ea4-4735-b1a2-fd9b9a349a90"><div class="modal-content"><h4>(doc/Variables/index.html)</h4></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="03356c39-d6e3-4577-a847-f2adb6ed3d7e"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/ics/from_exodus_solution/nodal_part2.i)</h4><pre class="moose-pre"><code class="language-text"># Use the exodus file for restarting the problem:
+# - restart one variable
+# - and have one extra variable with IC
+#
+
+[Mesh]
+  file = out_nodal_part1.e
+[]
+
+[Functions]
+  [./exact_fn]
+    type = ParsedFunction
+    value = ((x*x)+(y*y))
+  [../]
+
+  [./forcing_fn]
+    type = ParsedFunction
+    value = -4
+  [../]
+[]
+
+[Variables]
+  active = &#x27;u v&#x27;
+
+  [./u]
+    order = FIRST
+    family = LAGRANGE
+    initial_from_file_var = u
+    initial_from_file_timestep = 6
+  [../]
+
+  [./v]
+    order = FIRST
+    family = LAGRANGE
+    [./InitialCondition]
+      type = BoundingBoxIC
+      x1 = 0.0
+      x2 = 1.0
+      y1 = 0.0
+      y2 = 1.0
+      inside = 3.0
+      outside = 1.0
+    [../]
+  [../]
+[]
+
+[Kernels]
+  [./diff]
+    type = Diffusion
+    variable = u
+  [../]
+
+  [./ffn]
+    type = BodyForce
+    variable = u
+    function = forcing_fn
+  [../]
+
+  [./diff_v]
+    type = Diffusion
+    variable = v
+  [../]
+[]
+
+[BCs]
+  [./all]
+    type = FunctionDirichletBC
+    variable = u
+    boundary = &#x27;0 1 2 3&#x27;
+    function = exact_fn
+  [../]
+
+  [./left_v]
+    type = DirichletBC
+    variable = v
+    boundary = &#x27;3&#x27;
+    value = 0
+  [../]
+
+  [./right_v]
+    type = DirichletBC
+    variable = v
+    boundary = &#x27;1&#x27;
+    value = 1
+  [../]
+[]
+
+[Executioner]
+  type = Steady
+
+  solve_type = &#x27;PJFNK&#x27;
+[]
+
+[Outputs]
+  file_base = out_nodal_var_restart
+  exodus = true
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#e04ecc18-e109-4aaf-924c-441d1bdb6bcb" class="tooltipped" data-position="left" data-tooltip="Description">Description</a></li><li><a href="#a390409c-be04-4207-8bbb-4bbaddd554ab" class="tooltipped" data-position="left" data-tooltip="ICs Block">ICs Block</a></li><li><a href="#2b65dd93-75b7-4ef1-b7b2-69d27dee138a" class="tooltipped" data-position="left" data-tooltip="ICs from an Exodus File">ICs from an Exodus File</a></li><li><a href="#e6672cfd-b7cb-4c9b-b899-bf3abebeb03a" class="tooltipped" data-position="left" data-tooltip="Initial Condition Coupling">Initial Condition Coupling</a></li><li><a href="#d7078ae6-23a4-436b-b146-4f83807e3f31" class="tooltipped" data-position="left" data-tooltip="Gradients">Gradients</a></li><li><a href="#c4d1f75f-90a5-4b08-a9f5-2ce1c428ffdb" class="tooltipped" data-position="left" data-tooltip="Inspecting Current Node or Element Pointers">Inspecting Current Node or Element Pointers</a></li><li><a href="#d6eba3a6-ae9e-40f4-b019-15e55e11408c" class="tooltipped" data-position="left" data-tooltip="Sanity checks on ICs">Sanity checks on ICs</a></li><li><a href="#73237cfb-4f56-4c57-ab78-b3ba6ea7592d" class="tooltipped" data-position="left" data-tooltip="Block / Boundary Restrictions">Block / Boundary Restrictions</a></li><li><a href="#0b17bbb1-5e9e-49b7-90f2-beb68d309349" class="tooltipped" data-position="left" data-tooltip="Available Objects">Available Objects</a></li><li><a href="#9fd7307b-e0e7-46b7-83b1-72c5476b9592" class="tooltipped" data-position="left" data-tooltip="Available Actions">Available Actions</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>

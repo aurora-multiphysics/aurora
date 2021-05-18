@@ -1,0 +1,33 @@
+<!DOCTYPE html><head><meta charset="UTF-8"><title>CommandLine | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="432bbb14-5097-4be4-a561-1a166bc820d1"><i class="material-icons">menu</i></a><ul class="sidenav" id="432bbb14-5097-4be4-a561-1a166bc820d1"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">parser</span><a href="#" class="breadcrumb">CommandLine</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="ee1a8534-be98-471d-84e6-bca2db5b7264" data-section-level="1" data-section-text="CommandLine"><h1 id="commandline">CommandLine</h1><p>The CommandLine object is responsible for parsing and encapsulating the arguments passed to the application via the command line. Normally developers and users will <strong>not</strong> interact with this object directly. Instead, arguments that appear on the command line are normally spliced into the HIT parse tree when appropriate, or are used to set <a href="../utils/InputParameters.html">InputParameters</a> on the Application (MooseApp-derived) object itself.</p><section class="scrollspy" id="a2f0fd35-0abe-4402-ac93-4e1b7cd608e4" data-section-level="2" data-section-text="Overriding Input File Syntax"><h2 id="overriding-input-file-syntax">Overriding Input File Syntax</h2><p>When running multiple cases with similar input parameters, it can be convenient to supply some arguments right on the command line. This is accomplished by providing a fully-qualified name/value pair on the command line corresponding to the parameter you wish to override or add.</p><p>For example given this snippet of an input file either one or both of these parameters could be overridden from the command line with the syntax shown. Entirely new sections can be constructed right on the command line if desired.</p><pre class="moose-pre"><code class="language-text">
+[Section]
+  [object]
+     some_parameter = foo
+     another_parameter = bar
+  []
+[]
+
+
+# On the command line
+./MyApp-opt -i input.i Section/object/some_parameter=new_value
+./MyApp-opt -i input.i Section/object/new_parameter=some_value
+</code></pre></section><section class="scrollspy" id="18232269-a985-406c-b568-4e875af925e6" data-section-level="2" data-section-text="Overriding MultiApp Syntax"><h2 id="overriding-multiapp-syntax">Overriding MultiApp Syntax</h2><p>Syntax from MultiApp files can be overridden as well. Since a single input file can and is often used to spawn several SubApps a custom syntax was developed to allow users to override one or more MultiApps or individual SubApps at a time.</p><p>Given the same input file syntax seen above see the syntax below for the various ways in which SubApp syntax can be overridden or supplied on the command line.</p><pre class="moose-pre"><code class="language-text">
+[Multiapp]
+  [sub_app_left]
+    ...
+  []
+
+  [sub_app_right]
+    ...
+  []
+[]
+
+# Global MultApp Override
+./MyApp-opt -i input.i :Section/object/some_parameter=new_value
+
+# Whole MultiApp Override
+./MyApp-opt -i input.i sub_app_left:Section/object/some_parameter=new_value
+
+# Individual SubApp Override
+./MyApp-opt -i input.i sub_app_left0:Section/object/some_parameter=new_value
+                       sub_app_left1:Section/object/some_parameter=different_value
+</code></pre></section></section></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#a2f0fd35-0abe-4402-ac93-4e1b7cd608e4" class="tooltipped" data-position="left" data-tooltip="Overriding Input File Syntax">Overriding Input File Syntax</a></li><li><a href="#18232269-a985-406c-b568-4e875af925e6" class="tooltipped" data-position="left" data-tooltip="Overriding MultiApp Syntax">Overriding MultiApp Syntax</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>

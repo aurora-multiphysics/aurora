@@ -1,0 +1,177 @@
+<!DOCTYPE html><head><meta charset="UTF-8"><title>PostprocessorInterface | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="9808ada2-3d16-4e2c-a56b-50d3441797ae"><i class="material-icons">menu</i></a><ul class="sidenav" id="9808ada2-3d16-4e2c-a56b-50d3441797ae"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">interfaces</span><a href="#" class="breadcrumb">PostprocessorInterface</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="edaf5599-32b9-4006-9117-136cdc4b9910" data-section-level="1" data-section-text="PostprocessorInterface"><h1 id="postprocessorinterface">PostprocessorInterface</h1><p>The PostprocessorInterface defines the methods used for retrieving PostprocessorValue references. Many objects in MOOSE support the retrieval of these references for use in calculations. Postprocessors being &quot;post&quot;-processors generally execute after most other systems in MOOSE so these values are often lagged when being used in another calculation.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-cpp">   * Retrieve the value of a Postprocessor or one of it&#x27;s old or older values
+   * @param name The name of the Postprocessor parameter (see below)
+   * @param index The index of the Postprocessor
+   * @return A reference to the desired value
+   *
+   * The name required by this method is the name that is hard-coded into
+   * your source code. For example, if you have a Kernel that requires
+   * a Postprocessor you may have an input file with &quot;pp = my_pp&quot;, this function
+   * requires the &quot;pp&quot; name as input (see .../moose_test/functions/PostprocessorFunction.C)
+   *
+   * see getPostprocessorValueByName getPostprocessorValueOldByName getPostprocessorValueOlderByName
+   */
+  const PostprocessorValue &amp; getPostprocessorValue(const std::string &amp; name,
+                                                   unsigned int index = 0) const;
+  const PostprocessorValue &amp; getPostprocessorValueOld(const std::string &amp; name,
+                                                      unsigned int index = 0) const;
+  const PostprocessorValue &amp; getPostprocessorValueOlder(const std::string &amp; name,
+                                                        unsigned int index = 0) const;
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#ae58f4d5-3fe6-4ea2-a541-90e92e7a60e2">(../../../SoftwareDownloads/moose/framework/include/interfaces/PostprocessorInterface.h)</a></section><div class="moose-modal modal" id="ae58f4d5-3fe6-4ea2-a541-90e92e7a60e2"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/framework/include/interfaces/PostprocessorInterface.h)</h4><pre class="moose-pre"><code class="language-cpp">// This file is part of the MOOSE framework
+// https://www.mooseframework.org
+//
+// All rights reserved, see COPYRIGHT for full restrictions
+// https://github.com/idaholab/moose/blob/master/COPYRIGHT
+//
+// Licensed under LGPL 2.1, please see LICENSE for details
+// https://www.gnu.org/licenses/lgpl-2.1.html
+
+#pragma once
+
+// Standard includes
+#include &lt;string&gt;
+
+// MOOSE includes
+#include &quot;MooseTypes.h&quot;
+
+// Forward Declarations
+class FEProblemBase;
+class InputParameters;
+class PostprocessorName;
+class MooseObject;
+
+#define usingPostprocessorInterfaceMembers                                                         \
+  using PostprocessorInterface::getPostprocessorValue;                                             \
+  using PostprocessorInterface::getPostprocessorValueOld;                                          \
+  using PostprocessorInterface::getPostprocessorValueOlder;                                        \
+  using PostprocessorInterface::coupledPostprocessors
+
+/**
+ * Interface class for classes which interact with Postprocessors.
+ * Provides the getPostprocessorValueXYZ() and related interfaces.
+ */
+class PostprocessorInterface
+{
+public:
+  PostprocessorInterface(const MooseObject * moose_object);
+
+  static InputParameters validParams();
+
+  ///@{
+  /**
+   * doco-normal-methods-begin
+   * Retrieve the value of a Postprocessor or one of it&#x27;s old or older values
+   * @param name The name of the Postprocessor parameter (see below)
+   * @param index The index of the Postprocessor
+   * @return A reference to the desired value
+   *
+   * The name required by this method is the name that is hard-coded into
+   * your source code. For example, if you have a Kernel that requires
+   * a Postprocessor you may have an input file with &quot;pp = my_pp&quot;, this function
+   * requires the &quot;pp&quot; name as input (see .../moose_test/functions/PostprocessorFunction.C)
+   *
+   * see getPostprocessorValueByName getPostprocessorValueOldByName getPostprocessorValueOlderByName
+   */
+  const PostprocessorValue &amp; getPostprocessorValue(const std::string &amp; name,
+                                                   unsigned int index = 0) const;
+  const PostprocessorValue &amp; getPostprocessorValueOld(const std::string &amp; name,
+                                                      unsigned int index = 0) const;
+  const PostprocessorValue &amp; getPostprocessorValueOlder(const std::string &amp; name,
+                                                        unsigned int index = 0) const;
+  // doco-normal-methods-end
+
+  ///@}
+
+  ///@{
+  /**
+   * Retrieve the value of the Postprocessor
+   * @param name Postprocessor name (see below)
+   * @return A reference to the desired value
+   *
+   * The name required by this method is the name defined in the input file. For example,
+   * if you have a Kernel that requires a Postprocessor you may have an input file with
+   * &quot;pp = my_pp&quot;, this method requires the &quot;my_pp&quot; name as input
+   * (see .../moose_test/functions/PostprocessorFunction.C)
+   *
+   * see getPostprocessorValue getPostprocessorValueOld getPostprocessorValueOlder
+   */
+  const PostprocessorValue &amp; getPostprocessorValueByName(const PostprocessorName &amp; name) const;
+  const PostprocessorValue &amp; getPostprocessorValueOldByName(const PostprocessorName &amp; name) const;
+  const PostprocessorValue &amp; getPostprocessorValueOlderByName(const PostprocessorName &amp; name) const;
+  ///@}
+
+  ///@{
+  /**
+   * Return the default postprocessor value
+   * @param name The name of the postprocessor parameter
+   * @return A const reference to the default value
+   */
+  const PostprocessorValue &amp; getDefaultPostprocessorValue(const std::string &amp; name) const;
+  ///@}
+
+  /**
+   * Determine if the Postprocessor data exists
+   * @param name The name of the Postprocessor parameter
+   * @param index The index of the Postprocessor
+   * @return True if the Postprocessor exists
+   *
+   * @see hasPostprocessorByName getPostprocessorValue
+   */
+  bool hasPostprocessor(const std::string &amp; name, unsigned int index = 0) const;
+
+  /**
+   * Determine if the Postprocessor data exists
+   * @param name The name of the Postprocessor
+   * @return True if the Postprocessor exists
+   *
+   * @see hasPostprocessor getPostprocessorValueByName
+   */
+  bool hasPostprocessorByName(const PostprocessorName &amp; name) const;
+
+  /**
+   * Determine if the Postprocessor object exists
+   * @param name The name of the Postprocessor parameter
+   * @param index The index of the Postprocessor
+   * @return True if the Postprocessor exists
+   */
+  bool hasPostprocessorObject(const std::string &amp; name, unsigned int index = 0) const;
+
+  /**
+   * Determine if the Postprocessor object exists
+   * @param name The name of the Postprocessor
+   * @return True if the Postprocessor exists
+   */
+  bool hasPostprocessorObjectByName(const PostprocessorName &amp; name) const;
+
+  /**
+   * Returns number of Postprocessors coupled under parameter name
+   * @param name The name of the Postprocessor parameter
+   * @return Number of coupled post-processors, 1 if it&#x27;s a single
+   *
+   */
+  unsigned int coupledPostprocessors(const std::string &amp; name) const;
+
+  /**
+   * Checks if there is a single postprocessor coupled by parameter name
+   * @param name The name of the Postprocessor parameter
+   * @return Number of coupled post-processors, 1 if it&#x27;s a single
+   *
+   */
+  bool singlePostprocessor(const std::string &amp; name) const;
+
+private:
+  /// PostprocessorInterface Parameters
+  const InputParameters &amp; _ppi_params;
+
+  /// Reference the the FEProblemBase class
+  FEProblemBase &amp; _pi_feproblem;
+
+  /// Extract the value using parameter name
+  const PostprocessorValue &amp; getPostprocessorValueHelper(const std::string &amp; name,
+                                                         unsigned int index,
+                                                         std::size_t t_index) const;
+
+  /// Extract the value using stored name
+  const PostprocessorValue &amp; getPostprocessorValueByNameHelper(const PostprocessorName &amp; name,
+                                                               std::size_t t_index) const;
+};
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
