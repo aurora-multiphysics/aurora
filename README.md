@@ -1,10 +1,11 @@
 AURORA
 =====
 
-The name of this application is based on the following acronym:
+The [name](https://en.wikipedia.org/wiki/Aurora_(mythology)) of this application is based on the following acronym:
+
 **A** **U**nified **R**esource for **O**penMC (fusion) **R**eactor **A**pplications.
 
-In other words, AURORA combines the Monte Carlo neutron transport calculations from OpenMC with the FEA calculations supported by the MOOSE framework, intended for the modelling of tokamak physics. Currently supported modules within MOOSE are Heat Conduction and Tensor Mechanics, intended to model the increase in temperature arising from heat deposited from neutrons, and subsequent thermal expansion and density changes respectively. Support for further modules is ongoing.
+AURORA combines the Monte Carlo neutron transport calculations from OpenMC with the FEA calculations supported by the MOOSE framework, intended for the modelling of tokamak physics. Currently supported modules within MOOSE are Heat Conduction and Tensor Mechanics, intended to model the increase in temperature arising from heat deposited from neutrons, and subsequent thermal expansion and density changes respectively. Support for further modules is ongoing.
 
 For more information on MOOSE see: [http://mooseframework.org]
 
@@ -12,13 +13,13 @@ For more information on OpenMC see: [https://docs.openmc.org/en/stable/]
 
 ## License
 
-This source code is licensed under LGPL v2.1, see [here](LICENSE).
+[AURORA](https://github.com/aurora-multiphysics/aurora) is licensed under LGPL v2.1, see [here](https://github.com/aurora-multiphysics/aurora/blob/main/LICENSE).
 
 ## Installation
 
 We currently provide support for Debian and Redhat flavours of Linux; we have explicitly tested for Ubuntu 20.04 and Fedora 33 using gcc 9.3.0.
 
-If you would like support provided for another operating system or you experience any problems please get in touch via GitHub Issues, detailing your operating system using `lsb_release -a` (or equivalent), compiler version, and any relevant compiler errors.
+If you would like support provided for another operating system or you experience any problems please get in touch via [GitHub Issues](https://github.com/aurora-multiphysics/aurora/issues), detailing your operating system using `lsb_release -a` (or equivalent), compiler version, and any relevant compiler errors.
 
 If you do not want to build from source, please see the section on docker containers for a pre-built version.
 
@@ -179,7 +180,7 @@ See [this discussion](https://openmc.discourse.group/t/nuclear-data-dependent-ze
 cd aurora && \
 ./run_unit_tests
 ```
-All the tests should pass. (Let us know via GitHub Issues if you experience problems.)
+All the tests should pass. (Let us know via [GitHub Issues](https://github.com/aurora-multiphysics/aurora/issues) if you experience problems.)
 
 ### Docker
 
@@ -243,7 +244,7 @@ Please follow [this link](https://aurora-multiphysics.github.io/aurora/doc/doxyg
 
 ## Bugs / Problems / Feature Requests / Contact
 
-If you experience any problems with the code, or find a bug, or would like a new feature implemented, please raise an issue on GitHub. If you think you know how to fix said issue and would like to do it yourself, please see the guidelines in the next section.
+If you experience any problems with the code, or find a bug, or would like a new feature implemented, please raise an issue on [GitHub](https://github.com/aurora-multiphysics/aurora/issues). If you think you know how to fix said issue and would like to do it yourself, please see the guidelines in the next section.
 
 ## Want to contribute?
 
