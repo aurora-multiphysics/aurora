@@ -16,3 +16,4 @@ Extensions:
         remove: !include ${MOOSE_DIR}/framework/doc/remove.yml
         includes:
             - include
+            - openmc/include

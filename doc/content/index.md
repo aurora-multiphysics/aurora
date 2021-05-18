@@ -1,7 +1,10 @@
-# AuroraApp
+# Aurora Input File Syntax
 
-Some test documentation
-
-## Objects, Actions, and Syntax
+## AuroraApp
 
 !syntax complete groups=AuroraApp level=2
+
+## OpenMCApp
+
+!syntax complete groups=OpenMCApp level=2
+

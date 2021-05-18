@@ -8,6 +8,15 @@ Applications:
         log_stub_files: WARNING
         show_warning: false
 
+    OpenMC:
+        exe_directory: ${ROOT_DIR}/openmc
+        exe_name: open_mc
+        app_types:
+          - OpenMCApp
+        content_directory: ${ROOT_DIR}/doc/content
+        log_stub_files: WARNING
+        show_warning: false
+
 Documents:
     software_quality_plan: sqa/inl_records.md#software_quality_plan
     enterprise_architecture_entry: sqa/inl_records.md#enterprise_architecture_entry
