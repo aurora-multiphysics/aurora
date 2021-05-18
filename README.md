@@ -233,16 +233,13 @@ The second example performs neutronics + heat conduction + thermal expansion.
 ./aurora-opt -i main_temp_mech.i
 ```
 
-### Input parameters
+## Input File Syntax
 
-Documentation for all possible input parameters for AuroraApp-registered MOOSE objects can be found [here](https://aurora-multiphysics.github.io/aurora/#input-file-syntax).
+Please follow [this link](https://aurora-multiphysics.github.io/aurora/doc/htmldoc/index.html) to see documentation for input file syntax.
 
-### API documentation
+## API Documentation
 
-This section may be of interest if you are a developer looking to implement a new feature.
-
-Please follow [this link](https://aurora-multiphysics.github.io/aurora/#api-documentation) to find API code documentation.
-
+Please follow [this link](https://aurora-multiphysics.github.io/aurora/doc/doxygen/) to find code documentation for developers.
 
 ## Bugs / Problems / Feature Requests / Contact
 
