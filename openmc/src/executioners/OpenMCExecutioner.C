@@ -20,9 +20,8 @@ validParams<OpenMCExecutioner>()
   // OpenMC data params
   params.addParam<std::vector<std::string>>("score_names", std::vector<std::string>(1,"heating-local"),
                                             "List of the OpenMC score names we want to extract");
-  params.addParam<std::vector<int32_t>>("tally_ids", std::vector<int32_t>(1,1),
-                                            "List of OpenMC tally IDs from which to extract scores");
-  params.addParam<int32_t>("mesh_id", 1, "OpenMC mesh ID for which we are providing the MOAB interface");
+  params.addParam<std::vector<int32_t>>("tally_ids", std::vector<int32_t>(),
+                                            "List of OpenMC tally IDs from which to extract scores. Use -1 to auto-assign.");
 
   // Normalisation of source strength
   params.addParam<double>("neutron_source", 1.0e20, "Strength of fusion neutron source in neutrons/s");
@@ -44,7 +43,6 @@ OpenMCExecutioner::OpenMCExecutioner(const InputParameters & parameters) :
   matsUpdated(false),
   useUWUW(true),
   source_strength(getParam<double>("neutron_source")),
-  mesh_id(getParam<int32_t>("mesh_id")),
   add_variables(getParam<bool>("add_variables")),
   launch_threads(getParam<bool>("launch_threads")),
   n_threads(getParam<unsigned int>("n_threads")),
@@ -75,9 +73,6 @@ OpenMCExecutioner::~OpenMCExecutioner()
   // Will the file still close safely?
   if(!dagmclog.is_open()){
     dagmclog.close();
-  }
-  if(openmc::model::moabPtrs.find(mesh_id)!=openmc::model::moabPtrs.end()){
-    openmc::model::moabPtrs.clear();
   }
   if(openmc::model::DAG!=nullptr) {
     openmc::model::DAG = nullptr;
@@ -120,6 +115,10 @@ OpenMCExecutioner::initScoreData()
   if(scores.size() != nVars){
     mooseError("Please ensure the number of variables and score_names provided match.");
   }
+  if(tally_ids.empty()){
+    tally_ids.resize(nVars,-1);
+  }
+
   if(tally_ids.size() != nVars){
     mooseError("Please ensure the number of variables and tally_ids provided match.");
   }
@@ -179,9 +178,7 @@ OpenMCExecutioner::initialize()
 
   if(!initMaterials()) mooseError("Failed to initialize material data");
 
-  if(!initScoreIndices()) mooseError("Failed to initialize score indices");
-
-  //addVariables();
+  if(!initMeshTallies()) mooseError("Failed to set up mesh filter tally");
 
   isInit = true;
 }
@@ -319,14 +316,6 @@ OpenMCExecutioner::initOpenMC()
 
   TIME_SECTION(_initopenmc_timer);
 
-  // Check there is not an instance in memory already!
-  if(openmc::model::moabPtrs.find(mesh_id)!=openmc::model::moabPtrs.end()){
-    if(openmc::model::moabPtrs[mesh_id] != nullptr) return false;
-  }
-
-  // Set OpenMC's copy of MOAB
-  openmc::model::moabPtrs[mesh_id] = moab().moabPtr;
-
   // Emulate a command line
   std::string args("dummy");
   if(launch_threads && n_threads > 1){
@@ -418,82 +407,117 @@ OpenMCExecutioner::initMatNames()
 }
 
 bool
-OpenMCExecutioner::initScoreIndices()
+OpenMCExecutioner::initMeshTallies()
 {
-  // Loop over tally id
-  for(auto & tally_scores : tally_ids_to_scores){
+  // Create a new unstructured mesh in openmc
+  openmc::model::meshes.push_back(std::make_unique<openmc::MOABMesh>(moab().moabPtr));
 
-    // Get the tally id
-    int tally_id = tally_scores.first;
+  // Auto-assign mesh ID
+  openmc::model::meshes.back()->set_id(openmc::C_NONE);
 
-    // Get the tally index from the id
-    int32_t t_index(0);
-    openmc_err = openmc_get_tally_index(tally_id,&t_index);
-    if (openmc_err) return false;
+  // Add a new mesh filter with auto-assigned ID
+  openmc::Filter* filter_ptr = openmc::Filter::create("mesh",openmc::C_NONE);
 
-    // Fetch a reference to the tally object in openmc
-    openmc::Tally& tally = *(openmc::model::tallies.at(t_index));
+  // Upcast pointer type
+  openmc::MeshFilter* mesh_filter = dynamic_cast<openmc::MeshFilter*>(filter_ptr);
 
-    // Fetch all the scores' names and indices for this openmc tally
-    std::map<std::string,int> score_name_to_index;
-    size_t nScores = (tally.scores_).size();
-    for(unsigned int iScore=0; iScore<nScores; iScore++){
-      std::string name = tally.score_name(iScore);
-      score_name_to_index[name]=iScore;
-    }
-
-    // Loop over scores we want to retrieve and set their indices
-    for(auto & score : tally_scores.second){
-      std::string name = score.score_name;
-      if(score_name_to_index.find(name)==score_name_to_index.end()){
-        openmc::set_errmsg("Failed to find '"+name+"' score.");
-        return false;
-      }
-      score.index = score_name_to_index[name];
-    }
+  if(mesh_filter == nullptr){
+    mooseError("Failed to create mesh filter");
   }
+
+  // Pass in the index of our mesh to the filter
+  int32_t mesh_idx = openmc::model::meshes.size() -1;
+  mesh_filter->set_mesh(mesh_idx);
+
+  // Set up the tallies we need with this mesh
+  setupTallies(filter_ptr);
 
   return true;
 }
 
+
 void
-OpenMCExecutioner::addVariables()
+OpenMCExecutioner::setupTallies(openmc::Filter* filter_ptr)
 {
-  if(!add_variables) return;
 
-  // Get a reference to the FEProblem
-  FEProblemBase& problem = moab().problem();
+  // Loop over tally ids
+  for(auto & tally_scores : tally_ids_to_scores){
 
-  // Get ValidParams for const monomial variables
-  Factory& factory = problem.getMooseApp().getFactory();
-  InputParameters params = factory.getValidParams("MooseVariableConstMonomial");
+    // Get the tally id
+    int32_t tally_id = tally_scores.first;
 
-  // Loop over tally IDS
-  for(const auto & tally_scores : tally_ids_to_scores){
-    // Loop over scores for single tally ID
-    for(const auto & score : tally_scores.second){
-      // Add main variable
-      if(!problem.hasVariable(score.var_name)){
-        problem.addAuxVariable("MooseVariableConstMonomial",
-                               score.var_name,
-                               params);
-      }
-      // Add std dev variable
-      if(score.saveErr){
-        if(!problem.hasVariable(score.err_name)){
-          problem.addAuxVariable("MooseVariableConstMonomial",
-                                 score.err_name,
-                                 params);
-        }
-      }
-    }// End loop over scores for this tally ID
-  }// End loop over tally IDs
+    // Get the list of scores
+    auto& scores = tally_scores.second;
 
-  // Reinitialise equation systems
-  problem.es().reinit();
+    // If auto-assign, wait until end so we don't use reserved ids
+    if(tally_id == openmc::C_NONE) continue;
+
+    // Create / update tally
+    setupTally(tally_id,filter_ptr,scores);
+
+  }
+
+  // Deal with auto-assign id case and update id our map
+  auto tally_it = tally_ids_to_scores.find(openmc::C_NONE);
+  if(tally_it != tally_ids_to_scores.end()){
+
+    // Get the list of scores
+    auto scores = tally_it->second;
+
+    // Create tally and update the tally id
+    int32_t tally_id = tally_it->first;
+    setupTally(tally_id,filter_ptr,scores);
+
+    // Update map entry
+    tally_ids_to_scores.erase(tally_it);
+    tally_ids_to_scores[tally_id] = scores;
+
+  }
 
 }
+void
+OpenMCExecutioner::setupTally(int32_t& tally_id,
+                              openmc::Filter* filter_ptr,
+                              std::vector<ScoreData>& scores)
+{
 
+  openmc::Tally* tally_ptr;
+
+  // Check whether to create a new tally
+  if(openmc::model::tally_map.find(tally_id)
+     == openmc::model::tally_map.end())
+  {
+    // Create a tally with this id
+    tally_ptr = openmc::Tally::create(tally_id);
+
+    // If this was an auto-assign ID, get the right one
+    if(tally_id == openmc::C_NONE){
+      tally_id = tally_ptr->id_;
+    }
+
+    // Set name and estimator
+    tally_ptr->name_ = "moose_tally_"+std::to_string(tally_id);
+    tally_ptr->estimator_ = openmc::TallyEstimator::TRACKLENGTH;
+  }
+  else{
+    // Get pointer for existing tally
+    int32_t tally_idx = openmc::model::tally_map.at(tally_id);
+    tally_ptr = (openmc::model::tallies.at(tally_idx)).get();
+  }
+
+  // Add mesh filter
+  tally_ptr->add_filter(filter_ptr);
+
+  // Set the scores to for this tally and update ScoreData indices
+  std::vector<std::string> score_names;
+  for(auto & score_data : scores){
+    std::string name = score_data.score_name;
+    score_names.push_back(name);
+    score_data.index = score_names.size()-1;
+  }
+  tally_ptr->set_scores(score_names);
+
+}
 
 bool
 OpenMCExecutioner::getMatID(moab::EntityHandle vol_handle, int& mat_id)
