@@ -475,6 +475,8 @@ OpenMCExecutioner::setupTallies(openmc::Filter* filter_ptr)
   }
 
 }
+
+
 void
 OpenMCExecutioner::setupTally(int32_t& tally_id,
                               openmc::Filter* filter_ptr,
@@ -865,6 +867,8 @@ OpenMCExecutioner::resetOpenMC()
 
   updateMaterials();
 
+  updateMeshTallies();
+
   return true;
 }
 
@@ -1073,6 +1077,49 @@ OpenMCExecutioner::updateMaterialDensities()
   }
 }
 
+void
+OpenMCExecutioner::updateMeshTallies()
+{
+  // Retrieve the current mesh id
+  int32_t mesh_id = openmc::model::meshes.back()->id_;
+
+  // Update in place the mesh pointer
+  openmc::model::meshes.back().reset(new openmc::MOABMesh(moab().moabPtr));
+
+  // Set mesh ID to what is was before
+  openmc::model::meshes.back()->id_ = mesh_id;
+
+  // Get a pointer to current mesh filter
+  openmc::Filter* filter_ptr = openmc::model::tally_filters.back().get();
+
+  // Upcast pointer type
+  openmc::MeshFilter* mesh_filter = dynamic_cast<openmc::MeshFilter*>(filter_ptr);
+
+  int nBinsBefore = mesh_filter->n_bins();
+
+  // Update the mesh in the mesh_filter
+  int32_t mesh_idx = openmc::model::meshes.size() -1;
+  mesh_filter->set_mesh(mesh_idx);
+
+  int nBinsAfter = mesh_filter->n_bins();
+
+  // Update strides in tallies if number of bins has changed
+  if(nBinsAfter != nBinsBefore){
+    for(auto tally_pair : tally_ids_to_scores){
+      int32_t tally_id = tally_pair.first;
+
+      // Look up tally index
+      auto tally_it = openmc::model::tally_map.find(tally_id);
+      if(tally_it == openmc::model::tally_map.end()){
+        mooseError("Could not find tally ID in map.");
+      }
+      int32_t tally_index = tally_it->second;
+
+      // Re-calcuate strides
+      openmc::model::tallies.at(tally_index)->set_strides();
+    }
+  }
+}
 
 bool
 OpenMCExecutioner::setupCells()
