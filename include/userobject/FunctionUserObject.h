@@ -2,6 +2,7 @@
 
 // MOOSE includes
 #include "GeneralUserObject.h"
+#include "DisplacedProblem.h"
 
 // libMesh includes
 #include "libmesh/mesh_function.h"
@@ -34,8 +35,14 @@ class FunctionUserObject : public GeneralUserObject
 
 private:
 
+  // Reference to the mesh
+  MooseMesh& mesh();
+
   // Name of variable we want to turn into a function
   std::string _var_name;
+
+  // Tolerance to pass to point locator
+  double tolerance;
 
   // Pointer to the libMesh system containing our variable
   System* sysPtr;
