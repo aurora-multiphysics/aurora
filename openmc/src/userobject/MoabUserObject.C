@@ -115,7 +115,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     powMin = int(floor(log10(var_min)));
     powMax = int(ceil(log10(var_max)));
     nPow = std::max(powMax-powMin, 1);
-    if(nPow > nVarBins){
+    if(nPow > nVarBins && logscale){
       mooseError("Please ensure number of powers for variable is less than the number of bins");
     }
     nMinor = nVarBins/nPow;
