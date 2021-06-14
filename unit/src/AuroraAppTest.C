@@ -72,6 +72,35 @@ protected:
 
 };
 
+class DeformedMeshTest : public AuroraAppRunTest{
+protected:
+  DeformedMeshTest() : AuroraAppRunTest("aurora-thermal-expansion.i") {
+
+    // Override source openmc input names
+    openmcInputXMLFilesSrc.at(0) = "settings-deformed.xml";
+
+  };
+
+  virtual void SetUp() override {
+
+    // Base class setup.
+    AuroraAppRunTest::SetUp();
+    ASSERT_FALSE(appIsNull);
+
+    // Get the current dagmc file
+    fetchInputFile("dagmc_cube.h5m",dagmcFilename);
+
+    // Should run without error
+    ASSERT_NO_THROW(app->run());
+
+    // Get the executioner
+    Executioner* executionerPtr = app->getExecutioner();
+    ASSERT_NE(executionerPtr,nullptr);
+  }
+
+};
+
+
 TEST_F(FullRunTest, UWUW)
 {
   ASSERT_FALSE(appIsNull);
@@ -86,4 +115,9 @@ TEST_F(FullRunTest, Legacy)
 
   std::string dagFile = "dagmc_legacy.h5m";
   checkFullRun(dagFile);
+}
+
+
+TEST_F(DeformedMeshTest, SetUp)
+{
 }
