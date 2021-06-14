@@ -12,6 +12,13 @@
 
 #include "AuroraAppTest.h"
 #include "Executioner.h"
+#include "DisplacedProblem.h"
+#include "FunctionUserObject.h"
+
+#include "openmc/position.h"
+#include "openmc/mesh.h"
+#include "openmc/tallies/tally.h"
+
 
 TEST_F(AuroraAppBasicTest, registryTest)
 {
@@ -93,10 +100,20 @@ protected:
     // Should run without error
     ASSERT_NO_THROW(app->run());
 
-    // Get the executioner
-    Executioner* executionerPtr = app->getExecutioner();
-    ASSERT_NE(executionerPtr,nullptr);
+    // Get the FE problem and mesh
+    FEProblemBase& problem = app->getExecutioner()->feProblem();
+    if(problem.haveDisplaced()){
+      meshPtr = &(problem.getDisplacedProblem()->mesh().getMesh());
+    }
+    ASSERT_NE(meshPtr,nullptr);
+
+    // Get the function user object
+    functionUOPtr = &(problem.getUserObject<FunctionUserObject>("uo-heating-function"));
+
   }
+
+  MeshBase* meshPtr;
+  FunctionUserObject* functionUOPtr;
 
 };
 
@@ -117,7 +134,62 @@ TEST_F(FullRunTest, Legacy)
   checkFullRun(dagFile);
 }
 
-
-TEST_F(DeformedMeshTest, SetUp)
+// This test locates a point on the deformed mesh that is outside the bounds of
+// the original mesh and checks that openmc can locate it, and get tally value
+TEST_F(DeformedMeshTest, CheckExtremal)
 {
+
+  // Create a point to having maximal x,y,z
+  Point extr(0.,0.,0.);
+
+  // Loop over elems: find max point
+  auto itelem = meshPtr->elements_begin();
+  auto endelem = meshPtr->elements_end();
+  for( ; itelem!=endelem; ++itelem){
+    // Get a reference to current elem
+    Elem& elem = **itelem;
+    // Loop over elem's nodes
+    size_t nNodes = elem.n_nodes();
+    for(size_t iNode=0; iNode<nNodes; iNode++){
+      const Point pointNow = elem.point(iNode);
+      // Save point if this is the max in x and y,,z > 0
+      double xcoord = pointNow(0);
+      double ycoord = pointNow(1);
+      double zcoord = pointNow(2);
+      if(xcoord > extr(0) && ycoord > 1.0 && zcoord > 1.0){
+        extr = pointNow;
+      }
+    }
+  }
+
+  // Having found extr point subtract epsilon to ensure fully inside element
+  Point epsilon (5e-4,5e-4,5e-4);
+  extr -= epsilon;
+
+  // Convert to Openmc position
+  openmc::Position pt(extr(0),extr(1),extr(2));
+
+  // Get OpenMC Mesh
+  openmc::Mesh* omcMeshPtr = openmc::model::meshes.back().get();
+
+  // Find bin of extr pt
+  int iBin = omcMeshPtr->get_bin(pt);
+
+  // Upcast mesh ptr as unstructed
+  openmc::UnstructuredMesh* unstrMeshPtr = dynamic_cast<openmc::UnstructuredMesh*>(omcMeshPtr);
+  // Get the volume of the bin
+  double volume= unstrMeshPtr->volume(iBin);
+
+  // Get the openmc tally result for this bin
+  ASSERT_FALSE(openmc::model::tallies.empty());
+  openmc::Tally& tally = *(openmc::model::tallies.at(0));
+  xt::xtensor<double, 3> & results = tally.results_;
+  int iScore = 0;
+  int nBatches = tally.n_realizations_;
+  double omc_val = results(iBin,iScore,1)/double(nBatches)/volume;
+
+  // Now compare this result to that obtained from a function
+  double function_val = functionUOPtr->value(extr);
+  EXPECT_LT(fabs(function_val-omc_val),tol);
+
 }

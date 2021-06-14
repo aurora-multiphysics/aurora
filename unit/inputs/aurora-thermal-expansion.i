@@ -20,7 +20,7 @@
 []
 
 
-  
+
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
@@ -38,9 +38,9 @@
   [disp_y]
   []
   [disp_z]
-  []  
-[]  
-  
+  []
+[]
+
 [AuxVariables]
   [temp]
   []
@@ -49,7 +49,7 @@
     family = MONOMIAL
   []
 []
-  
+
 [Functions]
   [temp-function]
     type = ParsedFunction
@@ -143,7 +143,15 @@
     moabname = "moab"
     apptype_from="AuroraApp"
   [../]
-[]  
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = "initial"
+  []
+[]
 
 [Postprocessors]
   [volume_calc_deformed]
@@ -159,7 +167,7 @@
   #  variable = heating-local
   #  use_displaced_mesh = true
   #[]
-[]  
+[]
 
 [Outputs]
   console=false

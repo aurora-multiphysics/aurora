@@ -13,7 +13,7 @@
   variables = 'heating-local'
   err_variables = ''
   score_names = 'heating-local'
-  tally_ids = '2'
+  tally_ids = '1'
   neutron_source = 1.0e18
   launch_threads=false
   n_threads=1
