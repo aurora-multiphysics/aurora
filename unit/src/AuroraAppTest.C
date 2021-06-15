@@ -86,6 +86,8 @@ protected:
     // Override source openmc input names
     openmcInputXMLFilesSrc.at(0) = "settings-deformed.xml";
 
+    hasDisplaced = false;
+
   };
 
   virtual void SetUp() override {
@@ -104,6 +106,10 @@ protected:
     FEProblemBase& problem = app->getExecutioner()->feProblem();
     if(problem.haveDisplaced()){
       meshPtr = &(problem.getDisplacedProblem()->mesh().getMesh());
+      hasDisplaced = true;
+    }
+    else{
+      meshPtr = &(problem.mesh().getMesh());
     }
     ASSERT_NE(meshPtr,nullptr);
 
@@ -114,6 +120,7 @@ protected:
 
   MeshBase* meshPtr;
   FunctionUserObject* functionUOPtr;
+  bool hasDisplaced;
 
 };
 
@@ -149,6 +156,9 @@ TEST_F(FullRunTest, Legacy)
 // the original mesh and checks that openmc can locate it, and get tally value
 TEST_F(DeformedMeshTest, CheckExtremal)
 {
+
+  // Check we indeed have a deformed mesh
+  ASSERT_TRUE(hasDisplaced);
 
   // Create a point to having maximal x,y,z
   Point extr(0.,0.,0.);
@@ -208,4 +218,45 @@ TEST_F(DeformedMeshTest, CheckExtremal)
 
 TEST_F(RefinedMeshTest, CheckBins)
 {
+  ASSERT_FALSE(hasDisplaced);
+
+  // Total and active number of elements are different in refined case
+  ASSERT_NE(meshPtr->n_elem(),meshPtr->n_active_elem());
+
+  // Get the openmc tally results
+  ASSERT_FALSE(openmc::model::tallies.empty());
+  openmc::Tally& tally = *(openmc::model::tallies.at(0));
+  xt::xtensor<double, 3> & results = tally.results_;
+  int iScore = 0;
+  int nBatches = tally.n_realizations_;
+
+  // Get OpenMC Unstructred Mesh
+  openmc::UnstructuredMesh* unstrMeshPtr
+    = dynamic_cast<openmc::UnstructuredMesh*>(openmc::model::meshes.back().get());
+  ASSERT_NE(unstrMeshPtr,nullptr);
+
+  // Check that everything has the correct number of bins
+  size_t nBins = meshPtr->n_active_elem();
+  EXPECT_EQ(tally.n_filter_bins(),nBins);
+  EXPECT_EQ(results.shape()[0],nBins);
+  EXPECT_EQ(unstrMeshPtr->n_bins(),nBins);
+
+  for(size_t iBin=0; iBin<nBins; iBin++){
+    // Get the volume and centroid of this mesh element
+    double volume= unstrMeshPtr->volume(iBin);
+    openmc::Position pos = unstrMeshPtr->centroid(iBin);
+
+    // Convert pos to a libmesh point
+    Point pt(pos[0],pos[1],pos[2]);
+
+    // Get the result for this bin
+    double omc_val = results(iBin,iScore,1)/double(nBatches)/volume;
+
+    // Now compare this result to that obtained from a function
+    double function_val = functionUOPtr->value(pt);
+    double reldiff = fabs(function_val-omc_val);
+    if(omc_val > 0.) reldiff /= omc_val;
+    EXPECT_LT(reldiff,tol);
+  }
+
 }
