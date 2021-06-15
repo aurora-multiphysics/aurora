@@ -1056,7 +1056,8 @@ MoabUserObject::sortElemsByResults()
   for(const auto & elemSet : sortedElems){
     elemCountCheck += elemSet.size();
   }
-  if(elemCountCheck != mesh().n_elem()){
+
+  if(elemCountCheck != mesh().n_active_elem()){
     mooseError("Disparity in number of sorted elements.");
   }
 
@@ -1285,6 +1286,15 @@ MoabUserObject::resetContainers()
   // Update the serial solutions
   for(const auto& sol :  serial_solutions){
     System & sys = 	systems().get_system(sol.first);
+
+    // Check if solution vector size has changed, e.g. due to mesh refinement
+    if(sys.n_dofs() != sol.second->size()){
+      // clear
+      sol.second->init(0,false,SERIAL);
+      // resize
+      sol.second->init(sys.n_dofs(),false,SERIAL);
+    }
+
     sys.solution->localize(*sol.second);
   }
 }
