@@ -419,8 +419,8 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   moab::Range all_elems;
 
   // Iterate over elements in the mesh
-  auto itelem = mesh().elements_begin();
-  auto endelem = mesh().elements_end();
+  auto itelem = mesh().active_elements_begin();
+  auto endelem = mesh().active_elements_end();
   for( ; itelem!=endelem; ++itelem){
 
     // Get a reference to current elem
@@ -722,8 +722,8 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
   bool procHasNonZeroResult=false;
 
   // When we set the solution, we only want to set dofs that belong to this process
-  auto itelem  = mesh().local_elements_begin();
-  auto endelem = mesh().local_elements_end();
+  auto itelem  = mesh().active_local_elements_begin();
+  auto endelem = mesh().active_local_elements_end();
   for( ; itelem!=endelem; ++itelem){
 
     Elem& elem = **itelem;
