@@ -79,9 +79,9 @@ protected:
 
 };
 
-class DeformedMeshTest : public AuroraAppRunTest{
+class CubeMeshTest : public AuroraAppRunTest{
 protected:
-  DeformedMeshTest() : AuroraAppRunTest("aurora-thermal-expansion.i") {
+  CubeMeshTest(std::string inputfile) : AuroraAppRunTest(inputfile) {
 
     // Override source openmc input names
     openmcInputXMLFilesSrc.at(0) = "settings-deformed.xml";
@@ -116,6 +116,17 @@ protected:
   FunctionUserObject* functionUOPtr;
 
 };
+
+class DeformedMeshTest : public CubeMeshTest{
+protected:
+  DeformedMeshTest() : CubeMeshTest("aurora-thermal-expansion.i") {};
+};
+
+class RefinedMeshTest : public CubeMeshTest{
+protected:
+  RefinedMeshTest() : CubeMeshTest("aurora-refine.i") {};
+};
+
 
 
 TEST_F(FullRunTest, UWUW)
@@ -192,4 +203,9 @@ TEST_F(DeformedMeshTest, CheckExtremal)
   double function_val = functionUOPtr->value(extr);
   EXPECT_LT(fabs(function_val-omc_val),tol);
 
+}
+
+
+TEST_F(RefinedMeshTest, CheckBins)
+{
 }
