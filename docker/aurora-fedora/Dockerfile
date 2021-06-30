@@ -4,8 +4,8 @@
 # To compile a particular git sha use
 # docker build -t aurora-ubuntu --build-arg build_git_sha=${GITHUB_SHA} .
 
-# Get MOOSE image
-FROM helenbrooks/aurora-deps-fedora
+# Get MOOSE image with aurora deps
+FROM helenbrooks/aurora-deps-fedora:v.0.1.0
 
 # By default one core is used to compile
 ARG compile_cores=1
