@@ -5,7 +5,7 @@
 # docker build -t aurora-ubuntu --build-arg build_git_sha=${GITHUB_SHA} .
 
 # Get MOOSE image with aurora deps
-FROM helenbrooks/aurora-deps-ubuntu:v.0.1.0
+FROM helenbrooks/aurora-deps-ubuntu:v.0.2.0
 
 # By default one core is used to compile
 ARG compile_cores=1

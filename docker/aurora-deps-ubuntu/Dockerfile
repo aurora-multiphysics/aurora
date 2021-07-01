@@ -8,7 +8,8 @@ ARG compile_cores=1
 FROM helenbrooks/moose-ubuntu
 
 # Get MOAB / Embree / DagMC dependencies
-RUN apt-get -y install libeigen3-dev \
+RUN apt-get update && apt-get -y install \
+    libeigen3-dev \
     libhdf5-dev \
     libglfw3-dev \
     libtbb-dev \
@@ -50,6 +51,7 @@ RUN cd /home/dagmc-bld && \
 RUN cd /home/dagmc-bld && \
     git clone https://github.com/pshriwise/double-down && \
     cd double-down && \
+    git checkout c5fd09009afae415a06fcd5d8351829baf0a8f54 && \
     mkdir build && \
     cd build && \
     cmake ../ \
@@ -90,12 +92,11 @@ RUN cd /home/ && \
     make install
 
 # Build OpenMC
-# Need a special fork of OpenMC
 RUN mkdir /home/openmc-bld && \
     cd /home/openmc-bld && \
-    git clone https://github.com/helen-brooks/openmc.git && \
+    git clone https://github.com/openmc-dev/openmc.git && \
     cd openmc && \
-    git checkout external-mesh && \
+    git checkout develop && \
     cd ../ && \
     mkdir build && \
     cd build && \
