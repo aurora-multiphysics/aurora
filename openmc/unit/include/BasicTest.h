@@ -193,7 +193,6 @@ class OpenMCRunTest : public InputFileTest {
   {
     openmcInputXMLFiles.push_back("settings.xml");
     openmcInputXMLFiles.push_back("materials.xml");
-    openmcInputXMLFiles.push_back("tallies.xml");
 
     openmcOutputFiles.push_back("summary.h5");
     openmcOutputFiles.push_back("tallies.out");

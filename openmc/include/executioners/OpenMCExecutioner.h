@@ -28,6 +28,7 @@
 #include "openmc/nuclide.h" // data::nuclide_map
 #include "openmc/output.h" // print_plot
 #include "openmc/plot.h"
+#include "openmc/tallies/filter_mesh.h"
 #include "openmc/tallies/filter.h"
 #include "openmc/tallies/tally.h"
 #include "openmc/timer.h" // simulation:time_read_xs
@@ -116,11 +117,8 @@ private:
   // Set up map of names to ids
   bool initMatNames();
 
-  // Set up score indices
-  bool initScoreIndices();
-
-  // Add score variables to the FE problem
-  void addVariables();
+  // Pass MOAB mesh into OpenMC and set up tallies with a mesh filter
+  bool initMeshTallies();
 
   // Return the openmc id of the material
   bool getMatID(moab::EntityHandle vol_handle, int& mat_id);
@@ -157,6 +155,13 @@ private:
   // Update materials
   void updateMaterials();
   void updateMaterialDensities();
+
+
+  // Set up OpenMC tallies
+  void setupTallies(openmc::Filter* filter_ptr);
+  void setupTally(int32_t& tally_id,
+                  openmc::Filter* filter_ptr,
+                  std::vector<ScoreData>& scores);
 
   // Set up OpenMC cells, surfaces
   bool setupCells();
@@ -201,9 +206,6 @@ private:
 
   // Map of OpenMC IDs of the tallies to list of score and variable names
   std::map<int32_t, std::vector<ScoreData> > tally_ids_to_scores;
-
-  // OpenMC ID of the mesh to which we pass data
-  int32_t mesh_id;
 
   // Convenience map of mat name string to its id
   std::map<std::string,int32_t> mat_names_to_id;

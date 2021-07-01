@@ -20,7 +20,6 @@ protected:
   OpenMCExecutionerTest(std::string inputfile) :
     OpenMCAppRunTest(inputfile)
   {
-    init();
   };
 
   OpenMCExecutionerTest() :
@@ -45,10 +44,11 @@ protected:
 
   void setDefaults(){
     isSetUp=false;
-    scalefactor=16.0218;
+    source_strength=1.0e20;
+    scalefactor=source_strength*eVinJoules;
     nMeshElemsExpect=11972;
     nDegenBins=1;
-    nScores=2;
+    nScores=1;
     nBatches=2;
   }
 
@@ -240,19 +240,20 @@ protected:
 
     // Run the test three times
     for(unsigned int i=0; i<3; i++){
+
       // Delete them for next time
       deleteAll(openmcOutputFiles);
 
       // Run execute
-      ASSERT_NO_THROW(executionerPtr->execute());
+      ASSERT_NO_THROW(executionerPtr->execute())
+        <<"Execution failure on iteration "<< i;
 
       // Check if moabUOPtr now has an FEProblem set
       EXPECT_TRUE(moabUOPtr->hasProblem());
 
-      // Check moose and openmc moabPtrs are the same
-      auto moabIt = openmc::model::moabPtrs.find(1);
-      ASSERT_NE(moabIt,openmc::model::moabPtrs.end());
-      EXPECT_EQ(openmc::model::moabPtrs[1], moabUOPtr->moabPtr);
+      // Check moab interface shared ptrs - should be two copies (one in moose and one in openmc)
+      EXPECT_NE(moabUOPtr->moabPtr,nullptr);
+      EXPECT_EQ(moabUOPtr->moabPtr.use_count(),2);
 
       // Check we produced some output
       std::vector<std::string> openmcOutputFilesCopy = openmcOutputFiles;
@@ -287,7 +288,10 @@ protected:
   // List of scores to check
   std::vector<VarData> scores;
 
+  static constexpr double eVinJoules = 1.60218e-19;
+  double source_strength;
   double scalefactor;
+
 };
 
 // Fixture to test multiple scores
@@ -296,13 +300,16 @@ protected:
 
   ManyScoresExecutionerTest() :
     OpenMCExecutionerTest("executioner-many-scores.i")
-  {};
+  {
+    init();
+  };
 
   virtual void setScoreList() override{
-    VarData var = {"heating-local","heating-local-errs",scalefactor,0};
+    VarData var = {"heating-local","heating-local-err",scalefactor,0};
     scores.push_back(var);
-    var = {"flux","flux-errs",1.0,1};
+    var = {"flux","flux-err",source_strength,1};
     scores.push_back(var);
+    nScores=scores.size();
   }
 
 };
@@ -314,12 +321,13 @@ protected:
   SecondOrderExecutionerTest() :
     OpenMCExecutionerTest("executioner-second.i")
   {
+    init();
     // Second-order mesh has 8 sub-tets for a single tet10
     nDegenBins=8;
   }
 
   virtual void setScoreList() override{
-    VarData var = {"heating-local","heating-local-errs",scalefactor,0};
+    VarData var = {"heating-local","heating-local-err",scalefactor,0};
     scores.push_back(var);
   }
 
