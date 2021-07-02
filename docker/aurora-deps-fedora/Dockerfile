@@ -50,7 +50,6 @@ RUN cd /home/dagmc-bld && \
 RUN cd /home/dagmc-bld && \
     git clone https://github.com/pshriwise/double-down && \
     cd double-down && \
-    git checkout c5fd09009afae415a06fcd5d8351829baf0a8f54 && \
     mkdir build && \
     cd build && \
     cmake ../ \
