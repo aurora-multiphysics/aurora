@@ -11,12 +11,15 @@ validParams<FunctionUserObject>()
 
   params.addRequiredParam<std::string>(
       "variable", "Variable name to evaluate the mesh function on.");
+  params.addParam<double>("tolerance", 1e-9,"Set point locator tolerance.");
+
   return params;
 }
 
 FunctionUserObject::FunctionUserObject(const InputParameters & parameters) :
   GeneralUserObject(parameters),
-  _var_name(getParam<std::string>("variable"))
+  _var_name(getParam<std::string>("variable")),
+  tolerance(getParam<double>("tolerance"))
 {}
 
 void
@@ -24,7 +27,8 @@ FunctionUserObject::execute()
 {
 
   // Fetch a pointer to the point locator object
-  point_locator_ptr = _fe_problem.mesh().getPointLocator();
+  point_locator_ptr = mesh().getPointLocator();
+  point_locator_ptr->set_close_to_point_tol(tolerance);
 
   // Fetch a pointer to the system containing named variable
   sysPtr = &_fe_problem.getSystem(_var_name);
@@ -68,4 +72,13 @@ FunctionUserObject::value (const Point &p) const
   else{
     throw std::logic_error("Point locator is null in FunctionUserObject.");
   }
+}
+
+MooseMesh&
+FunctionUserObject::mesh()
+{
+  if(_fe_problem.haveDisplaced()){
+    return _fe_problem.getDisplacedProblem()->mesh();
+  }
+  return _fe_problem.mesh();
 }

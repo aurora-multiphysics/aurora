@@ -37,7 +37,7 @@ RDG                       := no
 RICHARDS                  := no
 SOLID_MECHANICS           := no
 STOCHASTIC_TOOLS          := no
-TENSOR_MECHANICS          := no
+TENSOR_MECHANICS          := yes
 XFEM                      := no
 POROUS_FLOW               := no
 LEVEL_SET                 := no
@@ -68,7 +68,7 @@ OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_APP_DIR)/lib -L$(OPENMC_APP_DIR)/lib -l$(OP
 
 include $(OPENMC_APP_DIR)/config.inc
 
-ADDITIONAL_INCLUDES += $(OPENMC_APP_INC) $(OPENMC_INC) $(MOAB_INC)
+ADDITIONAL_INCLUDES += $(OPENMC_APP_INC) $(OPENMC_INC) $(MOAB_INC) $(HDF5_INC)
 EXTERNAL_FLAGS += $(OPENMC_APP_LIB) $(OPENMC_LIB) $(MOAB_LIB)
 
 

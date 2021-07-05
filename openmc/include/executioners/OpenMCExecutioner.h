@@ -156,6 +156,8 @@ private:
   void updateMaterials();
   void updateMaterialDensities();
 
+  // Update mesh tallies
+  void updateMeshTallies();
 
   // Set up OpenMC tallies
   void setupTallies(openmc::Filter* filter_ptr);

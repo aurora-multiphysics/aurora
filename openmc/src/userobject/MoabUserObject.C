@@ -115,7 +115,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     powMin = int(floor(log10(var_min)));
     powMax = int(ceil(log10(var_max)));
     nPow = std::max(powMax-powMin, 1);
-    if(nPow > nVarBins){
+    if(nPow > nVarBins && logscale){
       mooseError("Please ensure number of powers for variable is less than the number of bins");
     }
     nMinor = nVarBins/nPow;
@@ -419,8 +419,8 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   moab::Range all_elems;
 
   // Iterate over elements in the mesh
-  auto itelem = mesh().elements_begin();
-  auto endelem = mesh().elements_end();
+  auto itelem = mesh().active_elements_begin();
+  auto endelem = mesh().active_elements_end();
   for( ; itelem!=endelem; ++itelem){
 
     // Get a reference to current elem
@@ -722,8 +722,8 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
   bool procHasNonZeroResult=false;
 
   // When we set the solution, we only want to set dofs that belong to this process
-  auto itelem  = mesh().local_elements_begin();
-  auto endelem = mesh().local_elements_end();
+  auto itelem  = mesh().active_local_elements_begin();
+  auto endelem = mesh().active_local_elements_end();
   for( ; itelem!=endelem; ++itelem){
 
     Elem& elem = **itelem;
@@ -1056,7 +1056,8 @@ MoabUserObject::sortElemsByResults()
   for(const auto & elemSet : sortedElems){
     elemCountCheck += elemSet.size();
   }
-  if(elemCountCheck != mesh().n_elem()){
+
+  if(elemCountCheck != mesh().n_active_elem()){
     mooseError("Disparity in number of sorted elements.");
   }
 
@@ -1285,6 +1286,15 @@ MoabUserObject::resetContainers()
   // Update the serial solutions
   for(const auto& sol :  serial_solutions){
     System & sys = 	systems().get_system(sol.first);
+
+    // Check if solution vector size has changed, e.g. due to mesh refinement
+    if(sys.n_dofs() != sol.second->size()){
+      // clear
+      sol.second->init(0,false,SERIAL);
+      // resize
+      sol.second->init(sys.n_dofs(),false,SERIAL);
+    }
+
     sys.solution->localize(*sol.second);
   }
 }

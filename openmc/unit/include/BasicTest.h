@@ -150,9 +150,16 @@ class InputFileTest : public BasicTest {
     ASSERT_TRUE(fileExists(newName));
   }
 
-  void fetchInput(const std::vector<std::string>& inputFiles){
-    for(const auto file : inputFiles){
-      fetchInputFile(file);
+  void fetchInput(const std::vector<std::string>& inputFilesSrc,
+                  const std::vector<std::string>& inputFilesDest){
+
+    ASSERT_EQ(inputFilesSrc.size(),inputFilesDest.size());
+
+    size_t nFiles = inputFilesSrc.size();
+    for(size_t iFile=0; iFile<nFiles; iFile++){
+      std::string fileSrc = inputFilesSrc.at(iFile);
+      std::string fileDest = inputFilesDest.at(iFile);
+      fetchInputFile(fileSrc,fileDest);
     }
   }
 
@@ -194,6 +201,9 @@ class OpenMCRunTest : public InputFileTest {
     openmcInputXMLFiles.push_back("settings.xml");
     openmcInputXMLFiles.push_back("materials.xml");
 
+    openmcInputXMLFilesSrc.push_back("settings.xml");
+    openmcInputXMLFilesSrc.push_back("materials.xml");
+
     openmcOutputFiles.push_back("summary.h5");
     openmcOutputFiles.push_back("tallies.out");
     openmcOutputFiles.push_back("statepoint.2.h5");
@@ -202,7 +212,8 @@ class OpenMCRunTest : public InputFileTest {
 
   virtual void SetUp() override {
     // Get the input xml files from dir input to current working dir
-    fetchInput(openmcInputXMLFiles);
+    fetchInput(openmcInputXMLFilesSrc,
+               openmcInputXMLFiles);
   }
 
   virtual void TearDown() override {
@@ -213,6 +224,7 @@ class OpenMCRunTest : public InputFileTest {
   }
 
   std::vector<std::string> openmcInputXMLFiles;
+  std::vector<std::string> openmcInputXMLFilesSrc;
   std::vector<std::string> openmcOutputFiles;
   std::string dagmcFilename;
 
