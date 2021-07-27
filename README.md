@@ -301,7 +301,17 @@ git rebase --continue
 ```
 It is a good idea to sync frequently so that your branch does not deviate significantly or merging will become quite a headache! Note, we will not approve pull requests that are not up-to-date with our `main` branch.
 
-7) Create a pull request, detailing the changes you have made and reference your original issue. Creating a pull request will trigger our CI pipeline, which tests the build and runs tests in two environments. If you would like to test your changes in a different environment to your own, you may want to use our docker images (see section on docker above).
+7) Update documentation:
+- Generate/update markdown stubs
+```
+cd doc && ./moosedocs.py generate
+```
+- Build the html pages
+```
+cd doc && ./moosedocs.py build --destination=htmldoc
+```
+
+8) Create a pull request, detailing the changes you have made and reference your original issue. Creating a pull request will trigger our CI pipeline, which tests the build and runs tests in two environments. If you would like to test your changes in a different environment to your own, you may want to use our docker images (see section on docker above).
 
 Once a pull request has been opened we will review your code. We may require some changes, in which case you'll need to make some further commits. Once your code has been reviewd and approved, we will merge it into `main`.
 
