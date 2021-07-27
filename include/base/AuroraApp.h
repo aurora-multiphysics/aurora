@@ -11,6 +11,9 @@
 
 #include "MooseApp.h"
 
+/**
+    \brief Driver MOOSE application class for AURORA to which objects are registered.
+ */
 class AuroraApp : public MooseApp
 {
 public:

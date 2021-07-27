@@ -69,12 +69,17 @@ $(function() {
 <div class="title">ADOpenMCDensity Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Derived ADDensity class which allows the original density parameter to be returned.  
+ <a href="classADOpenMCDensity.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ADOpenMCDensity_8h_source.html">ADOpenMCDensity.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ADOpenMCDensity:</div>
 <div class="dyncontent">
 <div class="center"><img src="classADOpenMCDensity__inherit__graph.png" border="0" usemap="#ADOpenMCDensity_inherit__map" alt="Inheritance graph"/></div>
 <map name="ADOpenMCDensity_inherit__map" id="ADOpenMCDensity_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,80,152,107"/>
+<area shape="rect" title="Derived ADDensity class which allows the original density parameter to be returned." alt="" coords="5,80,152,107"/>
 <area shape="rect" title=" " alt="" coords="33,5,124,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -84,8 +89,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3043daba148fb5371f3ed896dc2f23c8"><td class="memItemLeft" align="right" valign="top"><a id="a3043daba148fb5371f3ed896dc2f23c8"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ADOpenMCDensity</b> (const InputParameters &amp;params)</td></tr>
 <tr class="separator:a3043daba148fb5371f3ed896dc2f23c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a479fcce770715588ccb6cbbea5820243"><td class="memItemLeft" align="right" valign="top"><a id="a479fcce770715588ccb6cbbea5820243"></a>
-const Real&#160;</td><td class="memItemRight" valign="bottom"><b>origDensity</b> ()</td></tr>
+<tr class="memitem:a479fcce770715588ccb6cbbea5820243"><td class="memItemLeft" align="right" valign="top">const Real&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classADOpenMCDensity.html#a479fcce770715588ccb6cbbea5820243">origDensity</a> ()</td></tr>
+<tr class="memdesc:a479fcce770715588ccb6cbbea5820243"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the starting density of the material (i.e. prior to deformation)  <a href="classADOpenMCDensity.html#a479fcce770715588ccb6cbbea5820243">More...</a><br /></td></tr>
 <tr class="separator:a479fcce770715588ccb6cbbea5820243"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
@@ -94,6 +99,36 @@ Static Public Member Functions</h2></td></tr>
 static InputParameters&#160;</td><td class="memItemRight" valign="bottom"><b>validParams</b> ()</td></tr>
 <tr class="separator:abeff7bad6fdb0ccabf392b56e1863d7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Derived ADDensity class which allows the original density parameter to be returned. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a479fcce770715588ccb6cbbea5820243"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a479fcce770715588ccb6cbbea5820243">&#9670;&nbsp;</a></span>origDensity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Real ADOpenMCDensity::origDensity </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the starting density of the material (i.e. prior to deformation) </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>openmc/include/materials/<a class="el" href="ADOpenMCDensity_8h_source.html">ADOpenMCDensity.h</a></li>
 <li>openmc/src/materials/ADOpenMCDensity.C</li>

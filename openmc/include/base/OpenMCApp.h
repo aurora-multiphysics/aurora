@@ -11,6 +11,12 @@
 
 #include "MooseApp.h"
 
+/**
+   \brief Standalone app to wrap OpenMC
+
+   When run as a sub-app in a MultiApp data may be passed in and out via
+   MoabUserObject
+ */
 class OpenMCApp : public MooseApp
 {
 public:

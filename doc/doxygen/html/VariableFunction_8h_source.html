@@ -80,34 +80,37 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;InputParameters validParams&lt;VariableFunction&gt;();</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="classVariableFunction.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVariableFunction.html">VariableFunction</a>: <span class="keyword">public</span> Function</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <span class="keyword">static</span> InputParameters validParams();</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <a class="code" href="classVariableFunction.html">VariableFunction</a>(<span class="keyword">const</span> InputParameters &amp; parameters);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  ~<a class="code" href="classVariableFunction.html">VariableFunction</a>(){};</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keywordtype">void</span> initialSetup() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  Real value(Real t, <span class="keyword">const</span> Point &amp; p) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keywordtype">bool</span> getValue(<span class="keyword">const</span> Point &amp; p, Real&amp; value, std::string&amp; errmsg) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="classVariableFunction.html">   17</a></span>&#160;<span class="keyword">class </span><a class="code" href="classVariableFunction.html">VariableFunction</a>: <span class="keyword">public</span> Function</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">static</span> InputParameters validParams();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <a class="code" href="classVariableFunction.html">VariableFunction</a>(<span class="keyword">const</span> InputParameters &amp; parameters);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  ~<a class="code" href="classVariableFunction.html">VariableFunction</a>(){};</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classVariableFunction.html#accfc3e755ba838f4fa1201d1395916d7">initialSetup</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="comment">// Pointer to the mesh function user object</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">const</span> <a class="code" href="classFunctionUserObject.html">FunctionUserObject</a> * meshFunction;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="comment">// Name of meshFunctionUserObject to retrieve</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  std::string userObjName;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;};</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  Real <a class="code" href="classVariableFunction.html#aad56543e25d1422805b575aae4f874b9">value</a>(Real t, <span class="keyword">const</span> Point &amp; p) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classVariableFunction.html#a5c2640c534517bb7e9ebdacb99335ef5">getValue</a>(<span class="keyword">const</span> Point &amp; p, Real&amp; <a class="code" href="classVariableFunction.html#aad56543e25d1422805b575aae4f874b9">value</a>, std::string&amp; errmsg) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classVariableFunction.html#af76f976256b4fe478ae1645665c1af93">   45</a></span>&#160;  <span class="keyword">const</span> <a class="code" href="classFunctionUserObject.html">FunctionUserObject</a> * <a class="code" href="classVariableFunction.html#af76f976256b4fe478ae1645665c1af93">meshFunction</a>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classVariableFunction.html#af58077d20fd86f96e1475435ea7b8b11">   48</a></span>&#160;  std::string <a class="code" href="classVariableFunction.html#af58077d20fd86f96e1475435ea7b8b11">userObjName</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclassVariableFunction_html"><div class="ttname"><a href="classVariableFunction.html">VariableFunction</a></div><div class="ttdef"><b>Definition:</b> VariableFunction.h:12</div></div>
-<div class="ttc" id="aclassFunctionUserObject_html"><div class="ttname"><a href="classFunctionUserObject.html">FunctionUserObject</a></div><div class="ttdef"><b>Definition:</b> FunctionUserObject.h:18</div></div>
+<div class="ttc" id="aclassVariableFunction_html"><div class="ttname"><a href="classVariableFunction.html">VariableFunction</a></div><div class="ttdoc">Function object which returns the value of a variable at a point.</div><div class="ttdef"><b>Definition:</b> VariableFunction.h:17</div></div>
+<div class="ttc" id="aclassVariableFunction_html_accfc3e755ba838f4fa1201d1395916d7"><div class="ttname"><a href="classVariableFunction.html#accfc3e755ba838f4fa1201d1395916d7">VariableFunction::initialSetup</a></div><div class="ttdeci">void initialSetup() override</div><div class="ttdoc">Just retrieve the named FunctionUserObject.</div><div class="ttdef"><b>Definition:</b> VariableFunction.C:28</div></div>
+<div class="ttc" id="aclassVariableFunction_html_af76f976256b4fe478ae1645665c1af93"><div class="ttname"><a href="classVariableFunction.html#af76f976256b4fe478ae1645665c1af93">VariableFunction::meshFunction</a></div><div class="ttdeci">const FunctionUserObject * meshFunction</div><div class="ttdoc">Pointer to the FunctionUserObject.</div><div class="ttdef"><b>Definition:</b> VariableFunction.h:45</div></div>
+<div class="ttc" id="aclassVariableFunction_html_af58077d20fd86f96e1475435ea7b8b11"><div class="ttname"><a href="classVariableFunction.html#af58077d20fd86f96e1475435ea7b8b11">VariableFunction::userObjName</a></div><div class="ttdeci">std::string userObjName</div><div class="ttdoc">Name of FunctionUserObject to retrieve.</div><div class="ttdef"><b>Definition:</b> VariableFunction.h:48</div></div>
+<div class="ttc" id="aclassVariableFunction_html_a5c2640c534517bb7e9ebdacb99335ef5"><div class="ttname"><a href="classVariableFunction.html#a5c2640c534517bb7e9ebdacb99335ef5">VariableFunction::getValue</a></div><div class="ttdeci">bool getValue(const Point &amp;p, Real &amp;value, std::string &amp;errmsg) const</div><div class="ttdoc">Wrapper for FunctionUserObject::value.</div><div class="ttdef"><b>Definition:</b> VariableFunction.C:67</div></div>
+<div class="ttc" id="aclassFunctionUserObject_html"><div class="ttname"><a href="classFunctionUserObject.html">FunctionUserObject</a></div><div class="ttdoc">This UserObject class creates a function from a variable in memory given a string containing the vari...</div><div class="ttdef"><b>Definition:</b> FunctionUserObject.h:20</div></div>
+<div class="ttc" id="aclassVariableFunction_html_aad56543e25d1422805b575aae4f874b9"><div class="ttname"><a href="classVariableFunction.html#aad56543e25d1422805b575aae4f874b9">VariableFunction::value</a></div><div class="ttdeci">Real value(Real t, const Point &amp;p) const override</div><div class="ttdoc">Return the value of a variable at a point.</div><div class="ttdef"><b>Definition:</b> VariableFunction.C:34</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

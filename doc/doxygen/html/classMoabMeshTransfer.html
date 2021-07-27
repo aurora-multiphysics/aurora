@@ -63,17 +63,24 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classMoabMeshTransfer-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">MoabMeshTransfer Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Transfer a pointer to the FEProblem from the parent to child app in a MultiApp.  
+ <a href="classMoabMeshTransfer.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="MoabMeshTransfer_8h_source.html">MoabMeshTransfer.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for MoabMeshTransfer:</div>
 <div class="dyncontent">
 <div class="center"><img src="classMoabMeshTransfer__inherit__graph.png" border="0" usemap="#MoabMeshTransfer_inherit__map" alt="Inheritance graph"/></div>
 <map name="MoabMeshTransfer_inherit__map" id="MoabMeshTransfer_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,80,152,107"/>
+<area shape="rect" title="Transfer a pointer to the FEProblem from the parent to child app in a MultiApp." alt="" coords="5,80,152,107"/>
 <area shape="rect" title=" " alt="" coords="12,5,145,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -84,12 +91,40 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>MoabMeshTransfer</b> (const InputParameters &amp;parameters)</td></tr>
 <tr class="separator:afd7993ad37bf28e0541f15f84de2d426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76f904410c00de3898b76c086385a1c6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#a76f904410c00de3898b76c086385a1c6">execute</a> ()</td></tr>
+<tr class="memdesc:a76f904410c00de3898b76c086385a1c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the transfer.  <a href="classMoabMeshTransfer.html#a76f904410c00de3898b76c086385a1c6">More...</a><br /></td></tr>
 <tr class="separator:a76f904410c00de3898b76c086385a1c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25ed3a091f96d0d36c4e221aebf1814c"><td class="memItemLeft" align="right" valign="top"><a id="a25ed3a091f96d0d36c4e221aebf1814c"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>initialSetup</b> ()</td></tr>
 <tr class="separator:a25ed3a091f96d0d36c4e221aebf1814c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ad01411c27a4841fe02ed5d8a8d88f363"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#ad01411c27a4841fe02ed5d8a8d88f363">transfer</a> ()</td></tr>
+<tr class="memdesc:ad01411c27a4841fe02ed5d8a8d88f363"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the transfer of the mesh data into MOAB user object.  <a href="classMoabMeshTransfer.html#ad01411c27a4841fe02ed5d8a8d88f363">More...</a><br /></td></tr>
+<tr class="separator:ad01411c27a4841fe02ed5d8a8d88f363"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a63cf62abaab28f0cd0490df4a715be1d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#a63cf62abaab28f0cd0490df4a715be1d">isInit</a></td></tr>
+<tr class="memdesc:a63cf62abaab28f0cd0490df4a715be1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save whether initialisation suceeded.  <a href="classMoabMeshTransfer.html#a63cf62abaab28f0cd0490df4a715be1d">More...</a><br /></td></tr>
+<tr class="separator:a63cf62abaab28f0cd0490df4a715be1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a639a895e227b480db5ac1a472979e1de"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#a639a895e227b480db5ac1a472979e1de">_to_problem_index</a></td></tr>
+<tr class="memdesc:a639a895e227b480db5ac1a472979e1de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the FEProblem within _to_problems to which we are sending data.  <a href="classMoabMeshTransfer.html#a639a895e227b480db5ac1a472979e1de">More...</a><br /></td></tr>
+<tr class="separator:a639a895e227b480db5ac1a472979e1de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a768e4961ea76eb710b1741ffb5b1915c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#a768e4961ea76eb710b1741ffb5b1915c">apptype_from</a></td></tr>
+<tr class="memdesc:a768e4961ea76eb710b1741ffb5b1915c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the app from which we are taking the mesh and systems.  <a href="classMoabMeshTransfer.html#a768e4961ea76eb710b1741ffb5b1915c">More...</a><br /></td></tr>
+<tr class="separator:a768e4961ea76eb710b1741ffb5b1915c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4ee38b662a396b0715401cb27165be1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#ac4ee38b662a396b0715401cb27165be1">apptype_to</a></td></tr>
+<tr class="memdesc:ac4ee38b662a396b0715401cb27165be1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the app to which we are sending the mesh and systems.  <a href="classMoabMeshTransfer.html#ac4ee38b662a396b0715401cb27165be1">More...</a><br /></td></tr>
+<tr class="separator:ac4ee38b662a396b0715401cb27165be1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6ac9118dd3929d5d113042583488c29"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabMeshTransfer.html#ab6ac9118dd3929d5d113042583488c29">moabname</a></td></tr>
+<tr class="memdesc:ab6ac9118dd3929d5d113042583488c29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the MOAB user object to which we are transferring the problem and mesh.  <a href="classMoabMeshTransfer.html#ab6ac9118dd3929d5d113042583488c29">More...</a><br /></td></tr>
+<tr class="separator:ab6ac9118dd3929d5d113042583488c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Transfer a pointer to the FEProblem from the parent to child app in a MultiApp. </p>
+<p>Specifically, pass the data into the <a class="el" href="classMoabUserObject.html" title="UserObject class which wraps a moab::Interface pointer.">MoabUserObject</a> with the name contained in moabname, and fail if this does not exist. Also perform some intialisation of the <a class="el" href="classMoabUserObject.html" title="UserObject class which wraps a moab::Interface pointer.">MoabUserObject</a> that should only be done once. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a76f904410c00de3898b76c086385a1c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a76f904410c00de3898b76c086385a1c6">&#9670;&nbsp;</a></span>execute()</h2>
 
@@ -112,7 +147,156 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>initialSetup<
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Execute the transfer. </p>
+
+</div>
+</div>
+<a id="ad01411c27a4841fe02ed5d8a8d88f363"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad01411c27a4841fe02ed5d8a8d88f363">&#9670;&nbsp;</a></span>transfer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MoabMeshTransfer::transfer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Perform the transfer of the mesh data into MOAB user object. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a639a895e227b480db5ac1a472979e1de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a639a895e227b480db5ac1a472979e1de">&#9670;&nbsp;</a></span>_to_problem_index</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int MoabMeshTransfer::_to_problem_index</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Index of the FEProblem within _to_problems to which we are sending data. </p>
+
+</div>
+</div>
+<a id="a768e4961ea76eb710b1741ffb5b1915c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a768e4961ea76eb710b1741ffb5b1915c">&#9670;&nbsp;</a></span>apptype_from</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string MoabMeshTransfer::apptype_from</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Type of the app from which we are taking the mesh and systems. </p>
+
+</div>
+</div>
+<a id="ac4ee38b662a396b0715401cb27165be1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4ee38b662a396b0715401cb27165be1">&#9670;&nbsp;</a></span>apptype_to</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string MoabMeshTransfer::apptype_to</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Type of the app to which we are sending the mesh and systems. </p>
+
+</div>
+</div>
+<a id="a63cf62abaab28f0cd0490df4a715be1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63cf62abaab28f0cd0490df4a715be1d">&#9670;&nbsp;</a></span>isInit</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MoabMeshTransfer::isInit</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save whether initialisation suceeded. </p>
+
+</div>
+</div>
+<a id="ab6ac9118dd3929d5d113042583488c29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6ac9118dd3929d5d113042583488c29">&#9670;&nbsp;</a></span>moabname</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string MoabMeshTransfer::moabname</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Name of the MOAB user object to which we are transferring the problem and mesh. </p>
 
 </div>
 </div>

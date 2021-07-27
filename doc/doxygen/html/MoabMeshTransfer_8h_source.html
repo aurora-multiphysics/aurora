@@ -85,36 +85,39 @@ $(function() {
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;InputParameters validParams&lt;MoabMeshTransfer&gt;();</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html">   17</a></span>&#160;<span class="keyword">class </span><a class="code" href="classMoabMeshTransfer.html">MoabMeshTransfer</a> : <span class="keyword">public</span> MultiAppTransfer</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="classMoabMeshTransfer.html">MoabMeshTransfer</a>(<span class="keyword">const</span> InputParameters &amp; parameters);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classMoabMeshTransfer.html#a76f904410c00de3898b76c086385a1c6">execute</a>();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> initialSetup();</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// Perform the transfer of the mesh data into MOAB user object</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordtype">bool</span> transfer();</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keywordtype">bool</span> isInit;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> _to_problem_index;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classMoabMeshTransfer.html">MoabMeshTransfer</a> : <span class="keyword">public</span> MultiAppTransfer</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <a class="code" href="classMoabMeshTransfer.html">MoabMeshTransfer</a>(<span class="keyword">const</span> InputParameters &amp; parameters);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classMoabMeshTransfer.html#a76f904410c00de3898b76c086385a1c6">execute</a>();</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> initialSetup();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="comment">// Type of the app from which we are taking the mesh and systems</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::string apptype_from;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMoabMeshTransfer.html#ad01411c27a4841fe02ed5d8a8d88f363">transfer</a>();</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="comment">// Type of the app to which we are sending the mesh and systems</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  std::string apptype_to;</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html#a63cf62abaab28f0cd0490df4a715be1d">   41</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classMoabMeshTransfer.html#a63cf62abaab28f0cd0490df4a715be1d">isInit</a>;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// Name of the MOAB user object to which we are transferring the problem and mesh</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  std::string moabname;</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html#a639a895e227b480db5ac1a472979e1de">   44</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classMoabMeshTransfer.html#a639a895e227b480db5ac1a472979e1de">_to_problem_index</a>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html#a768e4961ea76eb710b1741ffb5b1915c">   47</a></span>&#160;  std::string <a class="code" href="classMoabMeshTransfer.html#a768e4961ea76eb710b1741ffb5b1915c">apptype_from</a>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html#ac4ee38b662a396b0715401cb27165be1">   50</a></span>&#160;  std::string <a class="code" href="classMoabMeshTransfer.html#ac4ee38b662a396b0715401cb27165be1">apptype_to</a>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classMoabMeshTransfer.html#ab6ac9118dd3929d5d113042583488c29">   53</a></span>&#160;  std::string <a class="code" href="classMoabMeshTransfer.html#ab6ac9118dd3929d5d113042583488c29">moabname</a>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclassMoabMeshTransfer_html"><div class="ttname"><a href="classMoabMeshTransfer.html">MoabMeshTransfer</a></div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:17</div></div>
-<div class="ttc" id="aclassMoabMeshTransfer_html_a76f904410c00de3898b76c086385a1c6"><div class="ttname"><a href="classMoabMeshTransfer.html#a76f904410c00de3898b76c086385a1c6">MoabMeshTransfer::execute</a></div><div class="ttdeci">virtual void execute()</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.C:31</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_ad01411c27a4841fe02ed5d8a8d88f363"><div class="ttname"><a href="classMoabMeshTransfer.html#ad01411c27a4841fe02ed5d8a8d88f363">MoabMeshTransfer::transfer</a></div><div class="ttdeci">bool transfer()</div><div class="ttdoc">Perform the transfer of the mesh data into MOAB user object.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.C:80</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_ac4ee38b662a396b0715401cb27165be1"><div class="ttname"><a href="classMoabMeshTransfer.html#ac4ee38b662a396b0715401cb27165be1">MoabMeshTransfer::apptype_to</a></div><div class="ttdeci">std::string apptype_to</div><div class="ttdoc">Type of the app to which we are sending the mesh and systems.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:50</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_a768e4961ea76eb710b1741ffb5b1915c"><div class="ttname"><a href="classMoabMeshTransfer.html#a768e4961ea76eb710b1741ffb5b1915c">MoabMeshTransfer::apptype_from</a></div><div class="ttdeci">std::string apptype_from</div><div class="ttdoc">Type of the app from which we are taking the mesh and systems.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:47</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html"><div class="ttname"><a href="classMoabMeshTransfer.html">MoabMeshTransfer</a></div><div class="ttdoc">Transfer a pointer to the FEProblem from the parent to child app in a MultiApp.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:25</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_ab6ac9118dd3929d5d113042583488c29"><div class="ttname"><a href="classMoabMeshTransfer.html#ab6ac9118dd3929d5d113042583488c29">MoabMeshTransfer::moabname</a></div><div class="ttdeci">std::string moabname</div><div class="ttdoc">Name of the MOAB user object to which we are transferring the problem and mesh.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:53</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_a76f904410c00de3898b76c086385a1c6"><div class="ttname"><a href="classMoabMeshTransfer.html#a76f904410c00de3898b76c086385a1c6">MoabMeshTransfer::execute</a></div><div class="ttdeci">virtual void execute()</div><div class="ttdoc">Execute the transfer.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.C:31</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_a639a895e227b480db5ac1a472979e1de"><div class="ttname"><a href="classMoabMeshTransfer.html#a639a895e227b480db5ac1a472979e1de">MoabMeshTransfer::_to_problem_index</a></div><div class="ttdeci">unsigned int _to_problem_index</div><div class="ttdoc">Index of the FEProblem within _to_problems to which we are sending data.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:44</div></div>
+<div class="ttc" id="aclassMoabMeshTransfer_html_a63cf62abaab28f0cd0490df4a715be1d"><div class="ttname"><a href="classMoabMeshTransfer.html#a63cf62abaab28f0cd0490df4a715be1d">MoabMeshTransfer::isInit</a></div><div class="ttdeci">bool isInit</div><div class="ttdoc">Save whether initialisation suceeded.</div><div class="ttdef"><b>Definition:</b> MoabMeshTransfer.h:41</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

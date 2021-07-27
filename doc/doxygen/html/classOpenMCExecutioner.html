@@ -64,30 +64,1937 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="classOpenMCExecutioner-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">OpenMCExecutioner Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Our bespoke Executioner class to perform OpenMC runs.  
+ <a href="classOpenMCExecutioner.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="OpenMCExecutioner_8h_source.html">OpenMCExecutioner.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for OpenMCExecutioner:</div>
 <div class="dyncontent">
 <div class="center"><img src="classOpenMCExecutioner__inherit__graph.png" border="0" usemap="#OpenMCExecutioner_inherit__map" alt="Inheritance graph"/></div>
 <map name="OpenMCExecutioner_inherit__map" id="OpenMCExecutioner_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,80,160,107"/>
+<area shape="rect" title="Our bespoke Executioner class to perform OpenMC runs." alt="" coords="5,80,160,107"/>
 <area shape="rect" title=" " alt="" coords="41,5,124,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct to store information about OpenMC tally filters.  <a href="structOpenMCExecutioner_1_1FilterInfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structOpenMCExecutioner_1_1ScoreData.html">ScoreData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct to store information about OpenMC scores.  <a href="structOpenMCExecutioner_1_1ScoreData.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a470dec2fbbbacf393ee4dfbde94210a1"><td class="memItemLeft" align="right" valign="top"><a id="a470dec2fbbbacf393ee4dfbde94210a1"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>OpenMCExecutioner</b> (const InputParameters &amp;parameters)</td></tr>
 <tr class="separator:a470dec2fbbbacf393ee4dfbde94210a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d97254509e6c855debad56494fe6c48"><td class="memItemLeft" align="right" valign="top"><a id="a8d97254509e6c855debad56494fe6c48"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>execute</b> () override</td></tr>
+<tr class="memitem:a8d97254509e6c855debad56494fe6c48"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a8d97254509e6c855debad56494fe6c48">execute</a> () override</td></tr>
+<tr class="memdesc:a8d97254509e6c855debad56494fe6c48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a full OpenMC run.  <a href="classOpenMCExecutioner.html#a8d97254509e6c855debad56494fe6c48">More...</a><br /></td></tr>
 <tr class="separator:a8d97254509e6c855debad56494fe6c48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a564e0b2e82c32fa19a2113228d99a82b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classMoabUserObject.html">MoabUserObject</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a564e0b2e82c32fa19a2113228d99a82b">moab</a> ()</td></tr>
+<tr class="memdesc:a564e0b2e82c32fa19a2113228d99a82b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the moab user object.  <a href="classOpenMCExecutioner.html#a564e0b2e82c32fa19a2113228d99a82b">More...</a><br /></td></tr>
+<tr class="separator:a564e0b2e82c32fa19a2113228d99a82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade2e2d2d4a9cd74a25fb900ad112aefb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ade2e2d2d4a9cd74a25fb900ad112aefb">initScoreData</a> ()</td></tr>
+<tr class="memdesc:ade2e2d2d4a9cd74a25fb900ad112aefb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise structures to store information about scores.  <a href="classOpenMCExecutioner.html#ade2e2d2d4a9cd74a25fb900ad112aefb">More...</a><br /></td></tr>
+<tr class="separator:ade2e2d2d4a9cd74a25fb900ad112aefb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a158c703ae174414d2dbcba21bfbae858"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a158c703ae174414d2dbcba21bfbae858">initialize</a> ()</td></tr>
+<tr class="memdesc:a158c703ae174414d2dbcba21bfbae858"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise MOAB/OpenMC.  <a href="classOpenMCExecutioner.html#a158c703ae174414d2dbcba21bfbae858">More...</a><br /></td></tr>
+<tr class="separator:a158c703ae174414d2dbcba21bfbae858"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a135079167cd2c3790ec432ea23d1a957"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a135079167cd2c3790ec432ea23d1a957">run</a> ()</td></tr>
+<tr class="memdesc:a135079167cd2c3790ec432ea23d1a957"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run OpenMC and get results.  <a href="classOpenMCExecutioner.html#a135079167cd2c3790ec432ea23d1a957">More...</a><br /></td></tr>
+<tr class="separator:a135079167cd2c3790ec432ea23d1a957"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb1cc11784841ead4a7cc883454d33fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#acb1cc11784841ead4a7cc883454d33fa">processResults</a> ()</td></tr>
+<tr class="memdesc:acb1cc11784841ead4a7cc883454d33fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass results into FEProblem.  <a href="classOpenMCExecutioner.html#acb1cc11784841ead4a7cc883454d33fa">More...</a><br /></td></tr>
+<tr class="separator:acb1cc11784841ead4a7cc883454d33fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd0732ba3cab142ac6deeb2ae9ef98f8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#afd0732ba3cab142ac6deeb2ae9ef98f8">output</a> ()</td></tr>
+<tr class="memdesc:afd0732ba3cab142ac6deeb2ae9ef98f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output the results.  <a href="classOpenMCExecutioner.html#afd0732ba3cab142ac6deeb2ae9ef98f8">More...</a><br /></td></tr>
+<tr class="separator:afd0732ba3cab142ac6deeb2ae9ef98f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6a654c6f332d5b8b369fa7024cf1fc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ae6a654c6f332d5b8b369fa7024cf1fc2">update</a> ()</td></tr>
+<tr class="memdesc:ae6a654c6f332d5b8b369fa7024cf1fc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update MOAB with any results from MOOSE.  <a href="classOpenMCExecutioner.html#ae6a654c6f332d5b8b369fa7024cf1fc2">More...</a><br /></td></tr>
+<tr class="separator:ae6a654c6f332d5b8b369fa7024cf1fc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92fe04740b004ed35d66c45d3e8f937e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a92fe04740b004ed35d66c45d3e8f937e">initMOAB</a> ()</td></tr>
+<tr class="memdesc:a92fe04740b004ed35d66c45d3e8f937e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise MOAB.  <a href="classOpenMCExecutioner.html#a92fe04740b004ed35d66c45d3e8f937e">More...</a><br /></td></tr>
+<tr class="separator:a92fe04740b004ed35d66c45d3e8f937e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02a083660df7c3f5e5bc7ce9487a4b4b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a02a083660df7c3f5e5bc7ce9487a4b4b">initOpenMC</a> ()</td></tr>
+<tr class="memdesc:a02a083660df7c3f5e5bc7ce9487a4b4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise OpenMC.  <a href="classOpenMCExecutioner.html#a02a083660df7c3f5e5bc7ce9487a4b4b">More...</a><br /></td></tr>
+<tr class="separator:a02a083660df7c3f5e5bc7ce9487a4b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a363718e895922a7fffd30e299d6fa423"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a363718e895922a7fffd30e299d6fa423">initMaterials</a> ()</td></tr>
+<tr class="memdesc:a363718e895922a7fffd30e299d6fa423"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise material maps (either local map or UWUW)  <a href="classOpenMCExecutioner.html#a363718e895922a7fffd30e299d6fa423">More...</a><br /></td></tr>
+<tr class="separator:a363718e895922a7fffd30e299d6fa423"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d072a917eeb5b600ffaac879724ea07"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a9d072a917eeb5b600ffaac879724ea07">initMatNames</a> ()</td></tr>
+<tr class="memdesc:a9d072a917eeb5b600ffaac879724ea07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up map of names to ids.  <a href="classOpenMCExecutioner.html#a9d072a917eeb5b600ffaac879724ea07">More...</a><br /></td></tr>
+<tr class="separator:a9d072a917eeb5b600ffaac879724ea07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8f9e4f11fe14a96eb0b1ad02c2ac84f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac8f9e4f11fe14a96eb0b1ad02c2ac84f">initMeshTallies</a> ()</td></tr>
+<tr class="memdesc:ac8f9e4f11fe14a96eb0b1ad02c2ac84f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass MOAB mesh into OpenMC and set up tallies with a mesh filter.  <a href="classOpenMCExecutioner.html#ac8f9e4f11fe14a96eb0b1ad02c2ac84f">More...</a><br /></td></tr>
+<tr class="separator:ac8f9e4f11fe14a96eb0b1ad02c2ac84f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8c1b2262e4fbf023d497515bcdd2e56"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa8c1b2262e4fbf023d497515bcdd2e56">getMatID</a> (moab::EntityHandle vol_handle, int &amp;mat_id)</td></tr>
+<tr class="memdesc:aa8c1b2262e4fbf023d497515bcdd2e56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the openmc id of the material.  <a href="classOpenMCExecutioner.html#aa8c1b2262e4fbf023d497515bcdd2e56">More...</a><br /></td></tr>
+<tr class="separator:aa8c1b2262e4fbf023d497515bcdd2e56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba0b8febcfa9b944ce15352f6971f755"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aba0b8febcfa9b944ce15352f6971f755">updateOpenMC</a> ()</td></tr>
+<tr class="memdesc:aba0b8febcfa9b944ce15352f6971f755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update OpenMC.  <a href="classOpenMCExecutioner.html#aba0b8febcfa9b944ce15352f6971f755">More...</a><br /></td></tr>
+<tr class="separator:aba0b8febcfa9b944ce15352f6971f755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa806d7d24bab3777e0bb69d2c16f09ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa806d7d24bab3777e0bb69d2c16f09ff">getResults</a> (std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;var_results_by_elem)</td></tr>
+<tr class="memdesc:aa806d7d24bab3777e0bb69d2c16f09ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process Tallies from OpenMC.  <a href="classOpenMCExecutioner.html#aa806d7d24bab3777e0bb69d2c16f09ff">More...</a><br /></td></tr>
+<tr class="separator:aa806d7d24bab3777e0bb69d2c16f09ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad89d7daab00ed035fd8f48ba0b0dfd86"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ad89d7daab00ed035fd8f48ba0b0dfd86">setSolution</a> (std::vector&lt; double &gt; &amp;results_by_elem, std::string var_name, double scale_factor, bool isErr)</td></tr>
+<tr class="memdesc:ad89d7daab00ed035fd8f48ba0b0dfd86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set solution in FEProblem variable.  <a href="classOpenMCExecutioner.html#ad89d7daab00ed035fd8f48ba0b0dfd86">More...</a><br /></td></tr>
+<tr class="separator:ad89d7daab00ed035fd8f48ba0b0dfd86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76d84c1cc14bb99d17d5cb80232127cc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a76d84c1cc14bb99d17d5cb80232127cc">setFilterInfo</a> (openmc::Tally &amp;tally, std::map&lt; int32_t, <a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a> &gt; &amp;filters_by_id, int32_t &amp;meshFilter, int32_t &amp;nFilterBins)</td></tr>
+<tr class="memdesc:a76d84c1cc14bb99d17d5cb80232127cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set information about OpenMC filters (IDs and strides)  <a href="classOpenMCExecutioner.html#a76d84c1cc14bb99d17d5cb80232127cc">More...</a><br /></td></tr>
+<tr class="separator:a76d84c1cc14bb99d17d5cb80232127cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c6f91144c6e92786a60868bad4326b3"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a4c6f91144c6e92786a60868bad4326b3">getFilterBin</a> (int32_t iResultBin, const <a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a> &amp;filter)</td></tr>
+<tr class="memdesc:a4c6f91144c6e92786a60868bad4326b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a 1D results vector bin index, return a filter bin index for the given filter.  <a href="classOpenMCExecutioner.html#a4c6f91144c6e92786a60868bad4326b3">More...</a><br /></td></tr>
+<tr class="separator:a4c6f91144c6e92786a60868bad4326b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba1a8fd29af845d44bf4a021dd4be945"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aba1a8fd29af845d44bf4a021dd4be945">decomposeIntoFilterBins</a> (int32_t iResultBin, const std::map&lt; int32_t, <a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a> &gt; &amp;filters_by_id, std::map&lt; int32_t, int32_t &gt; &amp;filter_id_to_bin_index)</td></tr>
+<tr class="memdesc:aba1a8fd29af845d44bf4a021dd4be945"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a 1D results vector bin index, return the set of filter bins index.  <a href="classOpenMCExecutioner.html#aba1a8fd29af845d44bf4a021dd4be945">More...</a><br /></td></tr>
+<tr class="separator:aba1a8fd29af845d44bf4a021dd4be945"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac42a4117a707c7c9b3957a5b63327fcd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac42a4117a707c7c9b3957a5b63327fcd">resetOpenMC</a> ()</td></tr>
+<tr class="memdesc:ac42a4117a707c7c9b3957a5b63327fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear some data in OpenMC.  <a href="classOpenMCExecutioner.html#ac42a4117a707c7c9b3957a5b63327fcd">More...</a><br /></td></tr>
+<tr class="separator:ac42a4117a707c7c9b3957a5b63327fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1a40cf53a28007e16230addce4e0afa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa1a40cf53a28007e16230addce4e0afa">reloadDAGMC</a> ()</td></tr>
+<tr class="memdesc:aa1a40cf53a28007e16230addce4e0afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass in mesh, new surfaces, setup metadata.  <a href="classOpenMCExecutioner.html#aa1a40cf53a28007e16230addce4e0afa">More...</a><br /></td></tr>
+<tr class="separator:aa1a40cf53a28007e16230addce4e0afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e49365e72c9b2b3f805cfa0d97434fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a4e49365e72c9b2b3f805cfa0d97434fa">updateMaterials</a> ()</td></tr>
+<tr class="memdesc:a4e49365e72c9b2b3f805cfa0d97434fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update materials.  <a href="classOpenMCExecutioner.html#a4e49365e72c9b2b3f805cfa0d97434fa">More...</a><br /></td></tr>
+<tr class="separator:a4e49365e72c9b2b3f805cfa0d97434fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01ce724a7175da434c4e0f00c504796c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a01ce724a7175da434c4e0f00c504796c">updateMaterialDensities</a> ()</td></tr>
+<tr class="memdesc:a01ce724a7175da434c4e0f00c504796c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update materials' densities.  <a href="classOpenMCExecutioner.html#a01ce724a7175da434c4e0f00c504796c">More...</a><br /></td></tr>
+<tr class="separator:a01ce724a7175da434c4e0f00c504796c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ae8e3dbe93c8d8f971f7cd6bea290e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a9ae8e3dbe93c8d8f971f7cd6bea290e3">updateMeshTallies</a> ()</td></tr>
+<tr class="memdesc:a9ae8e3dbe93c8d8f971f7cd6bea290e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update mesh tallies.  <a href="classOpenMCExecutioner.html#a9ae8e3dbe93c8d8f971f7cd6bea290e3">More...</a><br /></td></tr>
+<tr class="separator:a9ae8e3dbe93c8d8f971f7cd6bea290e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4af55cfa67ebe2e737cc5b75a6c0c547"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a4af55cfa67ebe2e737cc5b75a6c0c547">setupTallies</a> (openmc::Filter *filter_ptr)</td></tr>
+<tr class="memdesc:a4af55cfa67ebe2e737cc5b75a6c0c547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up OpenMC tallies.  <a href="classOpenMCExecutioner.html#a4af55cfa67ebe2e737cc5b75a6c0c547">More...</a><br /></td></tr>
+<tr class="separator:a4af55cfa67ebe2e737cc5b75a6c0c547"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee88cba722d4f820947fd83435c57654"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aee88cba722d4f820947fd83435c57654">setupTally</a> (int32_t &amp;tally_id, openmc::Filter *filter_ptr, std::vector&lt; <a class="el" href="structOpenMCExecutioner_1_1ScoreData.html">ScoreData</a> &gt; &amp;scores)</td></tr>
+<tr class="memdesc:aee88cba722d4f820947fd83435c57654"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up an OpenMC tally.  <a href="classOpenMCExecutioner.html#aee88cba722d4f820947fd83435c57654">More...</a><br /></td></tr>
+<tr class="separator:aee88cba722d4f820947fd83435c57654"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac817a8037668cd9086a8af017aae45bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac817a8037668cd9086a8af017aae45bb">setupCells</a> ()</td></tr>
+<tr class="memdesc:ac817a8037668cd9086a8af017aae45bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up OpenMC cells.  <a href="classOpenMCExecutioner.html#ac817a8037668cd9086a8af017aae45bb">More...</a><br /></td></tr>
+<tr class="separator:ac817a8037668cd9086a8af017aae45bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20d952e12006d9ab33ae0658d8007d53"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a20d952e12006d9ab33ae0658d8007d53">setupSurfaces</a> ()</td></tr>
+<tr class="memdesc:a20d952e12006d9ab33ae0658d8007d53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up OpenMC surfaces.  <a href="classOpenMCExecutioner.html#a20d952e12006d9ab33ae0658d8007d53">More...</a><br /></td></tr>
+<tr class="separator:a20d952e12006d9ab33ae0658d8007d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac54b069591549ac46cf3af3bee18701f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac54b069591549ac46cf3af3bee18701f">setCellAttrib</a> (openmc::DAGCell &amp;cell, unsigned int index, int32_t universe_idx)</td></tr>
+<tr class="memdesc:ac54b069591549ac46cf3af3bee18701f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set attributes of a DAGMC cell.  <a href="classOpenMCExecutioner.html#ac54b069591549ac46cf3af3bee18701f">More...</a><br /></td></tr>
+<tr class="separator:ac54b069591549ac46cf3af3bee18701f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f6b16128c81d0f61a79f6efe90ce26e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a2f6b16128c81d0f61a79f6efe90ce26e">setSurfAttrib</a> (openmc::DAGSurface &amp;surf, unsigned int index)</td></tr>
+<tr class="memdesc:a2f6b16128c81d0f61a79f6efe90ce26e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set attributes of a DAGMC surface.  <a href="classOpenMCExecutioner.html#a2f6b16128c81d0f61a79f6efe90ce26e">More...</a><br /></td></tr>
+<tr class="separator:a2f6b16128c81d0f61a79f6efe90ce26e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefb2f5efde10126f47f7159c6facdbd7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aefb2f5efde10126f47f7159c6facdbd7">completeSetup</a> ()</td></tr>
+<tr class="memdesc:aefb2f5efde10126f47f7159c6facdbd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final openMC set up after geometery has been set.  <a href="classOpenMCExecutioner.html#aefb2f5efde10126f47f7159c6facdbd7">More...</a><br /></td></tr>
+<tr class="separator:aefb2f5efde10126f47f7159c6facdbd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:aa767d201d7d751ac3794fb4bd9e54b77"><td class="memItemLeft" align="right" valign="top">moab::DagMC *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa767d201d7d751ac3794fb4bd9e54b77">dagPtr</a></td></tr>
+<tr class="memdesc:aa767d201d7d751ac3794fb4bd9e54b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy of the pointer to DAGMC.  <a href="classOpenMCExecutioner.html#aa767d201d7d751ac3794fb4bd9e54b77">More...</a><br /></td></tr>
+<tr class="separator:aa767d201d7d751ac3794fb4bd9e54b77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf24bf9696fa895f135afda185af41ec"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; dagmcMetaData &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#abf24bf9696fa895f135afda185af41ec">dmdPtr</a></td></tr>
+<tr class="memdesc:abf24bf9696fa895f135afda185af41ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">DAGMC Metadata object pointer.  <a href="classOpenMCExecutioner.html#abf24bf9696fa895f135afda185af41ec">More...</a><br /></td></tr>
+<tr class="separator:abf24bf9696fa895f135afda185af41ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c88760c5abafd5a425b3818ff8f7a48"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; UWUW &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a0c88760c5abafd5a425b3818ff8f7a48">uwuwPtr</a></td></tr>
+<tr class="memdesc:a0c88760c5abafd5a425b3818ff8f7a48"><td class="mdescLeft">&#160;</td><td class="mdescRight">DAGMC UWUW object pointer.  <a href="classOpenMCExecutioner.html#a0c88760c5abafd5a425b3818ff8f7a48">More...</a><br /></td></tr>
+<tr class="separator:a0c88760c5abafd5a425b3818ff8f7a48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95522032e2556f5d090fcd166d6f1a56"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a95522032e2556f5d090fcd166d6f1a56">setProblemLocal</a></td></tr>
+<tr class="memdesc:a95522032e2556f5d090fcd166d6f1a56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record whether we set the FE Problem locally.  <a href="classOpenMCExecutioner.html#a95522032e2556f5d090fcd166d6f1a56">More...</a><br /></td></tr>
+<tr class="separator:a95522032e2556f5d090fcd166d6f1a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23f2fedc44753e7d102f8f12097e43e1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a23f2fedc44753e7d102f8f12097e43e1">isInit</a></td></tr>
+<tr class="memdesc:a23f2fedc44753e7d102f8f12097e43e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save whether initialised.  <a href="classOpenMCExecutioner.html#a23f2fedc44753e7d102f8f12097e43e1">More...</a><br /></td></tr>
+<tr class="separator:a23f2fedc44753e7d102f8f12097e43e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a094ccc39cedfd5abdc4d0642bb9a6549"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a094ccc39cedfd5abdc4d0642bb9a6549">matsUpdated</a></td></tr>
+<tr class="memdesc:a094ccc39cedfd5abdc4d0642bb9a6549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save if we have updated the materials.  <a href="classOpenMCExecutioner.html#a094ccc39cedfd5abdc4d0642bb9a6549">More...</a><br /></td></tr>
+<tr class="separator:a094ccc39cedfd5abdc4d0642bb9a6549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4ae2466d2311a01075c3f0663d31fa0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ae4ae2466d2311a01075c3f0663d31fa0">useUWUW</a></td></tr>
+<tr class="memdesc:ae4ae2466d2311a01075c3f0663d31fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save whether we have a UWUW material library.  <a href="classOpenMCExecutioner.html#ae4ae2466d2311a01075c3f0663d31fa0">More...</a><br /></td></tr>
+<tr class="separator:ae4ae2466d2311a01075c3f0663d31fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada40be92fbaa581caa8cb2dd2d7f4138"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ada40be92fbaa581caa8cb2dd2d7f4138">openmc_err</a></td></tr>
+<tr class="memdesc:ada40be92fbaa581caa8cb2dd2d7f4138"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hold OpenMC error code.  <a href="classOpenMCExecutioner.html#ada40be92fbaa581caa8cb2dd2d7f4138">More...</a><br /></td></tr>
+<tr class="separator:ada40be92fbaa581caa8cb2dd2d7f4138"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad71a401a0fbda9abc2d380636d78deb2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ad71a401a0fbda9abc2d380636d78deb2">source_strength</a></td></tr>
+<tr class="memdesc:ad71a401a0fbda9abc2d380636d78deb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Strength of fusion neutron source in neutrons/s.  <a href="classOpenMCExecutioner.html#ad71a401a0fbda9abc2d380636d78deb2">More...</a><br /></td></tr>
+<tr class="separator:ad71a401a0fbda9abc2d380636d78deb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02156c6147364efdf866ededb502adf4"><td class="memItemLeft" align="right" valign="top">std::map&lt; int32_t, std::vector&lt; <a class="el" href="structOpenMCExecutioner_1_1ScoreData.html">ScoreData</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a02156c6147364efdf866ededb502adf4">tally_ids_to_scores</a></td></tr>
+<tr class="memdesc:a02156c6147364efdf866ededb502adf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of OpenMC IDs of the tallies to list of score and variable names.  <a href="classOpenMCExecutioner.html#a02156c6147364efdf866ededb502adf4">More...</a><br /></td></tr>
+<tr class="separator:a02156c6147364efdf866ededb502adf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9559565d0de02415bb4b2982c8483f08"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, int32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a9559565d0de02415bb4b2982c8483f08">mat_names_to_id</a></td></tr>
+<tr class="memdesc:a9559565d0de02415bb4b2982c8483f08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience map of mat name string to its id.  <a href="classOpenMCExecutioner.html#a9559565d0de02415bb4b2982c8483f08">More...</a><br /></td></tr>
+<tr class="separator:a9559565d0de02415bb4b2982c8483f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2edb0f1808e6bdef4f804921464d9cc5"><td class="memItemLeft" align="right" valign="top">std::map&lt; int32_t, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a2edb0f1808e6bdef4f804921464d9cc5">mat_id_to_density</a></td></tr>
+<tr class="memdesc:a2edb0f1808e6bdef4f804921464d9cc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience map of mat name string to its id.  <a href="classOpenMCExecutioner.html#a2edb0f1808e6bdef4f804921464d9cc5">More...</a><br /></td></tr>
+<tr class="separator:a2edb0f1808e6bdef4f804921464d9cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8006ff741b6472d089545bd0ac549aa0"><td class="memItemLeft" align="right" valign="top">moab::EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a8006ff741b6472d089545bd0ac549aa0">graveyard</a></td></tr>
+<tr class="memdesc:a8006ff741b6472d089545bd0ac549aa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Place to store graveyard entity handle.  <a href="classOpenMCExecutioner.html#a8006ff741b6472d089545bd0ac549aa0">More...</a><br /></td></tr>
+<tr class="separator:a8006ff741b6472d089545bd0ac549aa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa990f6a447adb6e1836b2ab2b90cba5e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa990f6a447adb6e1836b2ab2b90cba5e">add_variables</a></td></tr>
+<tr class="memdesc:aa990f6a447adb6e1836b2ab2b90cba5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch to control if we should automatically add variables to FEProblem.  <a href="classOpenMCExecutioner.html#aa990f6a447adb6e1836b2ab2b90cba5e">More...</a><br /></td></tr>
+<tr class="separator:aa990f6a447adb6e1836b2ab2b90cba5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac36d604e6ade1f2cf442085a0055ff6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac36d604e6ade1f2cf442085a0055ff6d">launch_threads</a></td></tr>
+<tr class="memdesc:ac36d604e6ade1f2cf442085a0055ff6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch to control whether openmc should launch child threads.  <a href="classOpenMCExecutioner.html#ac36d604e6ade1f2cf442085a0055ff6d">More...</a><br /></td></tr>
+<tr class="separator:ac36d604e6ade1f2cf442085a0055ff6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0a1ac17254be2e5a885d0050d14260f"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa0a1ac17254be2e5a885d0050d14260f">n_threads</a></td></tr>
+<tr class="memdesc:aa0a1ac17254be2e5a885d0050d14260f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of threads to use if launch_threads = true.  <a href="classOpenMCExecutioner.html#aa0a1ac17254be2e5a885d0050d14260f">More...</a><br /></td></tr>
+<tr class="separator:aa0a1ac17254be2e5a885d0050d14260f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1f080fa6ce930080ab13152f2df0bf6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ad1f080fa6ce930080ab13152f2df0bf6">redirect_dagout</a></td></tr>
+<tr class="memdesc:ad1f080fa6ce930080ab13152f2df0bf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch to control whether dagmc output is written to file or not.  <a href="classOpenMCExecutioner.html#ad1f080fa6ce930080ab13152f2df0bf6">More...</a><br /></td></tr>
+<tr class="separator:ad1f080fa6ce930080ab13152f2df0bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a169c4d787c4e8cfde1b54678d08dfde1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a169c4d787c4e8cfde1b54678d08dfde1">dagmc_logname</a></td></tr>
+<tr class="memdesc:a169c4d787c4e8cfde1b54678d08dfde1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of dagmc logfile.  <a href="classOpenMCExecutioner.html#a169c4d787c4e8cfde1b54678d08dfde1">More...</a><br /></td></tr>
+<tr class="separator:a169c4d787c4e8cfde1b54678d08dfde1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe70d29cbb7a79eef06f1e8cad3522a8"><td class="memItemLeft" align="right" valign="top">std::fstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#afe70d29cbb7a79eef06f1e8cad3522a8">dagmclog</a></td></tr>
+<tr class="memdesc:afe70d29cbb7a79eef06f1e8cad3522a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Todo: how to deal with threads?  <a href="classOpenMCExecutioner.html#afe70d29cbb7a79eef06f1e8cad3522a8">More...</a><br /></td></tr>
+<tr class="separator:afe70d29cbb7a79eef06f1e8cad3522a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2098a1deb45cc8ae00389db341de97b"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac2098a1deb45cc8ae00389db341de97b">_execute_timer</a></td></tr>
+<tr class="memdesc:ac2098a1deb45cc8ae00389db341de97b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for execution.  <a href="classOpenMCExecutioner.html#ac2098a1deb45cc8ae00389db341de97b">More...</a><br /></td></tr>
+<tr class="separator:ac2098a1deb45cc8ae00389db341de97b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18cecae006e5d6fa917b00eddf2411c9"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a18cecae006e5d6fa917b00eddf2411c9">_init_timer</a></td></tr>
+<tr class="memdesc:a18cecae006e5d6fa917b00eddf2411c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for initialisation.  <a href="classOpenMCExecutioner.html#a18cecae006e5d6fa917b00eddf2411c9">More...</a><br /></td></tr>
+<tr class="separator:a18cecae006e5d6fa917b00eddf2411c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a382c9bd04bb9fc137bb1988badec29c3"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a382c9bd04bb9fc137bb1988badec29c3">_initmoab_timer</a></td></tr>
+<tr class="memdesc:a382c9bd04bb9fc137bb1988badec29c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for MOAB initialisation.  <a href="classOpenMCExecutioner.html#a382c9bd04bb9fc137bb1988badec29c3">More...</a><br /></td></tr>
+<tr class="separator:a382c9bd04bb9fc137bb1988badec29c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aeff0c2874c2d96c955e12a1c0fad35"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a0aeff0c2874c2d96c955e12a1c0fad35">_initopenmc_timer</a></td></tr>
+<tr class="memdesc:a0aeff0c2874c2d96c955e12a1c0fad35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for OpenMC initialisation.  <a href="classOpenMCExecutioner.html#a0aeff0c2874c2d96c955e12a1c0fad35">More...</a><br /></td></tr>
+<tr class="separator:a0aeff0c2874c2d96c955e12a1c0fad35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1380a64d58f6aecc061ba04f6137a7ed"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a1380a64d58f6aecc061ba04f6137a7ed">_updateopenmc_timer</a></td></tr>
+<tr class="memdesc:a1380a64d58f6aecc061ba04f6137a7ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for OpenMC update between timesteps.  <a href="classOpenMCExecutioner.html#a1380a64d58f6aecc061ba04f6137a7ed">More...</a><br /></td></tr>
+<tr class="separator:a1380a64d58f6aecc061ba04f6137a7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3855cd58f0c28aab45512fb27289ee47"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a3855cd58f0c28aab45512fb27289ee47">_run_timer</a></td></tr>
+<tr class="memdesc:a3855cd58f0c28aab45512fb27289ee47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for OpenMC runs.  <a href="classOpenMCExecutioner.html#a3855cd58f0c28aab45512fb27289ee47">More...</a><br /></td></tr>
+<tr class="separator:a3855cd58f0c28aab45512fb27289ee47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a801770b34d98320a75aedc41b7166cf3"><td class="memItemLeft" align="right" valign="top">PerfID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a801770b34d98320a75aedc41b7166cf3">_output_timer</a></td></tr>
+<tr class="memdesc:a801770b34d98320a75aedc41b7166cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performance timer for writing output in standalone mode.  <a href="classOpenMCExecutioner.html#a801770b34d98320a75aedc41b7166cf3">More...</a><br /></td></tr>
+<tr class="separator:a801770b34d98320a75aedc41b7166cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
+Static Private Attributes</h2></td></tr>
+<tr class="memitem:af337661ff1ca45ef5e42aa4436465577"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#af337661ff1ca45ef5e42aa4436465577">eVinJoules</a> = 1.60218e-19</td></tr>
+<tr class="memdesc:af337661ff1ca45ef5e42aa4436465577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant to convert eV to joules.  <a href="classOpenMCExecutioner.html#af337661ff1ca45ef5e42aa4436465577">More...</a><br /></td></tr>
+<tr class="separator:af337661ff1ca45ef5e42aa4436465577"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2d64dc1c9b0bff971c5f456fc2d09d6"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ad2d64dc1c9b0bff971c5f456fc2d09d6">DIM_VOL</a> = 3</td></tr>
+<tr class="memdesc:ad2d64dc1c9b0bff971c5f456fc2d09d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant for geometric volume dimension.  <a href="classOpenMCExecutioner.html#ad2d64dc1c9b0bff971c5f456fc2d09d6">More...</a><br /></td></tr>
+<tr class="separator:ad2d64dc1c9b0bff971c5f456fc2d09d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca837f1ec3cbaae763b252199432ff0e"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aca837f1ec3cbaae763b252199432ff0e">DIM_SURF</a> = 2</td></tr>
+<tr class="memdesc:aca837f1ec3cbaae763b252199432ff0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant for geometric surface dimension.  <a href="classOpenMCExecutioner.html#aca837f1ec3cbaae763b252199432ff0e">More...</a><br /></td></tr>
+<tr class="separator:aca837f1ec3cbaae763b252199432ff0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Our bespoke Executioner class to perform OpenMC runs. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="aefb2f5efde10126f47f7159c6facdbd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefb2f5efde10126f47f7159c6facdbd7">&#9670;&nbsp;</a></span>completeSetup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::completeSetup </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Final openMC set up after geometery has been set. </p>
+
+</div>
+</div>
+<a id="aba1a8fd29af845d44bf4a021dd4be945"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba1a8fd29af845d44bf4a021dd4be945">&#9670;&nbsp;</a></span>decomposeIntoFilterBins()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::decomposeIntoFilterBins </td>
+          <td>(</td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>iResultBin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::map&lt; int32_t, <a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>filters_by_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::map&lt; int32_t, int32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>filter_id_to_bin_index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Given a 1D results vector bin index, return the set of filter bins index. </p>
+
+</div>
+</div>
+<a id="a8d97254509e6c855debad56494fe6c48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d97254509e6c855debad56494fe6c48">&#9670;&nbsp;</a></span>execute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::execute </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Perform a full OpenMC run. </p>
+<p>1) Intialisation<br  />
+ 2) Run<br  />
+ 3) Post-processing of results<br  />
+ 4) Write output (standalone only)<br  />
+ </p>
+
+</div>
+</div>
+<a id="a4c6f91144c6e92786a60868bad4326b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c6f91144c6e92786a60868bad4326b3">&#9670;&nbsp;</a></span>getFilterBin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t OpenMCExecutioner::getFilterBin </td>
+          <td>(</td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>iResultBin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a> &amp;&#160;</td>
+          <td class="paramname"><em>filter</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Given a 1D results vector bin index, return a filter bin index for the given filter. </p>
+
+</div>
+</div>
+<a id="aa8c1b2262e4fbf023d497515bcdd2e56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8c1b2262e4fbf023d497515bcdd2e56">&#9670;&nbsp;</a></span>getMatID()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::getMatID </td>
+          <td>(</td>
+          <td class="paramtype">moab::EntityHandle&#160;</td>
+          <td class="paramname"><em>vol_handle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>mat_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the openmc id of the material. </p>
+
+</div>
+</div>
+<a id="aa806d7d24bab3777e0bb69d2c16f09ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa806d7d24bab3777e0bb69d2c16f09ff">&#9670;&nbsp;</a></span>getResults()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::getResults </td>
+          <td>(</td>
+          <td class="paramtype">std::map&lt; std::string, std::vector&lt; double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>var_results_by_elem</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Process Tallies from OpenMC. </p>
+
+</div>
+</div>
+<a id="a158c703ae174414d2dbcba21bfbae858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a158c703ae174414d2dbcba21bfbae858">&#9670;&nbsp;</a></span>initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::initialize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise MOAB/OpenMC. </p>
+
+</div>
+</div>
+<a id="a363718e895922a7fffd30e299d6fa423"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a363718e895922a7fffd30e299d6fa423">&#9670;&nbsp;</a></span>initMaterials()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::initMaterials </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise material maps (either local map or UWUW) </p>
+
+</div>
+</div>
+<a id="a9d072a917eeb5b600ffaac879724ea07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d072a917eeb5b600ffaac879724ea07">&#9670;&nbsp;</a></span>initMatNames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::initMatNames </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set up map of names to ids. </p>
+
+</div>
+</div>
+<a id="ac8f9e4f11fe14a96eb0b1ad02c2ac84f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8f9e4f11fe14a96eb0b1ad02c2ac84f">&#9670;&nbsp;</a></span>initMeshTallies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::initMeshTallies </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pass MOAB mesh into OpenMC and set up tallies with a mesh filter. </p>
+
+</div>
+</div>
+<a id="a92fe04740b004ed35d66c45d3e8f937e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92fe04740b004ed35d66c45d3e8f937e">&#9670;&nbsp;</a></span>initMOAB()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::initMOAB </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise MOAB. </p>
+
+</div>
+</div>
+<a id="a02a083660df7c3f5e5bc7ce9487a4b4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02a083660df7c3f5e5bc7ce9487a4b4b">&#9670;&nbsp;</a></span>initOpenMC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::initOpenMC </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise OpenMC. </p>
+
+</div>
+</div>
+<a id="ade2e2d2d4a9cd74a25fb900ad112aefb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade2e2d2d4a9cd74a25fb900ad112aefb">&#9670;&nbsp;</a></span>initScoreData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::initScoreData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise structures to store information about scores. </p>
+
+</div>
+</div>
+<a id="a564e0b2e82c32fa19a2113228d99a82b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a564e0b2e82c32fa19a2113228d99a82b">&#9670;&nbsp;</a></span>moab()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classMoabUserObject.html">MoabUserObject</a> &amp; OpenMCExecutioner::moab </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the moab user object. </p>
+
+</div>
+</div>
+<a id="afd0732ba3cab142ac6deeb2ae9ef98f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd0732ba3cab142ac6deeb2ae9ef98f8">&#9670;&nbsp;</a></span>output()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::output </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Output the results. </p>
+
+</div>
+</div>
+<a id="acb1cc11784841ead4a7cc883454d33fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb1cc11784841ead4a7cc883454d33fa">&#9670;&nbsp;</a></span>processResults()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::processResults </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pass results into FEProblem. </p>
+
+</div>
+</div>
+<a id="aa1a40cf53a28007e16230addce4e0afa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1a40cf53a28007e16230addce4e0afa">&#9670;&nbsp;</a></span>reloadDAGMC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::reloadDAGMC </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pass in mesh, new surfaces, setup metadata. </p>
+
+</div>
+</div>
+<a id="ac42a4117a707c7c9b3957a5b63327fcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac42a4117a707c7c9b3957a5b63327fcd">&#9670;&nbsp;</a></span>resetOpenMC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::resetOpenMC </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clear some data in OpenMC. </p>
+
+</div>
+</div>
+<a id="a135079167cd2c3790ec432ea23d1a957"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a135079167cd2c3790ec432ea23d1a957">&#9670;&nbsp;</a></span>run()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::run </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Run OpenMC and get results. </p>
+
+</div>
+</div>
+<a id="ac54b069591549ac46cf3af3bee18701f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac54b069591549ac46cf3af3bee18701f">&#9670;&nbsp;</a></span>setCellAttrib()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setCellAttrib </td>
+          <td>(</td>
+          <td class="paramtype">openmc::DAGCell &amp;&#160;</td>
+          <td class="paramname"><em>cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t&#160;</td>
+          <td class="paramname"><em>universe_idx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set attributes of a DAGMC cell. </p>
+
+</div>
+</div>
+<a id="a76d84c1cc14bb99d17d5cb80232127cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76d84c1cc14bb99d17d5cb80232127cc">&#9670;&nbsp;</a></span>setFilterInfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setFilterInfo </td>
+          <td>(</td>
+          <td class="paramtype">openmc::Tally &amp;&#160;</td>
+          <td class="paramname"><em>tally</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::map&lt; int32_t, <a class="el" href="structOpenMCExecutioner_1_1FilterInfo.html">FilterInfo</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>filters_by_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t &amp;&#160;</td>
+          <td class="paramname"><em>meshFilter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t &amp;&#160;</td>
+          <td class="paramname"><em>nFilterBins</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set information about OpenMC filters (IDs and strides) </p>
+
+</div>
+</div>
+<a id="ad89d7daab00ed035fd8f48ba0b0dfd86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad89d7daab00ed035fd8f48ba0b0dfd86">&#9670;&nbsp;</a></span>setSolution()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setSolution </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>results_by_elem</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>var_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>scale_factor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isErr</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set solution in FEProblem variable. </p>
+
+</div>
+</div>
+<a id="a2f6b16128c81d0f61a79f6efe90ce26e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f6b16128c81d0f61a79f6efe90ce26e">&#9670;&nbsp;</a></span>setSurfAttrib()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setSurfAttrib </td>
+          <td>(</td>
+          <td class="paramtype">openmc::DAGSurface &amp;&#160;</td>
+          <td class="paramname"><em>surf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set attributes of a DAGMC surface. </p>
+
+</div>
+</div>
+<a id="ac817a8037668cd9086a8af017aae45bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac817a8037668cd9086a8af017aae45bb">&#9670;&nbsp;</a></span>setupCells()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setupCells </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set up OpenMC cells. </p>
+
+</div>
+</div>
+<a id="a20d952e12006d9ab33ae0658d8007d53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20d952e12006d9ab33ae0658d8007d53">&#9670;&nbsp;</a></span>setupSurfaces()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setupSurfaces </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set up OpenMC surfaces. </p>
+
+</div>
+</div>
+<a id="a4af55cfa67ebe2e737cc5b75a6c0c547"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4af55cfa67ebe2e737cc5b75a6c0c547">&#9670;&nbsp;</a></span>setupTallies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::setupTallies </td>
+          <td>(</td>
+          <td class="paramtype">openmc::Filter *&#160;</td>
+          <td class="paramname"><em>filter_ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set up OpenMC tallies. </p>
+
+</div>
+</div>
+<a id="aee88cba722d4f820947fd83435c57654"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee88cba722d4f820947fd83435c57654">&#9670;&nbsp;</a></span>setupTally()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::setupTally </td>
+          <td>(</td>
+          <td class="paramtype">int32_t &amp;&#160;</td>
+          <td class="paramname"><em>tally_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">openmc::Filter *&#160;</td>
+          <td class="paramname"><em>filter_ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structOpenMCExecutioner_1_1ScoreData.html">ScoreData</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>scores</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set up an OpenMC tally. </p>
+
+</div>
+</div>
+<a id="ae6a654c6f332d5b8b369fa7024cf1fc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6a654c6f332d5b8b369fa7024cf1fc2">&#9670;&nbsp;</a></span>update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::update </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update MOAB with any results from MOOSE. </p>
+
+</div>
+</div>
+<a id="a01ce724a7175da434c4e0f00c504796c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01ce724a7175da434c4e0f00c504796c">&#9670;&nbsp;</a></span>updateMaterialDensities()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::updateMaterialDensities </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update materials' densities. </p>
+
+</div>
+</div>
+<a id="a4e49365e72c9b2b3f805cfa0d97434fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e49365e72c9b2b3f805cfa0d97434fa">&#9670;&nbsp;</a></span>updateMaterials()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::updateMaterials </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update materials. </p>
+
+</div>
+</div>
+<a id="a9ae8e3dbe93c8d8f971f7cd6bea290e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ae8e3dbe93c8d8f971f7cd6bea290e3">&#9670;&nbsp;</a></span>updateMeshTallies()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::updateMeshTallies </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update mesh tallies. </p>
+
+</div>
+</div>
+<a id="aba0b8febcfa9b944ce15352f6971f755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba0b8febcfa9b944ce15352f6971f755">&#9670;&nbsp;</a></span>updateOpenMC()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::updateOpenMC </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update OpenMC. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ac2098a1deb45cc8ae00389db341de97b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2098a1deb45cc8ae00389db341de97b">&#9670;&nbsp;</a></span>_execute_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_execute_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for execution. </p>
+
+</div>
+</div>
+<a id="a18cecae006e5d6fa917b00eddf2411c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18cecae006e5d6fa917b00eddf2411c9">&#9670;&nbsp;</a></span>_init_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_init_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for initialisation. </p>
+
+</div>
+</div>
+<a id="a382c9bd04bb9fc137bb1988badec29c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a382c9bd04bb9fc137bb1988badec29c3">&#9670;&nbsp;</a></span>_initmoab_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_initmoab_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for MOAB initialisation. </p>
+
+</div>
+</div>
+<a id="a0aeff0c2874c2d96c955e12a1c0fad35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aeff0c2874c2d96c955e12a1c0fad35">&#9670;&nbsp;</a></span>_initopenmc_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_initopenmc_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for OpenMC initialisation. </p>
+
+</div>
+</div>
+<a id="a801770b34d98320a75aedc41b7166cf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a801770b34d98320a75aedc41b7166cf3">&#9670;&nbsp;</a></span>_output_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_output_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for writing output in standalone mode. </p>
+
+</div>
+</div>
+<a id="a3855cd58f0c28aab45512fb27289ee47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3855cd58f0c28aab45512fb27289ee47">&#9670;&nbsp;</a></span>_run_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_run_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for OpenMC runs. </p>
+
+</div>
+</div>
+<a id="a1380a64d58f6aecc061ba04f6137a7ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1380a64d58f6aecc061ba04f6137a7ed">&#9670;&nbsp;</a></span>_updateopenmc_timer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PerfID OpenMCExecutioner::_updateopenmc_timer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performance timer for OpenMC update between timesteps. </p>
+
+</div>
+</div>
+<a id="aa990f6a447adb6e1836b2ab2b90cba5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa990f6a447adb6e1836b2ab2b90cba5e">&#9670;&nbsp;</a></span>add_variables</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::add_variables</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Switch to control if we should automatically add variables to FEProblem. </p>
+
+</div>
+</div>
+<a id="a169c4d787c4e8cfde1b54678d08dfde1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a169c4d787c4e8cfde1b54678d08dfde1">&#9670;&nbsp;</a></span>dagmc_logname</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string OpenMCExecutioner::dagmc_logname</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Name of dagmc logfile. </p>
+
+</div>
+</div>
+<a id="afe70d29cbb7a79eef06f1e8cad3522a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe70d29cbb7a79eef06f1e8cad3522a8">&#9670;&nbsp;</a></span>dagmclog</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::fstream OpenMCExecutioner::dagmclog</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Todo: how to deal with threads? </p>
+
+</div>
+</div>
+<a id="aa767d201d7d751ac3794fb4bd9e54b77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa767d201d7d751ac3794fb4bd9e54b77">&#9670;&nbsp;</a></span>dagPtr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">moab::DagMC* OpenMCExecutioner::dagPtr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy of the pointer to DAGMC. </p>
+
+</div>
+</div>
+<a id="aca837f1ec3cbaae763b252199432ff0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca837f1ec3cbaae763b252199432ff0e">&#9670;&nbsp;</a></span>DIM_SURF</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int OpenMCExecutioner::DIM_SURF = 2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constant for geometric surface dimension. </p>
+
+</div>
+</div>
+<a id="ad2d64dc1c9b0bff971c5f456fc2d09d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2d64dc1c9b0bff971c5f456fc2d09d6">&#9670;&nbsp;</a></span>DIM_VOL</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int OpenMCExecutioner::DIM_VOL = 3</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constant for geometric volume dimension. </p>
+
+</div>
+</div>
+<a id="abf24bf9696fa895f135afda185af41ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf24bf9696fa895f135afda185af41ec">&#9670;&nbsp;</a></span>dmdPtr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt;dagmcMetaData&gt; OpenMCExecutioner::dmdPtr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>DAGMC Metadata object pointer. </p>
+
+</div>
+</div>
+<a id="af337661ff1ca45ef5e42aa4436465577"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af337661ff1ca45ef5e42aa4436465577">&#9670;&nbsp;</a></span>eVinJoules</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double OpenMCExecutioner::eVinJoules = 1.60218e-19</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constant to convert eV to joules. </p>
+
+</div>
+</div>
+<a id="a8006ff741b6472d089545bd0ac549aa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8006ff741b6472d089545bd0ac549aa0">&#9670;&nbsp;</a></span>graveyard</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">moab::EntityHandle OpenMCExecutioner::graveyard</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Place to store graveyard entity handle. </p>
+
+</div>
+</div>
+<a id="a23f2fedc44753e7d102f8f12097e43e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23f2fedc44753e7d102f8f12097e43e1">&#9670;&nbsp;</a></span>isInit</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::isInit</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save whether initialised. </p>
+
+</div>
+</div>
+<a id="ac36d604e6ade1f2cf442085a0055ff6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac36d604e6ade1f2cf442085a0055ff6d">&#9670;&nbsp;</a></span>launch_threads</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::launch_threads</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Switch to control whether openmc should launch child threads. </p>
+
+</div>
+</div>
+<a id="a2edb0f1808e6bdef4f804921464d9cc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2edb0f1808e6bdef4f804921464d9cc5">&#9670;&nbsp;</a></span>mat_id_to_density</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;int32_t,double&gt; OpenMCExecutioner::mat_id_to_density</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convenience map of mat name string to its id. </p>
+
+</div>
+</div>
+<a id="a9559565d0de02415bb4b2982c8483f08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9559565d0de02415bb4b2982c8483f08">&#9670;&nbsp;</a></span>mat_names_to_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;std::string,int32_t&gt; OpenMCExecutioner::mat_names_to_id</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convenience map of mat name string to its id. </p>
+
+</div>
+</div>
+<a id="a094ccc39cedfd5abdc4d0642bb9a6549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a094ccc39cedfd5abdc4d0642bb9a6549">&#9670;&nbsp;</a></span>matsUpdated</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::matsUpdated</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save if we have updated the materials. </p>
+
+</div>
+</div>
+<a id="aa0a1ac17254be2e5a885d0050d14260f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0a1ac17254be2e5a885d0050d14260f">&#9670;&nbsp;</a></span>n_threads</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int OpenMCExecutioner::n_threads</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Number of threads to use if launch_threads = true. </p>
+
+</div>
+</div>
+<a id="ada40be92fbaa581caa8cb2dd2d7f4138"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada40be92fbaa581caa8cb2dd2d7f4138">&#9670;&nbsp;</a></span>openmc_err</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int OpenMCExecutioner::openmc_err</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hold OpenMC error code. </p>
+
+</div>
+</div>
+<a id="ad1f080fa6ce930080ab13152f2df0bf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1f080fa6ce930080ab13152f2df0bf6">&#9670;&nbsp;</a></span>redirect_dagout</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::redirect_dagout</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Switch to control whether dagmc output is written to file or not. </p>
+
+</div>
+</div>
+<a id="a95522032e2556f5d090fcd166d6f1a56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95522032e2556f5d090fcd166d6f1a56">&#9670;&nbsp;</a></span>setProblemLocal</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::setProblemLocal</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Record whether we set the FE Problem locally. </p>
+
+</div>
+</div>
+<a id="ad71a401a0fbda9abc2d380636d78deb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad71a401a0fbda9abc2d380636d78deb2">&#9670;&nbsp;</a></span>source_strength</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double OpenMCExecutioner::source_strength</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Strength of fusion neutron source in neutrons/s. </p>
+
+</div>
+</div>
+<a id="a02156c6147364efdf866ededb502adf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02156c6147364efdf866ededb502adf4">&#9670;&nbsp;</a></span>tally_ids_to_scores</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;int32_t, std::vector&lt;<a class="el" href="structOpenMCExecutioner_1_1ScoreData.html">ScoreData</a>&gt; &gt; OpenMCExecutioner::tally_ids_to_scores</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Map of OpenMC IDs of the tallies to list of score and variable names. </p>
+
+</div>
+</div>
+<a id="ae4ae2466d2311a01075c3f0663d31fa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4ae2466d2311a01075c3f0663d31fa0">&#9670;&nbsp;</a></span>useUWUW</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::useUWUW</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save whether we have a UWUW material library. </p>
+
+</div>
+</div>
+<a id="a0c88760c5abafd5a425b3818ff8f7a48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c88760c5abafd5a425b3818ff8f7a48">&#9670;&nbsp;</a></span>uwuwPtr</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt;UWUW&gt; OpenMCExecutioner::uwuwPtr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>DAGMC UWUW object pointer. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>openmc/include/executioners/<a class="el" href="OpenMCExecutioner_8h_source.html">OpenMCExecutioner.h</a></li>
 <li>openmc/src/executioners/OpenMCExecutioner.C</li>

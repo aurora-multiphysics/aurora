@@ -68,12 +68,17 @@ $(function() {
 <div class="title">OpenMCProblem Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Minimal definition for a FE problem.  
+ <a href="classOpenMCProblem.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="OpenMCProblem_8h_source.html">OpenMCProblem.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for OpenMCProblem:</div>
 <div class="dyncontent">
 <div class="center"><img src="classOpenMCProblem__inherit__graph.png" border="0" usemap="#OpenMCProblem_inherit__map" alt="Inheritance graph"/></div>
 <map name="OpenMCProblem_inherit__map" id="OpenMCProblem_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,80,136,107"/>
+<area shape="rect" title="Minimal definition for a FE problem." alt="" coords="5,80,136,107"/>
 <area shape="rect" title=" " alt="" coords="5,5,136,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -83,16 +88,103 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaeb02f1c4fadf1e278f9c7e5fe8f4de6"><td class="memItemLeft" align="right" valign="top"><a id="aaeb02f1c4fadf1e278f9c7e5fe8f4de6"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>OpenMCProblem</b> (const InputParameters &amp;parameters)</td></tr>
 <tr class="separator:aaeb02f1c4fadf1e278f9c7e5fe8f4de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acce91f15a9230ec4512ae92e1e463851"><td class="memItemLeft" align="right" valign="top"><a id="acce91f15a9230ec4512ae92e1e463851"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>externalSolve</b> () override</td></tr>
+<tr class="memitem:acce91f15a9230ec4512ae92e1e463851"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCProblem.html#acce91f15a9230ec4512ae92e1e463851">externalSolve</a> () override</td></tr>
+<tr class="memdesc:acce91f15a9230ec4512ae92e1e463851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing.  <a href="classOpenMCProblem.html#acce91f15a9230ec4512ae92e1e463851">More...</a><br /></td></tr>
 <tr class="separator:acce91f15a9230ec4512ae92e1e463851"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e2e44523757c59b6fb8e99629da6022"><td class="memItemLeft" align="right" valign="top"><a id="a7e2e44523757c59b6fb8e99629da6022"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>converged</b> () override</td></tr>
+<tr class="memitem:a7e2e44523757c59b6fb8e99629da6022"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCProblem.html#a7e2e44523757c59b6fb8e99629da6022">converged</a> () override</td></tr>
+<tr class="memdesc:a7e2e44523757c59b6fb8e99629da6022"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing.  <a href="classOpenMCProblem.html#a7e2e44523757c59b6fb8e99629da6022">More...</a><br /></td></tr>
 <tr class="separator:a7e2e44523757c59b6fb8e99629da6022"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a791364226db45092016fe5635194abed"><td class="memItemLeft" align="right" valign="top"><a id="a791364226db45092016fe5635194abed"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>syncSolutions</b> (Direction) override</td></tr>
+<tr class="memitem:a791364226db45092016fe5635194abed"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCProblem.html#a791364226db45092016fe5635194abed">syncSolutions</a> (Direction) override</td></tr>
+<tr class="memdesc:a791364226db45092016fe5635194abed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Does nothing.  <a href="classOpenMCProblem.html#a791364226db45092016fe5635194abed">More...</a><br /></td></tr>
 <tr class="separator:a791364226db45092016fe5635194abed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Minimal definition for a FE problem. </p>
+<p>Only included as it is required by Moose and ensures our constructron avoids unneccessary initialisation.</p>
+<p>Our executioner does not actually call these methods - it will not successfully run for a normal MOOSE executioner. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7e2e44523757c59b6fb8e99629da6022"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e2e44523757c59b6fb8e99629da6022">&#9670;&nbsp;</a></span>converged()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool OpenMCProblem::converged </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Does nothing. </p>
+
+</div>
+</div>
+<a id="acce91f15a9230ec4512ae92e1e463851"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acce91f15a9230ec4512ae92e1e463851">&#9670;&nbsp;</a></span>externalSolve()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void OpenMCProblem::externalSolve </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Does nothing. </p>
+
+</div>
+</div>
+<a id="a791364226db45092016fe5635194abed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a791364226db45092016fe5635194abed">&#9670;&nbsp;</a></span>syncSolutions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void OpenMCProblem::syncSolutions </td>
+          <td>(</td>
+          <td class="paramtype">Direction&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Does nothing. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>openmc/include/problem/<a class="el" href="OpenMCProblem_8h_source.html">OpenMCProblem.h</a></li>
 </ul>

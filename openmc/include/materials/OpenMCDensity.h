@@ -11,8 +11,9 @@
 
 #include "Density.h"
 
-// Derived Density class which allows the original density
-// parameter to be returned
+/** \brief Derived Density class which allows the original density
+    parameter to be returned
+*/
 class OpenMCDensity : public Density
 {
 public:
@@ -20,6 +21,7 @@ public:
 
   OpenMCDensity(const InputParameters & params);
 
+  /// Return the starting density of the material (i.e. prior to deformation)
   const Real origDensity(){ return _initial_density; };
 
 };
