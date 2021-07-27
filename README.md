@@ -65,7 +65,7 @@ git clone https://bitbucket.org/fathomteam/moab && \
     make install
 ```
   - c. [ (Optionally) Double Down](https://github.com/pshriwise/double-down) - if you want to leverage Intel Embree's ray tracing kernels within DAGMC. First install [Embree ](https://github.com/embree/embree) and its dependencies.
-	```
+```
 	# Embree dependencies
 	sudo apt-get -y install libglfw3-dev libtbb-dev pkg-config
 
@@ -93,7 +93,7 @@ git clone https://bitbucket.org/fathomteam/moab && \
 		-DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
 		make -j $compile_cores && \
 		make install
-	```
+```
 
   - d. [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
 Ensure to configure with Double Down if you want this library to be used.
@@ -116,14 +116,13 @@ mkdir dagmc-bld && \
     make install
 ```
 
-4) OpenMC
-  Curently AURORA depends on [this fork](https://github.com/helen-brooks/openmc.git) of OpenMC, and the branch `external-mesh`:
+3) [OpenMC](https://docs.openmc.org/en/stable/)
   ```
     mkdir openmc-bld && \
     cd openmc-bld && \
-    git clone https://github.com/helen-brooks/openmc.git && \
+    git clone https://github.com/openmc-dev/openmc.git && \
     cd openmc && \
-    git checkout external-mesh && \
+    git checkout develop && \
     cd ../ && \
     mkdir build && \
     cd build && \
@@ -138,7 +137,7 @@ mkdir dagmc-bld && \
   Further detailed installation instructions for OpenMC can be found [here](https://docs.openmc.org/en/stable/usersguide/install.html).
   Please ensure you configure with support for DagMC enabled, and support for MPI/threads enabled if you intend to run in parallel.
 
-3) MOOSE ( + PETSc /  libMesh )
+4) MOOSE ( + PETSc /  libMesh )
   Please follow these [installation instructions ](https://mooseframework.inl.gov/getting_started/installation/install_moose.html).
   
 #### B. Environment
@@ -240,7 +239,7 @@ Please follow [this link](https://aurora-multiphysics.github.io/aurora/doc/htmld
 
 ## API Documentation
 
-Please follow [this link](https://aurora-multiphysics.github.io/aurora/doc/doxygen/) to find code documentation for developers.
+Please follow [this link](https://aurora-multiphysics.github.io/aurora/doc/doxygen/html) to find code documentation for developers.
 
 ## Bugs / Problems / Feature Requests / Contact
 
@@ -301,7 +300,22 @@ git rebase --continue
 ```
 It is a good idea to sync frequently so that your branch does not deviate significantly or merging will become quite a headache! Note, we will not approve pull requests that are not up-to-date with our `main` branch.
 
-7) Create a pull request, detailing the changes you have made and reference your original issue. Creating a pull request will trigger our CI pipeline, which tests the build and runs tests in two environments. If you would like to test your changes in a different environment to your own, you may want to use our docker images (see section on docker above).
+7) Update documentation (currently manual):
+- Generate/update MOOSE markdown stubs
+```
+cd doc && ./moosedocs.py generate
+```
+- Build the MOOSE html pages
+```
+cd doc && ./moosedocs.py build --destination=htmldoc
+```
+- Build the doxgyen html pages
+```
+doxygen doc/doxygen/Doxyfile
+```
+- Commit changes.
+
+8) Create a pull request, detailing the changes you have made and reference your original issue. Creating a pull request will trigger our CI pipeline, which tests the build and runs tests in two environments. If you would like to test your changes in a different environment to your own, you may want to use our docker images (see section on docker above).
 
 Once a pull request has been opened we will review your code. We may require some changes, in which case you'll need to make some further commits. Once your code has been reviewd and approved, we will merge it into `main`.
 

@@ -11,8 +11,9 @@
 
 #include "ADDensity.h"
 
-// Derived ADDensity class which allows the original density
-// parameter to be returned
+/** \brief Derived ADDensity class which allows the original density
+parameter to be returned.
+*/
 class ADOpenMCDensity : public ADDensity
 {
 public:
@@ -20,6 +21,7 @@ public:
 
   ADOpenMCDensity(const InputParameters & params);
 
+  /// Return the starting density of the material (i.e. prior to deformation)
   const Real origDensity(){ return _initial_density; };
 
 };

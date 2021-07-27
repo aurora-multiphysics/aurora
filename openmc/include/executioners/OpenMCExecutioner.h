@@ -46,6 +46,7 @@ class OpenMCExecutioner;
 template <>
 InputParameters validParams<OpenMCExecutioner>();
 
+/// \brief Our bespoke Executioner class to perform OpenMC runs
 class OpenMCExecutioner : public Transient
 {
 public:
@@ -53,195 +54,232 @@ public:
 
   ~OpenMCExecutioner();
 
+  /** \brief Perform a full OpenMC run
+
+      1) Intialisation<br>
+      2) Run<br>
+      3) Post-processing of results<br>
+      4) Write output (standalone only)<br>
+   */
   virtual void execute() override;
 
 private:
 
-  // Helper struct to store information about filters
+  /// \brief Helper struct to store information about OpenMC tally filters
   struct FilterInfo{
-    int32_t index; //Global index
-    int32_t id; // Unique ID
-    int32_t stride; // Shape data for results array
-    size_t nbins; // Number of filter bins
-    std::string type; // Type of filter
+    /// Global index
+    int32_t index;
+    /// Unique ID
+    int32_t id;
+    /// Shape data for results array
+    int32_t stride;
+    /// Number of filter bins
+    size_t nbins;
+    /// Type of filter
+    std::string type;
   };
 
-  // Helper struct to store information about scores
+  /// \brief Helper struct to store information about OpenMC scores
   struct ScoreData {
-    // Name of the score to extract
+    /// Name of the score to extract
     std::string score_name;
-    // Name of the variable in which we will store the score mean
+    /// Name of the variable in which we will store the score mean
     std::string var_name;
-    // Name of the variable in which we will store the score std deviation
+    /// Name of the variable in which we will store the score std deviation
     std::string err_name;
-    // Switch to control if we save the error
+    /// Switch to control if we save the error
     bool saveErr;
-    // Factor by which we need to multiply results to get desired units
+    /// Factor by which we need to multiply results to get desired units
     double scale_factor;
-    // Index for the score in the tally
+    /// Index for the score in the tally
     int index;
   };
 
   // Methods
 
-  // Get the moab user object
+  /// Get the moab user object
   MoabUserObject& moab();
 
-  // Initialise structures to store information about scores
+  /// Initialise structures to store information about scores
   void initScoreData();
 
-  // Initialise MOAB/OpenMC
+  /// Initialise MOAB/OpenMC
   void initialize();
 
-  // Run OpenMC and get results
+  /// Run OpenMC and get results
   bool run();
 
-  // Pass results into FEProblem
+  /// Pass results into FEProblem
   bool processResults();
 
-  // Output the results
+  /// Output the results
   bool output();
 
-  // Update MOAB with any results from MOOSE
+  /// Update MOAB with any results from MOOSE
   void update();
 
-  // Initialise MOAB
+  /// Initialise MOAB
   bool initMOAB();
 
-  // Initialise OpenMC
+  /// Initialise OpenMC
   bool initOpenMC();
 
-  // Initialise material maps (either local map or UWUW)
+  /// Initialise material maps (either local map or UWUW)
   bool initMaterials();
 
-  // Set up map of names to ids
+  /// Set up map of names to ids
   bool initMatNames();
 
-  // Pass MOAB mesh into OpenMC and set up tallies with a mesh filter
+  /// Pass MOAB mesh into OpenMC and set up tallies with a mesh filter
   bool initMeshTallies();
 
-  // Return the openmc id of the material
+  /// Return the openmc id of the material
   bool getMatID(moab::EntityHandle vol_handle, int& mat_id);
 
-    // Update OpenMC
+  /// Update OpenMC
   bool updateOpenMC();
 
-  // Process Tallies from OpenMC
+  /// Process Tallies from OpenMC
   bool getResults(std::map<std::string,std::vector< double > > & var_results_by_elem);
-  // Set solution in FEProblem variable
+  /// Set solution in FEProblem variable
   bool setSolution(std::vector< double > & results_by_elem,
                    std::string var_name,
                    double scale_factor,
                    bool isErr);
 
   // Helper methods to extract tally results
+
+  /// Set information about OpenMC filters (IDs and strides)
   bool setFilterInfo(openmc::Tally& tally,
                      std::map<int32_t, FilterInfo>& filters_by_id,
                      int32_t& meshFilter,
                      int32_t& nFilterBins);
 
+  /// Given a 1D results vector bin index, return a filter bin index for the given filter
   int32_t getFilterBin(int32_t iResultBin, const FilterInfo & filter);
+  /// Given a 1D results vector bin index, return the set of filter bins index
   bool decomposeIntoFilterBins(int32_t iResultBin,
                                const std::map<int32_t, FilterInfo>& filters_by_id,
                                std::map<int32_t,int32_t>& filter_id_to_bin_index);
 
 
-  // clear some data in OpenMC
+  /// Clear some data in OpenMC
   bool resetOpenMC();
 
-  // Pass in mesh, new surfaces, setup metadata
+  /// Pass in mesh, new surfaces, setup metadata
   bool reloadDAGMC();
 
-  // Update materials
+  /// Update materials
   void updateMaterials();
+
+  /// Update materials' densities
   void updateMaterialDensities();
 
-  // Update mesh tallies
+  /// Update mesh tallies
   void updateMeshTallies();
 
-  // Set up OpenMC tallies
+  /// Set up OpenMC tallies
   void setupTallies(openmc::Filter* filter_ptr);
+
+  /// Set up an OpenMC tally
   void setupTally(int32_t& tally_id,
                   openmc::Filter* filter_ptr,
                   std::vector<ScoreData>& scores);
 
-  // Set up OpenMC cells, surfaces
+  /// Set up OpenMC cells
   bool setupCells();
+
+  /// Set up OpenMC surfaces
   bool setupSurfaces();
 
+  /// Set attributes of a DAGMC cell
   bool setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx);
+
+  /// Set attributes of a DAGMC surface
   bool setSurfAttrib(openmc::DAGSurface& surf,unsigned int index);
 
-  // Final openMC set up after geometery has been set.
+  /// Final openMC set up after geometery has been set.
   void completeSetup();
 
   // Data members
 
-  // constant to convert eV to joules
+  /// Constant to convert eV to joules
   static constexpr double eVinJoules = 1.60218e-19;
 
-  // Geometric dimensions
+  /// Constant for geometric volume dimension
   static constexpr int DIM_VOL = 3;
+
+  /// Constant for geometric surface dimension
   static constexpr int DIM_SURF = 2;
 
-  moab::DagMC* dagPtr; // Copy of the pointer to DAGMC
+  /// Copy of the pointer to DAGMC
+  moab::DagMC* dagPtr;
+  /// DAGMC Metadata object pointer
   std::unique_ptr<dagmcMetaData> dmdPtr;
+  /// DAGMC UWUW object pointer
   std::unique_ptr<UWUW> uwuwPtr;
 
-  // Record whether we set the FE Problem locally.
+  /// Record whether we set the FE Problem locally.
   bool setProblemLocal;
 
-  // Save whether initialised
+  /// Save whether initialised
   bool isInit;
 
-  // Save if we have updated the materials
+  /// Save if we have updated the materials
   bool matsUpdated;
 
-  // Save whether we have a UWUW material library
+  /// Save whether we have a UWUW material library
   bool useUWUW;
 
-  // Hold OpenMC error code
+  /// Hold OpenMC error code
   int openmc_err;
 
-  // Strength of fusion neutron source in neutrons/s
+  /// Strength of fusion neutron source in neutrons/s
   double source_strength;
 
-  // Map of OpenMC IDs of the tallies to list of score and variable names
+  /// Map of OpenMC IDs of the tallies to list of score and variable names
   std::map<int32_t, std::vector<ScoreData> > tally_ids_to_scores;
 
-  // Convenience map of mat name string to its id
+  /// Convenience map of mat name string to its id
   std::map<std::string,int32_t> mat_names_to_id;
 
-  // Convenience map of mat name string to its id
+  /// Convenience map of mat name string to its id
   std::map<int32_t,double> mat_id_to_density;
 
-  // Place to store graveyard entity handle
+  /// Place to store graveyard entity handle
   moab::EntityHandle graveyard;
 
-  // Switch to control if we should automatically add variables to FEProblem
+  /// Switch to control if we should automatically add variables to FEProblem
   bool add_variables;
 
-  // Switch to control whether openmc should launch child threads
+  /// Switch to control whether openmc should launch child threads
   bool launch_threads;
 
-  // Number of threads to use if launch_threads = true
+  /// Number of threads to use if launch_threads = true
   unsigned int n_threads;
 
-  // Switch to control whether dagmc output is written to file or not.
+  /// Switch to control whether dagmc output is written to file or not.
   bool redirect_dagout;
 
-  // Name of dagmc logfile
+  /// Name of dagmc logfile
   std::string dagmc_logname;
 
-  // Todo: how to deal with threads?
+  /// Todo: how to deal with threads?
   std::fstream dagmclog;
 
+  /// Performance timer for execution
   PerfID _execute_timer;
+  /// Performance timer for initialisation
   PerfID _init_timer;
+  /// Performance timer for MOAB initialisation
   PerfID _initmoab_timer;
+  /// Performance timer for OpenMC initialisation
   PerfID _initopenmc_timer;
+  /// Performance timer for OpenMC update between timesteps
   PerfID _updateopenmc_timer;
+  /// Performance timer for OpenMC runs
   PerfID _run_timer;
+  /// Performance timer for writing output in standalone mode
   PerfID _output_timer;
 
 };
