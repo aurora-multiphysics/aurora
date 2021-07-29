@@ -1,3 +1,4 @@
+
 //* This file is part of the MOOSE framework
 //* https://www.mooseframework.org
 //*
@@ -45,12 +46,12 @@ TEST_F(AuroraAppBasicTest, registryTest)
 
 }
 
-class MinimalInputTest : public AuroraAppInputTest{
+class AuroraMinimalInputTest : public AuroraAppInputTest{
 protected:
-  MinimalInputTest() : AuroraAppInputTest("minimal.i") {};
+  AuroraMinimalInputTest() : AuroraAppInputTest("minimal.i") {};
 };
 
-TEST_F(MinimalInputTest, readInput)
+TEST_F(AuroraMinimalInputTest, readInput)
 {
   ASSERT_FALSE(appIsNull);
 
@@ -59,9 +60,10 @@ TEST_F(MinimalInputTest, readInput)
 
 }
 
-class FullRunTest : public AuroraAppRunTest{
+class AuroraFullRunTest : public AuroraAppRunTest{
 protected:
-  FullRunTest() : AuroraAppRunTest("aurora.i") {};
+  AuroraFullRunTest() : AuroraAppRunTest("aurora.i") {
+  };
 
   void checkFullRun(std::string dagfile){
 
@@ -87,7 +89,6 @@ protected:
     openmcInputXMLFilesSrc.at(0) = "settings-deformed.xml";
 
     hasDisplaced = false;
-
   };
 
   virtual void SetUp() override {
@@ -136,7 +137,7 @@ protected:
 
 
 
-TEST_F(FullRunTest, UWUW)
+TEST_F(AuroraFullRunTest, UWUW)
 {
   ASSERT_FALSE(appIsNull);
 
@@ -144,7 +145,7 @@ TEST_F(FullRunTest, UWUW)
   checkFullRun(dagFile);
 }
 
-TEST_F(FullRunTest, Legacy)
+TEST_F(AuroraFullRunTest, Legacy)
 {
   ASSERT_FALSE(appIsNull);
 

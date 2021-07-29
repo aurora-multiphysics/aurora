@@ -117,9 +117,10 @@ class InputFileTest : public BasicTest {
 
  protected:
 
-  InputFileTest(std::string appName, std::string inputfile) :
+  InputFileTest(std::string appName, std::string inputfile,std::string inputdir) :
     BasicTest(appName),
     tol(1.e-9) {
+    inputdir_=inputdir;
     setInputFile(inputfile);
   };
 
@@ -127,7 +128,7 @@ class InputFileTest : public BasicTest {
     if(inputfile==""){
       throw std::logic_error("Input file string is empty");
     }
-    args+=" -i inputs/"+inputfile;
+    args+=" -i "+inputdir_+inputfile;
   };
 
   // Some file utility methods
@@ -138,7 +139,7 @@ class InputFileTest : public BasicTest {
 
   void fetchInputFile(std::string file, std::string newName=""){
 
-    std::string fileNow = "inputs/"+file;
+    std::string fileNow = inputdir_+file;
     ASSERT_TRUE(fileExists(fileNow));
 
     if(newName=="") newName=file;
@@ -188,14 +189,14 @@ class InputFileTest : public BasicTest {
 
   // Define a tolerance for double comparisons
   double tol;
-
+  std::string inputdir_;
 };
 
 class OpenMCRunTest : public InputFileTest {
  protected:
 
-  OpenMCRunTest(std::string appName, std::string inputfile) :
-    InputFileTest(appName,inputfile),
+  OpenMCRunTest(std::string appName, std::string inputfile,std::string inputdir) :
+    InputFileTest(appName,inputfile,inputdir),
     dagmcFilename("dagmc.h5m")
   {
     openmcInputXMLFiles.push_back("settings.xml");

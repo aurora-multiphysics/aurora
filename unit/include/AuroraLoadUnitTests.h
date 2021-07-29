@@ -9,19 +9,9 @@
 
 #pragma once
 
-#include "MooseApp.h"
+// Moose includes
+#include "Moose.h"
+#include "MooseInit.h"
+#include "AppFactory.h"
 
-class MooseUnitApp;
-
-template <>
-InputParameters validParams<MooseUnitApp>();
-
-class MooseUnitApp : public MooseApp
-{
-public:
-  MooseUnitApp(const InputParameters & parameters);
-  virtual ~MooseUnitApp();
-
-  static void registerAll(Factory & f, ActionFactory & af, Syntax & s);
-};
-
+extern bool AuroraUnitTestsLoaded();

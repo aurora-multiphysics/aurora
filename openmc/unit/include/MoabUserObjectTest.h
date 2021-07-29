@@ -1406,9 +1406,9 @@ protected:
 };
 
 
-class DeformedMeshTest : public MoabUserObjectTestBase {
+class MoabDeformedMeshTest : public MoabUserObjectTestBase {
 protected:
-  DeformedMeshTest() :
+  MoabDeformedMeshTest() :
     MoabUserObjectTestBase("thermal-expansion.i"),
     foundPP(false)
   {};

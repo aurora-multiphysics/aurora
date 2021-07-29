@@ -7,21 +7,10 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#pragma once
+#include "OpenMCAppLoadUnitTests.h"
+#include "OpenMCApp.h"
 
-#include "MooseApp.h"
-
-class MooseUnitApp;
-
-template <>
-InputParameters validParams<MooseUnitApp>();
-
-class MooseUnitApp : public MooseApp
-{
-public:
-  MooseUnitApp(const InputParameters & parameters);
-  virtual ~MooseUnitApp();
-
-  static void registerAll(Factory & f, ActionFactory & af, Syntax & s);
+bool OpenMCAppUnitTestsLoaded() {
+  registerApp(OpenMCApp);
+  return true;
 };
-
