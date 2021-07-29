@@ -19,10 +19,14 @@ ARG build_git_sha="main"
 # Should we generate a coverage report
 ARG test_coverage=false
 
+# Coverage repo token
+ARG coveralls_token=""
+
 # Install pip and gcovr if we want test coverage
 RUN if "$test_coverage" ; then \
-       apt install -y python3-pip && \
-       pip install gcovr; \
+       apt-get install -y python3-pip && \
+       pip install cpp-coveralls && \
+       pip install coveralls; \
     fi
 
 # Build
@@ -44,9 +48,10 @@ RUN if "$test_coverage" ; then \
     make -j"$compile_cores" && \
     ./run_tests
 
-# Generate test coverage report using gcovr (nice summary printout and json report)
+# Generate test coverage report using coveralls and upload
 RUN if "$test_coverage" ; then \
+       export COVERALLS_REPO_TOKEN="$coveralls_token" && \
        cd /home/aurora/ && \
-       gcovr -s build/unity_src/.libs/ openmc/build/unity_src/.libs/ && \
-       gcovr --coveralls-pretty build/unity_src/.libs/ openmc/build/unity_src/.libs/  > coverage-report.json; \
+       cpp-coveralls -i src/ -i include/ -i openmc/src/ -i openmc/include/ --exclude-pattern "/usr/*" --dump cpp_cov.json && \
+       coveralls --merge=cpp_cov.json; \
     fi
