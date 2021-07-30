@@ -22,6 +22,9 @@ ARG test_coverage=false
 # Coverage repo token
 ARG coveralls_token=""
 
+# Branch name for coveralls
+ARG coveralls_branch=""
+
 # Install pip and gcovr if we want test coverage
 RUN if "$test_coverage" ; then \
        apt-get install -y python3-pip && \
@@ -51,6 +54,7 @@ RUN if "$test_coverage" ; then \
 # Generate test coverage report using coveralls and upload
 RUN if "$test_coverage" ; then \
        export COVERALLS_REPO_TOKEN="$coveralls_token" && \
+       export CI_BRANCH="$coveralls_branch" && \
        cd /home/aurora/ && \
        cpp-coveralls -i src/ -i include/ -i openmc/src/ -i openmc/include/ --exclude-pattern "/usr/*" --dump cpp_cov.json && \
        coveralls --merge=cpp_cov.json; \
