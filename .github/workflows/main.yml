@@ -3,7 +3,6 @@ on:
   push:
     branches:
        - main
-       - devel
   pull_request:
     branches:
        - main
@@ -11,9 +10,10 @@ on:
 jobs:
   docker-build-test-ubuntu:
     runs-on: ubuntu-latest
-    name: BuildTestUbuntu
+    name: BuildTestCoverallsUbuntu
     env:
       PRCOMMITSHA : ${{ github.event.pull_request.head.sha }}
+      COVERALLS_TOKEN : ${{ secrets.COVERALLS_TOKEN }}
     steps:
       # First check out the repository to get the docker file
       - name: Checkout
@@ -23,10 +23,10 @@ jobs:
         run: echo $PRCOMMITSHA
       - name: DockerBuildTestPR
         if:  ${{ github.event.pull_request.head.sha != '' }}
-        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$PRCOMMITSHA docker/aurora-ubuntu/
+        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$PRCOMMITSHA docker/aurora-ubuntu/ --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN
       - name:  DockerBuildTestPush
         if:  ${{ github.event.pull_request.head.sha == '' }}
-        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$GITHUB_SHA docker/aurora-ubuntu/
+        run: docker build -t ci-aurora-ubuntu --build-arg build_git_sha=$GITHUB_SHA docker/aurora-ubuntu/  --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN
 
   docker-build-test-fedora:
     runs-on: ubuntu-latest
