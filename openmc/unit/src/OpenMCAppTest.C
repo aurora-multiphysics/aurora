@@ -21,12 +21,12 @@ TEST_F(OpenMCAppBasicTest, registryTest)
   checkKnownObjects(knownObjNames);
 }
 
-class MinimalInputTest : public OpenMCAppInputTest{
+class OpenMCMinimalInputTest : public OpenMCAppInputTest{
 protected:
-  MinimalInputTest() : OpenMCAppInputTest("minimal.i") {};
+  OpenMCMinimalInputTest() : OpenMCAppInputTest("minimal.i") {};
 };
 
-TEST_F(MinimalInputTest, readInput)
+TEST_F(OpenMCMinimalInputTest, readInput)
 {
   ASSERT_FALSE(appIsNull);
 
@@ -35,9 +35,9 @@ TEST_F(MinimalInputTest, readInput)
 
 }
 
-class FullRunTest : public OpenMCAppRunTest{
+class OpenMCFullRunTest : public OpenMCAppRunTest{
 protected:
-  FullRunTest() : OpenMCAppRunTest("executioner.i") {};
+  OpenMCFullRunTest() : OpenMCAppRunTest("executioner.i") {};
 
   void checkFullRun(std::string dagfile){
 
@@ -50,7 +50,7 @@ protected:
 
 };
 
-TEST_F(FullRunTest, UWUW)
+TEST_F(OpenMCFullRunTest, UWUW)
 {
   ASSERT_FALSE(appIsNull);
 
@@ -58,7 +58,7 @@ TEST_F(FullRunTest, UWUW)
   checkFullRun(dagFile);
 }
 
-TEST_F(FullRunTest, Legacy)
+TEST_F(OpenMCFullRunTest, Legacy)
 {
   ASSERT_FALSE(appIsNull);
 

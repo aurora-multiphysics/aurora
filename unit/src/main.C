@@ -7,15 +7,8 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "MooseUnitApp.h"
-#include "AuroraApp.h"
+#include "AuroraLoadUnitTests.h"
 #include "gtest/gtest.h"
-
-// Moose includes
-#include "Moose.h"
-#include "MooseInit.h"
-#include "AppFactory.h"
-
 #include <fstream>
 #include <string>
 
@@ -32,9 +25,9 @@ main(int argc, char ** argv)
   // This line is annoyingly needed just to force load the shared library,
   // otherwise gtest doesn't find the tests
   // TODO: is there a way to get this to happen automatically?
-  registerApp(MooseUnitApp);
+  if(!AuroraUnitTestsLoaded()) return EXIT_FAILURE;
 
-  registerApp(AuroraApp);
+  Moose::_throw_on_error = true;
 
   return RUN_ALL_TESTS();
 }

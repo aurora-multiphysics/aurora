@@ -718,7 +718,7 @@ TEST_F(FindDensitySurfsUnitTest, checkMetadata)
 }
 
 // Test to check we are using the deformed mesh if there is one
-TEST_F(DeformedMeshTest, checkDeformedMesh)
+TEST_F(MoabDeformedMeshTest, checkDeformedMesh)
 {
   ASSERT_FALSE(appIsNull);
   ASSERT_TRUE(foundMOAB);
