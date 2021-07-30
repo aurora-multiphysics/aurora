@@ -20,13 +20,8 @@ RUN cd /home && \
     cd data && \
     tar xzvf endfb71_hdf5.tgz && \
     export OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml && \
-    cd ../openmc && \
+    cd ../openmc/unit && \
     make -j"$compile_cores" && \
-    cd unit && \
-    make -j"$compile_cores" && \
-    ./run_tests && \
-    cd ../../ && \
-    make -j"$compile_cores" && \
-    cd unit && \
+    cd ../../unit && \
     make -j"$compile_cores" && \
     ./run_tests
