@@ -2,7 +2,7 @@ AURORA
 =====
 
 [![GitHub Actions build status](https://github.com/aurora-multiphysics/aurora/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/aurora-multiphysics/aurora/actions/workflows/main.yml)
-[![Coverage Status](https://coveralls.io/repos/github/aurora-multiphysics/aurora/badge.svg?branch=HEAD)](https://coveralls.io/github/aurora-multiphysics/aurora?branch=HEAD)
+[![Coverage Status](https://coveralls.io/repos/github/aurora-multiphysics/aurora/badge.svg)](https://coveralls.io/github/aurora-multiphysics/aurora)
 
 The [name](https://en.wikipedia.org/wiki/Aurora_(mythology)) of this application is based on the following acronym:
 
