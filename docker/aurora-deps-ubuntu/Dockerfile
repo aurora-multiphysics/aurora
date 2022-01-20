@@ -5,7 +5,7 @@
 ARG compile_cores=1
 
 # Get MOOSE image
-FROM helenbrooks/moose-ubuntu
+FROM helenbrooks/moose-ubuntu:2021-04
 
 # Get MOAB / Embree / DagMC dependencies
 RUN apt-get update && apt-get -y install \
@@ -45,12 +45,13 @@ RUN cd /home/dagmc-bld && \
     -DCMAKE_C_COMPILER=$CC \
     -DEMBREE_ISPC_SUPPORT=0 && \
     make -j"$compile_cores" && \
-    make install 
+    make install
 
 # Build DoubleDown
 RUN cd /home/dagmc-bld && \
     git clone https://github.com/pshriwise/double-down && \
     cd double-down && \
+    git checkout v1.0.0 && \
     mkdir build && \
     cd build && \
     cmake ../ \
@@ -59,14 +60,14 @@ RUN cd /home/dagmc-bld && \
     -DCMAKE_INSTALL_PREFIX=/home/double-down && \
     make -j"$compile_cores" && \
     make install
-    
+
 # Build DagMC
 RUN cd /home/dagmc-bld && \
     mkdir dagmc && \
     cd dagmc && \
     git clone https://github.com/svalinn/DAGMC && \
     cd DAGMC && \
-    git checkout develop && \
+    git checkout 0d07a744178af6275959c745fa4362d8b4d13559 && \
     cd ../ && \
     mkdir build && \
     cd build && \
@@ -95,7 +96,7 @@ RUN mkdir /home/openmc-bld && \
     cd /home/openmc-bld && \
     git clone https://github.com/openmc-dev/openmc.git && \
     cd openmc && \
-    git checkout develop && \
+    git checkout b62708f911d05e269e5c3083287e70d050ed35f9 && \
     cd ../ && \
     mkdir build && \
     cd build && \
@@ -109,5 +110,3 @@ RUN mkdir /home/openmc-bld && \
 
 ENV PATH=$PATH:/home/moab/bin:/home/openmc/bin:/home/dagmc/bin
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/moab/lib:/home/dagmc/lib
-
-
