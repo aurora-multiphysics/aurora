@@ -8,7 +8,7 @@
 # docker build -t aurora-ubuntu --build-arg test_coverage=true .
 
 # Get MOOSE image with aurora deps
-FROM helenbrooks/aurora-deps-ubuntu:v.0.2.0
+FROM helenbrooks/aurora-deps-ubuntu:v.0.2.1
 
 # By default one core is used to compile
 ARG compile_cores=1
