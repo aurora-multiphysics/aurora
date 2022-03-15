@@ -74,9 +74,9 @@ OpenMCExecutioner::~OpenMCExecutioner()
   if(!dagmclog.is_open()){
     dagmclog.close();
   }
-  if(openmc::model::DAG!=nullptr) {
-    openmc::model::DAG = nullptr;
-  }
+  // if(openmc::model::DAG!=nullptr) {
+  //   openmc::model::DAG = nullptr;
+  // }
   openmc_finalize();
 }
 
@@ -567,20 +567,20 @@ OpenMCExecutioner::updateOpenMC()
     return false;
   }
 
-  if(!reloadDAGMC()){
-    std::cerr<<"Failed to load data into DagMC"<<std::endl;
-    return false;
-  }
+  // if(!reloadDAGMC()){
+  //   std::cerr<<"Failed to load data into DagMC"<<std::endl;
+  //   return false;
+  // }
 
-  if(!setupCells()){
-    std::cerr<<"Failed to set up cells in OpenMC"<<std::endl;
-    return false;
-  }
+  // if(!setupCells()){
+  //   std::cerr<<"Failed to set up cells in OpenMC"<<std::endl;
+  //   return false;
+  // }
 
-  if(!setupSurfaces()){
-    std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
-    return false;
-  }
+  // if(!setupSurfaces()){
+  //   std::cerr<<"Failed to set up surfaces in OpenMC"<<std::endl;
+  //   return false;
+  // }
 
   // Final OpenMC setup after geometry is updated.
   completeSetup();
@@ -873,72 +873,72 @@ OpenMCExecutioner::resetOpenMC()
 }
 
 
-bool
-OpenMCExecutioner::reloadDAGMC()
-{
-  moab::ErrorCode rval;
+// bool
+// OpenMCExecutioner::reloadDAGMC()
+// {
+//   moab::ErrorCode rval;
 
-  // Backup streambuffer of std out if redirecting
-  std::streambuf* stream_buffer_stdout(nullptr);
+//   // Backup streambuffer of std out if redirecting
+//   std::streambuf* stream_buffer_stdout(nullptr);
 
-  if(redirect_dagout){
-    // Don't reopen log file
-    if(!dagmclog.is_open()){
-      if(dagmc_logname!=""){
-        // Open our log file
-        dagmclog.open(dagmc_logname, std::ios::out);
-      }
-      // Did we successfully open a file?
-      if(!dagmclog.is_open()){
-        std::cerr<<"Failed to open dagmc log file: "<< dagmc_logname<< std::endl;
-        return false;
-      }
-      else{
-        std::cout<<"Redirecting DagMC output to file: "<< dagmc_logname<< std::endl;
-      }
-    }
-    // Check if any previous io operations failed
-    if(dagmclog.bad()){
-      std::cerr<<"Bad bit detected in fstream to dag log  file"<< dagmc_logname<< std::endl;
-      return false;
-    }
+//   if(redirect_dagout){
+//     // Don't reopen log file
+//     if(!dagmclog.is_open()){
+//       if(dagmc_logname!=""){
+//         // Open our log file
+//         dagmclog.open(dagmc_logname, std::ios::out);
+//       }
+//       // Did we successfully open a file?
+//       if(!dagmclog.is_open()){
+//         std::cerr<<"Failed to open dagmc log file: "<< dagmc_logname<< std::endl;
+//         return false;
+//       }
+//       else{
+//         std::cout<<"Redirecting DagMC output to file: "<< dagmc_logname<< std::endl;
+//       }
+//     }
+//     // Check if any previous io operations failed
+//     if(dagmclog.bad()){
+//       std::cerr<<"Bad bit detected in fstream to dag log  file"<< dagmc_logname<< std::endl;
+//       return false;
+//     }
 
-    // Backup streambuffer of std out
-    stream_buffer_stdout = std::cout.rdbuf();
+//     // Backup streambuffer of std out
+//     stream_buffer_stdout = std::cout.rdbuf();
 
-    // Get the streambuffer of the file
-    std::streambuf* stream_buffer_file = dagmclog.rdbuf();
+//     // Get the streambuffer of the file
+//     std::streambuf* stream_buffer_file = dagmclog.rdbuf();
 
-    // Redirect cout to file
-    std::cout.rdbuf(stream_buffer_file);
-  }
+//     // Redirect cout to file
+//     std::cout.rdbuf(stream_buffer_file);
+//   }
 
-  // Delete old data
-  openmc::free_memory_dagmc();
+//   // Delete old data
+//   openmc::free_memory_dagmc();
 
-  // Create a new DagMC, but pass in our MOAB interface
-  dagPtr = new moab::DagMC(moab().moabPtr);
-  openmc::model::DAG = dagPtr;
+//   // Create a new DagMC, but pass in our MOAB interface
+//   dagPtr = new moab::DagMC(moab().moabPtr);
+//   openmc::model::DAG = dagPtr;
 
-  // Set up geometry in DagMC from already-loaded mesh
-  rval = dagPtr->load_existing_contents();
-  if(rval!= moab::MB_SUCCESS) return false;
+//   // Set up geometry in DagMC from already-loaded mesh
+//   rval = dagPtr->load_existing_contents();
+//   if(rval!= moab::MB_SUCCESS) return false;
 
-  // Initialize acceleration data structures
-  rval = dagPtr->init_OBBTree();
-  if(rval!= moab::MB_SUCCESS) return false;
+//   // Initialize acceleration data structures
+//   rval = dagPtr->init_OBBTree();
+//   if(rval!= moab::MB_SUCCESS) return false;
 
-  // Parse model metadata
-  dmdPtr = std::make_unique<dagmcMetaData>(dagPtr, false, false);
-  dmdPtr->load_property_data();
+//   // Parse model metadata
+//   dmdPtr = std::make_unique<dagmcMetaData>(dagPtr, false, false);
+//   dmdPtr->load_property_data();
 
-  if(redirect_dagout && stream_buffer_stdout!= nullptr){
-    // Reset cout streambuffer
-    std::cout.rdbuf(stream_buffer_stdout);
-  }
+//   if(redirect_dagout && stream_buffer_stdout!= nullptr){
+//     // Reset cout streambuffer
+//     std::cout.rdbuf(stream_buffer_stdout);
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
 void
 OpenMCExecutioner::updateMaterials()
@@ -994,9 +994,9 @@ OpenMCExecutioner::updateMaterials()
   // Get the original xml string
   pugi::xml_document doc;
   if(useUWUW){
-    bool found_dagmc_mats = openmc::read_uwuw_materials(doc);
-    if(!found_dagmc_mats)
-      mooseError("Failed to extract UWUW material xml string");
+    //bool found_dagmc_mats = openmc::read_uwuw_materials(doc);
+    //if(!found_dagmc_mats)
+    mooseError("Failed to extract UWUW material xml string");
   }
   else{
     std::string filename = openmc::settings::path_input + "materials.xml";
@@ -1121,99 +1121,99 @@ OpenMCExecutioner::updateMeshTallies()
   }
 }
 
-bool
-OpenMCExecutioner::setupCells()
-{
+// bool
+// OpenMCExecutioner::setupCells()
+// {
 
-  // Clear existing cell data
-  openmc::model::cells.clear();
-  openmc::model::cell_map.clear();
+//   // Clear existing cell data
+//   openmc::model::cells.clear();
+//   openmc::model::cell_map.clear();
 
-  // Universe ID for DAGMC (always zero)
-  int32_t dagmc_univ_id = 0;
+//   // Universe ID for DAGMC (always zero)
+//   int32_t dagmc_univ_id = 0;
 
-  // Create universe if required
-  auto it = openmc::model::universe_map.find(dagmc_univ_id);
-  if (it == openmc::model::universe_map.end()) {
-    openmc::model::universes.push_back(std::make_unique<openmc::Universe>());
-    openmc::model::universes.back()->id_ = dagmc_univ_id;
-    openmc::model::universe_map[dagmc_univ_id] = openmc::model::universes.size() - 1;
-  }
-  // Get reference to dagmc universe
-  int32_t uID = openmc::model::universe_map[dagmc_univ_id];
-  openmc::Universe& universe = *(openmc::model::universes.at(uID));
+//   // Create universe if required
+//   auto it = openmc::model::universe_map.find(dagmc_univ_id);
+//   if (it == openmc::model::universe_map.end()) {
+//     openmc::model::universes.push_back(std::make_unique<openmc::Universe>());
+//     openmc::model::universes.back()->id_ = dagmc_univ_id;
+//     openmc::model::universe_map[dagmc_univ_id] = openmc::model::universes.size() - 1;
+//   }
+//   // Get reference to dagmc universe
+//   int32_t uID = openmc::model::universe_map[dagmc_univ_id];
+//   openmc::Universe& universe = *(openmc::model::universes.at(uID));
 
-  // Clear prior universe cell data
-  universe.cells_.clear();
+//   // Clear prior universe cell data
+//   universe.cells_.clear();
 
-  // Get number of volumes from DAGMC
-  unsigned int n_cells = dagPtr->num_entities(DIM_VOL);
+//   // Get number of volumes from DAGMC
+//   unsigned int n_cells = dagPtr->num_entities(DIM_VOL);
 
-  // Loop over the cells
-  for (unsigned int icell = 0; icell < n_cells; icell++) {
+//   // Loop over the cells
+//   for (unsigned int icell = 0; icell < n_cells; icell++) {
 
-    // DagMC indices are offset by one (convention stemming from MCNP)
-    unsigned int index = icell+1;
+//     // DagMC indices are offset by one (convention stemming from MCNP)
+//     unsigned int index = icell+1;
 
-    // Create new cell
-    openmc::DAGCell* cell = new openmc::DAGCell();
-    if(!setCellAttrib(*cell,index,dagmc_univ_id)){
-      delete cell;
-      return false;
-    }
+//     // Create new cell
+//     openmc::DAGCell* cell = new openmc::DAGCell();
+//     if(!setCellAttrib(*cell,index,dagmc_univ_id)){
+//       delete cell;
+//       return false;
+//     }
 
-    // Save cell
-    openmc::model::cell_map[cell->id_] = icell;
-    openmc::model::cells.emplace_back(cell);
-    universe.cells_.push_back(icell);
+//     // Save cell
+//     openmc::model::cell_map[cell->id_] = icell;
+//     openmc::model::cells.emplace_back(cell);
+//     universe.cells_.push_back(icell);
 
-  }
+//   }
 
-  // Allocate the cell overlap count if necessary
-  if (openmc::settings::check_overlaps) {
-    openmc::model::overlap_check_count.resize(openmc::model::cells.size(), 0);
-  }
+//   // Allocate the cell overlap count if necessary
+//   if (openmc::settings::check_overlaps) {
+//     openmc::model::overlap_check_count.resize(openmc::model::cells.size(), 0);
+//   }
 
-  if (!graveyard) {
-    std::cerr<<"No graveyard volume found in the DagMC model."<<std::endl;
-    return false;
+//   if (!graveyard) {
+//     std::cerr<<"No graveyard volume found in the DagMC model."<<std::endl;
+//     return false;
 
-  }
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
-bool
-OpenMCExecutioner::setupSurfaces()
-{
+// bool
+// OpenMCExecutioner::setupSurfaces()
+// {
 
-  // Clear existing surface data
-  openmc::model::surfaces.clear();
-  openmc::model::surface_map.clear();
+//   // Clear existing surface data
+//   openmc::model::surfaces.clear();
+//   openmc::model::surface_map.clear();
 
-  // Get number of surfaces from DAGMC
-  unsigned int n_surfaces = dagPtr->num_entities(DIM_SURF);
+//   // Get number of surfaces from DAGMC
+//   unsigned int n_surfaces = dagPtr->num_entities(DIM_SURF);
 
-  // Loop over the surfaces
-  for (unsigned int iSurf = 0; iSurf < n_surfaces; iSurf++) {
+//   // Loop over the surfaces
+//   for (unsigned int iSurf = 0; iSurf < n_surfaces; iSurf++) {
 
-    // DagMC indices are offset by one (convention stemming from MCNP)
-    unsigned int index = iSurf+1;
+//     // DagMC indices are offset by one (convention stemming from MCNP)
+//     unsigned int index = iSurf+1;
 
-    // Create new surface
-    openmc::DAGSurface* surf = new openmc::DAGSurface();
-    if(!setSurfAttrib(*surf,index)){
-      delete surf;
-      return false;
-    }
+//     // Create new surface
+//     openmc::DAGSurface* surf = new openmc::DAGSurface();
+//     if(!setSurfAttrib(*surf,index)){
+//       delete surf;
+//       return false;
+//     }
 
-    // Add to global array and map
-    openmc::model::surface_map[surf->id_] = iSurf;
-    openmc::model::surfaces.emplace_back(surf);
-  }
+//     // Add to global array and map
+//     openmc::model::surface_map[surf->id_] = iSurf;
+//     openmc::model::surfaces.emplace_back(surf);
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
 void
 OpenMCExecutioner::completeSetup()
@@ -1234,81 +1234,81 @@ OpenMCExecutioner::completeSetup()
 
 }
 
-bool
-OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_id)
-{
+// bool
+// OpenMCExecutioner::setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_id)
+// {
 
-  cell.dag_index_ = index;
-  cell.id_ = dagPtr->id_by_index(DIM_VOL, index);
-  cell.dagmc_ptr_ = dagPtr;
-  cell.universe_ = universe_id;
-  cell.fill_ = openmc::C_NONE;
+//   cell.dag_index_ = index;
+//   cell.id_ = dagPtr->id_by_index(DIM_VOL, index);
+//   cell.dagmc_ptr_ = dagPtr;
+//   cell.universe_ = universe_id;
+//   cell.fill_ = openmc::C_NONE;
 
-  // Get the MOAB handle
-  moab::EntityHandle vol_handle= dagPtr->entity_by_index(DIM_VOL, index);
+//   // Get the MOAB handle
+//   moab::EntityHandle vol_handle= dagPtr->entity_by_index(DIM_VOL, index);
 
-  // Set the material ID
-  int mat_id;
-  if(getMatID(vol_handle, mat_id)){
-    cell.material_.push_back(mat_id);
-  }
-  else{
-    std::cerr<<"Could not set material for cell "<< cell.id_<<std::endl;
-    return false;
-  }
+//   // Set the material ID
+//   int mat_id;
+//   if(getMatID(vol_handle, mat_id)){
+//     cell.material_.push_back(mat_id);
+//   }
+//   else{
+//     std::cerr<<"Could not set material for cell "<< cell.id_<<std::endl;
+//     return false;
+//   }
 
-  // Set the cell temperature
-  if (cell.material_[0] != openmc::MATERIAL_VOID){
-    //Retrieve the binned temperature data
-    double temp = moab().getTemperature(vol_handle);
-    cell.sqrtkT_.push_back(std::sqrt(openmc::K_BOLTZMANN * temp));
-  }
+//   // Set the cell temperature
+//   if (cell.material_[0] != openmc::MATERIAL_VOID){
+//     //Retrieve the binned temperature data
+//     double temp = moab().getTemperature(vol_handle);
+//     cell.sqrtkT_.push_back(std::sqrt(openmc::K_BOLTZMANN * temp));
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
-bool
-OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
-{
-  moab::EntityHandle surf_handle = dagPtr->entity_by_index(DIM_SURF,index);
+// bool
+// OpenMCExecutioner::setSurfAttrib(openmc::DAGSurface& surf,unsigned int index)
+// {
+//   moab::EntityHandle surf_handle = dagPtr->entity_by_index(DIM_SURF,index);
 
-  surf.dag_index_ = index;
-  surf.id_ = dagPtr->id_by_index(DIM_SURF, surf.dag_index_);
-  surf.dagmc_ptr_ = dagPtr;
+//   surf.dag_index_ = index;
+//   surf.id_ = dagPtr->id_by_index(DIM_SURF, surf.dag_index_);
+//   surf.dagmc_ptr_ = dagPtr;
 
-  // set BCs
-  std::string bc_value = dmdPtr->get_surface_property("boundary", surf_handle);
-  openmc::to_lower(bc_value);
+//   // set BCs
+//   std::string bc_value = dmdPtr->get_surface_property("boundary", surf_handle);
+//   openmc::to_lower(bc_value);
 
-  if (bc_value.empty() || bc_value == "transmit" || bc_value == "transmission") {
-    // Leave the bc_ a nullptr
-  } else if (bc_value == "vacuum") {
-    surf.bc_ = std::make_shared<openmc::VacuumBC>();
-  } else if (bc_value == "reflective" || bc_value == "reflect" || bc_value == "reflecting") {
-    surf.bc_ = std::make_shared<openmc::ReflectiveBC>();
-  } else if (bc_value == "white") {
-    std::cerr<<"White boundary condition not supported in DAGMC."<<std::endl;
-    return false;
-  } else if (bc_value == "periodic") {
-    std::cerr<<"Periodic boundary condition not supported in DAGMC."<<std::endl;
-    return false;
-  } else {
-    std::cerr<<"Unknown boundary condition "<<bc_value
-             <<" specified on surface "
-             << surf.id_<<std::endl;
-    return false;
-  }
+//   if (bc_value.empty() || bc_value == "transmit" || bc_value == "transmission") {
+//     // Leave the bc_ a nullptr
+//   } else if (bc_value == "vacuum") {
+//     surf.bc_ = std::make_shared<openmc::VacuumBC>();
+//   } else if (bc_value == "reflective" || bc_value == "reflect" || bc_value == "reflecting") {
+//     surf.bc_ = std::make_shared<openmc::ReflectiveBC>();
+//   } else if (bc_value == "white") {
+//     std::cerr<<"White boundary condition not supported in DAGMC."<<std::endl;
+//     return false;
+//   } else if (bc_value == "periodic") {
+//     std::cerr<<"Periodic boundary condition not supported in DAGMC."<<std::endl;
+//     return false;
+//   } else {
+//     std::cerr<<"Unknown boundary condition "<<bc_value
+//              <<" specified on surface "
+//              << surf.id_<<std::endl;
+//     return false;
+//   }
 
-  // graveyard check
-  moab::Range parent_vols;
-  moab::ErrorCode rval = dagPtr->moab_instance()->get_parent_meshsets(surf_handle, parent_vols);
-  if(rval!=moab::MB_SUCCESS) return false;
+//   // graveyard check
+//   moab::Range parent_vols;
+//   moab::ErrorCode rval = dagPtr->moab_instance()->get_parent_meshsets(surf_handle, parent_vols);
+//   if(rval!=moab::MB_SUCCESS) return false;
 
-  // Check if this surface belongs to the graveyard
-  if (graveyard && parent_vols.find(graveyard) != parent_vols.end()) {
-    // Set graveyard surface's bcs to vacuum
-    surf.bc_ = std::make_shared<openmc::VacuumBC>();
-  }
+//   // Check if this surface belongs to the graveyard
+//   if (graveyard && parent_vols.find(graveyard) != parent_vols.end()) {
+//     // Set graveyard surface's bcs to vacuum
+//     surf.bc_ = std::make_shared<openmc::VacuumBC>();
+//   }
 
-  return true;
-}
+//   return true;
+// }

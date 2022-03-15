@@ -167,7 +167,7 @@ private:
   bool resetOpenMC();
 
   /// Pass in mesh, new surfaces, setup metadata
-  bool reloadDAGMC();
+  //bool reloadDAGMC();
 
   /// Update materials
   void updateMaterials();
@@ -187,16 +187,16 @@ private:
                   std::vector<ScoreData>& scores);
 
   /// Set up OpenMC cells
-  bool setupCells();
+  //bool setupCells();
 
   /// Set up OpenMC surfaces
-  bool setupSurfaces();
+  //bool setupSurfaces();
 
   /// Set attributes of a DAGMC cell
-  bool setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx);
+  //bool setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx);
 
   /// Set attributes of a DAGMC surface
-  bool setSurfAttrib(openmc::DAGSurface& surf,unsigned int index);
+  // bool setSurfAttrib(openmc::DAGSurface& surf,unsigned int index);
 
   /// Final openMC set up after geometery has been set.
   void completeSetup();
