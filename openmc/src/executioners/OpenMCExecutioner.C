@@ -71,9 +71,9 @@ OpenMCExecutioner::~OpenMCExecutioner()
   // Close any open log files
   // To-do : what happens if exception is thrown?
   // Will the file still close safely?
-  if(!dagmclog.is_open()){
-    dagmclog.close();
-  }
+  // if(!dagmclog.is_open()){
+  //   dagmclog.close();
+  // }
   // if(openmc::model::DAG!=nullptr) {
   //   openmc::model::DAG = nullptr;
   // }

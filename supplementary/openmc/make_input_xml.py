@@ -3,8 +3,9 @@
 from settings import *
 
 def setupInput( ):
-    
+
+    createMaterials()
     createSettings()
-    createTallies("",False,False)
+    createGeometry()
 
 setupInput()
