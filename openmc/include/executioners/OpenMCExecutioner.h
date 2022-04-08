@@ -166,8 +166,11 @@ private:
   /// Clear some data in OpenMC
   bool resetOpenMC();
 
-  /// Pass in mesh, new surfaces, setup metadata
-  //bool reloadDAGMC();
+  /// Update DAGMC with reset MOAB interface
+  bool reloadDAGMC();
+
+  /// Update DAGMC universe in OpenMC
+  void updateDAGUniverse();
 
   /// Update materials
   void updateMaterials();
@@ -213,7 +216,7 @@ private:
   static constexpr int DIM_SURF = 2;
 
   /// Copy of the pointer to DAGMC
-  moab::DagMC* dagPtr;
+  std::shared_ptr<moab::DagMC> dagPtr;
   /// DAGMC Metadata object pointer
   std::unique_ptr<dagmcMetaData> dmdPtr;
   /// DAGMC UWUW object pointer

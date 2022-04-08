@@ -567,10 +567,10 @@ OpenMCExecutioner::updateOpenMC()
     return false;
   }
 
-  // if(!reloadDAGMC()){
-  //   std::cerr<<"Failed to load data into DagMC"<<std::endl;
-  //   return false;
-  // }
+  if(!reloadDAGMC()){
+    std::cerr<<"Failed to load data into DagMC"<<std::endl;
+    return false;
+  }
 
   // if(!setupCells()){
   //   std::cerr<<"Failed to set up cells in OpenMC"<<std::endl;
@@ -873,71 +873,74 @@ OpenMCExecutioner::resetOpenMC()
 }
 
 
-// bool
-// OpenMCExecutioner::reloadDAGMC()
+bool
+OpenMCExecutioner::reloadDAGMC()
+{
+  moab::ErrorCode rval;
+
+  // Backup streambuffer of std out if redirecting
+  std::streambuf* stream_buffer_stdout(nullptr);
+
+  if(redirect_dagout){
+    // Don't reopen log file
+    if(!dagmclog.is_open()){
+      if(dagmc_logname!=""){
+        // Open our log file
+        dagmclog.open(dagmc_logname, std::ios::out);
+      }
+      // Did we successfully open a file?
+      if(!dagmclog.is_open()){
+        std::cerr<<"Failed to open dagmc log file: "<< dagmc_logname<< std::endl;
+        return false;
+      }
+      else{
+        std::cout<<"Redirecting DagMC output to file: "<< dagmc_logname<< std::endl;
+      }
+    }
+    // Check if any previous io operations failed
+    if(dagmclog.bad()){
+      std::cerr<<"Bad bit detected in fstream to dag log  file"<< dagmc_logname<< std::endl;
+      return false;
+    }
+
+    // Backup streambuffer of std out
+    stream_buffer_stdout = std::cout.rdbuf();
+
+    // Get the streambuffer of the file
+    std::streambuf* stream_buffer_file = dagmclog.rdbuf();
+
+    // Redirect cout to file
+    std::cout.rdbuf(stream_buffer_file);
+  }
+
+  // Create a new DagMC, but pass in our MOAB interface
+  dagPtr.reset(new moab::DagMC(moab().moabPtr));
+
+  // Set up geometry in DagMC from already-loaded mesh
+  rval = dagPtr->load_existing_contents();
+  if(rval!= moab::MB_SUCCESS) return false;
+
+  // Initialize acceleration data structures
+  rval = dagPtr->init_OBBTree();
+  if(rval!= moab::MB_SUCCESS) return false;
+
+  // Parse model metadata
+  dmdPtr = std::make_unique<dagmcMetaData>(dagPtr.get(), false, false);
+  dmdPtr->load_property_data();
+
+  if(redirect_dagout && stream_buffer_stdout!= nullptr){
+    // Reset cout streambuffer
+    std::cout.rdbuf(stream_buffer_stdout);
+  }
+
+  return true;
+}
+
+// void
+// OpenMCExecutioner::updateDAGUniverse()
 // {
-//   moab::ErrorCode rval;
-
-//   // Backup streambuffer of std out if redirecting
-//   std::streambuf* stream_buffer_stdout(nullptr);
-
-//   if(redirect_dagout){
-//     // Don't reopen log file
-//     if(!dagmclog.is_open()){
-//       if(dagmc_logname!=""){
-//         // Open our log file
-//         dagmclog.open(dagmc_logname, std::ios::out);
-//       }
-//       // Did we successfully open a file?
-//       if(!dagmclog.is_open()){
-//         std::cerr<<"Failed to open dagmc log file: "<< dagmc_logname<< std::endl;
-//         return false;
-//       }
-//       else{
-//         std::cout<<"Redirecting DagMC output to file: "<< dagmc_logname<< std::endl;
-//       }
-//     }
-//     // Check if any previous io operations failed
-//     if(dagmclog.bad()){
-//       std::cerr<<"Bad bit detected in fstream to dag log  file"<< dagmc_logname<< std::endl;
-//       return false;
-//     }
-
-//     // Backup streambuffer of std out
-//     stream_buffer_stdout = std::cout.rdbuf();
-
-//     // Get the streambuffer of the file
-//     std::streambuf* stream_buffer_file = dagmclog.rdbuf();
-
-//     // Redirect cout to file
-//     std::cout.rdbuf(stream_buffer_file);
-//   }
-
-//   // Delete old data
-//   openmc::free_memory_dagmc();
-
-//   // Create a new DagMC, but pass in our MOAB interface
-//   dagPtr = new moab::DagMC(moab().moabPtr);
-//   openmc::model::DAG = dagPtr;
-
-//   // Set up geometry in DagMC from already-loaded mesh
-//   rval = dagPtr->load_existing_contents();
-//   if(rval!= moab::MB_SUCCESS) return false;
-
-//   // Initialize acceleration data structures
-//   rval = dagPtr->init_OBBTree();
-//   if(rval!= moab::MB_SUCCESS) return false;
-
-//   // Parse model metadata
-//   dmdPtr = std::make_unique<dagmcMetaData>(dagPtr, false, false);
-//   dmdPtr->load_property_data();
-
-//   if(redirect_dagout && stream_buffer_stdout!= nullptr){
-//     // Reset cout streambuffer
-//     std::cout.rdbuf(stream_buffer_stdout);
-//   }
-
-//   return true;
+//   // 
+  
 // }
 
 void
