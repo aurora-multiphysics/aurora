@@ -960,7 +960,6 @@ OpenMCExecutioner::updateDAGUniverse()
 
   // Update DAGMC universe
   dag_univ_ptr.reset(new openmc::DAGUniverse(dagPtr));
-
 }
 
 void
@@ -971,12 +970,12 @@ OpenMCExecutioner::updateMaterials()
 
   // Retrieve material data
   std::vector<std::string> mat_names;
-  std::vector<std::string> tails;
   std::vector<double> initial_densities;
-  std::vector<double> rel_densities;
-  moab().getMaterialsDensities(mat_names,tails,initial_densities,rel_densities);
+  std::vector<std::string> tails;
+  std::vector<MOABMaterialProperties> properties;
+  moab().getMaterialProperties(mat_names,initial_densities,tails,properties);
 
-  // First check if we can find the original material names
+  // First check if we can find the original material names in openmc
   std::map<int32_t,size_t> orig_index_to_moose_index;
   int32_t maxOrigID=0;
   for(size_t iMat=0; iMat<mat_names.size(); iMat++){
@@ -998,14 +997,8 @@ OpenMCExecutioner::updateMaterials()
     orig_index_to_moose_index[mat_index]=iMat;
   }
 
-  // Return if no relative_densities -> we are not binning by density
-  if(rel_densities.empty()){
-    matsUpdated = true;
-    return;
-  }
-
   // Check consistency of sizes
-  if(rel_densities.size() != tails.size()){
+  if(properties.size() != tails.size()){
     mooseError("Error setting updated material metadata.");
   }
 
@@ -1040,16 +1033,29 @@ OpenMCExecutioner::updateMaterials()
         +std::to_string(iOrigMat);
       mooseError(err);
     }
+
     // Get moose's index for this material
     size_t iMat = orig_index_to_moose_index.at(iOrigMat);
-    // Get the original density
-    double origDen = initial_densities.at(iMat);
-    // Get the original name
+
+    // Get the original material name
     std::string origName = mat_names.at(iMat);
 
-    // Loop over relative densities in decreasing order so we never
+    // Get the original density
+    double origDen = initial_densities.at(iMat);
+
+    // Loop over new materials in decreasing order so we never
     // simultaneously try to create any Material with the same ID
-    for(int iDen=int(rel_densities.size())-1; iDen>=0; iDen--){
+    // (Needed because we reuse the same xml node)
+    for(int iNewMat=int(properties.size())-1; iNewMat>=0; iNewMat--){
+
+      // Get the material properties for this material
+      MOABMaterialProperties mat_props = properties.at(iNewMat);
+
+      // Get the relative density
+      double relDiff = mat_props.rel_density;
+
+      // Get the temperature
+      double temp = mat_props.temp;
 
       // Create new material in place
       openmc::model::materials.push_back(std::make_unique<openmc::Material>(material_node));
@@ -1059,15 +1065,17 @@ OpenMCExecutioner::updateMaterials()
 
       // Update ID
       int32_t oldID = mat.id();
-      int32_t newID = iDen*(maxOrigID) + oldID;
+      int32_t newID = iNewMat*(maxOrigID) + oldID;
       mat.set_id(newID);
 
       // Update_name
-      std::string new_name = origName + tails.at(iDen);
+      std::string new_name = origName + tails.at(iNewMat);
       mat.set_name(new_name);
 
+      // Update temperature
+      mat.set_temperature(temp);
+
       // Update density
-      double relDiff = rel_densities.at(iDen);
       double newDen = (1.0+relDiff)*origDen;
 
       // Save updated density (we will update later)

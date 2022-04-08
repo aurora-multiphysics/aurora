@@ -134,6 +134,7 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
       nDenBins=1;
       rel_den_bw = std::numeric_limits<double>::max();
     }
+    calcDenMidpoints();
   }
 
   if(scalefactor_inner < 1.0){
@@ -804,10 +805,10 @@ MoabUserObject::getTemperature(moab::EntityHandle vol)
   return volToTemp[vol];
 }
 
-void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_out,
-                                           std::vector<std::string>& tails,
+void MoabUserObject::getMaterialProperties(std::vector<std::string>& mat_names_out,
                                            std::vector<double>& initial_densities,
-                                           std::vector<double>& rel_densities)
+                                           std::vector<std::string>& tails,
+                                           std::vector<MOABMaterialProperties>& properties)
 {
   // We shouldn't be calling this if we didn't provide any materials
   if(openmc_mat_names.empty())
@@ -815,9 +816,6 @@ void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_o
 
   // Set the list of materials names we expect to find in openmc
   mat_names_out=openmc_mat_names;
-
-  // If we are not binning by density exit now
-  if(!binByDensity) return;
 
   // We shouldn't call this function until after initMOAB
   // due to timing of intialisation of MOOSE materials)
@@ -833,18 +831,32 @@ void MoabUserObject::getMaterialsDensities(std::vector<std::string>& mat_names_o
     }
   }
 
-  // Calculate relative densities for each bin midpoint
-  calcDenMidpoints(rel_densities);
-  if(rel_densities.size()!=nDenBins){
-    mooseError("Inconsistency in number of relative density bins.");
+  tails.clear();
+  properties.clear();
+
+  // Loop over temperature bins
+  for(unsigned int iVar=0; iVar<nVarBins; iVar++){
+    // Retrieve the average bin temperature
+    double temp = midpoints.at(iVar);
+
+    // Loop over density bins
+    for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+      // Retrieve the relative density
+      double rel_den = den_midpoints.at(iDen);
+
+      // Get the name modifier
+      int iNewMatBin = getMatBin(iVar,iDen);
+      std::string tail ="_"+std::to_string(iNewMatBin);
+      tails.push_back(tail);
+
+      // Save material properties
+      MOABMaterialProperties mat_props;
+      mat_props.temp = temp;
+      mat_props.rel_density = rel_den;
+      properties.push_back(mat_props);
+    }
   }
 
-  // Get the name modifiers
-  tails.clear();
-  for(unsigned int iDen=0; iDen<nDenBins; iDen++){
-    std::string tail ="_"+std::to_string(iDen);
-    tails.push_back(tail);
-  }
 }
 
 
@@ -1108,30 +1120,25 @@ MoabUserObject::findSurfaces()
       // Loop over density bins
       for(unsigned int iDen=0; iDen<nDenBins; iDen++){
 
-        std::string density_mat_name=mat_name;
-
-        // Update mat name if we have more than one density bin
-        if(binByDensity){
-          density_mat_name+="_"+std::to_string(iDen);
-        }
-
-        unsigned int group_id = iMat*nDenBins + iDen + 1;
-
-        // Create a material group
-        moab::EntityHandle group_set;
-        rval = createGroup(group_id,density_mat_name,group_set);
-        if(rval != moab::MB_SUCCESS) return false;
-
         // Loop over temperature bins
         for(unsigned int iVar=0; iVar<nVarBins; iVar++){
 
-          // Sort elems in this mat-density-temp bin into local regions
+          // Update material name
+          std::string updated_mat_name=mat_name;
+          int iNewMatBin = getMatBin(iVar,iDen);
+          updated_mat_name+="_"+std::to_string(iNewMatBin);
+
+          // Create a material group
+          // Todo set temp in metadata?
           int iSortBin = getSortBin(iVar,iDen,iMat);
+          moab::EntityHandle group_set;
+          unsigned int group_id = iSortBin;
+          rval = createGroup(group_id,updated_mat_name,group_set);
+          if(rval != moab::MB_SUCCESS) return false;
+
+          // Sort elems in this mat-density-temp bin into local regions
           std::vector<moab::Range> regions;
           groupLocalElems(sortedElems.at(iSortBin),regions);
-
-          // Retrieve the average bin temperature
-          double temp = midpoints.at(iVar);
 
           // Loop over all regions and find surfaces
           for(const auto & region : regions){
@@ -1140,7 +1147,9 @@ MoabUserObject::findSurfaces()
               return false;
             }
             // Save the volume temperature
+            double temp = midpoints.at(iVar);
             volToTemp[volume_set] = temp;
+
           } // End loop over local regions
 
         } // End loop over temperature bins
@@ -1408,11 +1417,31 @@ MoabUserObject::getSortBin(int iVarBin, int iDenBin, int iMat,int nVarBinsIn, in
   return iSortBin;
 }
 
+int
+MoabUserObject::getMatBin(int iVarBin, int iDenBin, int nVarBinsIn, int nDenBinsIn)
+{
+
+  if(iDenBin<0 || iDenBin >= nDenBinsIn ){
+    std::string err = "Relative density of material fell outside of binning range";
+    mooseError(err);
+  }
+  if(iVarBin<0 || iVarBin >= nVarBinsIn ){
+    std::string err = "Relative temperature of material fell outside of binning range";
+    mooseError(err);
+  }
+
+  int nMatBins = nDenBinsIn*nVarBins;
+  int iMatBin= nVarBinsIn*iDenBin + iVarBin;
+  if(iMatBin<0 || iMatBin >= nMatBins){
+    mooseError("Cannot find material bin index.");
+  }
+  return iMatBin;
+}
 
 void
-MoabUserObject::calcDenMidpoints(std::vector<double>& denmidpoints)
+MoabUserObject::calcDenMidpoints()
 {
-  calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,denmidpoints);
+  calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,den_midpoints);
 }
 
 void
