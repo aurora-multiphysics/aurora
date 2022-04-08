@@ -16,7 +16,7 @@
 #include "openmc/cell.h"
 #include "openmc/constants.h" // enum RunMode
 #include "openmc/cross_sections.h"
-#include "openmc/dagmc.h" // model::DAG
+#include "openmc/dagmc.h" // DAGUniverse
 #include "openmc/error.h"
 #include "openmc/file_utils.h"
 #include "openmc/geometry.h" // overlap_check_count

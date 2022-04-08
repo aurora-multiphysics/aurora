@@ -936,12 +936,32 @@ OpenMCExecutioner::reloadDAGMC()
   return true;
 }
 
-// void
-// OpenMCExecutioner::updateDAGUniverse()
-// {
-//   // 
-  
-// }
+void
+OpenMCExecutioner::updateDAGUniverse()
+{
+  // Identify existing DAGUniverses
+  std::vector<int32_t> dagmc_univ_ids;
+
+  // Loop over universes and check if type is DAGMC
+  for(const auto& universe: openmc::model::universes){
+    if (universe->geom_type() == openmc::GeometryType::DAG ){
+      dagmc_univ_ids.push_back(universe->id_);
+    }
+  }
+
+  // We only expect one! How to handle this in future?
+  if(dagmc_univ_ids.size() > 1){
+    mooseError("Multiple DAGMC universes detected - can support only 1 at present.");
+  }
+
+  // Get a reference to the DAGMC universe unique ptr
+  int32_t univ_idx = openmc::model::universe_map[dagmc_univ_ids.front()];
+  auto& dag_univ_ptr = openmc::model::universes.at(univ_idx);
+
+  // Update DAGMC universe
+  dag_univ_ptr.reset(new openmc::DAGUniverse(dagPtr));
+
+}
 
 void
 OpenMCExecutioner::updateMaterials()
