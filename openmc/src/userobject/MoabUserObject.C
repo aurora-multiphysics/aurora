@@ -132,7 +132,6 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
     }
     else{
       nDenBins=1;
-      rel_den_bw = std::numeric_limits<double>::max();
     }
     calcDenMidpoints();
   }
@@ -819,7 +818,7 @@ void MoabUserObject::getMaterialProperties(std::vector<std::string>& mat_names_o
 
   // We shouldn't call this function until after initMOAB
   // due to timing of intialisation of MOOSE materials)
-  if(initialDensities.size()!=openmc_mat_names.size())
+  if(binByDensity && initialDensities.size()!=openmc_mat_names.size())
     mooseError("Initial densities not yet initialised.");
 
   // Set the original densities of materials
@@ -1441,7 +1440,10 @@ MoabUserObject::getMatBin(int iVarBin, int iDenBin, int nVarBinsIn, int nDenBins
 void
 MoabUserObject::calcDenMidpoints()
 {
-  calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,den_midpoints);
+  if (binByDensity)
+    calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,den_midpoints);
+  else
+    den_midpoints.push_back(1.0);
 }
 
 void

@@ -124,11 +124,11 @@ private:
   /// Initialise OpenMC
   bool initOpenMC();
 
-  /// Initialise material maps (either local map or UWUW)
-  bool initMaterials();
+  /// Initialise booking of DAGMC universe
+  bool initDAGUniverse();
 
-  /// Set up map of names to ids
-  bool initMatNames();
+  /// Initialise material maps of names to ids
+  bool initMaterials();
 
   /// Pass MOAB mesh into OpenMC and set up tallies with a mesh filter
   bool initMeshTallies();
@@ -217,10 +217,9 @@ private:
 
   /// Copy of the pointer to DAGMC
   std::shared_ptr<moab::DagMC> dagPtr;
-  /// DAGMC Metadata object pointer
-  std::unique_ptr<dagmcMetaData> dmdPtr;
-  /// DAGMC UWUW object pointer
-  std::unique_ptr<UWUW> uwuwPtr;
+
+  /// OpenMC index for DAGMC universe
+  int32_t dag_univ_idx;
 
   /// Record whether we set the FE Problem locally.
   bool setProblemLocal;
@@ -230,6 +229,9 @@ private:
 
   /// Save if we have updated the materials
   bool matsUpdated;
+
+  /// Save if we are updating densities
+  bool updateDensity;
 
   /// Save whether we have a UWUW material library
   bool useUWUW;
