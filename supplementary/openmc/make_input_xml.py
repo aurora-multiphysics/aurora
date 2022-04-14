@@ -6,6 +6,6 @@ def setupInput( ):
 
     createMaterials()
     createSettings()
-    createGeometry()
+    createGeometry("dagmc_uwuw.h5m")
 
 setupInput()

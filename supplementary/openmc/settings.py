@@ -103,8 +103,8 @@ def createTallies(meshname):
     print("Created tallies.xml")
 
 
-def createGeometry():
-    dagmc_univ = openmc.DAGMCUniverse(filename="dagmc.h5m")
+def createGeometry(filename="dagmc.h5m"):
+    dagmc_univ = openmc.DAGMCUniverse(filename,auto_mat_ids=True)
     geometry = openmc.Geometry(root=dagmc_univ)
     geometry.export_to_xml()
     print("Created geometry.xml")
