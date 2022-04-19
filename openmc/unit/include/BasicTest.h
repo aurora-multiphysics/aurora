@@ -211,7 +211,6 @@ class OpenMCRunTest : public InputFileTest {
     openmcOutputFiles.push_back("tallies.out");
     openmcOutputFiles.push_back("statepoint.2.h5");
     openmcOutputFiles.push_back("tally_1.2.vtk");
-    openmcOutputFiles.push_back("uwuw_materials.xml");
   };
 
   virtual void SetUp() override {
@@ -225,6 +224,7 @@ class OpenMCRunTest : public InputFileTest {
     deleteAll(openmcInputXMLFiles);
     deleteAll(openmcOutputFiles);
     deleteIfFileExists(dagmcFilename);
+    deleteIfFileExists("uwuw_materials.xml");
   }
 
   std::vector<std::string> openmcInputXMLFiles;

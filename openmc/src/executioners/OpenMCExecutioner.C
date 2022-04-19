@@ -960,7 +960,6 @@ OpenMCExecutioner::updateMaterials()
   int32_t minOrigID=std::numeric_limits<int32_t>::max();
   for(size_t iMat=0; iMat<mat_names.size(); iMat++){
     std::string mat_name = mat_names.at(iMat);
-    openmc::to_lower(mat_name);
     if(mat_names_to_id.find(mat_name)==mat_names_to_id.end()){
       std::string err="Could not find material "+mat_name;
       mooseError(err);
@@ -968,12 +967,11 @@ OpenMCExecutioner::updateMaterials()
     int32_t mat_id = mat_names_to_id[mat_name];
     if(openmc::model::material_map.find(mat_id)==
        openmc::model::material_map.end()){
-      std::string err="Could not find material id "+mat_id;
+      std::string err="Could not find openmc material with id "+mat_id;
       mooseError(err);
     }
     if(mat_id>maxOrigID) maxOrigID=mat_id;
     if(mat_id<minOrigID) minOrigID=mat_id;
-    //int32_t mat_index = openmc::model::material_map[mat_id];
     // Save
     orig_ID_to_moose_index[mat_id]=iMat;
   }
@@ -1012,9 +1010,11 @@ OpenMCExecutioner::updateMaterials()
 
     if(orig_ID_to_moose_index.find(origMatID) ==
        orig_ID_to_moose_index.end()){
-      std::string err = "Unknown material ID "
+      std::string err = "Unknown material ID from material.xml: "
         +std::to_string(origMatID);
-      mooseError(err);
+      mooseWarning(err);
+      openmc::model::materials.push_back(std::make_unique<openmc::Material>(material_node));
+      continue;
     }
 
     // Get moose's index for this material

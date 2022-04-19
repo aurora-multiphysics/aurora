@@ -33,13 +33,13 @@ MoabMeshTransfer::execute()
   if(_direction==Transfer::DIRECTION::FROM_MULTIAPP) return;
 
   if(!isInit){
-    std::cerr<<"Failed to initialise MoabMeshTransfer."<<std::endl;
+    mooseError("Failed to initialise MoabMeshTransfer.");
     return;
   }
 
   // Transfer the mesh and systems into MOAB and initialise
   if(!transfer()){
-    std::cerr<<"Failed to perform mesh transfer to into MOAB user object in MoabMeshTransfer"<<std::endl;
+    mooseError("Failed to perform mesh transfer to into MOAB user object in MoabMeshTransfer");
     return;
   }
 
@@ -51,7 +51,7 @@ MoabMeshTransfer::initialSetup()
 
   std::string apptype = _fe_problem.getMooseApp().type();
   if(apptype != apptype_from){
-    std::cerr<<"From direction app is incorrect."<<std::endl;
+    mooseError("From direction app is incorrect.");
     return;
   }
 
@@ -67,7 +67,7 @@ MoabMeshTransfer::initialSetup()
     }
   }
   if(!found_problem){
-    std::cerr<<"To direction app is incorrect."<<std::endl;
+    mooseError("To direction app is incorrect.");
     return;
   }
 
@@ -97,7 +97,7 @@ MoabMeshTransfer::transfer()
      }
   catch(std::exception &e)
     {
-      std::cerr<<"Failed to fetch MOAB User object '"<<moabname<<"'. Please add one to your input file."<<std::endl;
+      mooseError("Failed to fetch MOAB User object '"+moabname+"'. Please add one to your input file.");
       return false;
     }
 
