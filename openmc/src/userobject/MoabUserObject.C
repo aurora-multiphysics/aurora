@@ -128,9 +128,11 @@ MoabUserObject::MoabUserObject(const InputParameters & parameters) :
       if(nDenBins < 1){
         mooseError("Number of density bins must exceed 0.");
       }
-      rel_den_bw = (rel_den_max-rel_den_min)/double(nDenBins);
     }
     else{
+      // Ignore density settings for whatever user set
+      rel_den_min=-0.1;
+      rel_den_max=0.1;
       nDenBins=1;
     }
     calcDenMidpoints();
@@ -795,15 +797,6 @@ MoabUserObject::setSolution(unsigned int iSysNow,  unsigned int iVarNow, std::ve
 
 }
 
-double
-MoabUserObject::getTemperature(moab::EntityHandle vol)
-{
-  if(volToTemp.find(vol)==volToTemp.end()){
-    throw std::out_of_range("Could not find volume");
-  }
-  return volToTemp[vol];
-}
-
 void MoabUserObject::getMaterialProperties(std::vector<std::string>& mat_names_out,
                                            std::vector<double>& initial_densities,
                                            std::vector<std::string>& tails,
@@ -833,15 +826,16 @@ void MoabUserObject::getMaterialProperties(std::vector<std::string>& mat_names_o
   tails.clear();
   properties.clear();
 
-  // Loop over temperature bins
-  for(unsigned int iVar=0; iVar<nVarBins; iVar++){
-    // Retrieve the average bin temperature
-    double temp = midpoints.at(iVar);
+  // Loop over density bins
+  for(unsigned int iDen=0; iDen<nDenBins; iDen++){
 
-    // Loop over density bins
-    for(unsigned int iDen=0; iDen<nDenBins; iDen++){
-      // Retrieve the relative density
-      double rel_den = den_midpoints.at(iDen);
+    // Retrieve the relative density
+    double rel_den = den_midpoints.at(iDen);
+
+    // Loop over temperature bins
+    for(unsigned int iVar=0; iVar<nVarBins; iVar++){
+      // Retrieve the average bin temperature
+      double temp = midpoints.at(iVar);
 
       // Get the name modifier
       int iNewMatBin = getMatBin(iVar,iDen);
@@ -1131,7 +1125,7 @@ MoabUserObject::findSurfaces()
           // Todo set temp in metadata?
           int iSortBin = getSortBin(iVar,iDen,iMat);
           moab::EntityHandle group_set;
-          unsigned int group_id = iSortBin;
+          unsigned int group_id = iSortBin+1;
           rval = createGroup(group_id,updated_mat_name,group_set);
           if(rval != moab::MB_SUCCESS) return false;
 
@@ -1145,9 +1139,6 @@ MoabUserObject::findSurfaces()
             if(!findSurface(region,group_set,vol_id,surf_id,volume_set)){
               return false;
             }
-            // Save the volume temperature
-            double temp = midpoints.at(iVar);
-            volToTemp[volume_set] = temp;
 
           } // End loop over local regions
 
@@ -1289,7 +1280,6 @@ MoabUserObject::resetContainers()
   unsigned int nSortBins = nMatBins*nDenBins*nVarBins;
   sortedElems.clear();
   sortedElems.resize(nSortBins);
-  volToTemp.clear();
 
   // Update the serial solutions
   for(const auto& sol :  serial_solutions){
@@ -1440,10 +1430,8 @@ MoabUserObject::getMatBin(int iVarBin, int iDenBin, int nVarBinsIn, int nDenBins
 void
 MoabUserObject::calcDenMidpoints()
 {
-  if (binByDensity)
-    calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,den_midpoints);
-  else
-    den_midpoints.push_back(1.0);
+  rel_den_bw = (rel_den_max-rel_den_min)/double(nDenBins);
+  calcMidpointsLin(rel_den_min,rel_den_bw,nDenBins,den_midpoints);
 }
 
 void
@@ -1557,7 +1545,7 @@ moab::ErrorCode MoabUserObject::buildGraveyard( unsigned int & vol_id, unsigned 
 
   // Create the graveyard set
   moab::EntityHandle graveyard;
-  unsigned int id = nMatBins*nDenBins+1;
+  unsigned int id = nMatBins*nVarBins*nDenBins+1;
   std::string mat_name = "mat:Graveyard";
   rval = createGroup(id,mat_name,graveyard);
   if(rval != moab::MB_SUCCESS) return rval;

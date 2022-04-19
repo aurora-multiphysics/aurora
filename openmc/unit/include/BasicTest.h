@@ -201,14 +201,17 @@ class OpenMCRunTest : public InputFileTest {
   {
     openmcInputXMLFiles.push_back("settings.xml");
     openmcInputXMLFiles.push_back("materials.xml");
+    openmcInputXMLFiles.push_back("geometry.xml");
 
     openmcInputXMLFilesSrc.push_back("settings.xml");
     openmcInputXMLFilesSrc.push_back("materials.xml");
+    openmcInputXMLFilesSrc.push_back("geometry.xml");
 
     openmcOutputFiles.push_back("summary.h5");
     openmcOutputFiles.push_back("tallies.out");
     openmcOutputFiles.push_back("statepoint.2.h5");
     openmcOutputFiles.push_back("tally_1.2.vtk");
+    openmcOutputFiles.push_back("uwuw_materials.xml");
   };
 
   virtual void SetUp() override {

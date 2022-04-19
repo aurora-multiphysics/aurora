@@ -216,20 +216,19 @@ TEST_F(FindMoabSurfacesTest, singleBin)
   // Copper block
   volinfo.vol_id=1;
   volinfo.surf_ids = {1};
-  volinfo.temp=300.;
   volinfo.isGraveyard=false;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air
   volinfo.vol_id=2;
   volinfo.surf_ids = {1,2};
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Graveyard
   volinfo.vol_id=3;
   volinfo.surf_ids = {3,4};
   volinfo.isGraveyard=true;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
 }
 
@@ -262,26 +261,24 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   // Copper block
   volinfo.vol_id=1;
   volinfo.surf_ids = {1};
-  volinfo.temp=300.;
   volinfo.isGraveyard=false;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air at cooler T
   volinfo.vol_id=2;
   volinfo.surf_ids = {1,2,3};
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air at hotter T
   volinfo.vol_id=3;
   volinfo.surf_ids = {3};
-  volinfo.temp=305.;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Graveyard
   volinfo.vol_id=4;
   volinfo.surf_ids = {4,5};
   volinfo.isGraveyard=true;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Change boundary of temperature contour to intersect material boundary
   rMax = 4.0*lengthscale/log(2.0);
@@ -300,33 +297,29 @@ TEST_F(FindMoabSurfacesTest, extraBin)
   // Main block of copper at lower T
   volinfo.vol_id=1;
   volinfo.surf_ids = {1,3,5};
-  volinfo.temp=300.;
   volinfo.isGraveyard=false;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Block of copper at higher T
   volinfo.vol_id=2;
   volinfo.surf_ids={2,3,6};
-  volinfo.temp=305.;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air at lower T
   volinfo.vol_id=3;
   volinfo.surf_ids ={4,5,6,7};
-  volinfo.temp=300.;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air at higher T
   volinfo.vol_id=4;
   volinfo.surf_ids ={1,2,7};
-  volinfo.temp=305.;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Graveyard
   volinfo.vol_id=5;
   volinfo.surf_ids ={8,9};
   volinfo.isGraveyard=true;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
 }
 
@@ -347,30 +340,8 @@ TEST_F(FindMoabSurfacesTest, checkOutput)
 // Test for retrieving metadata
 TEST_F(FindMoabSurfacesTest, checkMetadata)
 {
-  EXPECT_FALSE(appIsNull);
-  ASSERT_TRUE(foundMOAB);
-  ASSERT_TRUE(setProblem());
-
-  // Retrieve material data
-  std::vector<std::string> mat_names_check;
-  std::vector<std::string> tails;
-  std::vector<double> initial_densities;
-  std::vector<double> rel_densities;
-  ASSERT_NO_THROW(moabUOPtr->getMaterialsDensities(mat_names_check,tails,initial_densities,rel_densities));
-
-  // Materials should be the same (though former excludes graveyard)
-  ASSERT_EQ(mat_names_check.size()+1,mat_names.size());
-  for(auto name: mat_names_check){
-    std::string err="Failed to find material "+name;
-    name = "mat:"+name;
-    auto pos = find(mat_names.begin(),mat_names.end(),name);
-    bool found_name = (pos != mat_names.end());
-    EXPECT_TRUE(found_name)<<err;
-  }
-
-  EXPECT_TRUE(tails.empty());
-  EXPECT_TRUE(initial_densities.empty());
-  EXPECT_TRUE( rel_densities.empty());
+  init();
+  matMetadataTest();
 }
 
 // Test for finding surfaces for second order mesh
@@ -407,26 +378,24 @@ TEST_F(FindSurfsNodalTemp, nodalTemperature)
   // Copper block
   volinfo.vol_id=1;
   volinfo.surf_ids = {1};
-  volinfo.temp=300.;
   volinfo.isGraveyard=false;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air at cooler T
   volinfo.vol_id=2;
   volinfo.surf_ids = {1,2,3};
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Region of air at hotter T
   volinfo.vol_id=3;
   volinfo.surf_ids = {3};
-  volinfo.temp=305.;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Graveyard
   volinfo.vol_id=4;
   volinfo.surf_ids = {4,5};
   volinfo.isGraveyard=true;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
 }
 
@@ -491,15 +460,14 @@ TEST_F(FindSingleMatSurfs, manyBins)
       int inner = surfaces.at(iVol);;
       volinfo.surf_ids.insert(inner);
     }
-    volinfo.temp = solMin + double(iVol-1)*binWidth;
-    checkSurfsAndTemp(volinfo);
+    checkSurfs(volinfo);
   }
 
   // Graveyard
   volinfo.vol_id=nVol;
   volinfo.surf_ids = {6,7};
   volinfo.isGraveyard=true;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
 }
 
@@ -554,8 +522,7 @@ TEST_F(FindLogBinSurfs, constTemp)
   // Check temperature
   volinfo.vol_id=1;
   volinfo. surf_ids = {1};
-  volinfo.temp = pow(10,2.25);
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Set a constant solution
   solConst = 400.;
@@ -563,10 +530,7 @@ TEST_F(FindLogBinSurfs, constTemp)
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
-
-  // Check temperature
-  volinfo.temp = pow(10,2.75);
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Set a constant solution
   solConst = 2000.;
@@ -574,10 +538,7 @@ TEST_F(FindLogBinSurfs, constTemp)
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
-
-  // Check temperature
-  volinfo.temp = pow(10,3.25);
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
   // Set a constant solution
   solConst = 5000.;
@@ -585,11 +546,15 @@ TEST_F(FindLogBinSurfs, constTemp)
 
   // Find the surfaces
   EXPECT_TRUE(moabUOPtr->update());
+  checkSurfs(volinfo);
 
-  // Check temperature
-  volinfo.temp = pow(10,3.75);
-  checkSurfsAndTemp(volinfo);
+}
 
+// Test for retrieving metadata
+TEST_F(FindLogBinSurfs, checkMetadata)
+{
+  init();
+  matMetadataTest();
 }
 
 // Test for finding surfaces for many temperature bins on log scale
@@ -626,7 +591,6 @@ TEST_F(FindLogBinSurfs, manyBins)
   double proddiff = pow(10,0.5);
   for(unsigned int iVol=1; iVol<nVol; iVol++){
     volinfo.vol_id=iVol;
-    volinfo.temp=tnow;
     volinfo.surf_ids.clear();
     int outer = surfaces.at(iVol-1);
     volinfo.surf_ids.insert(outer);
@@ -634,7 +598,7 @@ TEST_F(FindLogBinSurfs, manyBins)
       int inner = surfaces.at(iVol);;
       volinfo.surf_ids.insert(inner);
     }
-    checkSurfsAndTemp(volinfo);
+    checkSurfs(volinfo);
     // Update temperature for next iteration;
     tnow *= proddiff;
   }
@@ -643,7 +607,7 @@ TEST_F(FindLogBinSurfs, manyBins)
   volinfo.vol_id=nVol;
   volinfo.surf_ids = {5,6};
   volinfo.isGraveyard=true;
-  checkSurfsAndTemp(volinfo);
+  checkSurfs(volinfo);
 
 }
 

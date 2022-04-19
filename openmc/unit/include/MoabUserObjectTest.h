@@ -523,19 +523,30 @@ class FindMoabSurfacesTest : public MoabUserObjectTest {
 protected:
   FindMoabSurfacesTest() :
     MoabUserObjectTest("findsurfstest.i") {
-
-    // Define the material names expected for this input file
-    mat_names.push_back("mat:copper");
-    mat_names.push_back("mat:air");
-    mat_names.push_back("mat:Graveyard");
-
+    setBinningDefaults();
+    initMats();
     setOutputDefaults();
   };
 
   FindMoabSurfacesTest(std::string inputfile) :
     MoabUserObjectTest(inputfile) {
+    setBinningDefaults();
     setOutputDefaults();
   };
+
+  void initMats() {
+    setBaseNames();
+    setMatNames();
+  }
+
+  void setBinningDefaults(){
+    nDenBins=1;
+    nTempBins=60;
+    tempMin=297.5;
+    tempMax=597.5;
+    relDenMin=-0.1;
+    relDenMax=0.1;
+  }
 
   void setOutputDefaults(){
 
@@ -549,6 +560,47 @@ protected:
     output_base="moab_surfs";
   }
 
+  virtual void setBaseNames() {
+    // Define the material names expected for this input file
+    base_names.push_back("mat:copper");
+    base_names.push_back("mat:air");
+  };
+
+  virtual void setMatNames(){
+    for(const auto name : base_names){
+      for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+        for(unsigned int iTemp=0; iTemp<nTempBins; iTemp++){
+          unsigned int iMat = nTempBins*iDen + iTemp;
+          std::string new_name = name+"_"+std::to_string(iMat);
+          mat_names.push_back(new_name);
+        }
+      }
+    }
+    mat_names.push_back("mat:Graveyard");
+  };
+
+  virtual void setTemperatures() {
+    ASSERT_GT(nTempBins,0);
+    double binWidth=(tempMax-tempMin)/double(nTempBins);
+    ASSERT_GT(binWidth,0.);
+    double tempNow = tempMin - 0.5*binWidth;
+    for(unsigned int iTemp=0; iTemp<nTempBins; iTemp++){
+      tempNow += binWidth;
+      mat_temperatures.push_back(tempNow);
+    }
+  };
+
+  virtual void setDensities() {
+    ASSERT_GT(nDenBins,0);
+    double binWidth=(relDenMax-relDenMin)/double(nDenBins);
+    ASSERT_GT(binWidth,0.);
+    double relDenNow = relDenMin - 0.5*binWidth;
+    for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+      relDenNow += binWidth;
+      mat_densities.push_back(relDenNow);
+    }
+  };
+
   // Define a struct to help test properties of entity sets
   struct TagInfo {
     std::string category; // value of category tag
@@ -561,7 +613,6 @@ protected:
   struct VolumeInfo {
     int vol_id;
     std::set<int> surf_ids;
-    double temp;
     bool isGraveyard;
   };
 
@@ -702,7 +753,7 @@ protected:
       EXPECT_EQ(ents.size(),nCat) << "Disparity in category size for "<< cat;
       if( ents.size()!= nCat ) continue;
 
-      // Get the values of the other tags
+      // Get the values of name tags
       auto names = new char[nCat][NAME_TAG_SIZE];
       rval = moabPtr->tag_get_data (name_tag,ents,names);
       if(cat =="Group")
@@ -710,10 +761,12 @@ protected:
       else
         EXPECT_NE(rval,moab::MB_SUCCESS);
 
+      // Get the values of dimension (geom) tag
       std::vector<int> dims(nCat);
       rval = moabPtr->tag_get_data (geom_tag,ents,dims.data());
       EXPECT_EQ(rval,moab::MB_SUCCESS);
 
+      // Get the values of ID tag
       std::vector<int> ids(nCat);
       rval = moabPtr->tag_get_data (id_tag,ents,ids.data());
       EXPECT_EQ(rval,moab::MB_SUCCESS);
@@ -958,7 +1011,7 @@ protected:
     ASSERT_EQ(rval,moab::MB_SUCCESS);
   }
 
-  void checkSurfsAndTemp(VolumeInfo volinfo){
+  void checkSurfs(VolumeInfo volinfo){
 
     // Shorthands
     int& vol_id=volinfo.vol_id;
@@ -990,16 +1043,79 @@ protected:
 
     // Found all the surfs
     EXPECT_EQ(surf_ids.size(),size_t(0));
+  }
 
-    // Check temperature
-    if(volinfo.isGraveyard){
-      EXPECT_THROW(moabUOPtr->getTemperature(vol_handle),std::out_of_range);
+  void matMetadataTest()
+  {
+    // Retrieve material data
+    std::vector<std::string> mat_names_check;
+    std::vector<double> initial_densities;
+    std::vector<std::string> tails;
+    std::vector<MOABMaterialProperties> properties;
+    ASSERT_NO_THROW(moabUOPtr->getMaterialProperties(mat_names_check,
+                                                     initial_densities,
+                                                     tails,
+                                                     properties));
+
+    // Materials should be the same
+    size_t nMats = base_names.size();
+    ASSERT_EQ(mat_names_check.size(),nMats);
+    for(auto name: mat_names_check){
+      std::string err="Failed to find material "+name;
+      name = "mat:"+name;
+      auto pos = find(base_names.begin(),base_names.end(),name);
+      bool found_name = (pos != base_names.end());
+      EXPECT_TRUE(found_name)<<err;
     }
-    else{
-      double temp = moabUOPtr->getTemperature(vol_handle);
-      double dtemp = fabs(temp-volinfo.temp);
-      EXPECT_LT(dtemp,tol);
+
+    bool binByDensity = !initial_densities.empty();
+
+    if(binByDensity){
+      // Compare initial densities of materials
+      ASSERT_EQ(initial_densities.size(),nMats);
+      ASSERT_EQ(orig_densities.size(), nMats);
+      for(size_t iMat=0; iMat<nMats; iMat++){
+        EXPECT_EQ(initial_densities.at(iMat),orig_densities.at(iMat));
+      }
     }
+
+    setTemperatures();
+    setDensities();
+
+    unsigned int nMatBins = nDenBins*nTempBins;
+    ASSERT_EQ(properties.size(),nMatBins);
+    ASSERT_EQ(tails.size(),nMatBins);
+
+    for(unsigned int iDen=0; iDen<nDenBins; iDen++){
+      // Get relative density change of  bin
+      double relDenCheck = mat_densities.at(iDen);
+
+      for(unsigned int iTemp=0; iTemp<nTempBins; iTemp++){
+        // Get temperature of bin
+        double tempCheck = mat_temperatures.at(iTemp);
+
+        // Get material bin
+        unsigned int iMatBin = nTempBins*iDen + iTemp;
+
+        // Check mat name modifier
+        std::string tail_cmp = "_"+std::to_string(iMatBin);
+        EXPECT_EQ(tails.at(iMatBin),tail_cmp);
+
+        // Fetch properties values for material
+        MOABMaterialProperties mat_props = properties.at(iMatBin);
+        // Get the relative density
+        double relDen = mat_props.rel_density;
+        // Get the temperature
+        double temp = mat_props.temp;
+
+        // Check relative density
+        EXPECT_EQ(relDen,relDenCheck);
+
+        // Check temperature
+        EXPECT_EQ(temp,tempCheck);
+      }
+    }
+
   }
 
   void checkOutputAfterUpdate(unsigned int nUpdate){
@@ -1051,7 +1167,6 @@ protected:
 
     // Check volume->surf relationships
     VolumeInfo volinfo;
-    volinfo.temp=solConst*double(nDegen);
     volinfo.isGraveyard=false;
     for(unsigned int iVol=1; iVol<nVol; iVol++){
       volinfo.vol_id=iVol;
@@ -1060,14 +1175,14 @@ protected:
       if(iVol>1){
         volinfo.surf_ids.insert(iVol-1);
       }
-      checkSurfsAndTemp(volinfo);
+      checkSurfs(volinfo);
     }
 
     // Graveyard
     volinfo.vol_id=nVol;
     volinfo.surf_ids = {int(nSurf),int(nSurf)-1};
     volinfo.isGraveyard=true;
-    checkSurfsAndTemp(volinfo);
+    checkSurfs(volinfo);
   }
 
   // Vector to hold material names
@@ -1078,6 +1193,19 @@ protected:
   unsigned int nSkip;
   std::string output_base;
 
+  // Variables relating to material created by binning
+  unsigned int nTempBins;
+  unsigned int nDenBins;
+  std::vector<std::string> base_names;
+  double relDenMin;
+  double relDenMax;
+  double tempMin;
+  double tempMax;
+  std::vector<double> orig_densities;
+  std::vector<double> mat_densities;
+  std::vector<double> mat_temperatures;
+
+
 };
 
 // Repeat surfaces test for second order mesh
@@ -1086,13 +1214,9 @@ protected:
 
   SecondOrderSurfacesTest() :
     FindMoabSurfacesTest("findsurfstest-second.i") {
-
-    // Define the material names expected for this input file
-    mat_names.push_back("mat:copper");
-    mat_names.push_back("mat:air");
-    mat_names.push_back("mat:Graveyard");
-
+    initMats();
   }
+
 };
 
 class FindSingleMatSurfs: public FindMoabSurfacesTest {
@@ -1101,9 +1225,9 @@ protected:
   FindSingleMatSurfs() :
     FindMoabSurfacesTest("findsurfstest-singlemat.i") {
 
-    // Define the material names expected for this input file
-    mat_names.push_back("mat:copper");
-    mat_names.push_back("mat:Graveyard");
+    nTempBins=5;
+
+    initMats();
 
     // Max number of outputs
     nOutput=4;
@@ -1116,6 +1240,12 @@ protected:
 
   };
 
+  virtual void setBaseNames() override {
+    // Define the material names expected for this input file
+    base_names.push_back("mat:copper");
+  };
+
+
 };
 
 class FindOffsetSurfs: public FindMoabSurfacesTest {
@@ -1123,14 +1253,14 @@ protected:
 
   FindOffsetSurfs() :
     FindMoabSurfacesTest("offset-box.i") {
-
+    initMats();
     nNodesExpect=15;
     nElemsExpect=24;
+  };
 
+  virtual void setBaseNames() override {
     // Define the material names expected for this input file
-    mat_names.push_back("mat:copper");
-    mat_names.push_back("mat:Graveyard");
-
+    base_names.push_back("mat:copper");
   };
 
 };
@@ -1142,9 +1272,11 @@ protected:
   FindLogBinSurfs() :
     FindMoabSurfacesTest("findsurfstest-logbins.i") {
 
-    // Define the material names expected for this input file
-    mat_names.push_back("mat:copper");
-    mat_names.push_back("mat:Graveyard");
+    nTempBins=4;
+    tempMin=150;
+    tempMax=6000;
+
+    initMats();
 
     // Max number of outputs
     nOutput=10;
@@ -1157,6 +1289,29 @@ protected:
 
   };
 
+  virtual void setBaseNames() override {
+    // Define the material names expected for this input file
+    base_names.push_back("mat:copper");
+  };
+
+
+  virtual void setTemperatures() {
+    ASSERT_GT(nTempBins,0);
+    int powMin = int(floor(log10(tempMin)));
+    int powMax = int(ceil(log10(tempMax)));
+    int nPow = std::max(powMax-powMin, 1);
+    int nMinor = nTempBins/nPow;
+    ASSERT_GT(nMinor,0);
+    double powDiff = 1./double(nMinor);
+    double powStart = double(powMin) - 0.5*powDiff;
+    double tempNow = pow(10,powStart);
+    double prodDiff = pow(10,powDiff);
+    for(unsigned int iTemp=0; iTemp<nTempBins; iTemp++){
+      tempNow *= prodDiff;
+      mat_temperatures.push_back(tempNow);
+    }
+  };
+
 };
 
 class FindSurfsNodalTemp: public FindMoabSurfacesTest {
@@ -1165,11 +1320,7 @@ protected:
   FindSurfsNodalTemp() :
     FindMoabSurfacesTest("nodal_temperature.i") {
 
-    // Define the material names expected for this input file
-    mat_names.push_back("mat:copper");
-    mat_names.push_back("mat:air");
-    mat_names.push_back("mat:Graveyard");
-
+    initMats();
   };
 
   virtual void SetUp() override {
@@ -1212,24 +1363,11 @@ protected:
   {
     density_name="density_local";
     nDenBins=5;
+
     // sides of box
     xMinSav=-10.0*lengthscale;
     xMaxSav=10.0*lengthscale;
   }
-
-  virtual void setDensities(){};
-
-  virtual void setBaseNames(){};
-
-  virtual void setMatNames(){
-    for(const auto name : base_names){
-      for(unsigned int iDen=0; iDen<nDenBins; iDen++){
-        std::string new_name = name+"_"+std::to_string(iDen);
-        mat_names.push_back(new_name);
-      }
-    }
-    mat_names.push_back("mat:Graveyard");
-  };
 
   double getLinSol(double x, double xMin, double xMax, double solMin, double solMax)
   {
@@ -1303,7 +1441,7 @@ protected:
     // Set a linearly varying density along x
     setLinearSolution(density_name,denMin,denMax,0);
 
-    // Set a linearly varying density along y
+    // Set a linearly varying temp along x
     setLinearSolution(var_name,tempMin,tempMax,1);
 
     // Find the surfaces
@@ -1313,57 +1451,7 @@ protected:
     checkAllGeomsets(nVol,nSurf);
   }
 
-  void matMetadataTest()
-  {
-    // Retrieve material data
-    std::vector<std::string> mat_names_check;
-    std::vector<std::string> tails;
-    std::vector<double> initial_densities;
-    std::vector<double> rel_densities;
-    ASSERT_NO_THROW(moabUOPtr->getMaterialsDensities(mat_names_check,tails,initial_densities,rel_densities));
-
-    // Materials should be the same
-    size_t nMats = base_names.size();
-    ASSERT_EQ(mat_names_check.size(),nMats);
-    for(auto name: mat_names_check){
-      std::string err="Failed to find material "+name;
-      name = "mat:"+name;
-      auto pos = find(base_names.begin(),base_names.end(),name);
-      bool found_name = (pos != base_names.end());
-      EXPECT_TRUE(found_name)<<err;
-    }
-
-    // Compare initial densities of materials
-    ASSERT_EQ(initial_densities.size(),nMats);
-    ASSERT_EQ(orig_densities.size(), nMats);
-    for(size_t iMat=0; iMat<nMats; iMat++){
-      EXPECT_EQ(initial_densities.at(iMat),orig_densities.at(iMat));
-    }
-
-    ASSERT_GT(nDenBins,0);
-    double binWidth=  (relDenMax-relDenMin)/double(nDenBins);
-    ASSERT_GT(binWidth,0.);
-
-    double relDenNow = relDenMin - 0.5*binWidth;
-    ASSERT_EQ(tails.size(),nDenBins);
-    ASSERT_EQ(rel_densities.size(),nDenBins);
-    for(unsigned int iDen=0; iDen<nDenBins; iDen++){
-      // Check mat name modifier
-      std::string tail_cmp = "_"+std::to_string(iDen);
-      EXPECT_EQ(tails.at(iDen),tail_cmp);
-      // Check relative density change of density bin
-      relDenNow+=binWidth;
-      EXPECT_EQ(rel_densities.at(iDen),relDenNow);
-    }
-
-  }
-
   std::string density_name;
-  unsigned int nDenBins;
-  std::vector<std::string> base_names;
-  std::vector<double> orig_densities;
-  double relDenMin;
-  double relDenMax;
   double xMinSav;
   double xMaxSav;
 
@@ -1374,28 +1462,22 @@ protected:
   FindDensitySurfsTest() :
     FindDensitySurfsTestBase("densitysurfstest.i")
   {
-    setDensities();
-    setBaseNames();
-    setMatNames();
+    orig_densities.push_back(8.920);
+    initMats();
   };
 
   FindDensitySurfsTest(std::string inputfile) :
     FindDensitySurfsTestBase(inputfile)
   {
-    setDensities();
-    setBaseNames();
-    setMatNames();
-  };
-
-  virtual void setDensities() override {
     orig_densities.push_back(8.920);
-    relDenMin=-0.1;
-    relDenMax=0.1;
+    initMats();
   };
 
   virtual void setBaseNames() override {
+    // Define the material names expected for this input file
     base_names.push_back("mat:copper");
   };
+
 
 };
 

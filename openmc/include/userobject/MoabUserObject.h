@@ -84,9 +84,6 @@ class MoabUserObject : public UserObject
   /// Pass the OpenMC results into the libMesh systems solution
   bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool isErr=false, bool normToVol=true);
 
-  /// Retrieve the temperature of a volume
-  double getTemperature(moab::EntityHandle vol);
-
   /// Retrieve a list of original material names and properties
   void getMaterialProperties(std::vector<std::string>& mat_names_out,
                              std::vector<double>& initial_densities,
@@ -95,7 +92,6 @@ class MoabUserObject : public UserObject
 
   /// Publically available pointer to MOAB interface
   std::shared_ptr<moab::Interface> moabPtr;
-
 
 private:
 
@@ -368,9 +364,6 @@ private:
 
   /// Save some topological data: map from surface handle to vol handle and sense
   std::map<moab::EntityHandle, std::vector<VolData> > surfsToVols;
-
-  /// Save a map of EntityHandle to temperature
-  std::map<moab::EntityHandle,double> volToTemp;
 
   // Some moab tags
 
