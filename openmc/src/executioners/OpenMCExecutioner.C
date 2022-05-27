@@ -933,7 +933,7 @@ OpenMCExecutioner::updateDAGUniverse()
   openmc::model::universes.erase(univ_it);
 
   // Create new DAGMC universe
-  openmc::DAGUniverse* dag_univ_ptr = new openmc::DAGUniverse(dagPtr,"");
+  openmc::DAGUniverse* dag_univ_ptr = new openmc::DAGUniverse(dagPtr);
   openmc::model::universes.emplace(univ_it,std::unique_ptr<openmc::DAGUniverse>(dag_univ_ptr));
 
   // Add cells to universes
