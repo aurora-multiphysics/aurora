@@ -417,14 +417,15 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   // Clear prior results.
   clearElemMaps();
 
-  moab::Range all_elems;
-
   // Fetch the mesh subdomains
   std::set< subdomain_id_type > blocks;
   mesh().subdomain_ids(blocks);
 
   // Loop over subdomains
   for(const auto block_id : blocks){
+
+    // Collect elements in this block
+    moab::Range block_elems;
 
     // Iterate over elements in this material
     auto itelem = mesh().active_subdomain_elements_begin(block_id);
@@ -489,23 +490,31 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
         addElem(id,ent);
 
         // Save the handle for adding to entity sets
-        all_elems.insert(ent);
+        block_elems.insert(ent);
+
       } // End loop over sub-tetrahedra for current elem
 
     } // End loop over elems in this block
+
+    // Find the boundary of this block (skin)
+
+    // Query each element in skin - is it in a surface?
+    // Get parent, get libmesh equivalent of tet, get libmesh face, query libmesh face
+    // Save sideset of elem handles as a meshset
+
+    // Add the elems to the full meshset
+    rval = moabPtr->add_entities(meshset,block_elems);
+
+    // Save the first elem
+    if (offset==0) offset = block_elems.front();
+
   } // End loop over this block
 
-  // Add the elems to the full meshset
-  rval = moabPtr->add_entities(meshset,all_elems);
   if(rval!=moab::MB_SUCCESS){
     std::string err="Could not create meshset: rval = "
       +std::to_string(rval);
     mooseError(err);
   }
-
-  // Save the first elem
-  offset = all_elems.front();
-
 }
 
 bool
