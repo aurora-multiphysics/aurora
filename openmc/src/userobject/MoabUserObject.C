@@ -6,11 +6,10 @@
 
 registerMooseObject("OpenMCApp", MoabUserObject);
 
-template <>
 InputParameters
-validParams<MoabUserObject>()
+MoabUserObject::validParams()
 {
-  InputParameters params = validParams<UserObject>();
+  InputParameters params = UserObject::validParams();
 
   // MOAB mesh params
   params.addParam<double>("length_scale", 100.,"Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.");

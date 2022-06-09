@@ -30,8 +30,6 @@ struct MOABMaterialProperties{
 // Forward Declarations
 class MoabUserObject;
 
-template <>
-InputParameters validParams<MoabUserObject>();
 
 /**
     \brief UserObject class which wraps a moab::Interface pointer.
@@ -46,6 +44,8 @@ class MoabUserObject : public UserObject
  public:
 
   MoabUserObject(const InputParameters & parameters);
+
+  static InputParameters validParams();
 
   /// Override MOOSE virtual method to do nothing
   virtual void execute(){};

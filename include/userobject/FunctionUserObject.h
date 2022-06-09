@@ -11,9 +11,6 @@
 // Forward declaration
 class FunctionUserObject;
 
-template <>
-InputParameters validParams<FunctionUserObject>();
-
 /** \brief This UserObject class creates a function from a variable in memory given
  *  a string containing the variable name.
  */
@@ -22,6 +19,8 @@ class FunctionUserObject : public GeneralUserObject
  public:
 
   FunctionUserObject(const InputParameters & parameters);
+
+  static InputParameters validParams();
 
   /// Sets the mesh function from a variable in memory
   virtual void execute() override;

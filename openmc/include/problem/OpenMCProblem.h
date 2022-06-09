@@ -4,9 +4,6 @@
 
 class OpenMCProblem;
 
-template <>
-InputParameters validParams<OpenMCProblem>();
-
 /** \brief Minimal definition for a FE problem.
 
     Only included as it is required by Moose
@@ -20,6 +17,8 @@ class OpenMCProblem : public ExternalProblem
  public:
   OpenMCProblem (const InputParameters & parameters) :
   ExternalProblem(parameters)  {};
+
+  static InputParameters validParams();
 
   /// Does nothing
   virtual void externalSolve () override {};

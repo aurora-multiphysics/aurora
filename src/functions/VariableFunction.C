@@ -3,8 +3,6 @@
 
 registerMooseObject("AuroraApp", VariableFunction);
 
-defineLegacyParams(VariableFunction);
-
 InputParameters
 VariableFunction::validParams()
 {
