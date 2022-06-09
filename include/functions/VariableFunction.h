@@ -6,9 +6,6 @@
 
 class VariableFunction;
 
-template <>
-InputParameters validParams<VariableFunction>();
-
 /**
    \brief Function object which returns the value of a variable at a point.
 

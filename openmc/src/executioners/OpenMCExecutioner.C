@@ -3,11 +3,11 @@
 
 registerMooseObject("OpenMCApp", OpenMCExecutioner);
 
-template <>
+
 InputParameters
-validParams<OpenMCExecutioner>()
+OpenMCExecutioner::validParams()
 {
-  InputParameters params = validParams<Transient>();
+  InputParameters params = Transient::validParams();
 
   // Location for results
   params.addParam<std::vector<std::string>>("variables", std::vector<std::string>(1,"heating-local"),

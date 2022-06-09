@@ -2,10 +2,9 @@
 
 registerMooseObject("OpenMCApp", OpenMCProblem);
 
-template <>
 InputParameters
-validParams<OpenMCProblem>()
+OpenMCProblem::validParams()
 {
-  InputParameters params = validParams<ExternalProblem>();
+  InputParameters params = ExternalProblem::validParams();
   return params;
 }

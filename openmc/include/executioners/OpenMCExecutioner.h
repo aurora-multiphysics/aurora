@@ -43,9 +43,6 @@
 
 class OpenMCExecutioner;
 
-template <>
-InputParameters validParams<OpenMCExecutioner>();
-
 /// \brief Our bespoke Executioner class to perform OpenMC runs
 class OpenMCExecutioner : public Transient
 {
@@ -53,6 +50,8 @@ public:
   OpenMCExecutioner(const InputParameters & parameters);
 
   ~OpenMCExecutioner();
+
+  static InputParameters validParams();
 
   /** \brief Perform a full OpenMC run
 

@@ -3,11 +3,10 @@
 
 registerMooseObject("AuroraApp", MoabMeshTransfer);
 
-template <>
 InputParameters
-validParams<MoabMeshTransfer>()
+MoabMeshTransfer::validParams()
 {
-  InputParameters params = validParams<MultiAppTransfer>();
+  InputParameters params = MultiAppTransfer::validParams();
 
   params.addParam<std::string>("apptype_from", "AuroraTestApp","Type of app from which we are taking mesh and systems.");
   params.addParam<std::string>("apptype_to", "OpenMCApp","Type of app to which we are sending mesh and systems.");

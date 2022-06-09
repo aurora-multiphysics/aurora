@@ -3,11 +3,10 @@
 
 registerMooseObject("AuroraApp", FunctionUserObject);
 
-template <>
 InputParameters
-validParams<FunctionUserObject>()
+FunctionUserObject::validParams()
 {
-  InputParameters params = validParams<GeneralUserObject>();
+  InputParameters params = GeneralUserObject::validParams();
 
   params.addRequiredParam<std::string>(
       "variable", "Variable name to evaluate the mesh function on.");

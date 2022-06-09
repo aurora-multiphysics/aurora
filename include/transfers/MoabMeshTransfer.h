@@ -11,9 +11,6 @@
 class MultiApp;
 class MoabMeshTransfer;
 
-template <>
-InputParameters validParams<MoabMeshTransfer>();
-
 /**
    \brief Transfer a pointer to the FEProblem from the parent to child app in a MultiApp.
 
@@ -31,6 +28,8 @@ class MoabMeshTransfer : public MultiAppTransfer
   virtual void execute();
 
   virtual void initialSetup();
+
+  static InputParameters validParams();
 
  private:
 
