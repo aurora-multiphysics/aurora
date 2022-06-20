@@ -124,6 +124,20 @@ private:
   /// Helper method to create MOAB elements
   void createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
 
+  /// Helper method to find MOAB surface entities having a boundary condition given a block
+  void findBoundaries(const moab::Range& block_elems);
+
+  /// Helper method to find MOAB surface entities having a boundary condition given a geometric skin
+  void findBoundariesFromSkin(const moab::Range& skin_elems);
+
+  /// Query if the given MOAB entity handle has a boundary condition
+  bool entityInBoundary(moab::EntityHandle skin_handle,
+                        boundary_id_type& boundary_id);
+
+  /// Save this MOAB entity handle to a given boundary
+  void addToBoundary(moab::EntityHandle skin_handle,
+                     boundary_id_type& boundary_id);
+
   /// Helper method to create MOAB tags
   moab::ErrorCode createTags();
 
@@ -134,10 +148,16 @@ private:
   moab::ErrorCode createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set);
 
   /// Helper method to create MOAB surface entity set
-  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata);
+  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata, boundary_id_type boundary);
 
   /// Helper method to create MOAB surfaces with no overlaps
-  moab::ErrorCode createSurfaces(moab::Range& reversed, VolData& voldata, unsigned int& surf_id);
+  moab::ErrorCode createSurfaces(moab::Range& faces, VolData& voldata, unsigned int& surf_id);
+
+  /// Helper method to create MOAB surfaces with no overlaps having a given boundary
+  moab::ErrorCode createSurfaces(moab::Range& faces,
+                                 boundary_id_type boundary,
+                                 VolData& voldata, unsigned int& surf_id);
+
 
   /// Create a MOAB surface from a bounding box
   moab::ErrorCode createSurfaceFromBox(const BoundingBox& box, VolData& voldata, unsigned int& surf_id, bool normalout, double factor=1.0);
@@ -158,7 +178,7 @@ private:
   moab::ErrorCode updateSurfData(moab::EntityHandle surface_set,VolData data);
 
   /// Generic method to set the tags that DAGMC requires
-  moab::ErrorCode setTags(moab::EntityHandle ent,std::string name, std::string category, unsigned int id, int dim);
+  moab::ErrorCode setTags(moab::EntityHandle ent, unsigned int id, int dim, std::string category, std::string name, std::string boundary)
 
   /// Helper function to wrap moab::tag_set_data for a string
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
@@ -174,6 +194,9 @@ private:
 
   /// Get the coords of the box back as an array (possibly scaled)
   std::vector<Point> boxCoords(const BoundingBox& box, double factor);
+
+  /// Look for sidesets corresponding to DAGMC boundary conditions
+  void findDAGBoundaries();
 
   /// Look for materials in the FE problem
   void findMaterials();
@@ -263,6 +286,10 @@ private:
   /// Find the surfaces for the provided range and add to group
   bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 
+  // Given a starting range of faces, split into groups by boundary
+  void partitionByBoundary(const moab::Range faces,
+                           std::map< boundary_id_type, moab::Range>& mapped_faces);
+
   /// Write to file
   bool write();
 
@@ -271,6 +298,9 @@ private:
 
   /// Pointer to the feProblem we care about
   FEProblemBase * _problem_ptr;
+
+  ///Pointer to a BoundaryInfo object;
+  BoundaryInfo * boundary_info_ptr;
 
   /// Pointer to a moab skinner for finding temperature surfaces
   std::unique_ptr< moab::Skinner > skinner;
@@ -289,6 +319,9 @@ private:
 
   /// Save the first tet entity handle
   moab::EntityHandle offset;
+
+  /// Map from libmesh boundary id to DAGMC surface type
+  std::map<boundary_id_type, DagBoundaryType > boundary_id_to_type;
 
   // Data members relating to binning in temperature
 
@@ -354,6 +387,8 @@ private:
   std::vector<std::string> mat_names;
   /// OpenMC material names
   std::vector<std::string> openmc_mat_names;
+  /// DagSurfaceUserObject names
+  std::vector<UserObjectName> dag_surface_names;
   /// all element blocks assigned to mats
   std::vector< std::set<SubdomainID> > mat_blocks;
   /// vector for initial densities if binning by density
@@ -379,6 +414,8 @@ private:
   moab::Tag category_tag;
   /// Tag for name of entity set
   moab::Tag name_tag;
+  /// Tag for name of entity set
+  moab::Tag boundary_tag;
 
   /// Const to encode that MOAB tets have 4 nodes
   const unsigned int nNodesPerTet = 4;
