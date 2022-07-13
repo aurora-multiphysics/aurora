@@ -1,19 +1,131 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>DT 2 | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="96552c60-8afd-4c4b-9243-cd0a4455cb87"><i class="material-icons">menu</i></a><ul class="sidenav" id="96552c60-8afd-4c4b-9243-cd0a4455cb87"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">timesteppers</span><a href="#" class="breadcrumb">DT2</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="8226e754-ddd4-4cfa-bb95-4753aa2a72a6" data-section-level="1" data-section-text="DT 2"><h1 id="dt-2">DT2</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p><p>The DT2 has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p><pre class="moose-pre"><code class="language-markdown">
-# DT2
+<!DOCTYPE html><head><meta charset="UTF-8"><title>DT 2 | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><link href="../../contrib/katex/katex.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/katex_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script><script type="text/javascript" src="../../contrib/katex/katex.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="72db8cac-3a4a-47c2-8ab5-68fe731da8b4"><i class="material-icons">menu</i></a><ul class="sidenav" id="72db8cac-3a4a-47c2-8ab5-68fe731da8b4"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">timesteppers</span><a href="#" class="breadcrumb">DT2</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="7040108d-e889-4513-a926-906967481f91" data-section-level="1" data-section-text="DT 2"><h1 id="dt-2">DT2</h1><p>An adaptive timestepper that compares the solution obtained from a single step of size dt with two steps of size dt/2 and adjusts the next timestep accordingly.</p><p>This is an adaptive, error-estimate based multi-step time step calculation scheme. It is meant to provide confidence in the convergence in time step of the results. Because it takes three time steps for every step, it is a relatively computationally expensive time stepping scheme.</p><p>For each time step, the solution is compared to what the solution would be if two half-time steps had been taken instead. This latter solution is generally more accurate, so this gives an estimate of the error. Based on the error, detailed below, and the user set acceptable errors, the time step may be accepted or rejected.</p><span class="moose-katex-block-equation"><span class="moose-katex-equation table-cell" id="moose-equation-65185edf-1b1c-4d4d-8100-bae6af670f63"></span><script>var element = document.getElementById("moose-equation-65185edf-1b1c-4d4d-8100-bae6af670f63");katex.render("error = \\dfrac{||u_{dt} - u_{2dt/2}||_{L_2}}{max(||u_{dt}||_{L_2}, ||u_{2dt/2}||_{L_2}) dt}", element, {displayMode:true,throwOnError:false});</script></span><p>where <span class="moose-katex-inline-equation" id="moose-equation-7c6445a5-5c42-4034-a8c4-892adef7ed30"><script>var element = document.getElementById("moose-equation-7c6445a5-5c42-4034-a8c4-892adef7ed30");katex.render("u", element, {displayMode:false,throwOnError:false});</script></span> is the solution and <span class="moose-katex-inline-equation" id="moose-equation-6e1cada5-3245-49b2-9658-fdc8df7d497e"><script>var element = document.getElementById("moose-equation-6e1cada5-3245-49b2-9658-fdc8df7d497e");katex.render("dt", element, {displayMode:false,throwOnError:false});</script></span> the time step size. If the time step is accepted, then the time step is increased to</p><span class="moose-katex-block-equation"><span class="moose-katex-equation table-cell" id="moose-equation-64bbfd3f-8d91-47fb-8c02-b676fda59f0b"></span><script>var element = document.getElementById("moose-equation-64bbfd3f-8d91-47fb-8c02-b676fda59f0b");katex.render("dt^{n+1} = dt^n \\left(\\dfrac{e_{tol}}{error} \\right)^{1/order}", element, {displayMode:true,throwOnError:false});</script></span><p>where <span class="moose-katex-inline-equation" id="moose-equation-e8b69e93-04ef-4014-8786-cdf8393f2948"><script>var element = document.getElementById("moose-equation-e8b69e93-04ef-4014-8786-cdf8393f2948");katex.render("e_{tol}", element, {displayMode:false,throwOnError:false});</script></span> is the user set tolerance on the error and <span class="moose-katex-inline-equation" id="moose-equation-888d92d2-da18-4821-9c21-04353fd16b81"><script>var element = document.getElementById("moose-equation-888d92d2-da18-4821-9c21-04353fd16b81");katex.render("order", element, {displayMode:false,throwOnError:false});</script></span> is the accuracy order of the time integration scheme.</p><p>If the step is rejected, both the non linear and auxiliary systems are reset, and the time step is reduced before the next attempt.</p><section class="scrollspy" id="deba94ae-30d9-4b46-8ada-fb19d86bc725" data-section-level="2" data-section-text="Example input syntax"><h2 id="example-input-syntax">Example input syntax</h2><p>The <code>DT2</code> time stepping scheme is used in this example. The two half-steps are taken after the full step. In this example, the full step is always accepted. By tightening <code>e_max</code> to 3e-1, the reader may make the time stepper reject the full step, and lower the time step accordingly.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Executioner]
+  type = Transient
 
-!syntax description /Executioner/TimeStepper/DT2
+  solve_type = &#x27;PJFNK&#x27;
 
-## Overview
+  nl_rel_tol = 1e-7
+  #  l_tol = 1e-5
 
-!! Replace these lines with information regarding the DT2 object.
+  start_time = 0.0
+  end_time = 5
+  num_steps = 500000
+  dtmax = 0.25
 
-## Example Input File Syntax
+  [./TimeStepper]
+    type = DT2
+    dt = 0.1
+    e_max = 3e-1
+    e_tol = 1e-1
+  [../]
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#65bac95f-d4af-4629-bc79-4e5bdf97fa6a">(../../../SoftwareDownloads/moose/test/tests/time_steppers/dt2/dt2.i)</a></section><section class="scrollspy" id="e4aaba1c-6631-4cf1-8834-4bb180766e70" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="fd46f03d-315f-4390-9ee1-902cececbe50" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">e_max</span><span class="moose-parameter-header-description">Maximum acceptable error.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Maximum acceptable error.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">e_tol</span><span class="moose-parameter-header-description">Target error tolerance.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Target error tolerance.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="3cebf3c2-4674-48fe-8759-09c4dbbca4d4" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">cutback_factor_at_failure</span><span class="moose-parameter-header-default">0.5</span><span class="moose-parameter-header-description">Factor to apply to timestep if a time step fails to converge.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Factor to apply to timestep if a time step fails to converge.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">dt</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">The initial time step size.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The initial time step size.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">max_increase</span><span class="moose-parameter-header-default">1e+09</span><span class="moose-parameter-header-description">Maximum ratio that the time step can increase.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1e+09</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Maximum ratio that the time step can increase.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">reset_dt</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Use when restarting a calculation to force a change in dt.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Use when restarting a calculation to force a change in dt.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="cfdaf1a2-5540-407c-93b3-a9f28e0bc5c8" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="65bac95f-d4af-4629-bc79-4e5bdf97fa6a"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/time_steppers/dt2/dt2.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 2
+  xmin = -1
+  xmax = 1
+  ymin = -1
+  ymax = 1
+  nx = 20
+  ny = 20
+  elem_type = QUAD4
+[]
 
-!! Describe and include an example of how to use the DT2 object.
+[GlobalParams]
+  slope = 1
+  t_jump = 2
+[]
 
-!syntax parameters /Executioner/TimeStepper/DT2
+[Functions]
+  active = &#x27;u_func&#x27;
 
-!syntax inputs /Executioner/TimeStepper/DT2
+  [./u_func]
+    type = ParsedFunction
+    value = &#x27;atan((t-2)*pi)&#x27;   # atan((t-t_jump)*pi*slope) - has to match global params above
 
-!syntax children /Executioner/TimeStepper/DT2
-</code></pre></p></div></div></div><p>An adaptive timestepper that compares the solution obtained from a single step of size dt with two steps of size dt/2 and adjusts the next timestep accordingly.</p><section class="scrollspy" id="6fd69f38-c3cd-4009-b91d-1ec2042b8fe2" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="14fed3d8-13f0-41c4-a764-cf7bc498f872" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">e_max</span><span class="moose-parameter-header-description">Maximum acceptable error.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Maximum acceptable error.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">e_tol</span><span class="moose-parameter-header-description">Target error tolerance.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Target error tolerance.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="314a78ed-661e-41bf-a3bd-ea8e96ce2f0b" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">cutback_factor_at_failure</span><span class="moose-parameter-header-default">0.5</span><span class="moose-parameter-header-description">Factor to apply to timestep if it a time step fails to convergence.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Factor to apply to timestep if it a time step fails to convergence.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">dt</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">The initial time step size.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The initial time step size.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">max_increase</span><span class="moose-parameter-header-default">1e+09</span><span class="moose-parameter-header-description">Maximum ratio that the time step can increase.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1e+09</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Maximum ratio that the time step can increase.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">reset_dt</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Use when restarting a calculation to force a change in dt.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Use when restarting a calculation to force a change in dt.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="3f4b1054-752f-40ce-b973-7f3da0aa03a4" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#6fd69f38-c3cd-4009-b91d-1ec2042b8fe2" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
+  [../]
+[]
+
+[Variables]
+  active = &#x27;u&#x27;
+
+  [./u]
+    order = FIRST
+    family = LAGRANGE
+
+    [./InitialCondition]
+      type = TEIC
+    [../]
+  [../]
+[]
+
+[Kernels]
+  active = &#x27;td diff ffn&#x27;
+
+  [./td]
+    type = TimeDerivative
+    variable = u
+  [../]
+
+  [./diff]
+    type = Diffusion
+    variable = u
+  [../]
+
+  [./ffn]
+    type = TEJumpFFN
+    variable = u
+  [../]
+[]
+
+[BCs]
+  active = &#x27;all&#x27;
+
+  [./all]
+    type = TEJumpBC
+    variable = u
+    boundary = &#x27;0 1 2 3&#x27;
+  [../]
+[]
+
+[Postprocessors]
+  active = &#x27;dt l2&#x27;
+
+  [./dt]
+    type = TimestepSize
+  [../]
+
+  [./l2]
+    type = ElementL2Error
+    variable = u
+    function = u_func
+  [../]
+[]
+
+[Executioner]
+  type = Transient
+
+
+  solve_type = &#x27;PJFNK&#x27;
+
+  nl_rel_tol = 1e-7
+#  l_tol = 1e-5
+
+  start_time = 0.0
+  end_time = 5
+  num_steps = 500000
+  dtmax = 0.25
+
+  [./TimeStepper]
+    type = DT2
+    dt = 0.1
+    e_max = 3e-1
+    e_tol = 1e-1
+  [../]
+[]
+
+[Outputs]
+  execute_on = &#x27;timestep_end&#x27;
+  csv = true
+  exodus = true
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#deba94ae-30d9-4b46-8ada-fb19d86bc725" class="tooltipped" data-position="left" data-tooltip="Example input syntax">Example input syntax</a></li><li><a href="#e4aaba1c-6631-4cf1-8834-4bb180766e70" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>

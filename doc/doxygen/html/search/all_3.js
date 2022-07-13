@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['calcdenmidpoints_25',['calcDenMidpoints',['../classMoabUserObject.html#a36988da2e3d6287fc9c84b3110232674',1,'MoabUserObject']]],
+  ['calcdenmidpoints_25',['calcDenMidpoints',['../classMoabUserObject.html#ae582c96c53d68ae174c6d1e9b3475c7b',1,'MoabUserObject']]],
   ['calcmidpoints_26',['calcMidpoints',['../classMoabUserObject.html#a47ba0ef4bbe7d4fc2c70279c694a54d5',1,'MoabUserObject']]],
   ['calcmidpointslin_27',['calcMidpointsLin',['../classMoabUserObject.html#a3c089835b8c72d10e61b6b0f3b62034d',1,'MoabUserObject::calcMidpointsLin()'],['../classMoabUserObject.html#a37736d98f0a00d7185682c49e0f006ad',1,'MoabUserObject::calcMidpointsLin(double var_min_in, double bin_width_in, int nbins_in, std::vector&lt; double &gt; &amp;midpoints_in)']]],
   ['calcmidpointslog_28',['calcMidpointsLog',['../classMoabUserObject.html#a43703cd23a164f3065ffe39480036ed6',1,'MoabUserObject']]],

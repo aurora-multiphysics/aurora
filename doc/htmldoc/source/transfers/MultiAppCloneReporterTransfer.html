@@ -1,4 +1,4 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>MultiAppCloneReporterTransfer | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="110efaa2-800c-4331-bb38-11354f95ef04"><i class="material-icons">menu</i></a><ul class="sidenav" id="110efaa2-800c-4331-bb38-11354f95ef04"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">transfers</span><a href="#" class="breadcrumb">MultiAppCloneReporterTransfer</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="3651757c-3159-4367-81bb-2b1dee8aa947" data-section-level="1" data-section-text="MultiAppCloneReporterTransfer"><h1 id="multiappclonereportertransfer">MultiAppCloneReporterTransfer</h1><p>Declare and transfer reporter data from sub-application(s) to main application.</p><section class="scrollspy" id="18bafb80-f1cc-471d-a683-782e03392a0a" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p>This transfer is very similar to <a href="MultiAppReporterTransfer.html">MultiAppReporterTransfer</a> with a few key differences. The first is that this object can only transfer from sub-application(s) to the main app. The second is that reporter values are declared on-the-fly, i.e. the reporter values from the sub-app are &quot;cloned&quot; onto the main app, with out an already existing value on the main app. The third is that when there are multiple sub-applications, the values are collected into a vector of that reporter type on the main app.</p><div class="card moose-alert moose-alert-warning"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">warning</i><span class="moose-alert-title-brand">warning</span></div><div class="card-content"><div class="moose-alert-content"><p><p>It is not possible to transfer a reporter value that has already been cloned with this object. For instance, let&#x27;s say there is a hierarchical structure of multiapps with a primary (main), secondary, and tertiary app. If this object is used to clone values from the tertiary to secondary, it cannot again be used to clone the same values from the secondary to the primary.</p></p></div></div></div></section><section class="scrollspy" id="68873f78-4fbf-4e93-a45a-567cb534e992" data-section-level="2" data-section-text="Example Input Syntax"><h2 id="example-input-syntax">Example Input Syntax</h2><section id="32450477-e666-4195-8b97-6c4cf5cb7727" data-section-level="3" data-section-text="Multiple Sub Applications"><h3 id="multiple-sub-applications">Multiple Sub Applications</h3><p>This example shows a multi-app with multiple sub applications. It uses the same input file, but with different reporter values controlled by <a href="#2e388e16-28ea-437e-97d0-ead31d32efea" class="moose-modal-link modal-trigger">&quot;cli_args&quot;</a>:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[MultiApps]
+<!DOCTYPE html><head><meta charset="UTF-8"><title>MultiAppCloneReporterTransfer | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="f726f05a-61f1-46d9-a35a-0b598c187e68"><i class="material-icons">menu</i></a><ul class="sidenav" id="f726f05a-61f1-46d9-a35a-0b598c187e68"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">transfers</span><a href="#" class="breadcrumb">MultiAppCloneReporterTransfer</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="2cc6b3ee-e39a-4f5d-a509-15e4f9fd9784" data-section-level="1" data-section-text="MultiAppCloneReporterTransfer"><h1 id="multiappclonereportertransfer">MultiAppCloneReporterTransfer</h1><p>Declare and transfer reporter data from sub-application(s) to main application.</p><section class="scrollspy" id="49709d2c-cd8d-4c65-aafb-e4df2437b7e9" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p>This transfer is very similar to <a href="MultiAppReporterTransfer.html">MultiAppReporterTransfer</a> with a few key differences. The first is that this object can only transfer from sub-application(s) to the main app. The second is that reporter values are declared on-the-fly, i.e. the reporter values from the sub-app are &quot;cloned&quot; onto the main app, with out an already existing value on the main app. The third is that when there are multiple sub-applications, the values are collected into a vector of that reporter type on the main app.</p><div class="card moose-alert moose-alert-warning"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">warning</i><span class="moose-alert-title-brand">warning</span></div><div class="card-content"><div class="moose-alert-content"><p>It is not possible to transfer a reporter value that has already been cloned with this object. For instance, let&#x27;s say there is a hierarchical structure of multiapps with a primary (main), secondary, and tertiary app. If this object is used to clone values from the tertiary to secondary, it cannot again be used to clone the same values from the secondary to the primary.</p></div></div></div></section><section class="scrollspy" id="c52daa4d-99c6-4c62-ae19-1f41bfd355b7" data-section-level="2" data-section-text="Example Input Syntax"><h2 id="example-input-syntax">Example Input Syntax</h2><section id="7d812639-d2e1-47bd-982d-6ab75e9b2e87" data-section-level="3" data-section-text="Multiple Sub Applications"><h3 id="multiple-sub-applications">Multiple Sub Applications</h3><p>This example shows a multi-app with multiple sub applications. It uses the same input file, but with different reporter values controlled by <a href="#93f17573-58cd-4480-82cb-d846e874df6d" class="moose-modal-link modal-trigger">&quot;cli_args&quot;</a>:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[MultiApps]
   [multi_reporter]
     type = TransientMultiApp
     input_files = &#x27;sub0.i sub0.i sub0.i sub0.i&#x27;
@@ -11,113 +11,91 @@
                   Postprocessors/from_sub_pp/default=1.0471975;Reporters/from_sub_rep/integer_values=12;Reporters/from_sub_rep/string_values=thirty;Outputs/active=&quot;&quot;
                   Postprocessors/from_sub_pp/default=0.7853981;Reporters/from_sub_rep/integer_values=13;Reporters/from_sub_rep/string_values=forty;Outputs/active=&quot;&quot;&#x27;
   []
-[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#8f16aaa6-4050-4b49-86b3-4d92cb631194">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><p>The transfer syntax is pretty minimal giving reporter value names (can be found in <a class="moose-source-filename tooltipped modal-trigger" href="#5dc2dde2-0a32-4d92-8a2a-5c6e852a19c8">sub0.i</a>) on the sub-app and reporter object name on main app, the object name is used to associate the cloned value to an object.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Transfers]
+[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#48756602-3df6-4817-b23d-cf1dd45f7d76">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><p>The transfer syntax is pretty minimal giving reporter value names (can be found in <a class="moose-source-filename tooltipped modal-trigger" href="#3c8bf8a7-19a8-4baf-ac69-5260d76b99f0">sub0.i</a>) on the sub-app and reporter object name on main app, the object name is used to associate the cloned value to an object.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Transfers]
   [multi_rep]
     type = MultiAppCloneReporterTransfer
     from_reporters = &#x27;from_sub_pp/value from_sub_rep/int from_sub_rep/str&#x27;
     to_reporter = receiver
     multi_app = multi_reporter
   []
-[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#3ef0dd4c-15cc-4109-ae35-dac433ba50aa">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><p>When run in serial, a single output file is produced which shows the vectors of the reporter values created:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                3.1415926,
-                                1.5707963,
-                                1.0471975,
-                                0.7853981
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                10,
-                                11,
-                                12,
-                                13
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;ten&quot;,
-                                &quot;twenty&quot;,
-                                &quot;thirty&quot;,
-                                &quot;forty&quot;
-                            ]
-                        },
-                        {
-</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#01d78ee6-8e3e-4885-bb14-5989b9c7b4ea">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_serial.json)</a><p>In parallel, the sub app reporter values are split into different files, one for each processor. This example was run with 6 processors which split the 4 sub apps. So the root processor for each sub app (<a class="moose-source-filename tooltipped modal-trigger" href="#c4491468-362b-431f-809c-49b31da8fa3c">clone_out.json</a>, <a class="moose-source-filename tooltipped modal-trigger" href="#16b2f42b-b27f-4767-acc2-62f0f4b62ef0">clone_out.json.1</a>, <a class="moose-source-filename tooltipped modal-trigger" href="#993ccf31-3d4e-4dfd-b08b-263c42492e38">clone_out.json.2</a>, and <a class="moose-source-filename tooltipped modal-trigger" href="#dceaf954-0b7e-4cec-8b47-076b827e57ae">clone_out.json.4</a>) will show the value, while the other processors (<a class="moose-source-filename tooltipped modal-trigger" href="#8e7dbdb9-284e-4631-a852-99b76f228003">clone_out.json.3</a> and <a class="moose-source-filename tooltipped modal-trigger" href="#0245ba75-3495-4d13-8b75-c2e633a3835f">clone_out.json.5</a>) will be empty:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                3.1415926
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                10
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;ten&quot;
-                            ]
-                        },
-                        {
-</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#78be8738-0c66-4368-ba26-3c7d68aa11ce">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</a><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#27a3ccbc-e9f0-4f25-a016-851f8d515d7d">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.3)</a></section><section id="2cc66d5f-0478-49f2-b581-ce7a5da971cb" data-section-level="3" data-section-text="Single Sub Application"><h3 id="single-sub-application">Single Sub Application</h3><p>When there is a only a single sub-application in the multi-app, the reporter value is directly cloned (versus creating a vector):</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[MultiApps]
+[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#00929b2e-7b18-43ca-9791-6c0d07233263">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><p>When run in serial, a single output file is produced which shows the vectors of the reporter values created:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#8d678f31-f3fb-435c-9b79-5002282841d1">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_serial.json)</a><p>In parallel, the sub app reporter values are split into different files, one for each processor. This example was run with 6 processors which split the 4 sub apps. So the root processor for each sub app (<a class="moose-source-filename tooltipped modal-trigger" href="#1c02c6d7-de0a-43bb-afe5-c34cf0a274a4">clone_out.json</a>, <a class="moose-source-filename tooltipped modal-trigger" href="#de9a59b0-8bc7-466b-a1f4-279ff49f7d55">clone_out.json.1</a>, <a class="moose-source-filename tooltipped modal-trigger" href="#1968a1e9-3fee-4aa6-8ed1-499a5871c931">clone_out.json.2</a>, and <a class="moose-source-filename tooltipped modal-trigger" href="#d776415b-b58d-47ba-8c11-537d038a86f3">clone_out.json.4</a>) will show the value, while the other processors (<a class="moose-source-filename tooltipped modal-trigger" href="#2a0c266e-99e5-4890-a375-6754080d9b58">clone_out.json.3</a> and <a class="moose-source-filename tooltipped modal-trigger" href="#1bf10f46-f9af-4731-9443-b14545202106">clone_out.json.5</a>) will be empty:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#dde69f28-121b-4c56-a2b4-3b181add958f">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</a><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#8b43dcfa-9bf2-4f91-9555-e9aaa8800c4b">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.3)</a></section><section id="6b1c9e2b-7daf-4a2c-9c3d-1330b23d9753" data-section-level="3" data-section-text="Single Sub Application"><h3 id="single-sub-application">Single Sub Application</h3><p>When there is a only a single sub-application in the multi-app, the reporter value is directly cloned (versus creating a vector):</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[MultiApps]
   [single_app]
     type = TransientMultiApp
     input_files = &#x27;sub0.i&#x27;
     cli_args = &#x27;Outputs/active=&quot;&quot;&#x27;
   []
-[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#ce281cf2-eb1d-4269-9717-8fb8c72e59ce">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Transfers]
+[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#945bec26-c702-4f9f-be16-9d50ec164084">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Transfers]
   [single]
     type = MultiAppCloneReporterTransfer
     from_reporters = &#x27;from_sub_pp/value from_sub_rep/int from_sub_rep/str&#x27;
     to_reporter = receiver
     multi_app = single_app
   []
-[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#a4364c25-06db-4f6b-9602-d6b6e1ad74e5">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><p>The resulting output in serial and the root processor in parallel will contain the transferred values, while the non-root processors will have the default constructor of the value type:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                            &quot;name&quot;: &quot;single:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;double&quot;,
-                            &quot;value&quot;: 3.1415926
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;int&quot;,
-                            &quot;value&quot;: 10
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::string&quot;,
-                            &quot;value&quot;: &quot;twenty&quot;
-                        }
-                    ]
+[]</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#0250c596-00ce-449a-b49f-d1562cdb57b5">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</a><p>The resulting output in serial and the root processor in parallel will contain the transferred values, while the non-root processors will have the default constructor of the value type:</p><pre class="moose-pre" style="max-height:350px;"><code class="language-json">                &quot;single:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;double&quot;
+                },
+                &quot;single:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;int&quot;
+                },
+                &quot;single:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::string&quot;
                 }
-            },
-</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#7856f5ad-221e-4b8d-9be4-4a1c9402c422">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</a><pre class="moose-pre" style="max-height:350px;"><code class="language-json">{
+            }
+        }
+    },
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#03095861-c2cf-41fe-818d-a858bb726722">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</a><pre class="moose-pre" style="max-height:350px;"><code class="language-json">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 1,
-</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#251bea1b-81e7-4bcd-b380-a83dbf54413f">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.1)</a></section></section><section class="scrollspy" id="c6ea3758-3899-4bcf-9d58-e2a2e5abb50a" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="23c5b332-2292-4c37-acc7-a59b4089f184" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">from_reporters</span><span class="moose-parameter-header-description">List of the reporter names (object_name/value_name) to transfer the value from.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;ReporterName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>List of the reporter names (object_name/value_name) to transfer the value from.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">multi_app</span><span class="moose-parameter-header-description">The name of the MultiApp to use.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiAppName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the MultiApp to use.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">to_reporter</span><span class="moose-parameter-header-description">Reporter object to reference when declaring reporter values.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Reporter object to reference when declaring reporter values.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="f646b4a0-6b18-4632-9c50-928bffc75c34" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">check_multiapp_execute_on</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">When false the check between the multiapp and transfer execute on flags is not preformed.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>When false the check between the multiapp and transfer execute on flags is not preformed.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_source_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the source mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the source mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_target_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the target mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the target mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">execute_on</span><span class="moose-parameter-header-default">SAME_AS_MULTIAPP</span><span class="moose-parameter-header-description">The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>SAME_AS_MULTIAPP</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>ExecFlagEnum</p><p class="moose-parameter-description-options"><span>Options:</span>NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP</p><p class="moose-parameter-description"><span>Description:</span>The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">prefix</span><span class="moose-parameter-header-description">Use the supplied string as the prefix for reporter name rather than the transfer name.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Use the supplied string as the prefix for reporter name rather than the transfer name.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">reporter_type</span><span class="moose-parameter-header-description">The type of the reporter on the sub-application. This parameter is not typically required, but if some processors do not have a sub-app, for instance if the max_procs_per_app parameter is used in the MultiApp, then this is required.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>bool, integer, real, string</p><p class="moose-parameter-description"><span>Description:</span>The type of the reporter on the sub-application. This parameter is not typically required, but if some processors do not have a sub-app, for instance if the max_procs_per_app parameter is used in the MultiApp, then this is required.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="2118c0f0-52af-49c6-aed0-e3f0b92cf864" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="2e388e16-28ea-437e-97d0-ead31d32efea"><div class="modal-content"><h4>cli_args</h4><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Additional command line arguments to pass to the sub apps. If one set is provided the arguments are applied to all, otherwise there must be a set for each sub app.</p></div></div><div class="moose-modal modal" id="8f16aaa6-4050-4b49-86b3-4d92cb631194"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#4b69f819-00b5-4af2-b31d-75ef445bab02">(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.1)</a></section></section><section class="scrollspy" id="c0d1117c-1e67-4c43-8076-a4e93a39b1d3" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="2a748dab-9406-4480-8af2-734f8c31be75" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">from_reporters</span><span class="moose-parameter-header-description">List of the reporter names (object_name/value_name) to transfer the value from.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;ReporterName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>List of the reporter names (object_name/value_name) to transfer the value from.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">multi_app</span><span class="moose-parameter-header-description">The name of the MultiApp to use.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiAppName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the MultiApp to use.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">to_reporter</span><span class="moose-parameter-header-description">Reporter object to reference when declaring reporter values.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Reporter object to reference when declaring reporter values.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="87a535a4-abb1-4927-bbba-75a5c66eed3e" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">check_multiapp_execute_on</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">When false the check between the multiapp and transfer execute on flags is not preformed.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>When false the check between the multiapp and transfer execute on flags is not preformed.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_source_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the source mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the source mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_target_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the target mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the target mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">execute_on</span><span class="moose-parameter-header-default">SAME_AS_MULTIAPP</span><span class="moose-parameter-header-description">The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP, ALWAYS.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>SAME_AS_MULTIAPP</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>ExecFlagEnum</p><p class="moose-parameter-description-options"><span>Options:</span>NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP, ALWAYS</p><p class="moose-parameter-description"><span>Description:</span>The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP, ALWAYS.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">prefix</span><span class="moose-parameter-header-description">Use the supplied string as the prefix for reporter name rather than the transfer name.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Use the supplied string as the prefix for reporter name rather than the transfer name.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">reporter_type</span><span class="moose-parameter-header-description">The type of the reporter on the sub-application. This parameter is not typically required, but if some processors do not have a sub-app, for instance if the max_procs_per_app parameter is used in the MultiApp, then this is required.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>bool, integer, real, string</p><p class="moose-parameter-description"><span>Description:</span>The type of the reporter on the sub-application. This parameter is not typically required, but if some processors do not have a sub-app, for instance if the max_procs_per_app parameter is used in the MultiApp, then this is required.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="fc4e0777-d9a4-4e98-861b-a34829f7f7e3" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="93f17573-58cd-4480-82cb-d846e874df6d"><div class="modal-content"><h4>cli_args</h4><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Additional command line arguments to pass to the sub apps. If one set is provided the arguments are applied to all, otherwise there must be a set for each sub app.</p></div></div><div class="moose-modal modal" id="48756602-3df6-4817-b23d-cf1dd45f7d76"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
   type = GeneratedMeshGenerator
   dim = 1
 []
@@ -196,7 +174,7 @@
   []
   execute_on = timestep_end
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="5dc2dde2-0a32-4d92-8a2a-5c6e852a19c8"><div class="modal-content"><h4>(doc/reporter_transfer/sub0.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="3c8bf8a7-19a8-4baf-ac69-5260d76b99f0"><div class="modal-content"><h4>(doc/reporter_transfer/sub0.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
   type = GeneratedMeshGenerator
   dim = 1
 []
@@ -260,7 +238,7 @@
   []
   execute_on = timestep_end
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="3ef0dd4c-15cc-4109-ae35-dac433ba50aa"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="00929b2e-7b18-43ca-9791-6c0d07233263"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
   type = GeneratedMeshGenerator
   dim = 1
 []
@@ -339,602 +317,539 @@
   []
   execute_on = timestep_end
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="01d78ee6-8e3e-4885-bb14-5989b9c7b4ea"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_serial.json)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="8d678f31-f3fb-435c-9b79-5002282841d1"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_serial.json)</h4><pre class="moose-pre"><code class="language-text">{
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;single:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;double&quot;
+                },
+                &quot;single:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;int&quot;
+                },
+                &quot;single:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::string&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                3.1415926,
-                                1.5707963,
-                                1.0471975,
-                                0.7853981
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                10,
-                                11,
-                                12,
-                                13
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;ten&quot;,
-                                &quot;twenty&quot;,
-                                &quot;thirty&quot;,
-                                &quot;forty&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    30.0,
-                                    30.0,
-                                    30.0
-                                ],
-                                [
-                                    30.0,
-                                    30.0,
-                                    30.0
-                                ],
-                                [
-                                    31.0,
-                                    31.0,
-                                    31.0
-                                ],
-                                [
-                                    31.0,
-                                    31.0,
-                                    31.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    40.0,
-                                    40.0,
-                                    40.0
-                                ],
-                                [
-                                    40.0,
-                                    40.0,
-                                    40.0
-                                ],
-                                [
-                                    41.0,
-                                    41.0,
-                                    41.0
-                                ],
-                                [
-                                    41.0,
-                                    41.0,
-                                    41.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;double&quot;,
-                            &quot;value&quot;: 3.1415926
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;int&quot;,
-                            &quot;value&quot;: 10
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::string&quot;,
-                            &quot;value&quot;: &quot;twenty&quot;
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    3.1415926,
+                    1.5707963,
+                    1.0471975,
+                    0.7853981
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    10,
+                    11,
+                    12,
+                    13
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;ten&quot;,
+                    &quot;twenty&quot;,
+                    &quot;thirty&quot;,
+                    &quot;forty&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        30.0,
+                        30.0,
+                        30.0
+                    ],
+                    [
+                        30.0,
+                        30.0,
+                        30.0
+                    ],
+                    [
+                        31.0,
+                        31.0,
+                        31.0
+                    ],
+                    [
+                        31.0,
+                        31.0,
+                        31.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    [
+                        41.0,
+                        41.0,
+                        41.0
+                    ],
+                    [
+                        41.0,
+                        41.0,
+                        41.0
+                    ]
+                ],
+                &quot;single:from_sub_pp:value&quot;: 3.1415926,
+                &quot;single:from_sub_rep:int&quot;: 10,
+                &quot;single:from_sub_rep:str&quot;: &quot;twenty&quot;
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="c4491468-362b-431f-809c-49b31da8fa3c"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="1c02c6d7-de0a-43bb-afe5-c34cf0a274a4"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 0,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;single:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;double&quot;
+                },
+                &quot;single:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;int&quot;
+                },
+                &quot;single:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::string&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                3.1415926
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                10
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;ten&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    30.0,
-                                    30.0,
-                                    30.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    40.0,
-                                    40.0,
-                                    40.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;double&quot;,
-                            &quot;value&quot;: 3.1415926
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;int&quot;,
-                            &quot;value&quot;: 10
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::string&quot;,
-                            &quot;value&quot;: &quot;twenty&quot;
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    3.1415926
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    10
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;ten&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        30.0,
+                        30.0,
+                        30.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        40.0,
+                        40.0,
+                        40.0
+                    ]
+                ],
+                &quot;single:from_sub_pp:value&quot;: 3.1415926,
+                &quot;single:from_sub_rep:int&quot;: 10,
+                &quot;single:from_sub_rep:str&quot;: &quot;twenty&quot;
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="16b2f42b-b27f-4767-acc2-62f0f4b62ef0"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.1)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="de9a59b0-8bc7-466b-a1f4-279ff49f7d55"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.1)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 1,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        }
-                    ]
-                }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [],
+                &quot;multi_rep:from_sub_rep:int&quot;: [],
+                &quot;multi_rep:from_sub_rep:str&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: []
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="993ccf31-3d4e-4dfd-b08b-263c42492e38"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.2)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="1968a1e9-3fee-4aa6-8ed1-499a5871c931"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.2)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 2,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                1.5707963
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                11
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;twenty&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    30.0,
-                                    30.0,
-                                    30.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    40.0,
-                                    40.0,
-                                    40.0
-                                ]
-                            ]
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    1.5707963
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    11
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;twenty&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        30.0,
+                        30.0,
+                        30.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        40.0,
+                        40.0,
+                        40.0
+                    ]
+                ]
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="dceaf954-0b7e-4cec-8b47-076b827e57ae"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.4)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="d776415b-b58d-47ba-8c11-537d038a86f3"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.4)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 4,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                1.0471975
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                12
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;thirty&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    31.0,
-                                    31.0,
-                                    31.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    41.0,
-                                    41.0,
-                                    41.0
-                                ]
-                            ]
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    1.0471975
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    12
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;thirty&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        31.0,
+                        31.0,
+                        31.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        41.0,
+                        41.0,
+                        41.0
+                    ]
+                ]
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="8e7dbdb9-284e-4631-a852-99b76f228003"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.3)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="2a0c266e-99e5-4890-a375-6754080d9b58"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.3)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 3,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        }
-                    ]
-                }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [],
+                &quot;multi_rep:from_sub_rep:int&quot;: [],
+                &quot;multi_rep:from_sub_rep:str&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: []
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="0245ba75-3495-4d13-8b75-c2e633a3835f"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.5)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="1bf10f46-f9af-4731-9443-b14545202106"><div class="modal-content"><h4>(doc/reporter_transfer/gold/clone_out.json.5)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 5,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                0.7853981
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                13
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;forty&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    31.0,
-                                    31.0,
-                                    31.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    41.0,
-                                    41.0,
-                                    41.0
-                                ]
-                            ]
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    0.7853981
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    13
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;forty&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        31.0,
+                        31.0,
+                        31.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        41.0,
+                        41.0,
+                        41.0
+                    ]
+                ]
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="78be8738-0c66-4368-ba26-3c7d68aa11ce"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="dde69f28-121b-4c56-a2b4-3b181add958f"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 0,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;single:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;double&quot;
+                },
+                &quot;single:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;int&quot;
+                },
+                &quot;single:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::string&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                3.1415926
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                10
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;ten&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    30.0,
-                                    30.0,
-                                    30.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    40.0,
-                                    40.0,
-                                    40.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;double&quot;,
-                            &quot;value&quot;: 3.1415926
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;int&quot;,
-                            &quot;value&quot;: 10
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::string&quot;,
-                            &quot;value&quot;: &quot;twenty&quot;
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    3.1415926
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    10
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;ten&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        30.0,
+                        30.0,
+                        30.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        40.0,
+                        40.0,
+                        40.0
+                    ]
+                ],
+                &quot;single:from_sub_pp:value&quot;: 3.1415926,
+                &quot;single:from_sub_rep:int&quot;: 10,
+                &quot;single:from_sub_rep:str&quot;: &quot;twenty&quot;
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="27a3ccbc-e9f0-4f25-a016-851f8d515d7d"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.3)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="8b43dcfa-9bf2-4f91-9555-e9aaa8800c4b"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.3)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 3,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        }
-                    ]
-                }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [],
+                &quot;multi_rep:from_sub_rep:int&quot;: [],
+                &quot;multi_rep:from_sub_rep:str&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: []
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="ce281cf2-eb1d-4269-9717-8fb8c72e59ce"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="945bec26-c702-4f9f-be16-9d50ec164084"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
   type = GeneratedMeshGenerator
   dim = 1
 []
@@ -1013,7 +928,7 @@
   []
   execute_on = timestep_end
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="a4364c25-06db-4f6b-9602-d6b6e1ad74e5"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="0250c596-00ce-449a-b49f-d1562cdb57b5"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/clone.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh/generate]
   type = GeneratedMeshGenerator
   dim = 1
 []
@@ -1092,127 +1007,112 @@
   []
   execute_on = timestep_end
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="7856f5ad-221e-4b8d-9be4-4a1c9402c422"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="03095861-c2cf-41fe-818d-a858bb726722"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 0,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;single:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;double&quot;
+                },
+                &quot;single:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;int&quot;
+                },
+                &quot;single:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::string&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: [
-                                3.1415926
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: [
-                                10
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: [
-                                &quot;ten&quot;
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    30.0,
-                                    30.0,
-                                    30.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: [
-                                [
-                                    40.0,
-                                    40.0,
-                                    40.0
-                                ]
-                            ]
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;double&quot;,
-                            &quot;value&quot;: 3.1415926
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;int&quot;,
-                            &quot;value&quot;: 10
-                        },
-                        {
-                            &quot;name&quot;: &quot;single:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::string&quot;,
-                            &quot;value&quot;: &quot;twenty&quot;
-                        }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [
+                    3.1415926
+                ],
+                &quot;multi_rep:from_sub_rep:int&quot;: [
+                    10
+                ],
+                &quot;multi_rep:from_sub_rep:str&quot;: [
+                    &quot;ten&quot;
+                ],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [
+                    [
+                        30.0,
+                        30.0,
+                        30.0
                     ]
-                }
+                ],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: [
+                    [
+                        40.0,
+                        40.0,
+                        40.0
+                    ]
+                ],
+                &quot;single:from_sub_pp:value&quot;: 3.1415926,
+                &quot;single:from_sub_rep:int&quot;: 10,
+                &quot;single:from_sub_rep:str&quot;: &quot;twenty&quot;
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="251bea1b-81e7-4bcd-b380-a83dbf54413f"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.1)</h4><pre class="moose-pre"><code class="language-text">{
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="4b69f819-00b5-4af2-b31d-75ef445bab02"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/transfers/reporter_transfer/gold/clone_out.json.1)</h4><pre class="moose-pre"><code class="language-text">{
     &quot;number_of_parts&quot;: 6,
     &quot;part&quot;: 1,
+    &quot;reporters&quot;: {
+        &quot;receiver&quot;: {
+            &quot;type&quot;: &quot;ConstantReporter&quot;,
+            &quot;values&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:int&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;
+                },
+                &quot;multi_rep:from_sub_rep:str&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:a&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                },
+                &quot;multi_vpp:from_sub_vpp:b&quot;: {
+                    &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;
+                }
+            }
+        }
+    },
     &quot;time_steps&quot;: [
         {
-            &quot;reporters&quot;: {
-                &quot;receiver&quot;: {
-                    &quot;info&quot;: {
-                        &quot;name&quot;: &quot;receiver&quot;,
-                        &quot;type&quot;: &quot;ConstantReporter&quot;
-                    },
-                    &quot;values&quot;: [
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_pp:value&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;double&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:int&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;int&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_rep:from_sub_rep:str&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::string&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:a&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        },
-                        {
-                            &quot;name&quot;: &quot;multi_vpp:from_sub_vpp:b&quot;,
-                            &quot;type&quot;: &quot;std::vector&lt;std::vector&lt;double&gt;&gt;&quot;,
-                            &quot;value&quot;: []
-                        }
-                    ]
-                }
+            &quot;receiver&quot;: {
+                &quot;multi_rep:from_sub_pp:value&quot;: [],
+                &quot;multi_rep:from_sub_rep:int&quot;: [],
+                &quot;multi_rep:from_sub_rep:str&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:a&quot;: [],
+                &quot;multi_vpp:from_sub_vpp:b&quot;: []
             },
             &quot;time&quot;: 1.0,
             &quot;time_step&quot;: 1
         }
     ]
 }
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#18bafb80-f1cc-471d-a683-782e03392a0a" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#68873f78-4fbf-4e93-a45a-567cb534e992" class="tooltipped" data-position="left" data-tooltip="Example Input Syntax">Example Input Syntax</a></li><li><a href="#c6ea3758-3899-4bcf-9d58-e2a2e5abb50a" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#49709d2c-cd8d-4c65-aafb-e4df2437b7e9" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#c52daa4d-99c6-4c62-ae19-1f41bfd355b7" class="tooltipped" data-position="left" data-tooltip="Example Input Syntax">Example Input Syntax</a></li><li><a href="#c0d1117c-1e67-4c43-8076-a4e93a39b1d3" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>

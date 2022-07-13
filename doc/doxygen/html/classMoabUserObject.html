@@ -135,12 +135,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aceeeb40f99cef4ae84795b04f6350f8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#aceeeb40f99cef4ae84795b04f6350f8c">setSolution</a> (std::string var_now, std::vector&lt; double &gt; &amp;results, double scaleFactor=1., bool isErr=false, bool normToVol=true)</td></tr>
 <tr class="memdesc:aceeeb40f99cef4ae84795b04f6350f8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass the OpenMC results into the libMesh systems solution.  <a href="classMoabUserObject.html#aceeeb40f99cef4ae84795b04f6350f8c">More...</a><br /></td></tr>
 <tr class="separator:aceeeb40f99cef4ae84795b04f6350f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0f6f11545be3697538ac87dedb5b4ee"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#ae0f6f11545be3697538ac87dedb5b4ee">getTemperature</a> (moab::EntityHandle vol)</td></tr>
-<tr class="memdesc:ae0f6f11545be3697538ac87dedb5b4ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the temperature of a volume.  <a href="classMoabUserObject.html#ae0f6f11545be3697538ac87dedb5b4ee">More...</a><br /></td></tr>
-<tr class="separator:ae0f6f11545be3697538ac87dedb5b4ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80d24557d1b6c96f1ab3de2ee27a6d72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a80d24557d1b6c96f1ab3de2ee27a6d72">getMaterialsDensities</a> (std::vector&lt; std::string &gt; &amp;mat_names_out, std::vector&lt; std::string &gt; &amp;tails, std::vector&lt; double &gt; &amp;initial_densities, std::vector&lt; double &gt; &amp;rel_densities)</td></tr>
-<tr class="memdesc:a80d24557d1b6c96f1ab3de2ee27a6d72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a list of original material names, initial and relative densities.  <a href="classMoabUserObject.html#a80d24557d1b6c96f1ab3de2ee27a6d72">More...</a><br /></td></tr>
-<tr class="separator:a80d24557d1b6c96f1ab3de2ee27a6d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9582895afd898d70ed256f298488ee50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a9582895afd898d70ed256f298488ee50">getMaterialProperties</a> (std::vector&lt; std::string &gt; &amp;mat_names_out, std::vector&lt; double &gt; &amp;initial_densities, std::vector&lt; std::string &gt; &amp;tails, std::vector&lt; <a class="el" href="structMOABMaterialProperties.html">MOABMaterialProperties</a> &gt; &amp;properties)</td></tr>
+<tr class="memdesc:a9582895afd898d70ed256f298488ee50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a list of original material names and properties.  <a href="classMoabUserObject.html#a9582895afd898d70ed256f298488ee50">More...</a><br /></td></tr>
+<tr class="separator:a9582895afd898d70ed256f298488ee50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -273,6 +270,11 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a71f26cba27ea83dd782342482ca6a14c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a6462ccf33c2afa176a5136fdd05bf9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a0a6462ccf33c2afa176a5136fdd05bf9">getSortBin</a> (int iVarBin, int iDenBin, int iMat)</td></tr>
 <tr class="separator:a0a6462ccf33c2afa176a5136fdd05bf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77cd224da3ce15042e09aa8489b50b32"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a77cd224da3ce15042e09aa8489b50b32">getMatBin</a> (int iVarBin, int iDenBin, int nVarBinsIn, int nDenBinsIn)</td></tr>
+<tr class="memdesc:a77cd224da3ce15042e09aa8489b50b32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map density and temp bin indices onto a linearised index.  <a href="classMoabUserObject.html#a77cd224da3ce15042e09aa8489b50b32">More...</a><br /></td></tr>
+<tr class="separator:a77cd224da3ce15042e09aa8489b50b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d6e8c46ff2154c407bd4c7cbb3a268a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a3d6e8c46ff2154c407bd4c7cbb3a268a">getMatBin</a> (int iVarBin, int iDenBin)</td></tr>
+<tr class="separator:a3d6e8c46ff2154c407bd4c7cbb3a268a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47ba0ef4bbe7d4fc2c70279c694a54d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a47ba0ef4bbe7d4fc2c70279c694a54d5">calcMidpoints</a> ()</td></tr>
 <tr class="memdesc:a47ba0ef4bbe7d4fc2c70279c694a54d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the variable evaluated at the bin midpoints.  <a href="classMoabUserObject.html#a47ba0ef4bbe7d4fc2c70279c694a54d5">More...</a><br /></td></tr>
 <tr class="separator:a47ba0ef4bbe7d4fc2c70279c694a54d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -282,9 +284,9 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a43703cd23a164f3065ffe39480036ed6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a43703cd23a164f3065ffe39480036ed6">calcMidpointsLog</a> ()</td></tr>
 <tr class="memdesc:a43703cd23a164f3065ffe39480036ed6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the variable evaluated at the bin midpoints for log binning.  <a href="classMoabUserObject.html#a43703cd23a164f3065ffe39480036ed6">More...</a><br /></td></tr>
 <tr class="separator:a43703cd23a164f3065ffe39480036ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36988da2e3d6287fc9c84b3110232674"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a36988da2e3d6287fc9c84b3110232674">calcDenMidpoints</a> (std::vector&lt; double &gt; &amp;denmidpoints)</td></tr>
-<tr class="memdesc:a36988da2e3d6287fc9c84b3110232674"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the density evaluated at the bin midpoints.  <a href="classMoabUserObject.html#a36988da2e3d6287fc9c84b3110232674">More...</a><br /></td></tr>
-<tr class="separator:a36988da2e3d6287fc9c84b3110232674"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae582c96c53d68ae174c6d1e9b3475c7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#ae582c96c53d68ae174c6d1e9b3475c7b">calcDenMidpoints</a> ()</td></tr>
+<tr class="memdesc:ae582c96c53d68ae174c6d1e9b3475c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the density evaluated at the bin midpoints.  <a href="classMoabUserObject.html#ae582c96c53d68ae174c6d1e9b3475c7b">More...</a><br /></td></tr>
+<tr class="separator:ae582c96c53d68ae174c6d1e9b3475c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37736d98f0a00d7185682c49e0f006ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a37736d98f0a00d7185682c49e0f006ad">calcMidpointsLin</a> (double var_min_in, double bin_width_in, int nbins_in, std::vector&lt; double &gt; &amp;midpoints_in)</td></tr>
 <tr class="memdesc:a37736d98f0a00d7185682c49e0f006ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate a generic variable midpoints given binning params.  <a href="classMoabUserObject.html#a37736d98f0a00d7185682c49e0f006ad">More...</a><br /></td></tr>
 <tr class="separator:a37736d98f0a00d7185682c49e0f006ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -366,6 +368,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:aecdb1abad5a76956b5300db0ed12ca72"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#aecdb1abad5a76956b5300db0ed12ca72">midpoints</a></td></tr>
 <tr class="memdesc:aecdb1abad5a76956b5300db0ed12ca72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the temperature corresponding to the bin mipoint.  <a href="classMoabUserObject.html#aecdb1abad5a76956b5300db0ed12ca72">More...</a><br /></td></tr>
 <tr class="separator:aecdb1abad5a76956b5300db0ed12ca72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28fca2cc03f345a3b77e3eed0825e8ec"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a28fca2cc03f345a3b77e3eed0825e8ec">den_midpoints</a></td></tr>
+<tr class="memdesc:a28fca2cc03f345a3b77e3eed0825e8ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the relative density corresponding to the bin mipoint.  <a href="classMoabUserObject.html#a28fca2cc03f345a3b77e3eed0825e8ec">More...</a><br /></td></tr>
+<tr class="separator:a28fca2cc03f345a3b77e3eed0825e8ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32a880fde94101e9b6cbf9b4142b392a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a32a880fde94101e9b6cbf9b4142b392a">den_var_name</a></td></tr>
 <tr class="memdesc:a32a880fde94101e9b6cbf9b4142b392a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data members relating to binning in density.  <a href="classMoabUserObject.html#a32a880fde94101e9b6cbf9b4142b392a">More...</a><br /></td></tr>
 <tr class="separator:a32a880fde94101e9b6cbf9b4142b392a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -414,9 +419,6 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a19eb9ed434d4f019ea93ceec18a435bb"><td class="memItemLeft" align="right" valign="top">std::map&lt; moab::EntityHandle, std::vector&lt; <a class="el" href="structMoabUserObject_1_1VolData.html">VolData</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a19eb9ed434d4f019ea93ceec18a435bb">surfsToVols</a></td></tr>
 <tr class="memdesc:a19eb9ed434d4f019ea93ceec18a435bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save some topological data: map from surface handle to vol handle and sense.  <a href="classMoabUserObject.html#a19eb9ed434d4f019ea93ceec18a435bb">More...</a><br /></td></tr>
 <tr class="separator:a19eb9ed434d4f019ea93ceec18a435bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fcd2bd7128fe65a3283bdf221d24fe0"><td class="memItemLeft" align="right" valign="top">std::map&lt; moab::EntityHandle, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#a7fcd2bd7128fe65a3283bdf221d24fe0">volToTemp</a></td></tr>
-<tr class="memdesc:a7fcd2bd7128fe65a3283bdf221d24fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a map of EntityHandle to temperature.  <a href="classMoabUserObject.html#a7fcd2bd7128fe65a3283bdf221d24fe0">More...</a><br /></td></tr>
-<tr class="separator:a7fcd2bd7128fe65a3283bdf221d24fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af088cd271b8de0d808188907f9998283"><td class="memItemLeft" align="right" valign="top">moab::Tag&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMoabUserObject.html#af088cd271b8de0d808188907f9998283">geometry_dimension_tag</a></td></tr>
 <tr class="memdesc:af088cd271b8de0d808188907f9998283"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag for dimension for geometry.  <a href="classMoabUserObject.html#af088cd271b8de0d808188907f9998283">More...</a><br /></td></tr>
 <tr class="separator:af088cd271b8de0d808188907f9998283"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -627,8 +629,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a36988da2e3d6287fc9c84b3110232674"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36988da2e3d6287fc9c84b3110232674">&#9670;&nbsp;</a></span>calcDenMidpoints()</h2>
+<a id="ae582c96c53d68ae174c6d1e9b3475c7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae582c96c53d68ae174c6d1e9b3475c7b">&#9670;&nbsp;</a></span>calcDenMidpoints()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -639,8 +641,7 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void MoabUserObject::calcDenMidpoints </td>
           <td>(</td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>denmidpoints</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1604,23 +1605,104 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a80d24557d1b6c96f1ab3de2ee27a6d72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80d24557d1b6c96f1ab3de2ee27a6d72">&#9670;&nbsp;</a></span>getMaterialsDensities()</h2>
+<a id="a3d6e8c46ff2154c407bd4c7cbb3a268a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d6e8c46ff2154c407bd4c7cbb3a268a">&#9670;&nbsp;</a></span>getMatBin() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int MoabUserObject::getMatBin </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>iVarBin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>iDenBin</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Map density and temp bin indices onto a linearised index with default parameters for number of bins </p>
+
+</div>
+</div>
+<a id="a77cd224da3ce15042e09aa8489b50b32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77cd224da3ce15042e09aa8489b50b32">&#9670;&nbsp;</a></span>getMatBin() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int MoabUserObject::getMatBin </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>iVarBin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>iDenBin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nVarBinsIn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nDenBinsIn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Map density and temp bin indices onto a linearised index. </p>
+
+</div>
+</div>
+<a id="a9582895afd898d70ed256f298488ee50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9582895afd898d70ed256f298488ee50">&#9670;&nbsp;</a></span>getMaterialProperties()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void MoabUserObject::getMaterialsDensities </td>
+          <td class="memname">void MoabUserObject::getMaterialProperties </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; std::string &gt; &amp;&#160;</td>
           <td class="paramname"><em>mat_names_out</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>tails</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1631,8 +1713,14 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rel_densities</em>&#160;</td>
+          <td class="paramtype">std::vector&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tails</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structMOABMaterialProperties.html">MOABMaterialProperties</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>properties</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1642,7 +1730,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Retrieve a list of original material names, initial and relative densities. </p>
+<p>Retrieve a list of original material names and properties. </p>
 
 </div>
 </div>
@@ -1916,26 +2004,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Map material, density and temp bin indices onto a linearised index. </p>
-
-</div>
-</div>
-<a id="ae0f6f11545be3697538ac87dedb5b4ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0f6f11545be3697538ac87dedb5b4ee">&#9670;&nbsp;</a></span>getTemperature()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double MoabUserObject::getTemperature </td>
-          <td>(</td>
-          <td class="paramtype">moab::EntityHandle&#160;</td>
-          <td class="paramname"><em>vol</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Retrieve the temperature of a volume. </p>
 
 </div>
 </div>
@@ -2949,6 +3017,30 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Tag for type of entity set. </p>
+
+</div>
+</div>
+<a id="a28fca2cc03f345a3b77e3eed0825e8ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28fca2cc03f345a3b77e3eed0825e8ec">&#9670;&nbsp;</a></span>den_midpoints</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; MoabUserObject::den_midpoints</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Store the relative density corresponding to the bin mipoint. </p>
 
 </div>
 </div>
@@ -4118,30 +4210,6 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Name of the MOOSE variable. </p>
-
-</div>
-</div>
-<a id="a7fcd2bd7128fe65a3283bdf221d24fe0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7fcd2bd7128fe65a3283bdf221d24fe0">&#9670;&nbsp;</a></span>volToTemp</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;moab::EntityHandle,double&gt; MoabUserObject::volToTemp</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Save a map of EntityHandle to temperature. </p>
 
 </div>
 </div>

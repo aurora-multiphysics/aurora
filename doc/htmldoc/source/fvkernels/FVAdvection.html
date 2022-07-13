@@ -1,19 +1,247 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>FVAdvection | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="92caabf4-daa0-4606-b3de-b047468c2d99"><i class="material-icons">menu</i></a><ul class="sidenav" id="92caabf4-daa0-4606-b3de-b047468c2d99"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">fvkernels</span><a href="#" class="breadcrumb">FVAdvection</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="59b8dd7e-f6a9-4ec7-9616-54d9d4bf59a9" data-section-level="1" data-section-text="FVAdvection"><h1 id="fvadvection">FVAdvection</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p><p>The FVAdvection has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p><pre class="moose-pre"><code class="language-markdown">
-# FVAdvection
+<!DOCTYPE html><head><meta charset="UTF-8"><title>FVAdvection | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><link href="../../contrib/katex/katex.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/katex_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script><script type="text/javascript" src="../../contrib/katex/katex.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="6c7bdb5d-cff5-4941-94c5-c5e771a08592"><i class="material-icons">menu</i></a><ul class="sidenav" id="6c7bdb5d-cff5-4941-94c5-c5e771a08592"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">fvkernels</span><a href="#" class="breadcrumb">FVAdvection</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="39358607-aca6-46c5-b0de-1c482fbde03e" data-section-level="1" data-section-text="FVAdvection"><h1 id="fvadvection">FVAdvection</h1><p>Residual contribution from advection operator for finite volume method.</p><p>The <code>FVAdvection</code> kernel implements an advection term given for the domain (<span class="moose-katex-inline-equation" id="moose-equation-252ef118-fdac-438e-a482-7d6652e7fd35"><script>var element = document.getElementById("moose-equation-252ef118-fdac-438e-a482-7d6652e7fd35");katex.render("\\Omega", element, {displayMode:false,throwOnError:false});</script></span>) defined as</p><span class="moose-katex-block-equation"><span class="moose-katex-equation table-cell" id="moose-equation-9969d07b-b81c-4c24-aaa3-9825af265871"></span><script>var element = document.getElementById("moose-equation-9969d07b-b81c-4c24-aaa3-9825af265871");katex.render("\\underbrace{\\vec{v} \\cdot \\nabla u} + \\sum_{i=1}^n \\beta_i = 0 \\in \\Omega,", element, {displayMode:true,throwOnError:false});</script></span><p>where <span class="moose-katex-inline-equation" id="moose-equation-40d5b3fa-c10d-4e0a-b7e3-13590485d231"><script>var element = document.getElementById("moose-equation-40d5b3fa-c10d-4e0a-b7e3-13590485d231");katex.render("u", element, {displayMode:false,throwOnError:false});</script></span> is the advected quantity, the <code>variable</code> for this kernel, <span class="moose-katex-inline-equation" id="moose-equation-fb9df1c1-505c-4994-8b63-e1268beeb64e"><script>var element = document.getElementById("moose-equation-fb9df1c1-505c-4994-8b63-e1268beeb64e");katex.render("v", element, {displayMode:false,throwOnError:false});</script></span> is the constant advecting velocity, the <code>velocity</code> parameter of this kernel, and the <span class="moose-katex-inline-equation" id="moose-equation-b697abce-f422-4802-9540-6b4bde60836f"><script>var element = document.getElementById("moose-equation-b697abce-f422-4802-9540-6b4bde60836f");katex.render("\\beta_i", element, {displayMode:false,throwOnError:false});</script></span> are the contribution to the residual of other kernels.</p><p>This volumetric term is transformed using the divergence theorem into a surface integral, computed as a sum over each face of the advective flux. This is preferred over computing a volumetric gradient as conservative advection is naturally achieved.</p><span class="moose-katex-block-equation"><span class="moose-katex-equation table-cell" id="moose-equation-05b7fe83-e245-461c-b11c-bdfdf61199ad"></span><script>var element = document.getElementById("moose-equation-05b7fe83-e245-461c-b11c-bdfdf61199ad");katex.render("\\int_{element} \\vec{v} \\cdot \\nabla u = \\sum_{elem faces f} u_f \\vec{v} \\cdot n_f v area_f", element, {displayMode:true,throwOnError:false});</script></span><p>The advected quantity is evaluated on the face using an <code>advected_interp(olation)_method</code>. Two methods are available:</p><ul class="browser-default"><li><p><code>average</code> for a geometrically weighted average between the element and neighbor values</p><p></p></li><li><p><code>upwind</code> for a first order upwind scheme, which uses the value from the centroid of the element situated upwind of the face, using velocity as the wind</p></li></ul><div class="card moose-alert moose-alert-note"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">comment</i><span class="moose-alert-title-brand">note</span></div><div class="card-content"><div class="moose-alert-content"><p>This kernel leverages the automatic differentiation system, so the Jacobian is computed at the same time as the residual and need not be defined separately.</p></div></div></div><section class="scrollspy" id="4b50f76f-7791-4048-9d27-3c7150ccf31f" data-section-level="2" data-section-text="Boundary conditions for pure advection"><h2 id="boundary-conditions-for-pure-advection">Boundary conditions for pure advection</h2><p>Advection problems, with a constant advecting velocity, should have two types of boundary conditions: inflow and outflow. The inflow boundary conditions may be specified as a constant boundary value with a <a href="../fvbcs/FVDirichletBC.html">FVDirichletBC</a> (with caveats, see documentation) or as a constant flux with <a href="../fvbcs/FVAdvectionFunctionBC.html">FVAdvectionFunctionBC</a>.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[FVBCs]
+  [advection]
+    type = FVAdvectionFunctionBC
+    boundary = &#x27;left right&#x27;
+    exact_solution = &#x27;exact&#x27;
+    variable = v
+    velocity = &#x27;${a} 0 0&#x27;
+  []
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#2775fba0-f585-4308-a28f-cbadde51ffea">(../../../SoftwareDownloads/moose/test/tests/fvkernels/mms/advection.i)</a><p>The outflow boundary conditions may be specified with a <a href="../fvbcs/FVConstantScalarOutflowBC.html">FVConstantScalarOutflowBC</a>.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[FVBCs]
+  [./fv_outflow]
+    type = FVConstantScalarOutflowBC
+    velocity = &#x27;1 0.5 0&#x27;
+    variable = v
+    boundary = &#x27;right top&#x27;
+  [../]
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#e8ef71bc-67b1-4f3f-9b20-d8fe5d05d2e4">(../../../SoftwareDownloads/moose/test/tests/fvkernels/fv_constant_scalar_advection/2D_constant_scalar_advection.i)</a><p>If no boundary conditions are specified, then there is a zero advective flux through the boundary, also known a no-penetration boundary condition.</p><div class="card moose-alert moose-alert-note"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">comment</i><span class="moose-alert-title-brand">note</span></div><div class="card-content"><div class="moose-alert-content"><p>The <code>FVAdvection</code> kernel may be executed on boundaries using the <code>force_boundary_execution</code> and <code>boundaries_to_force</code> parameters, however this is somewhat situational / not for mainstream use.</p></div></div></div></section><section class="scrollspy" id="45a3bf2a-e359-461d-8266-3c2e99151262" data-section-level="2" data-section-text="Example input syntax"><h2 id="example-input-syntax">Example input syntax</h2><p>In this example, a simple time-dependent advection problem is solved, with a constant advecting velocity of <code>1 0.5 0</code>.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[FVKernels]
+  [./advection]
+    type = FVAdvection
+    variable = v
+    velocity = &#x27;1 0.5 0&#x27;
+  [../]
+  [./time]
+    type = FVTimeKernel
+    variable = v
+  [../]
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#5973fceb-ddbd-42f1-85a8-d55e8a58b92c">(../../../SoftwareDownloads/moose/test/tests/fvkernels/fv_constant_scalar_advection/2D_constant_scalar_advection.i)</a></section><section class="scrollspy" id="ccb58578-f8bb-47ff-b689-7a12e52f26d6" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="6104c7fb-4f01-4e17-8a44-8600a663065b" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">variable</span><span class="moose-parameter-header-description">The name of the finite volume variable this kernel applies to</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>NonlinearVariableName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the finite volume variable this kernel applies to</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">velocity</span><span class="moose-parameter-header-description">Constant advection velocity</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>libMesh::VectorValue&lt;double&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Constant advection velocity</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="feb7f297-9786-4229-acc4-18bcc18720f8" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">advected_interp_method</span><span class="moose-parameter-header-default">upwind</span><span class="moose-parameter-header-description">The interpolation to use for the advected quantity. Options are 'upwind' and 'average', with the default being 'upwind'.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>upwind</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>average, upwind</p><p class="moose-parameter-description"><span>Description:</span>The interpolation to use for the advected quantity. Options are 'upwind' and 'average', with the default being 'upwind'.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">block</span><span class="moose-parameter-header-description">The list of blocks (ids or names) that this object will be applied</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;SubdomainName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The list of blocks (ids or names) that this object will be applied</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">boundaries_to_force</span><span class="moose-parameter-header-description">The set of boundaries to force execution of this FVFluxKernel on.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;BoundaryName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The set of boundaries to force execution of this FVFluxKernel on.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">boundaries_to_not_force</span><span class="moose-parameter-header-description">The set of boundaries to not force execution of this FVFluxKernel on.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;BoundaryName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The set of boundaries to not force execution of this FVFluxKernel on.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">force_boundary_execution</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether to force execution of this object on the boundary.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether to force execution of this object on the boundary.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">ghost_layers</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">The number of layers of elements to ghost.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned short</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The number of layers of elements to ghost.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">prop_getter_suffix</span><span class="moose-parameter-header-description">An optional suffix parameter that can be appended to any attempt to retrieve/get material properties. The suffix will be prepended with a '_' character.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MaterialPropertyName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>An optional suffix parameter that can be appended to any attempt to retrieve/get material properties. The suffix will be prepended with a '_' character.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_point_neighbors</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether to use point neighbors, which introduces additional ghosting to that used for simple face neighbors.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether to use point neighbors, which introduces additional ghosting to that used for simple face neighbors.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="b9b7579a-730c-4b21-b2aa-df653f9c2f20" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">implicit</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Determines whether this object is calculated using an implicit or explicit form</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Determines whether this object is calculated using an implicit or explicit form</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation. Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation. Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section><section id="635d341c-7be4-457e-84b6-4f793a9683d9" data-section-level="3" data-section-text="Tagging Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">extra_matrix_tags</span><span class="moose-parameter-header-description">The extra tags for the matrices this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;TagName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The extra tags for the matrices this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">extra_vector_tags</span><span class="moose-parameter-header-description">The extra tags for the vectors this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;TagName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The extra tags for the vectors this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">matrix_tags</span><span class="moose-parameter-header-default">system</span><span class="moose-parameter-header-description">The tag for the matrices this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>system</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>nontime, system</p><p class="moose-parameter-description"><span>Description:</span>The tag for the matrices this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">vector_tags</span><span class="moose-parameter-header-default">nontime</span><span class="moose-parameter-header-description">The tag for the vectors this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>nontime</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>nontime, time</p><p class="moose-parameter-description"><span>Description:</span>The tag for the vectors this Kernel should fill</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Tagging Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="2775fba0-f585-4308-a28f-cbadde51ffea"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/fvkernels/mms/advection.i)</h4><pre class="moose-pre"><code class="language-text">a=1.1
 
-!syntax description /FVKernels/FVAdvection
+[GlobalParams]
+  advected_interp_method = &#x27;average&#x27;
+[]
 
-## Overview
+[Mesh]
+  [./gen_mesh]
+    type = GeneratedMeshGenerator
+    dim = 1
+    xmin = -0.6
+    xmax = 0.6
+    nx = 2
+  [../]
+[]
 
-!! Replace these lines with information regarding the FVAdvection object.
+[Problem]
+  kernel_coverage_check = off
+[]
 
-## Example Input File Syntax
+[Variables]
+  [./v]
+    family = MONOMIAL
+    order = CONSTANT
+    fv = true
+  [../]
+[]
 
-!! Describe and include an example of how to use the FVAdvection object.
+[FVKernels]
+  [./advection]
+    type = FVAdvection
+    variable = v
+    velocity = &#x27;${a} 0 0&#x27;
+  [../]
+  [body_v]
+    type = FVBodyForce
+    variable = v
+    function = &#x27;forcing&#x27;
+  []
+[]
 
-!syntax parameters /FVKernels/FVAdvection
+[FVBCs]
+  [advection]
+    type = FVAdvectionFunctionBC
+    boundary = &#x27;left right&#x27;
+    exact_solution = &#x27;exact&#x27;
+    variable = v
+    velocity = &#x27;${a} 0 0&#x27;
+  []
+[]
 
-!syntax inputs /FVKernels/FVAdvection
+[Functions]
+  [exact]
+    type = ParsedFunction
+    value = &#x27;1.1 * sin(1.1 * x)&#x27;
+  []
+  [forcing]
+    type = ParsedFunction
+    value = &#x27;${a} * 1.1 * 1.1 * cos(1.1 * x)&#x27;
+  []
+[]
 
-!syntax children /FVKernels/FVAdvection
-</code></pre></p></div></div></div><p>Residual contribution from advection operator for finite volume method.</p><section class="scrollspy" id="a9bbf2d6-c0b7-41ce-9807-85d1c5712f6d" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="fc7868d2-2ece-497d-b4b5-975864264e31" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">variable</span><span class="moose-parameter-header-description">The name of the finite volume variable this kernel applies to</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>NonlinearVariableName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the finite volume variable this kernel applies to</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">velocity</span><span class="moose-parameter-header-description">Constant advection velocity</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>libMesh::VectorValue&lt;double&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Constant advection velocity</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="073e61e0-86b5-4906-8ab5-32e77cb1a099" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">advected_interp_method</span><span class="moose-parameter-header-default">upwind</span><span class="moose-parameter-header-description">The interpolation to use for the advected quantity. Options are 'upwind' and 'average', with the default being 'upwind'.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>upwind</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>average, upwind</p><p class="moose-parameter-description"><span>Description:</span>The interpolation to use for the advected quantity. Options are 'upwind' and 'average', with the default being 'upwind'.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">block</span><span class="moose-parameter-header-description">The list of block ids (SubdomainID) that this object will be applied</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;SubdomainName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The list of block ids (SubdomainID) that this object will be applied</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">boundaries_to_force</span><span class="moose-parameter-header-description">The set of boundaries to force execution of this FVFluxKernel on.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;BoundaryName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The set of boundaries to force execution of this FVFluxKernel on.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">boundaries_to_not_force</span><span class="moose-parameter-header-description">The set of boundaries to not force execution of this FVFluxKernel on.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;BoundaryName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The set of boundaries to not force execution of this FVFluxKernel on.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">force_boundary_execution</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether to force execution of this object on the boundary.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether to force execution of this object on the boundary.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">ghost_layers</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">The number of layers of elements to ghost.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned short</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The number of layers of elements to ghost.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_point_neighbors</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether to use point neighbors, which introduces additional ghosting to that used for simple face neighbors.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether to use point neighbors, which introduces additional ghosting to that used for simple face neighbors.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="36655983-4977-4e13-a7cd-bc09c65d46bf" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">implicit</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Determines whether this object is calculated using an implicit or explicit form</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Determines whether this object is calculated using an implicit or explicit form</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation. Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation. Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section><section id="516c1329-cc72-4950-8e0d-11b6f30e090e" data-section-level="3" data-section-text="Tagging Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">extra_matrix_tags</span><span class="moose-parameter-header-description">The extra tags for the matrices this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;TagName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The extra tags for the matrices this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">extra_vector_tags</span><span class="moose-parameter-header-description">The extra tags for the vectors this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;TagName&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The extra tags for the vectors this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">matrix_tags</span><span class="moose-parameter-header-default">system</span><span class="moose-parameter-header-description">The tag for the matrices this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>system</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>nontime, system</p><p class="moose-parameter-description"><span>Description:</span>The tag for the matrices this Kernel should fill</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">vector_tags</span><span class="moose-parameter-header-default">nontime</span><span class="moose-parameter-header-description">The tag for the vectors this Kernel should fill</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>nontime</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>nontime, time</p><p class="moose-parameter-description"><span>Description:</span>The tag for the vectors this Kernel should fill</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Tagging Parameters</h3></summary></details></section></section></section></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#a9bbf2d6-c0b7-41ce-9807-85d1c5712f6d" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
+[Executioner]
+  type = Steady
+  solve_type = &#x27;NEWTON&#x27;
+  petsc_options_iname = &#x27;-pc_type -sub_pc_factor_shift_type&#x27;
+  petsc_options_value = &#x27;asm      NONZERO&#x27;
+[]
+
+[Outputs]
+  exodus = true
+  csv = true
+[]
+
+[Postprocessors]
+  [./error]
+    type = ElementL2Error
+    variable = v
+    function = exact
+    outputs = &#x27;console csv&#x27;
+    execute_on = &#x27;timestep_end&#x27;
+  [../]
+  [h]
+    type = AverageElementSize
+    outputs = &#x27;console csv&#x27;
+    execute_on = &#x27;timestep_end&#x27;
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="e8ef71bc-67b1-4f3f-9b20-d8fe5d05d2e4"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/fvkernels/fv_constant_scalar_advection/2D_constant_scalar_advection.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [./gen_mesh]
+    type = GeneratedMeshGenerator
+    dim = 2
+    xmin = 0
+    xmax = 2
+    ymin = 0
+    ymax = 4
+    nx = 10
+    ny = 20
+  [../]
+[]
+
+[Problem]
+  kernel_coverage_check = off
+[]
+
+[Variables]
+  [./v]
+    family = MONOMIAL
+    order = CONSTANT
+    fv = true
+  [../]
+[]
+
+[ICs]
+  [./v_ic]
+    type = FunctionIC
+    variable = v
+    function = &#x27;r2 := (x - 0.5)*(x - 0.5) + (y - 0.3)*(y - 0.3); exp(-r2 * 20)&#x27;
+  [../]
+[]
+
+[FVKernels]
+  [./advection]
+    type = FVAdvection
+    variable = v
+    velocity = &#x27;1 0.5 0&#x27;
+  [../]
+  [./time]
+    type = FVTimeKernel
+    variable = v
+  [../]
+[]
+
+[FVBCs]
+  [./fv_outflow]
+    type = FVConstantScalarOutflowBC
+    velocity = &#x27;1 0.5 0&#x27;
+    variable = v
+    boundary = &#x27;right top&#x27;
+  [../]
+[]
+
+[Executioner]
+  type = Transient
+  petsc_options = &#x27;-snes_converged_reason&#x27;
+  num_steps = 10
+  dt = 0.25
+  nl_rel_tol = 1e-12
+[]
+
+[Outputs]
+  exodus = true
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="5973fceb-ddbd-42f1-85a8-d55e8a58b92c"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/fvkernels/fv_constant_scalar_advection/2D_constant_scalar_advection.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [./gen_mesh]
+    type = GeneratedMeshGenerator
+    dim = 2
+    xmin = 0
+    xmax = 2
+    ymin = 0
+    ymax = 4
+    nx = 10
+    ny = 20
+  [../]
+[]
+
+[Problem]
+  kernel_coverage_check = off
+[]
+
+[Variables]
+  [./v]
+    family = MONOMIAL
+    order = CONSTANT
+    fv = true
+  [../]
+[]
+
+[ICs]
+  [./v_ic]
+    type = FunctionIC
+    variable = v
+    function = &#x27;r2 := (x - 0.5)*(x - 0.5) + (y - 0.3)*(y - 0.3); exp(-r2 * 20)&#x27;
+  [../]
+[]
+
+[FVKernels]
+  [./advection]
+    type = FVAdvection
+    variable = v
+    velocity = &#x27;1 0.5 0&#x27;
+  [../]
+  [./time]
+    type = FVTimeKernel
+    variable = v
+  [../]
+[]
+
+[FVBCs]
+  [./fv_outflow]
+    type = FVConstantScalarOutflowBC
+    velocity = &#x27;1 0.5 0&#x27;
+    variable = v
+    boundary = &#x27;right top&#x27;
+  [../]
+[]
+
+[Executioner]
+  type = Transient
+  petsc_options = &#x27;-snes_converged_reason&#x27;
+  num_steps = 10
+  dt = 0.25
+  nl_rel_tol = 1e-12
+[]
+
+[Outputs]
+  exodus = true
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#4b50f76f-7791-4048-9d27-3c7150ccf31f" class="tooltipped" data-position="left" data-tooltip="Boundary conditions for pure advection">Boundary conditions for pure advection</a></li><li><a href="#45a3bf2a-e359-461d-8266-3c2e99151262" class="tooltipped" data-position="left" data-tooltip="Example input syntax">Example input syntax</a></li><li><a href="#ccb58578-f8bb-47ff-b689-7a12e52f26d6" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>
