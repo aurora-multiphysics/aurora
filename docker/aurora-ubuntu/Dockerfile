@@ -5,7 +5,7 @@
 # docker build -t aurora-ubuntu --build-arg build_git_sha=${GITHUB_SHA} .
 
 # To compile with gcov support and generate coverage report
-# docker build -t aurora-ubuntu --build-arg test_coverage=true .
+# docker build -t aurora-ubuntu --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN .
 
 # Get MOOSE image with aurora deps
 FROM helenbrooks/aurora-deps-ubuntu:v.0.3.0
@@ -27,6 +27,7 @@ ARG coveralls_branch=""
 
 # Install pip and gcovr if we want test coverage
 RUN if "$test_coverage" ; then \
+       apt-get update && \
        apt-get install -y python3-pip && \
        pip install cpp-coveralls && \
        pip install coveralls; \
