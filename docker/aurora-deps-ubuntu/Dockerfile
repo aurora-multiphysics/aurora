@@ -96,13 +96,13 @@ RUN mkdir /home/openmc-bld && \
     cd /home/openmc-bld && \
     git clone https://github.com/openmc-dev/openmc.git && \
     cd openmc && \
-    git checkout b62708f911d05e269e5c3083287e70d050ed35f9 && \
+    git checkout a21174e4f968c07ab791c7b343dc0e07a7ab28b3 && \
     cd ../ && \
     mkdir build && \
     cd build && \
     cmake ../openmc \
-          -Doptimize=on \
-          -Ddagmc=on \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DOPENMC_USE_DAGMC=on \
           -DCMAKE_INSTALL_PREFIX=/home/openmc \
           -DDAGMC_DIR=/home/dagmc/lib/cmake && \
     make -j"$compile_cores" && \
