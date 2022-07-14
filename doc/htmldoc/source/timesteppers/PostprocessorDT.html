@@ -1,19 +1,268 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>PostprocessorDT | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="f4e0023b-ac6b-4e7d-be08-11faf03dd42e"><i class="material-icons">menu</i></a><ul class="sidenav" id="f4e0023b-ac6b-4e7d-be08-11faf03dd42e"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">timesteppers</span><a href="#" class="breadcrumb">PostprocessorDT</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="646eef81-9e8f-4420-9ede-35e8cf5442f3" data-section-level="1" data-section-text="PostprocessorDT"><h1 id="postprocessordt">PostprocessorDT</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p><p>The PostprocessorDT has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p><pre class="moose-pre"><code class="language-markdown">
-# PostprocessorDT
+<!DOCTYPE html><head><meta charset="UTF-8"><title>PostprocessorDT | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="1e991413-5a37-4f44-8fa7-14afecda392c"><i class="material-icons">menu</i></a><ul class="sidenav" id="1e991413-5a37-4f44-8fa7-14afecda392c"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">timesteppers</span><a href="#" class="breadcrumb">PostprocessorDT</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="2f174313-a7bb-4756-abde-9deff1dfb711" data-section-level="1" data-section-text="PostprocessorDT"><h1 id="postprocessordt">PostprocessorDT</h1><p>Computes timestep based on a Postprocessor value.</p><p>The postprocessor can be computing a global metric, like the Courant Friedrich Levy criterion with the NSCFLTimeStepSize or the LevelSetCFLCondition postprocessor. In those cases, the postprocessor computes the maximum value of the timestep that should ensure stability. Variations in numerical schemes may impact the accuracy of this postprocessor, so the <code>PostprocessorDT</code> allows for a scaling factor and an offset to modify the time step.</p><p>If the application using the <code>PostprocessorDT</code> is a sub-app, its time step may also be received through a <a href="../transfers/MultiAppPostprocessorTransfer.html">MultiAppPostprocessorTransfer</a> using a <a href="../postprocessors/Receiver.html">Receiver</a> postprocessor.</p><section class="scrollspy" id="b8c3cc0f-de7c-421b-8bca-d8024d96b2c9" data-section-level="2" data-section-text="Example input syntax"><h2 id="example-input-syntax">Example input syntax</h2><p>In this example, we set the time step to be the maximum value allowable under a CFL criterion for a fluid flow simulation in a shock tube.</p><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[./TimeStepper]
+  type = PostprocessorDT
+  postprocessor = cfl_dt
+[../]
 
-!syntax description /Executioner/TimeStepper/PostprocessorDT
+[Postprocessors]
+  [./cfl_dt]
+    type = ADCFLTimeStepSize
+    c_names = &#x27;sound_speed&#x27;
+    vel_names = &#x27;speed&#x27;
+  [../]
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#b4432b69-0167-42d8-a01d-db33c455564a">(../../../SoftwareDownloads/moose/modules/navier_stokes/test/tests/finite_volume/cns/shock_tube_2D_cavity/hllc_sod_shocktube_2D.i)</a></section><section class="scrollspy" id="9a863436-9422-4c56-b3c1-2b38940c93a9" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="4840fc08-fdf2-4e71-a010-b3a7c2909796" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">postprocessor</span><span class="moose-parameter-header-description">The name of the postprocessor that computes the dt</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>PostprocessorName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the postprocessor that computes the dt</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="f8e881f3-2af2-41fc-bdd7-1fc23908d1d4" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">cutback_factor_at_failure</span><span class="moose-parameter-header-default">0.5</span><span class="moose-parameter-header-description">Factor to apply to timestep if a time step fails to converge.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Factor to apply to timestep if a time step fails to converge.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">dt</span><span class="moose-parameter-header-description">Initial value of dt</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Initial value of dt</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">offset</span><span class="moose-parameter-header-default">0</span><span class="moose-parameter-header-description">Add an offset to the supplied postprocessor value.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Add an offset to the supplied postprocessor value.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">reset_dt</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Use when restarting a calculation to force a change in dt.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Use when restarting a calculation to force a change in dt.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">scale</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">Multiple scale and supplied postprocessor value.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Multiple scale and supplied postprocessor value.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="71493576-ca28-4170-a10a-3413aa4fbc5b" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="b4432b69-0167-42d8-a01d-db33c455564a"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/modules/navier_stokes/test/tests/finite_volume/cns/shock_tube_2D_cavity/hllc_sod_shocktube_2D.i)</h4><pre class="moose-pre"><code class="language-text">rho_left = 1
+E_left = 2.501505578
+u_left = 1e-15
 
-## Overview
+rho_right = 0.125
+E_right = 1.999770935
+u_right = 1e-15
 
-!! Replace these lines with information regarding the PostprocessorDT object.
+x_sep = 35
 
-## Example Input File Syntax
+[GlobalParams]
+  fp = fp
+[]
 
-!! Describe and include an example of how to use the PostprocessorDT object.
+[Mesh]
+  [./cartesian]
+    type = CartesianMeshGenerator
+    dim = 2
+    dx = &#x27;40 20&#x27;
+    ix = &#x27;200 100&#x27;
+    dy = &#x27;1 20  2  20 1&#x27;
+    iy = &#x27;4 100 10 100 4&#x27;
+    subdomain_id = &#x27;0 0
+                    0 1
+                    1 1
+                    0 1
+                    0 0&#x27;
+  [../]
 
-!syntax parameters /Executioner/TimeStepper/PostprocessorDT
+  [./wall]
+    type = SideSetsBetweenSubdomainsGenerator
+    input = cartesian
+    primary_block = 1
+    paired_block = 0
+    new_boundary = &#x27;wall&#x27;
+  [../]
 
-!syntax inputs /Executioner/TimeStepper/PostprocessorDT
+  [./delete]
+    type = BlockDeletionGenerator
+    input = wall
+    block = 0
+  [../]
+[]
 
-!syntax children /Executioner/TimeStepper/PostprocessorDT
-</code></pre></p></div></div></div><p>Computes timestep based on a Postprocessor value.</p><section class="scrollspy" id="852ee235-466d-4c53-9172-25761257299b" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="6f920f47-ea22-489d-99e6-6197b2a472df" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">postprocessor</span><span class="moose-parameter-header-description">The name of the postprocessor that computes the dt</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>PostprocessorName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the postprocessor that computes the dt</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="f308d4ba-5716-4dbf-b9e4-a1e6e068946f" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">cutback_factor_at_failure</span><span class="moose-parameter-header-default">0.5</span><span class="moose-parameter-header-description">Factor to apply to timestep if it a time step fails to convergence.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Factor to apply to timestep if it a time step fails to convergence.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">dt</span><span class="moose-parameter-header-description">Initial value of dt</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Initial value of dt</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">factor</span><span class="moose-parameter-header-default">0</span><span class="moose-parameter-header-description">Add a factor to the supplied postprocessor value.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Add a factor to the supplied postprocessor value.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">reset_dt</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Use when restarting a calculation to force a change in dt.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Use when restarting a calculation to force a change in dt.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">scale</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">Multiple scale and supplied postprocessor value.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Multiple scale and supplied postprocessor value.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="89dd836b-66f2-40fc-ae01-4e76cdbe17fd" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#852ee235-466d-4c53-9172-25761257299b" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
+[Modules]
+  [./FluidProperties]
+    [./fp]
+      type = IdealGasFluidProperties
+      allow_imperfect_jacobians = true
+    [../]
+  [../]
+[]
+
+[Variables]
+  [./rho]
+    order = CONSTANT
+    family = MONOMIAL
+    fv = true
+  [../]
+  [./rho_u]
+    order = CONSTANT
+    family = MONOMIAL
+    fv = true
+  [../]
+  [./rho_v]
+    order = CONSTANT
+    family = MONOMIAL
+    fv = true
+  [../]
+  [./rho_E]
+    order = CONSTANT
+    family = MONOMIAL
+    fv = true
+  [../]
+[]
+
+[AuxVariables]
+  [./Ma]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./p]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./v_norm]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./temperature]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+[]
+
+[AuxKernels]
+  [./Ma_aux]
+    type = NSMachAux
+    variable = Ma
+    fluid_properties = fp
+    use_material_properties = true
+  [../]
+
+  [./p_aux]
+    type = ADMaterialRealAux
+    variable = p
+    property = pressure
+  [../]
+
+  [./v_norm_aux]
+    type = ADMaterialRealAux
+    variable = v_norm
+    property = speed
+  [../]
+
+  [./temperature_aux]
+    type = ADMaterialRealAux
+    variable = temperature
+    property = T_fluid
+  [../]
+[]
+
+[FVKernels]
+  [./mass_time]
+    type = FVTimeKernel
+    variable = rho
+  [../]
+
+  [./mass_advection]
+    type = CNSFVMassHLLC
+    variable = rho
+  [../]
+
+  [./momentum_x_time]
+    type = FVTimeKernel
+    variable = rho_u
+  [../]
+
+  [./momentum_x_advection]
+    type = CNSFVMomentumHLLC
+    variable = rho_u
+    momentum_component = x
+  [../]
+
+  [./momentum_y_time]
+    type = FVTimeKernel
+    variable = rho_v
+  [../]
+
+  [./momentum_y_advection]
+    type = CNSFVMomentumHLLC
+    variable = rho_v
+    momentum_component = y
+  [../]
+
+  [./fluid_energy_time]
+    type = FVTimeKernel
+    variable = rho_E
+  [../]
+
+  [./fluid_energy_advection]
+    type = CNSFVFluidEnergyHLLC
+    variable = rho_E
+  [../]
+[]
+
+[FVBCs]
+  [./mom_x_pressure]
+    type = CNSFVMomImplicitPressureBC
+    variable = rho_u
+    momentum_component = x
+    boundary = &#x27;left right wall&#x27;
+  [../]
+
+  [./mom_y_pressure]
+    type = CNSFVMomImplicitPressureBC
+    variable = rho_v
+    momentum_component = y
+    boundary = &#x27;wall&#x27;
+  [../]
+[]
+
+[ICs]
+  [./rho_ic]
+    type = FunctionIC
+    variable = rho
+    function = &#x27;if (x &lt; ${x_sep}, ${rho_left}, ${rho_right})&#x27;
+  [../]
+
+  [./rho_u_ic]
+    type = FunctionIC
+    variable = rho_u
+    function = &#x27;if (x &lt; ${x_sep}, ${fparse rho_left * u_left}, ${fparse rho_right * u_right})&#x27;
+  [../]
+
+  [./rho_E_ic]
+    type = FunctionIC
+    variable = rho_E
+    function = &#x27;if (x &lt; ${x_sep}, ${fparse E_left * rho_left}, ${fparse E_right * rho_right})&#x27;
+  [../]
+[]
+
+[Materials]
+  [./var_mat]
+    type = ConservedVarValuesMaterial
+    rho = rho
+    rhou = rho_u
+    rhov = rho_v
+    rho_et = rho_E
+    fp = fp
+  [../]
+  [./sound_speed]
+    type = SoundspeedMat
+    fp = fp
+  [../]
+[]
+
+[Preconditioning]
+  [./smp]
+    type = SMP
+    full = true
+    petsc_options_iname = &#x27;-pc_type&#x27;
+    petsc_options_value = &#x27;lu&#x27;
+  [../]
+[]
+
+[Postprocessors]
+  [./cfl_dt]
+    type = ADCFLTimeStepSize
+    c_names = &#x27;sound_speed&#x27;
+    vel_names = &#x27;speed&#x27;
+  [../]
+[]
+
+[Executioner]
+  type = Transient
+  end_time = 100
+  [TimeIntegrator]
+    type = ExplicitSSPRungeKutta
+    order = 2
+  []
+  l_tol = 1e-8
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = cfl_dt
+  [../]
+[]
+
+[Outputs]
+  exodus = true
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#b8c3cc0f-de7c-421b-8bca-d8024d96b2c9" class="tooltipped" data-position="left" data-tooltip="Example input syntax">Example input syntax</a></li><li><a href="#9a863436-9422-4c56-b3c1-2b38940c93a9" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>

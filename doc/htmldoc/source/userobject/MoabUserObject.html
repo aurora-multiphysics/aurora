@@ -1,40 +1,11 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>MoabUserObject | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="257eef03-f5e2-494f-959a-e9e69996622b"><i class="material-icons">menu</i></a><ul class="sidenav" id="257eef03-f5e2-494f-959a-e9e69996622b"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">userobject</span><a href="#" class="breadcrumb">MoabUserObject</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="1b5bca1f-3176-4af0-9227-44020d8afc2f" data-section-level="1" data-section-text="MoabUserObject"><h1 id="moabuserobject">MoabUserObject</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p><p>The MoabUserObject has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p></p></div></div></div><p></p><section class="scrollspy" id="a0f60c22-fbfe-4e54-8820-296c1786b2ea" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p></p></section><section class="scrollspy" id="40269a5c-73bb-434b-b073-eebe8ff7c4bc" data-section-level="2" data-section-text="Example Input File Syntax"><h2 id="example-input-file-syntax">Example Input File Syntax</h2><p></p></section><section class="scrollspy" id="ca826655-97a0-4e79-8b93-cb2001264100" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="186450b9-cffc-48d0-a16d-b39f380ed340" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">bin_density</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Determine if elements should be additionally binned by material density</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Determine if elements should be additionally binned by material density</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">bin_varname</span><span class="moose-parameter-header-description">Variable name by whose results elements should be binned.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Variable name by whose results elements should be binned.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">density_name</span><span class="moose-parameter-header-description">Variable name for density by whose results elements should be binned.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Variable name for density by whose results elements should be binned.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">density_scale</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">Scale factor to convert densities from from MOOSE to OpenMC (latter is g/cc).</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Scale factor to convert densities from from MOOSE to OpenMC (latter is g/cc).</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">execute_on</span><span class="moose-parameter-header-default">TIMESTEP_END</span><span class="moose-parameter-header-description">The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>TIMESTEP_END</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>ExecFlagEnum</p><p class="moose-parameter-description-options"><span>Options:</span>NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM</p><p class="moose-parameter-description"><span>Description:</span>The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">faceting_tol</span><span class="moose-parameter-header-default">0.0001</span><span class="moose-parameter-header-description">Faceting tolerance for DagMC</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.0001</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Faceting tolerance for DagMC</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">geom_tol</span><span class="moose-parameter-header-default">1e-06</span><span class="moose-parameter-header-description">Geometry tolerance for DagMC</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1e-06</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Geometry tolerance for DagMC</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">graveyard_scale_inner</span><span class="moose-parameter-header-default">1.01</span><span class="moose-parameter-header-description">Graveyard inner surface scalefactor relative to aligned bounding box.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1.01</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Graveyard inner surface scalefactor relative to aligned bounding box.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">graveyard_scale_outer</span><span class="moose-parameter-header-default">1.1</span><span class="moose-parameter-header-description">Graveyard outer surface scalefactor relative to aligned bounding box.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1.1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Graveyard outer surface scalefactor relative to aligned bounding box.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">length_scale</span><span class="moose-parameter-header-default">100</span><span class="moose-parameter-header-description">Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>100</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">logscale</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Switch to determine if logarithmic binning should be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Switch to determine if logarithmic binning should be used.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">material_names</span><span class="moose-parameter-header-description">List of MOOSE material names</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>List of MOOSE material names</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">material_openmc_names</span><span class="moose-parameter-header-description">List of OpenMC material names</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>List of OpenMC material names</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_bins</span><span class="moose-parameter-header-default">60</span><span class="moose-parameter-header-description">Number of bins</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>60</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of bins</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_density_bins</span><span class="moose-parameter-header-default">5</span><span class="moose-parameter-header-description">Number of relative density bins</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of relative density bins</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_output</span><span class="moose-parameter-header-default">10</span><span class="moose-parameter-header-description">Number of times to write to file if output_skins and/or output_full is true</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>10</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of times to write to file if output_skins and/or output_full is true</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_skip</span><span class="moose-parameter-header-default">0</span><span class="moose-parameter-header-description">Number of iterations to skip between writes if output_skins and/or output_full is true and n_output>1</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of iterations to skip between writes if output_skins and/or output_full is true and n_output>1</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_base</span><span class="moose-parameter-header-default">moab_surfs</span><span class="moose-parameter-header-description">Base filename for surface file writes (will be appended by an integer</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>moab_surfs</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Base filename for surface file writes (will be appended by an integer</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_base_full</span><span class="moose-parameter-header-default">moab_full</span><span class="moose-parameter-header-description">Base filename for full mesh file writes (will be appended by an integer</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>moab_full</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Base filename for full mesh file writes (will be appended by an integer</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_full</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Switch to control whether MOAB should write full mesh data to file.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Switch to control whether MOAB should write full mesh data to file.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_skins</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Switch to control whether MOAB should write skins to file.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Switch to control whether MOAB should write skins to file.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">rel_den_max</span><span class="moose-parameter-header-default">0.1</span><span class="moose-parameter-header-description">Maximum difference in density relative to original material density</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Maximum difference in density relative to original material density</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">rel_den_min</span><span class="moose-parameter-header-default">-0.1</span><span class="moose-parameter-header-description">Minimum difference in density relative to original material density</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>-0.1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Minimum difference in density relative to original material density</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">var_max</span><span class="moose-parameter-header-default">597.5</span><span class="moose-parameter-header-description">Max value to define range of bins.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>597.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Max value to define range of bins.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">var_min</span><span class="moose-parameter-header-default">297.5</span><span class="moose-parameter-header-description">Minimum value to define range of bins.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>297.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Minimum value to define range of bins.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="bf70b344-cd36-4ccb-80bc-7db93aeca874" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">allow_duplicate_execution_on_initial</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">In the case where this UserObject is depended upon by an initial condition, allow it to be executed twice during the initial setup (once before the IC and again after mesh adaptivity (if applicable).</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>In the case where this UserObject is depended upon by an initial condition, allow it to be executed twice during the initial setup (once before the IC and again after mesh adaptivity (if applicable).</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section><section class="scrollspy" id="9b40eebe-a890-41ba-a4c8-4855ae31c09c" data-section-level="2" data-section-text="Input Files"><h2 id="input-files">Input Files</h2><ul class="moose-list-inputs browser-default"><li><a class="moose-source-filename tooltipped modal-trigger" href="#814c5108-454a-4a0b-9480-637222d6dd14">(openmc/unit/inputs/executioner.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#0255e7dd-f24d-4b70-b7eb-e52d10a16fdd">(openmc/unit/inputs/badmoabuserobject.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#91da74a0-e377-44c6-93ed-e38bbac7b9a8">(openmc/unit/inputs/densitysurfstest.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#ecb91a1d-2422-4841-afc3-bc96d1c98abe">(openmc_mech.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#9d36f5f9-dd80-412e-886a-84eafb430412">(openmc/unit/inputs/executioner-many-scores.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#376ee470-0a91-4fc6-9401-4941f05f03ff">(openmc/unit/inputs/findsurfstest-logbins.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#3aab9fb8-7549-4a75-a1e6-ba7f99635922">(openmc.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#cdca3b49-522a-40af-924d-055b0e11bd10">(openmc/unit/inputs/findsurfstest.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#855fb341-646b-4ba0-9a86-1be7e986dedf">(unit/inputs/openmc.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#a66448d1-e7eb-417f-bdeb-7dec89cc2bfb">(openmc/example.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#a7886950-22ab-46ba-9166-a8da0f4c85b4">(openmc/unit/inputs/thermal-expansion.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#fa4ead09-6d42-48b9-9952-3a52fc04909f">(unit/inputs/function_user_object_sub.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#e94295f9-5d69-4521-9d14-1005c86e7993">(unit/inputs/transfer_sub.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#d18e7fb2-43fd-45d3-be02-55685fb6dc9a">(openmc/unit/inputs/offset-box.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#e293f72f-2e40-43cf-85e4-973df640c4cc">(openmc/unit/inputs/moabuserobject.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#8676fa14-77ea-4a3f-b224-6ff21d772f3a">(openmc/unit/inputs/findsurfstest-singlemat.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#cbb34c4e-98c8-41c1-98fa-3631713b7eae">(openmc/perf_test.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#aa982d6a-6d6e-44b2-8c5e-9c12db7bbc0b">(openmc/unit/inputs/nodal_temperature.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#00bd770b-e5bb-4038-9eb2-b0f6769b60f1">(openmc/unit/inputs/findsurfstest-second.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#50c26aed-5a2d-4221-90ff-facc5544316f">(unit/inputs/openmc-refine.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#640df21d-8972-4c19-94ba-bac7344ddb50">(openmc/unit/inputs/secondordermesh.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#7ba2ad93-a4a2-4c88-84c4-f769516d4da6">(openmc/unit/inputs/moabuserobject-changeunits.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#f355a566-5721-4dd1-b2b5-76f963e44116">(openmc/unit/inputs/executioner-second.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#aed513ec-13ad-4795-afc2-4f506b9da833">(unit/inputs/openmc-thermal-expansion.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#dd5a81ab-ff3d-49b1-8c09-8960028187de">(openmc/unit/inputs/densitysurfstest-changeunits.i)</a></li></ul></section></section><div class="moose-modal modal" id="814c5108-454a-4a0b-9480-637222d6dd14"><div class="modal-content"><h4>(openmc/unit/inputs/executioner.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [meshcm]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = OpenMCExecutioner
-[]
-
-[Variables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-  []
-[]
-
-# Worryingly this is needed when multiple app tests are run in sequence
-# presumably the console object does not get properly destroyed...
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="0255e7dd-f24d-4b70-b7eb-e52d10a16fdd"><div class="modal-content"><h4>(openmc/unit/inputs/badmoabuserobject.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+<!DOCTYPE html><head><meta charset="UTF-8"><title>MoabUserObject | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="27452444-48b0-4d78-958b-7643cb255279"><i class="material-icons">menu</i></a><ul class="sidenav" id="27452444-48b0-4d78-958b-7643cb255279"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">userobject</span><a href="#" class="breadcrumb">MoabUserObject</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="032277cf-8dc2-463c-bb5a-e81d9200b5b8" data-section-level="1" data-section-text="MoabUserObject"><h1 id="moabuserobject">MoabUserObject</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p>The MoabUserObject has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p></div></div></div><p></p><section class="scrollspy" id="d856aa4c-2996-46a3-bf68-ab6c292034e3" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p></p></section><section class="scrollspy" id="f796af8c-4c7d-47c3-ac16-f8768d04ab88" data-section-level="2" data-section-text="Example Input File Syntax"><h2 id="example-input-file-syntax">Example Input File Syntax</h2><p></p></section><section class="scrollspy" id="18906dd1-8f62-4cf3-8239-3da0a29fab37" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="2cb1798d-74fc-4d50-871f-32f9cdf319a3" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">bin_density</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Determine if elements should be additionally binned by material density</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Determine if elements should be additionally binned by material density</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">bin_varname</span><span class="moose-parameter-header-description">Variable name by whose results elements should be binned.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Variable name by whose results elements should be binned.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">density_name</span><span class="moose-parameter-header-description">Variable name for density by whose results elements should be binned.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Variable name for density by whose results elements should be binned.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">density_scale</span><span class="moose-parameter-header-default">1</span><span class="moose-parameter-header-description">Scale factor to convert densities from from MOOSE to OpenMC (latter is g/cc).</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Scale factor to convert densities from from MOOSE to OpenMC (latter is g/cc).</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">execute_on</span><span class="moose-parameter-header-default">TIMESTEP_END</span><span class="moose-parameter-header-description">The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, ALWAYS.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>TIMESTEP_END</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>ExecFlagEnum</p><p class="moose-parameter-description-options"><span>Options:</span>NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, ALWAYS</p><p class="moose-parameter-description"><span>Description:</span>The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, ALWAYS.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">faceting_tol</span><span class="moose-parameter-header-default">0.0001</span><span class="moose-parameter-header-description">Faceting tolerance for DagMC</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.0001</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Faceting tolerance for DagMC</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">geom_tol</span><span class="moose-parameter-header-default">1e-06</span><span class="moose-parameter-header-description">Geometry tolerance for DagMC</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1e-06</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Geometry tolerance for DagMC</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">graveyard_scale_inner</span><span class="moose-parameter-header-default">1.01</span><span class="moose-parameter-header-description">Graveyard inner surface scalefactor relative to aligned bounding box.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1.01</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Graveyard inner surface scalefactor relative to aligned bounding box.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">graveyard_scale_outer</span><span class="moose-parameter-header-default">1.1</span><span class="moose-parameter-header-description">Graveyard outer surface scalefactor relative to aligned bounding box.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>1.1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Graveyard outer surface scalefactor relative to aligned bounding box.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">length_scale</span><span class="moose-parameter-header-default">100</span><span class="moose-parameter-header-description">Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>100</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Scale factor to convert lengths from MOOSE to MOAB. Default is from metres->centimetres.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">logscale</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Switch to determine if logarithmic binning should be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Switch to determine if logarithmic binning should be used.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">material_names</span><span class="moose-parameter-header-description">List of MOOSE material names</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>List of MOOSE material names</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">material_openmc_names</span><span class="moose-parameter-header-description">List of OpenMC material names</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>List of OpenMC material names</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_bins</span><span class="moose-parameter-header-default">60</span><span class="moose-parameter-header-description">Number of bins</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>60</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of bins</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_density_bins</span><span class="moose-parameter-header-default">5</span><span class="moose-parameter-header-description">Number of relative density bins</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of relative density bins</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_output</span><span class="moose-parameter-header-default">10</span><span class="moose-parameter-header-description">Number of times to write to file if output_skins and/or output_full is true</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>10</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of times to write to file if output_skins and/or output_full is true</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">n_skip</span><span class="moose-parameter-header-default">0</span><span class="moose-parameter-header-description">Number of iterations to skip between writes if output_skins and/or output_full is true and n_output>1</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>unsigned int</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Number of iterations to skip between writes if output_skins and/or output_full is true and n_output>1</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_base</span><span class="moose-parameter-header-default">moab_surfs</span><span class="moose-parameter-header-description">Base filename for surface file writes (will be appended by an integer</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>moab_surfs</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Base filename for surface file writes (will be appended by an integer</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_base_full</span><span class="moose-parameter-header-default">moab_full</span><span class="moose-parameter-header-description">Base filename for full mesh file writes (will be appended by an integer</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>moab_full</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Base filename for full mesh file writes (will be appended by an integer</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_full</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Switch to control whether MOAB should write full mesh data to file.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Switch to control whether MOAB should write full mesh data to file.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">output_skins</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Switch to control whether MOAB should write skins to file.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Switch to control whether MOAB should write skins to file.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">rel_den_max</span><span class="moose-parameter-header-default">0.1</span><span class="moose-parameter-header-description">Maximum difference in density relative to original material density</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Maximum difference in density relative to original material density</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">rel_den_min</span><span class="moose-parameter-header-default">-0.1</span><span class="moose-parameter-header-description">Minimum difference in density relative to original material density</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>-0.1</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Minimum difference in density relative to original material density</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">var_max</span><span class="moose-parameter-header-default">597.5</span><span class="moose-parameter-header-description">Max value to define range of bins.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>597.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Max value to define range of bins.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">var_min</span><span class="moose-parameter-header-default">297.5</span><span class="moose-parameter-header-description">Minimum value to define range of bins.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>297.5</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Minimum value to define range of bins.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="662fd653-f7d9-4af1-b77c-4288aa45370b" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">allow_duplicate_execution_on_initial</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">In the case where this UserObject is depended upon by an initial condition, allow it to be executed twice during the initial setup (once before the IC and again after mesh adaptivity (if applicable).</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>In the case where this UserObject is depended upon by an initial condition, allow it to be executed twice during the initial setup (once before the IC and again after mesh adaptivity (if applicable).</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">force_postaux</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Forces the UserObject to be executed in POSTAUX</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Forces the UserObject to be executed in POSTAUX</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">force_preaux</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Forces the UserObject to be executed in PREAUX</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Forces the UserObject to be executed in PREAUX</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">force_preic</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Forces the UserObject to be executed in PREIC during initial setup</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Forces the UserObject to be executed in PREIC during initial setup</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section><section class="scrollspy" id="7f41d650-c967-46f9-be4c-4667f2fced6b" data-section-level="2" data-section-text="Input Files"><h2 id="input-files">Input Files</h2><ul class="moose-list-inputs browser-default"><li><a class="moose-source-filename tooltipped modal-trigger" href="#47d4ad69-dfd8-4c46-8276-05db363162bc">(openmc/unit/openmc_app_inputs/secondordermesh.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#5be804fe-1f2d-491c-ab4e-da5406c846d8">(openmc/unit/openmc_app_inputs/findsurfstest.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#96e28173-2446-43ab-91a8-f5b946503817">(openmc/unit/openmc_app_inputs/offset-box.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#c04f437d-c524-4dd8-8612-d75d78926504">(unit/aurora_app_inputs/transfer_sub.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#0b43cfed-5233-4720-9f1c-a775fc91df50">(openmc/unit/openmc_app_inputs/moabuserobject.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#927ff92d-8653-45e2-83df-b75d342c2b8d">(openmc/unit/openmc_app_inputs/findsurfstest-second.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#c3eb1a92-e06b-4bd1-b364-a7881d2d9fda">(openmc/unit/openmc_app_inputs/badmoabuserobject.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#24ab6fb1-9b8f-4efb-ae0b-9313795c3298">(unit/aurora_app_inputs/openmc-refine.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#cab6b1d2-4167-4bd0-81e8-e5c5bdbf64ee">(openmc/unit/openmc_app_inputs/thermal-expansion.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#07ef6522-c990-4a61-b72f-bdbf91cac97d">(openmc/unit/openmc_app_inputs/executioner-many-scores.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#6cfe84ee-329f-4eec-af64-e417a220147f">(openmc/unit/openmc_app_inputs/densitysurfstest-changeunits.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#dced9c52-6168-413a-bc7a-74fe06f680fc">(openmc/unit/openmc_app_inputs/findsurfstest-logbins.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#3b7710d2-66b3-477e-a1c5-09b35a0ffaed">(openmc/unit/openmc_app_inputs/executioner-second.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#5cbff7c9-4b9e-4f77-a9b6-a2d131b2e03c">(openmc/example.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#e78574ec-9db4-4feb-ad33-ef3574cc60a4">(openmc/unit/openmc_app_inputs/executioner.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#9ebe0b67-8a60-4803-bf5c-38a7a0c1067d">(unit/aurora_app_inputs/openmc.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#6185bbc0-779f-461a-9087-1cda1017b75f">(openmc_mech.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#e63753ed-e4cc-45c5-ae80-6cc629d0694b">(openmc/unit/openmc_app_inputs/densitysurfstest.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#808586c8-8a09-4f73-a408-461a8f3b26f9">(unit/aurora_app_inputs/openmc-thermal-expansion.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#c53866cd-4da1-4556-8e09-3066d856121e">(unit/aurora_app_inputs/function_user_object_sub.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#158c7305-3aae-4ef3-af67-f8ee0903b975">(openmc/unit/openmc_app_inputs/findsurfstest-singlemat.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#0cffb6c4-89b3-4a96-b994-7bb25d149e27">(openmc/unit/openmc_app_inputs/moabuserobject-changeunits.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#2a5dc284-5a9f-4ba1-91ca-80ac742542ce">(openmc/unit/openmc_app_inputs/nodal_temperature.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#a14eca79-11af-47c5-ae55-d7f94c69c71c">(openmc/perf_test.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#bbff9c42-2870-4d1c-9cd7-aad03267bd00">(openmc.i)</a></li></ul></section></section><div class="moose-modal modal" id="47d4ad69-dfd8-4c46-8276-05db363162bc"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/secondordermesh.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  # Length dimensions are cm
   type = GeneratedMesh
-  dim = 1
+  dim = 3
   nx = 1
+  ny = 1
+  nz = 1
+  elem_type=TET10
 []
 
 [Problem]
@@ -43,185 +14,6 @@
 
 [Executioner]
   type = Steady
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="91da74a0-e377-44c6-93ed-e38bbac7b9a8"><div class="modal-content"><h4>(openmc/unit/inputs/densitysurfstest.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = FileMesh
-  file = copper_air_bcs_tetmesh.e
-  displacements = &#x27;disp_x disp_y disp_z&#x27;
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[Materials]
-  [copper_density]
-    type = ADOpenMCDensity
-    density = &#x27;8.920&#x27; # g/cm^3
-    displacements = &#x27;disp_x disp_y disp_z&#x27;
-    block = &#x27;1 2&#x27;
-    compute=false
-  []
-[]
-  
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    # match up with variable below for this test
-    bin_varname = &quot;temperature&quot;
-    density_name = &quot;density_local&quot;
-    material_names = &#x27;copper_density&#x27;
-    material_openmc_names = &#x27;copper&#x27;
-    rel_den_min = -0.1
-    rel_den_max = 0.1
-    n_density_bins = 5
-  []
-[]
-
-[Variables]
-  [temperature]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [disp_x]
-  []
-  [disp_y]
-  []
-  [disp_z]
-  []  
-[]
-
-[AuxVariables]
-  [density_local]
-     order = CONSTANT
-     family = MONOMIAL
-  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="ecb91a1d-2422-4841-afc3-bc96d1c98abe"><div class="modal-content"><h4>(openmc_mech.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = GeneratedMesh
-  dim = 1
-  nx = 1
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = OpenMCExecutioner
-  variables = &#x27;heating-local flux&#x27;
-  err_variables = &#x27;heating-local-err flux-err&#x27;
-  score_names = &#x27;heating-local flux&#x27;
-  tally_ids = &#x27;1 1&#x27;
-  neutron_source = 1.0e18
-  launch_threads=true
-  n_threads=4
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    bin_varname = &quot;temp&quot;
-    density_name = &quot;density_local&quot;
-    material_names = &#x27;copper_density air_density&#x27;
-    material_openmc_names = &#x27;copper air&#x27;
-    output_skins = true
-    length_scale = 1.0
-  []
-[]
-
-#  Uncomment these lines to disable output to screen
-#[Outputs]
-#  console = false
-#  [my_console]
-#    type = Console
-#    output_screen = false
-#  []
-#[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="9d36f5f9-dd80-412e-886a-84eafb430412"><div class="modal-content"><h4>(openmc/unit/inputs/executioner-many-scores.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [meshcm]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = OpenMCExecutioner
-  variables = &#x27;heating-local flux&#x27;
-  score_names = &#x27;heating-local flux&#x27;
-  tally_ids = &#x27;1 1&#x27;
-  err_variables = &#x27;heating-local-err flux-err&#x27;
-[]
-
-[Variables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [heating-local-err]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [flux]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [flux-err]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-  []
-[]
-
-# Worryingly this is needed when multiple app tests are run in sequence
-# presumably the console object does not get properly destroyed...
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="376ee470-0a91-4fc6-9401-4941f05f03ff"><div class="modal-content"><h4>(openmc/unit/inputs/findsurfstest-logbins.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [meshcm]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[Materials]
-  [copper]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;dummy_prop&#x27;
-    prop_values = &#x27;1.0&#x27;
-    compute = false
-    block = &#x27;1 2&#x27;
-  []
 []
 
 [UserObjects]
@@ -229,11 +21,6 @@
     type = MoabUserObject
     # match up with variable below for this test
     bin_varname = &quot;temperature&quot;
-    material_names = &#x27;copper&#x27;
-    logscale = true
-    var_min = 150 #  lower bin edge will be 1e2
-    var_max = 6000 # upper bin edge will be 1e4
-    n_bins = 4
   []
 []
 
@@ -243,47 +30,7 @@
     family = MONOMIAL
   []
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="3aab9fb8-7549-4a75-a1e6-ba7f99635922"><div class="modal-content"><h4>(openmc.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = GeneratedMesh
-  dim = 1
-  nx = 1
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = OpenMCExecutioner
-  variables = &#x27;heating-local flux&#x27;
-  score_names = &#x27;heating-local flux&#x27;
-  tally_ids = &#x27;1 1&#x27;
-  err_variables = &#x27;heating-local-err flux-err&#x27;
-  neutron_source = 1.0e16
-  launch_threads=true
-  n_threads=4
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    bin_varname = &quot;temperature&quot;
-    material_names = &#x27;copper_props air_props&#x27;
-    material_openmc_names = &#x27;copper air&#x27;
-    output_skins = true
-    length_scale = 1.0
-  []
-[]
-
-#  Uncomment these lines to disable output to screen
-#[Outputs]
-#  console = false
-#  [my_console]
-#    type = Console
-#    output_screen = false
-#  []
-#[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="cdca3b49-522a-40af-924d-055b0e11bd10"><div class="modal-content"><h4>(openmc/unit/inputs/findsurfstest.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="5be804fe-1f2d-491c-ab4e-da5406c846d8"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/findsurfstest.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   [meshcm]
     type = FileMeshGenerator
     file = copper_air_bcs_tetmesh.e
@@ -332,35 +79,189 @@
     family = MONOMIAL
   []
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="855fb341-646b-4ba0-9a86-1be7e986dedf"><div class="modal-content"><h4>(unit/inputs/openmc.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="96e28173-2446-43ab-91a8-f5b946503817"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/offset-box.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [offset-box]
+    type = GeneratedMeshGenerator
+    dim = 3
+    nx = 1
+    ny = 1
+    nz = 1
+    xmax = 5
+    ymax = 5
+    zmax = 5
+    xmin = 4
+    ymin = 4
+    zmin = 4
+    elem_type=TET4
+  []
+  [offset-box-id]
+    type = SubdomainIDGenerator
+    input = offset-box
+    subdomain_id = 1
+  []
+
+[]
+
+[Problem]
+  type = FEProblem
+  solve = false
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[Materials]
+  [copper]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;dummy_prop&#x27;
+    prop_values = &#x27;1.0&#x27;
+    block = 1
+    compute = false
+  []
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    # match up with variable below for this test
+    bin_varname = &quot;temperature&quot;
+    material_names = &#x27;copper&#x27;
+    output_skins = true
+  []
+[]
+
+[Variables]
+  [temperature]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
+  
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="c04f437d-c524-4dd8-8612-d75d78926504"><div class="modal-content"><h4>(unit/aurora_app_inputs/transfer_sub.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   type = GeneratedMesh
   dim = 1
   nx = 1
 []
-  
+
 [Problem]
-  type = OpenMCProblem
+  type = FEProblem
+  solve = false
 []
 
 [Executioner]
-  type = OpenMCExecutioner
+  type = Steady
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
+  []
+[]
+
+#[Outputs]
+#  console=false
+#[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="0b43cfed-5233-4720-9f1c-a775fc91df50"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/moabuserobject.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [meshcm]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    # match up with variable below for this test
+    bin_varname = &quot;temperature&quot;
+  []
+[]
+
+[Variables]
+  [temperature]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="927ff92d-8653-45e2-83df-b75d342c2b8d"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/findsurfstest-second.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = FileMesh
+  file = copper_air_bcs_tetmesh.e
+  second_order = true
+[]
+
+[Problem]
+  type = FEProblem
+  solve = false
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[Materials]
+  [copper]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;dummy_prop&#x27;
+    prop_values = &#x27;1.0&#x27;
+    compute = false
+    block = 1
+  []
+  [air]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;dummy_prop&#x27;
+    prop_values = &#x27;1.0&#x27;
+    compute = false
+    block = 2
+  []
+[]
+  
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    # match up with variable below for this test
     bin_varname = &quot;temperature&quot;
     material_names = &#x27;copper air&#x27;
-    faceting_tol = 10
+    output_skins = true
   []
 []
 
-[Outputs]
-  console=false
+[Variables]
+  [temperature]
+    order = CONSTANT
+    family = MONOMIAL
+  []
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="a66448d1-e7eb-417f-bdeb-7dec89cc2bfb"><div class="modal-content"><h4>(openmc/example.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = FileMesh
-  file = copper_air_tetmesh.e
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="c3eb1a92-e06b-4bd1-b364-a7881d2d9fda"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/badmoabuserobject.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="24ab6fb1-9b8f-4efb-ae0b-9313795c3298"><div class="modal-content"><h4>(unit/aurora_app_inputs/openmc-refine.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
 []
 
 [Problem]
@@ -369,71 +270,33 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variables = &#x27;heating-local flux&#x27;
-  score_names = &#x27;heating-local flux&#x27;
-  tally_ids = &#x27;1 1&#x27;
-  err_variables = &#x27;heating-local-err flux-err&#x27;
-  launch_threads=true
-  n_threads=4
-[]
-
-[AuxVariables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [heating-local-err]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [flux]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [flux-err]
-      order = CONSTANT
-      family = MONOMIAL
-  []
+  variables = &#x27;heating-local&#x27;
+  err_variables = &#x27;&#x27;
+  score_names = &#x27;heating-local&#x27;
+  tally_ids = &#x27;1&#x27;
+  neutron_source = 1.0e18
+  launch_threads=false
+  n_threads=1
+  no_scaling = true
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
+    bin_varname = &quot;temp&quot;
+    material_names = &#x27;copper&#x27;
+    material_openmc_names = &#x27;copper&#x27;
     length_scale = 1.0
-  []
-[]
-
-[Postprocessors]
-  [total-heating]
-    type = ElementIntegralVariablePostprocessor
-    variable = heating-local
-    execute_on = &quot;final&quot;
-  []
-  [total-flux]
-    type = ElementIntegralVariablePostprocessor
-    variable = flux
-    execute_on = &quot;final&quot;
-  []
-  [copper-heating]
-    type = ElementIntegralVariablePostprocessor
-    variable = heating-local
-    block = 1
-    execute_on = &quot;final&quot;
-  []
-  [copper-flux]
-    type = ElementIntegralVariablePostprocessor
-    variable = flux
-    block = 1
-    execute_on = &quot;final&quot;
+    graveyard_scale_inner = 1.05
+    n_bins = 1
+    var_max = 500.
   []
 []
 
 [Outputs]
-  exodus = true
-  csv = true
-  execute_on = &quot;final&quot;
+  console = false
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="a7886950-22ab-46ba-9166-a8da0f4c85b4"><div class="modal-content"><h4>(openmc/unit/inputs/thermal-expansion.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="cab6b1d2-4167-4bd0-81e8-e5c5bdbf64ee"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/thermal-expansion.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   # Length dimensions are cm
   type = GeneratedMesh
   dim = 3
@@ -578,10 +441,59 @@
 [Outputs]
   console=false
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="fa4ead09-6d42-48b9-9952-3a52fc04909f"><div class="modal-content"><h4>(unit/inputs/function_user_object_sub.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = GeneratedMesh
-  dim = 1
-  nx = 1
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="07ef6522-c990-4a61-b72f-bdbf91cac97d"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/executioner-many-scores.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [meshcm]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = OpenMCExecutioner
+  variables = &#x27;heating-local flux&#x27;
+  score_names = &#x27;heating-local flux&#x27;
+  tally_ids = &#x27;1 1&#x27;
+  err_variables = &#x27;heating-local-err flux-err&#x27;
+[]
+
+[Variables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [heating-local-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+  []
+[]
+
+# Worryingly this is needed when multiple app tests are run in sequence
+# presumably the console object does not get properly destroyed...
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="6cfe84ee-329f-4eec-af64-e417a220147f"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/densitysurfstest-changeunits.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = FileMesh
+  file = copper_air_bcs_tetmesh.e
+  displacements = &#x27;disp_x disp_y disp_z&#x27;
 []
 
 [Problem]
@@ -593,56 +505,54 @@
   type = Steady
 []
 
-[UserObjects]
-  [moab]
-    type = MoabUserObject
+[Materials]
+  [copper_density]
+    type = ADOpenMCDensity
+    density = &#x27;8920.&#x27; # kg/m^3
+    displacements = &#x27;disp_x disp_y disp_z&#x27;
+    block = &#x27;1 2&#x27;
+    compute=false
   []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="e94295f9-5d69-4521-9d14-1005c86e7993"><div class="modal-content"><h4>(unit/inputs/transfer_sub.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = GeneratedMesh
-  dim = 1
-  nx = 1
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
+    bin_varname = &quot;temperature&quot;
+    density_name = &quot;density_local&quot;
+    material_names = &#x27;copper_density&#x27;
+    material_openmc_names = &#x27;copper&#x27;
+    rel_den_min = -0.1
+    rel_den_max = 0.1
+    n_density_bins = 5
+    density_scale = 0.001 # factor to change density in material back to g/cc
   []
 []
 
-#[Outputs]
-#  console=false
-#[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="d18e7fb2-43fd-45d3-be02-55685fb6dc9a"><div class="modal-content"><h4>(openmc/unit/inputs/offset-box.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [offset-box]
-    type = GeneratedMeshGenerator
-    dim = 3
-    nx = 1
-    ny = 1
-    nz = 1
-    xmax = 5
-    ymax = 5
-    zmax = 5
-    xmin = 4
-    ymin = 4
-    zmin = 4
-    elem_type=TET4
+[Variables]
+  [temperature]
+    order = CONSTANT
+    family = MONOMIAL
   []
-  [offset-box-id]
-    type = SubdomainIDGenerator
-    input = offset-box
-    subdomain_id = 1
+  [disp_x]
   []
+  [disp_y]
+  []
+  [disp_z]
+  []
+[]
 
+[AuxVariables]
+  [density_local]
+     order = CONSTANT
+     family = MONOMIAL
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="dced9c52-6168-413a-bc7a-74fe06f680fc"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/findsurfstest-logbins.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [meshcm]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
 []
 
 [Problem]
@@ -659,8 +569,8 @@
     type = ADGenericConstantMaterial
     prop_names = &#x27;dummy_prop&#x27;
     prop_values = &#x27;1.0&#x27;
-    block = 1
     compute = false
+    block = &#x27;1 2&#x27;
   []
 []
 
@@ -670,7 +580,10 @@
     # match up with variable below for this test
     bin_varname = &quot;temperature&quot;
     material_names = &#x27;copper&#x27;
-    output_skins = true
+    logscale = true
+    var_min = 150 #  lower bin edge will be 1e2
+    var_max = 6000 # upper bin edge will be 1e4
+    n_bins = 4
   []
 []
 
@@ -680,8 +593,122 @@
     family = MONOMIAL
   []
 []
-  
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="e293f72f-2e40-43cf-85e4-973df640c4cc"><div class="modal-content"><h4>(openmc/unit/inputs/moabuserobject.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="3b7710d2-66b3-477e-a1c5-09b35a0ffaed"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/executioner-second.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = FileMesh
+  file = copper_air_bcs_tetmesh.e
+  second_order = true
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = OpenMCExecutioner
+  variables = &#x27;heating-local&#x27;
+  score_names = &#x27;heating-local&#x27;
+  tally_ids = &#x27;1&#x27;
+  err_variables = &#x27;heating-local-err&#x27;
+[]
+
+[Variables]
+  [heating-local]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [heating-local-err]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+  []
+[]
+
+# Worryingly this is needed when multiple app tests are run in sequence
+# presumably the console object does not get properly destroyed...
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="5cbff7c9-4b9e-4f77-a9b6-a2d131b2e03c"><div class="modal-content"><h4>(openmc/example.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = FileMesh
+  file = copper_air_tetmesh.e
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = OpenMCExecutioner
+  variables = &#x27;heating-local flux&#x27;
+  score_names = &#x27;heating-local flux&#x27;
+  tally_ids = &#x27;1 1&#x27;
+  err_variables = &#x27;heating-local-err flux-err&#x27;
+  launch_threads=true
+  n_threads=4
+[]
+
+[AuxVariables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [heating-local-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    length_scale = 1.0
+  []
+[]
+
+[Postprocessors]
+  [total-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+    execute_on = &quot;final&quot;
+  []
+  [total-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+    execute_on = &quot;final&quot;
+  []
+  [copper-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+    block = 1
+    execute_on = &quot;final&quot;
+  []
+  [copper-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+    block = 1
+    execute_on = &quot;final&quot;
+  []
+[]
+
+[Outputs]
+  exodus = true
+  csv = true
+  execute_on = &quot;final&quot;
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="e78574ec-9db4-4feb-ad33-ef3574cc60a4"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/executioner.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   [meshcm]
     type = FileMeshGenerator
     file = copper_air_bcs_tetmesh.e
@@ -693,14 +720,130 @@
 []
 
 [Executioner]
-  type = Steady
+  type = OpenMCExecutioner
+[]
+
+[Variables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
+  []
+[]
+
+# Worryingly this is needed when multiple app tests are run in sequence
+# presumably the console object does not get properly destroyed...
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="9ebe0b67-8a60-4803-bf5c-38a7a0c1067d"><div class="modal-content"><h4>(unit/aurora_app_inputs/openmc.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
+[]
+  
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = OpenMCExecutioner
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    bin_varname = &quot;temperature&quot;
+    material_names = &#x27;copper air&#x27;
+    faceting_tol = 10
+  []
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="6185bbc0-779f-461a-9087-1cda1017b75f"><div class="modal-content"><h4>(openmc_mech.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = OpenMCExecutioner
+  variables = &#x27;heating-local flux&#x27;
+  err_variables = &#x27;heating-local-err flux-err&#x27;
+  score_names = &#x27;heating-local flux&#x27;
+  tally_ids = &#x27;1 1&#x27;
+  neutron_source = 1.0e18
+  launch_threads=true
+  n_threads=4
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    bin_varname = &quot;temp&quot;
+    density_name = &quot;density_local&quot;
+    material_names = &#x27;copper_density air_density&#x27;
+    material_openmc_names = &#x27;copper air&#x27;
+    output_skins = true
+    length_scale = 1.0
+  []
+[]
+
+#  Uncomment these lines to disable output to screen
+#[Outputs]
+#  console = false
+#  [my_console]
+#    type = Console
+#    output_screen = false
+#  []
+#[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="e63753ed-e4cc-45c5-ae80-6cc629d0694b"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/densitysurfstest.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = FileMesh
+  file = copper_air_bcs_tetmesh.e
+  displacements = &#x27;disp_x disp_y disp_z&#x27;
+[]
+
+[Problem]
+  type = FEProblem
+  solve = false
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[Materials]
+  [copper_density]
+    type = ADOpenMCDensity
+    density = &#x27;8.920&#x27; # g/cm^3
+    displacements = &#x27;disp_x disp_y disp_z&#x27;
+    block = &#x27;1 2&#x27;
+    compute=false
+  []
+[]
+  
+[UserObjects]
+  [moab]
+    type = MoabUserObject
     # match up with variable below for this test
     bin_varname = &quot;temperature&quot;
+    density_name = &quot;density_local&quot;
+    material_names = &#x27;copper_density&#x27;
+    material_openmc_names = &#x27;copper&#x27;
+    rel_den_min = -0.1
+    rel_den_max = 0.1
+    n_density_bins = 5
   []
 []
 
@@ -709,8 +852,80 @@
     order = CONSTANT
     family = MONOMIAL
   []
+  [disp_x]
+  []
+  [disp_y]
+  []
+  [disp_z]
+  []  
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="8676fa14-77ea-4a3f-b224-6ff21d772f3a"><div class="modal-content"><h4>(openmc/unit/inputs/findsurfstest-singlemat.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+
+[AuxVariables]
+  [density_local]
+     order = CONSTANT
+     family = MONOMIAL
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="808586c8-8a09-4f73-a408-461a8f3b26f9"><div class="modal-content"><h4>(unit/aurora_app_inputs/openmc-thermal-expansion.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
+[]
+
+[Problem]
+  type = OpenMCProblem
+[]
+
+[Executioner]
+  type = OpenMCExecutioner
+  variables = &#x27;heating-local&#x27;
+  err_variables = &#x27;&#x27;
+  score_names = &#x27;heating-local&#x27;
+  tally_ids = &#x27;1&#x27;
+  neutron_source = 1.0e18
+  launch_threads=false
+  n_threads=1
+  no_scaling = true
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+    bin_varname = &quot;temp&quot;
+    material_names = &#x27;copper&#x27;
+    material_openmc_names = &#x27;copper&#x27;
+    #output_skins = true
+    length_scale = 1.0
+    graveyard_scale_inner = 1.05
+    n_bins = 1
+    var_max = 1200.
+  []
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="c53866cd-4da1-4556-8e09-3066d856121e"><div class="modal-content"><h4>(unit/aurora_app_inputs/function_user_object_sub.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  type = GeneratedMesh
+  dim = 1
+  nx = 1
+[]
+
+[Problem]
+  type = FEProblem
+  solve = false
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[UserObjects]
+  [moab]
+    type = MoabUserObject
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="158c7305-3aae-4ef3-af67-f8ee0903b975"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/findsurfstest-singlemat.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   [meshcm]
     type = FileMeshGenerator
     file = copper_air_bcs_tetmesh.e
@@ -758,10 +973,10 @@
     family = MONOMIAL
   []
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="cbb34c4e-98c8-41c1-98fa-3631713b7eae"><div class="modal-content"><h4>(openmc/perf_test.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="0cffb6c4-89b3-4a96-b994-7bb25d149e27"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/moabuserobject-changeunits.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   [meshcm]
     type = FileMeshGenerator
-    file = copper_air_tetmesh.e
+    file = copper_air_bcs_tetmesh.e
   []
 []
 
@@ -770,85 +985,29 @@
 []
 
 [Executioner]
-  type = OpenMCExecutioner
-  variable = &#x27;heating-local&#x27;
-[]
-
-[Variables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
+  type = Steady
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
-    length_scale = 1.0
+    # match up with variable below for this test
+    bin_varname = &quot;temperature&quot;
+    # change the units used in moab
+    length_scale = 1000.0
+    #  change the dagmc tolerances
+    faceting_tol = 1.e-2
+    geom_tol = 1.e-4
   []
 []
 
-[VectorPostprocessors]
-  [./element_value_sampler]
-    type = ElementValueSampler
-    variable = &#x27;heating-local&#x27;
-    sort_by = id
-    execute_on = &#x27;final&#x27;
-  [../]
-[]
-
-[Postprocessors]
-  [./main_total_time]
-    type = PerfGraphData
-    section_name = &quot;Root&quot;
-    data_type = total
-    execute_on = &#x27;final&#x27;
-  [../]
-  [./execute_total_time]
-    type = PerfGraphData
-    section_name = &quot;MooseApp::execute&quot;
-    data_type = total
-    execute_on = &#x27;final&#x27;
-  [../]
-  [./executioner_total_time]
-    type = PerfGraphData
-    section_name = &quot;OpenMCExecutioner::execute&quot;
-    data_type = total
-    execute_on = &#x27;final&#x27;
-  [../]
-  [./executioner_init_time]
-    type = PerfGraphData
-    section_name = &quot;OpenMCExecutioner::init&quot;
-    data_type = total
-    execute_on = &#x27;final&#x27;
-  [../]
-  [./executioner_initopenmc_time]
-    type = PerfGraphData
-    section_name = &quot;OpenMCExecutioner::initopenmc&quot;
-    data_type = total
-    execute_on = &#x27;final&#x27;
-  [../]
-  [./executioner_run_time]
-    type = PerfGraphData
-    section_name = &quot;OpenMCExecutioner::run&quot;
-    data_type = total
-    execute_on = &#x27;final&#x27;
-  [../]
-[]
-
-[Outputs]
-  [csv]
-    type = CSV
-    execute_on = &#x27;final&#x27;
-    file_base = &quot;perf_test&quot;
-  []
-  [pgraph]
-    type = PerfGraphOutput
-    execute_on = &#x27;final&#x27;  # Default is &quot;final&quot;
-    level = 2 # Default is 1
+[Variables]
+  [temperature]
+    order = CONSTANT
+    family = MONOMIAL
   []
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="aa982d6a-6d6e-44b2-8c5e-9c12db7bbc0b"><div class="modal-content"><h4>(openmc/unit/inputs/nodal_temperature.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="2a5dc284-5a9f-4ba1-91ca-80ac742542ce"><div class="modal-content"><h4>(openmc/unit/openmc_app_inputs/nodal_temperature.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   [meshcm]
     type = FileMeshGenerator
     file = copper_air_bcs_tetmesh.e
@@ -942,162 +1101,11 @@
 [Outputs]
   console=false
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="00bd770b-e5bb-4038-9eb2-b0f6769b60f1"><div class="modal-content"><h4>(openmc/unit/inputs/findsurfstest-second.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = FileMesh
-  file = copper_air_bcs_tetmesh.e
-  second_order = true
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[Materials]
-  [copper]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;dummy_prop&#x27;
-    prop_values = &#x27;1.0&#x27;
-    compute = false
-    block = 1
-  []
-  [air]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;dummy_prop&#x27;
-    prop_values = &#x27;1.0&#x27;
-    compute = false
-    block = 2
-  []
-[]
-  
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    # match up with variable below for this test
-    bin_varname = &quot;temperature&quot;
-    material_names = &#x27;copper air&#x27;
-    output_skins = true
-  []
-[]
-
-[Variables]
-  [temperature]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="50c26aed-5a2d-4221-90ff-facc5544316f"><div class="modal-content"><h4>(unit/inputs/openmc-refine.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = GeneratedMesh
-  dim = 1
-  nx = 1
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = OpenMCExecutioner
-  variables = &#x27;heating-local&#x27;
-  err_variables = &#x27;&#x27;
-  score_names = &#x27;heating-local&#x27;
-  tally_ids = &#x27;1&#x27;
-  neutron_source = 1.0e18
-  launch_threads=false
-  n_threads=1
-  no_scaling = true
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    bin_varname = &quot;temp&quot;
-    material_names = &#x27;copper&#x27;
-    material_openmc_names = &#x27;copper&#x27;
-    length_scale = 1.0
-    graveyard_scale_inner = 1.05
-    n_bins = 1
-    var_max = 500.
-  []
-[]
-
-[Outputs]
-  console = false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="640df21d-8972-4c19-94ba-bac7344ddb50"><div class="modal-content"><h4>(openmc/unit/inputs/secondordermesh.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  # Length dimensions are cm
-  type = GeneratedMesh
-  dim = 3
-  nx = 1
-  ny = 1
-  nz = 1
-  elem_type=TET10
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    # match up with variable below for this test
-    bin_varname = &quot;temperature&quot;
-  []
-[]
-
-[Variables]
-  [temperature]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="7ba2ad93-a4a2-4c88-84c4-f769516d4da6"><div class="modal-content"><h4>(openmc/unit/inputs/moabuserobject-changeunits.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="a14eca79-11af-47c5-ae55-d7f94c69c71c"><div class="modal-content"><h4>(openmc/perf_test.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   [meshcm]
     type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
+    file = copper_air_tetmesh.e
   []
-[]
-
-[Problem]
-  type = OpenMCProblem
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    # match up with variable below for this test
-    bin_varname = &quot;temperature&quot;
-    # change the units used in moab
-    length_scale = 1000.0
-    #  change the dagmc tolerances
-    faceting_tol = 1.e-2
-    geom_tol = 1.e-4
-  []
-[]
-
-[Variables]
-  [temperature]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="f355a566-5721-4dd1-b2b5-76f963e44116"><div class="modal-content"><h4>(openmc/unit/inputs/executioner-second.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = FileMesh
-  file = copper_air_bcs_tetmesh.e
-  second_order = true
 []
 
 [Problem]
@@ -1106,35 +1114,84 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variables = &#x27;heating-local&#x27;
-  score_names = &#x27;heating-local&#x27;
-  tally_ids = &#x27;1&#x27;
-  err_variables = &#x27;heating-local-err&#x27;
+  variable = &#x27;heating-local&#x27;
 []
 
 [Variables]
   [heating-local]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [heating-local-err]
-    order = CONSTANT
-    family = MONOMIAL
+      order = CONSTANT
+      family = MONOMIAL
   []
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
+    length_scale = 1.0
   []
 []
 
-# Worryingly this is needed when multiple app tests are run in sequence
-# presumably the console object does not get properly destroyed...
-[Outputs]
-  console=false
+[VectorPostprocessors]
+  [./element_value_sampler]
+    type = ElementValueSampler
+    variable = &#x27;heating-local&#x27;
+    sort_by = id
+    execute_on = &#x27;final&#x27;
+  [../]
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="aed513ec-13ad-4795-afc2-4f506b9da833"><div class="modal-content"><h4>(unit/inputs/openmc-thermal-expansion.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+
+[Postprocessors]
+  [./main_total_time]
+    type = PerfGraphData
+    section_name = &quot;Root&quot;
+    data_type = total
+    execute_on = &#x27;final&#x27;
+  [../]
+  [./execute_total_time]
+    type = PerfGraphData
+    section_name = &quot;MooseApp::execute&quot;
+    data_type = total
+    execute_on = &#x27;final&#x27;
+  [../]
+  [./executioner_total_time]
+    type = PerfGraphData
+    section_name = &quot;OpenMCExecutioner::execute&quot;
+    data_type = total
+    execute_on = &#x27;final&#x27;
+  [../]
+  [./executioner_init_time]
+    type = PerfGraphData
+    section_name = &quot;OpenMCExecutioner::init&quot;
+    data_type = total
+    execute_on = &#x27;final&#x27;
+  [../]
+  [./executioner_initopenmc_time]
+    type = PerfGraphData
+    section_name = &quot;OpenMCExecutioner::initopenmc&quot;
+    data_type = total
+    execute_on = &#x27;final&#x27;
+  [../]
+  [./executioner_run_time]
+    type = PerfGraphData
+    section_name = &quot;OpenMCExecutioner::run&quot;
+    data_type = total
+    execute_on = &#x27;final&#x27;
+  [../]
+[]
+
+[Outputs]
+  [csv]
+    type = CSV
+    execute_on = &#x27;final&#x27;
+    file_base = &quot;perf_test&quot;
+  []
+  [pgraph]
+    type = PerfGraphOutput
+    execute_on = &#x27;final&#x27;  # Default is &quot;final&quot;
+    level = 2 # Default is 1
+  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="bbff9c42-2870-4d1c-9cd7-aad03267bd00"><div class="modal-content"><h4>(openmc.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   type = GeneratedMesh
   dim = 1
   nx = 1
@@ -1146,89 +1203,32 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variables = &#x27;heating-local&#x27;
-  err_variables = &#x27;&#x27;
-  score_names = &#x27;heating-local&#x27;
-  tally_ids = &#x27;1&#x27;
+  variables = &#x27;heating-local flux&#x27;
+  score_names = &#x27;heating-local flux&#x27;
+  tally_ids = &#x27;1 1&#x27;
+  err_variables = &#x27;heating-local-err flux-err&#x27;
   neutron_source = 1.0e18
-  launch_threads=false
-  n_threads=1
-  no_scaling = true
-[]
-
-[UserObjects]
-  [moab]
-    type = MoabUserObject
-    bin_varname = &quot;temp&quot;
-    material_names = &#x27;copper&#x27;
-    material_openmc_names = &#x27;copper&#x27;
-    #output_skins = true
-    length_scale = 1.0
-    graveyard_scale_inner = 1.05
-    n_bins = 1
-    var_max = 1200.
-  []
-[]
-
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="dd5a81ab-ff3d-49b1-8c09-8960028187de"><div class="modal-content"><h4>(openmc/unit/inputs/densitysurfstest-changeunits.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  type = FileMesh
-  file = copper_air_bcs_tetmesh.e
-  displacements = &#x27;disp_x disp_y disp_z&#x27;
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[Materials]
-  [copper_density]
-    type = ADOpenMCDensity
-    density = &#x27;8920.&#x27; # kg/m^3
-    displacements = &#x27;disp_x disp_y disp_z&#x27;
-    block = &#x27;1 2&#x27;
-    compute=false
-  []
+  launch_threads=true
+  n_threads=4
 []
 
 [UserObjects]
   [moab]
     type = MoabUserObject
     bin_varname = &quot;temperature&quot;
-    density_name = &quot;density_local&quot;
-    material_names = &#x27;copper_density&#x27;
-    material_openmc_names = &#x27;copper&#x27;
-    rel_den_min = -0.1
-    rel_den_max = 0.1
-    n_density_bins = 5
-    density_scale = 0.001 # factor to change density in material back to g/cc
+    material_names = &#x27;copper_props air_props&#x27;
+    material_openmc_names = &#x27;copper air&#x27;
+    output_skins = true
+    length_scale = 1.0
   []
 []
 
-[Variables]
-  [temperature]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [disp_x]
-  []
-  [disp_y]
-  []
-  [disp_z]
-  []
-[]
-
-[AuxVariables]
-  [density_local]
-     order = CONSTANT
-     family = MONOMIAL
-  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#a0f60c22-fbfe-4e54-8820-296c1786b2ea" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#40269a5c-73bb-434b-b073-eebe8ff7c4bc" class="tooltipped" data-position="left" data-tooltip="Example Input File Syntax">Example Input File Syntax</a></li><li><a href="#ca826655-97a0-4e79-8b93-cb2001264100" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li><li><a href="#9b40eebe-a890-41ba-a4c8-4855ae31c09c" class="tooltipped" data-position="left" data-tooltip="Input Files">Input Files</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
+#  Uncomment these lines to disable output to screen
+#[Outputs]
+#  console = false
+#  [my_console]
+#    type = Console
+#    output_screen = false
+#  []
+#[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#d856aa4c-2996-46a3-bf68-ab6c292034e3" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#f796af8c-4c7d-47c3-ac16-f8768d04ab88" class="tooltipped" data-position="left" data-tooltip="Example Input File Syntax">Example Input File Syntax</a></li><li><a href="#18906dd1-8f62-4cf3-8239-3da0a29fab37" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li><li><a href="#7f41d650-c967-46f9-be4c-4667f2fced6b" class="tooltipped" data-position="left" data-tooltip="Input Files">Input Files</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>

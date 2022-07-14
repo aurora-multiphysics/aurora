@@ -201,9 +201,11 @@ class OpenMCRunTest : public InputFileTest {
   {
     openmcInputXMLFiles.push_back("settings.xml");
     openmcInputXMLFiles.push_back("materials.xml");
+    openmcInputXMLFiles.push_back("geometry.xml");
 
     openmcInputXMLFilesSrc.push_back("settings.xml");
     openmcInputXMLFilesSrc.push_back("materials.xml");
+    openmcInputXMLFilesSrc.push_back("geometry.xml");
 
     openmcOutputFiles.push_back("summary.h5");
     openmcOutputFiles.push_back("tallies.out");
@@ -222,6 +224,7 @@ class OpenMCRunTest : public InputFileTest {
     deleteAll(openmcInputXMLFiles);
     deleteAll(openmcOutputFiles);
     deleteIfFileExists(dagmcFilename);
+    deleteIfFileExists("uwuw_materials.xml");
   }
 
   std::vector<std::string> openmcInputXMLFiles;

@@ -12,5 +12,4 @@
   <photon_transport>false</photon_transport>
   <verbosity>0</verbosity>
   <temperature_method>interpolation</temperature_method>
-  <dagmc>true</dagmc>
 </settings>

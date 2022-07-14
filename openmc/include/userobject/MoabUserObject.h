@@ -20,6 +20,13 @@
 #include <libmesh/mesh_tools.h>
 #include <libmesh/mesh_function.h>
 
+/// Convenience struct
+struct MOABMaterialProperties{
+  double rel_density;
+  double temp;
+};
+
+
 // Forward Declarations
 class MoabUserObject;
 
@@ -77,14 +84,11 @@ class MoabUserObject : public UserObject
   /// Pass the OpenMC results into the libMesh systems solution
   bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool isErr=false, bool normToVol=true);
 
-  /// Retrieve the temperature of a volume
-  double getTemperature(moab::EntityHandle vol);
-
-  /// Retrieve a list of original material names, initial and relative densities
-  void getMaterialsDensities(std::vector<std::string>& mat_names_out,
-                             std::vector<std::string>& tails,
+  /// Retrieve a list of original material names and properties
+  void getMaterialProperties(std::vector<std::string>& mat_names_out,
                              std::vector<double>& initial_densities,
-                             std::vector<double>& rel_densities);
+                             std::vector<std::string>& tails,
+                             std::vector<MOABMaterialProperties>& properties);
 
   /// Publically available pointer to MOAB interface
   std::shared_ptr<moab::Interface> moabPtr;
@@ -227,6 +231,14 @@ private:
     return getSortBin(iVarBin,iDenBin,iMat,nVarBins,nDenBins,nMatBins);
   }
 
+  /// Map density and temp bin indices onto a linearised index
+  int getMatBin(int iVarBin, int iDenBin, int nVarBinsIn, int nDenBinsIn);
+  /// Map density and temp bin indices onto a linearised index
+  /// with default parameters for number of bins
+  int getMatBin(int iVarBin, int iDenBin){
+    return getMatBin(iVarBin,iDenBin,nVarBins,nDenBins);
+  }
+
   /// Calculate the variable evaluated at the bin midpoints
   void calcMidpoints();
   /// Calculate the variable evaluated at the bin midpoints for linear binning
@@ -234,7 +246,7 @@ private:
   /// Calculate the variable evaluated at the bin midpoints for log binning
   void calcMidpointsLog();
   /// Calculate the density evaluated at the bin midpoints
-  void calcDenMidpoints(std::vector<double>& denmidpoints);
+  void calcDenMidpoints();
 
   /// Calculate a generic variable midpoints given binning params
   void calcMidpointsLin(double var_min_in, double bin_width_in,int nbins_in,std::vector<double>& midpoints_in);
@@ -304,6 +316,8 @@ private:
   unsigned int nMinor;
   /// Store the temperature corresponding to the bin mipoint
   std::vector<double> midpoints;
+  /// Store the relative density corresponding to the bin mipoint
+  std::vector<double> den_midpoints;
 
   /// Data members relating to  binning in density
 
@@ -350,9 +364,6 @@ private:
 
   /// Save some topological data: map from surface handle to vol handle and sense
   std::map<moab::EntityHandle, std::vector<VolData> > surfsToVols;
-
-  /// Save a map of EntityHandle to temperature
-  std::map<moab::EntityHandle,double> volToTemp;
 
   // Some moab tags
 

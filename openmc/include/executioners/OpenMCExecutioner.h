@@ -16,7 +16,7 @@
 #include "openmc/cell.h"
 #include "openmc/constants.h" // enum RunMode
 #include "openmc/cross_sections.h"
-#include "openmc/dagmc.h" // model::DAG
+#include "openmc/dagmc.h" // DAGUniverse
 #include "openmc/error.h"
 #include "openmc/file_utils.h"
 #include "openmc/geometry.h" // overlap_check_count
@@ -124,11 +124,11 @@ private:
   /// Initialise OpenMC
   bool initOpenMC();
 
-  /// Initialise material maps (either local map or UWUW)
-  bool initMaterials();
+  /// Initialise booking of DAGMC universe
+  bool initDAGUniverse();
 
-  /// Set up map of names to ids
-  bool initMatNames();
+  /// Initialise material maps of names to ids
+  bool initMaterials();
 
   /// Pass MOAB mesh into OpenMC and set up tallies with a mesh filter
   bool initMeshTallies();
@@ -166,8 +166,11 @@ private:
   /// Clear some data in OpenMC
   bool resetOpenMC();
 
-  /// Pass in mesh, new surfaces, setup metadata
+  /// Update DAGMC with reset MOAB interface
   bool reloadDAGMC();
+
+  /// Update DAGMC universe in OpenMC
+  void updateDAGUniverse();
 
   /// Update materials
   void updateMaterials();
@@ -187,16 +190,16 @@ private:
                   std::vector<ScoreData>& scores);
 
   /// Set up OpenMC cells
-  bool setupCells();
+  //bool setupCells();
 
   /// Set up OpenMC surfaces
-  bool setupSurfaces();
+  //bool setupSurfaces();
 
   /// Set attributes of a DAGMC cell
-  bool setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx);
+  //bool setCellAttrib(openmc::DAGCell& cell,unsigned int index,int32_t universe_idx);
 
   /// Set attributes of a DAGMC surface
-  bool setSurfAttrib(openmc::DAGSurface& surf,unsigned int index);
+  // bool setSurfAttrib(openmc::DAGSurface& surf,unsigned int index);
 
   /// Final openMC set up after geometery has been set.
   void completeSetup();
@@ -213,11 +216,10 @@ private:
   static constexpr int DIM_SURF = 2;
 
   /// Copy of the pointer to DAGMC
-  moab::DagMC* dagPtr;
-  /// DAGMC Metadata object pointer
-  std::unique_ptr<dagmcMetaData> dmdPtr;
-  /// DAGMC UWUW object pointer
-  std::unique_ptr<UWUW> uwuwPtr;
+  std::shared_ptr<moab::DagMC> dagPtr;
+
+  /// OpenMC index for DAGMC universe
+  int32_t dag_univ_idx;
 
   /// Record whether we set the FE Problem locally.
   bool setProblemLocal;
@@ -227,6 +229,9 @@ private:
 
   /// Save if we have updated the materials
   bool matsUpdated;
+
+  /// Save if we are updating densities
+  bool updateDensity;
 
   /// Save whether we have a UWUW material library
   bool useUWUW;

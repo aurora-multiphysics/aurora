@@ -1,4 +1,729 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>MoabMeshTransfer | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="f2b8bea9-6554-4cc1-93c1-01012de0629d"><i class="material-icons">menu</i></a><ul class="sidenav" id="f2b8bea9-6554-4cc1-93c1-01012de0629d"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">transfers</span><a href="#" class="breadcrumb">MoabMeshTransfer</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="456c330d-a635-40c7-b583-4e3db950829f" data-section-level="1" data-section-text="MoabMeshTransfer"><h1 id="moabmeshtransfer">MoabMeshTransfer</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p><p>The MoabMeshTransfer has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p></p></div></div></div><p></p><section class="scrollspy" id="cbea69e8-3508-4e83-807d-4c1b74c6605a" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p></p></section><section class="scrollspy" id="c0899b88-2a1f-43bb-87ed-3e0d6882bc1f" data-section-level="2" data-section-text="Example Input File Syntax"><h2 id="example-input-file-syntax">Example Input File Syntax</h2><p></p></section><section class="scrollspy" id="c15a8d18-dad3-4198-9b56-c2375002d803" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="19aa52cf-7276-441e-a833-9a74064a288e" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">direction</span><span class="moose-parameter-header-description">Whether this Transfer will be 'to' or 'from' a MultiApp, or bidirectional, by providing both FROM_MULTIAPP and TO_MULTIAPP.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>to_multiapp, from_multiapp</p><p class="moose-parameter-description"><span>Description:</span>Whether this Transfer will be 'to' or 'from' a MultiApp, or bidirectional, by providing both FROM_MULTIAPP and TO_MULTIAPP.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">moabname</span><span class="moose-parameter-header-description">Name of the MoabUserObject to which we are transferring the mesh and systems.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Name of the MoabUserObject to which we are transferring the mesh and systems.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">multi_app</span><span class="moose-parameter-header-description">The name of the MultiApp to use.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiAppName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the MultiApp to use.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="853e705b-d94d-4c73-bdab-b41bd0657026" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">apptype_from</span><span class="moose-parameter-header-default">AuroraTestApp</span><span class="moose-parameter-header-description">Type of app from which we are taking mesh and systems.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>AuroraTestApp</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Type of app from which we are taking mesh and systems.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">apptype_to</span><span class="moose-parameter-header-default">OpenMCApp</span><span class="moose-parameter-header-description">Type of app to which we are sending mesh and systems.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>OpenMCApp</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Type of app to which we are sending mesh and systems.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">check_multiapp_execute_on</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">When false the check between the multiapp and transfer execute on flags is not preformed.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>When false the check between the multiapp and transfer execute on flags is not preformed.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_source_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the source mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the source mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_target_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the target mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the target mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">execute_on</span><span class="moose-parameter-header-default">SAME_AS_MULTIAPP</span><span class="moose-parameter-header-description">The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>SAME_AS_MULTIAPP</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>ExecFlagEnum</p><p class="moose-parameter-description-options"><span>Options:</span>NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP</p><p class="moose-parameter-description"><span>Description:</span>The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="4c888f3a-787b-45fa-b6d9-a623ed491996" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section><section class="scrollspy" id="43ac4bca-cb4b-4a70-a2a3-7814a09eb7b9" data-section-level="2" data-section-text="Input Files"><h2 id="input-files">Input Files</h2><ul class="moose-list-inputs browser-default"><li><a class="moose-source-filename tooltipped modal-trigger" href="#f739ce1f-2364-461e-aeb0-6affec2e71dd">(main_temp_mech.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#4f8dcb37-4028-4277-87c5-ce23c5aa2d41">(main.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#e72d1a9d-4b2c-492d-a546-afb9079893a6">(unit/inputs/function_user_object.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#73249a2f-fa74-4428-ae5e-4ff0abfb9f80">(unit/inputs/aurora-thermal-expansion.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#9e1c50b6-4433-4c81-91ff-b82c51b78ee8">(unit/inputs/transfer.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#15ad5dd0-d398-4c41-a50b-da89cfa18f1e">(unit/inputs/aurora-refine.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#d1333147-2730-4435-b14c-6c15faaafc2c">(unit/inputs/aurora.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#649f91ba-93f2-4ae2-a710-74f372c37b99">(unit/inputs/variable_function.i)</a></li></ul></section></section><div class="moose-modal modal" id="f739ce1f-2364-461e-aeb0-6affec2e71dd"><div class="modal-content"><h4>(main_temp_mech.i)</h4><pre class="moose-pre"><code class="language-text"># Example input for neutronics + heat conduction + thermal expansion
+<!DOCTYPE html><head><meta charset="UTF-8"><title>MoabMeshTransfer | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="2444da29-0c2c-4e6e-97a3-5dad9380de8a"><i class="material-icons">menu</i></a><ul class="sidenav" id="2444da29-0c2c-4e6e-97a3-5dad9380de8a"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">transfers</span><a href="#" class="breadcrumb">MoabMeshTransfer</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="17aae3c0-ce0e-495a-a179-381b906ab61e" data-section-level="1" data-section-text="MoabMeshTransfer"><h1 id="moabmeshtransfer">MoabMeshTransfer</h1><div class="card moose-alert moose-alert-construction"><div class="card-title moose-alert-title"><i class="material-icons moose-inline-icon">build</i><span class="moose-alert-title-brand">construction:</span>Undocumented Class</div><div class="card-content"><div class="moose-alert-content"><p>The MoabMeshTransfer has not been documented. The content listed below should be used as a starting point for documenting the class, which includes the typical automatic documentation associated with a MooseObject; however, what is contained is ultimately determined by what is necessary to make the documentation clear for users.</p></div></div></div><p></p><section class="scrollspy" id="20a57c56-2d81-4664-aa2f-c1d0f9666daa" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p></p></section><section class="scrollspy" id="5691fd59-c6e4-4358-9987-a905bebbafcd" data-section-level="2" data-section-text="Example Input File Syntax"><h2 id="example-input-file-syntax">Example Input File Syntax</h2><p></p></section><section class="scrollspy" id="a2a375aa-999e-4657-96d3-f2d0cfe02e65" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="871d4fbe-6385-4f97-bf73-6662159c88ff" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">direction</span><span class="moose-parameter-header-description">Whether this Transfer will be 'to' or 'from' a MultiApp, or bidirectional, by providing both FROM_MULTIAPP and TO_MULTIAPP.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiMooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>to_multiapp, from_multiapp</p><p class="moose-parameter-description"><span>Description:</span>Whether this Transfer will be 'to' or 'from' a MultiApp, or bidirectional, by providing both FROM_MULTIAPP and TO_MULTIAPP.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">moabname</span><span class="moose-parameter-header-description">Name of the MoabUserObject to which we are transferring the mesh and systems.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Name of the MoabUserObject to which we are transferring the mesh and systems.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">multi_app</span><span class="moose-parameter-header-description">The name of the MultiApp to use.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MultiAppName</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>The name of the MultiApp to use.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="b00196f5-479c-4362-b0a3-4f2155a9923b" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">apptype_from</span><span class="moose-parameter-header-default">AuroraTestApp</span><span class="moose-parameter-header-description">Type of app from which we are taking mesh and systems.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>AuroraTestApp</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Type of app from which we are taking mesh and systems.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">apptype_to</span><span class="moose-parameter-header-default">OpenMCApp</span><span class="moose-parameter-header-description">Type of app to which we are sending mesh and systems.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>OpenMCApp</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Type of app to which we are sending mesh and systems.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">check_multiapp_execute_on</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">When false the check between the multiapp and transfer execute on flags is not preformed.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>When false the check between the multiapp and transfer execute on flags is not preformed.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_source_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the source mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the source mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">displaced_target_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to use the displaced mesh for the target mesh.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not to use the displaced mesh for the target mesh.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">execute_on</span><span class="moose-parameter-header-default">SAME_AS_MULTIAPP</span><span class="moose-parameter-header-description">The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP, ALWAYS.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>SAME_AS_MULTIAPP</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>ExecFlagEnum</p><p class="moose-parameter-description-options"><span>Options:</span>NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP, ALWAYS</p><p class="moose-parameter-description"><span>Description:</span>The list of flag(s) indicating when this object should be executed, the available options include NONE, INITIAL, LINEAR, NONLINEAR, TIMESTEP_END, TIMESTEP_BEGIN, FINAL, CUSTOM, SAME_AS_MULTIAPP, ALWAYS.</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="1ed88a60-7743-43dd-a4ea-49525151102a" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">use_displaced_mesh</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-options"><span>Options:</span></p><p class="moose-parameter-description"><span>Description:</span>Whether or not this object should use the displaced mesh for computation.  Note that in the case this is true but no displacements are provided in the Mesh block the undisplaced mesh will still be used.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section><section class="scrollspy" id="99ed5ae8-984a-43bf-b940-e26620e1a07f" data-section-level="2" data-section-text="Input Files"><h2 id="input-files">Input Files</h2><ul class="moose-list-inputs browser-default"><li><a class="moose-source-filename tooltipped modal-trigger" href="#f552b1d4-3749-4990-8420-fdd490a0b228">(unit/aurora_app_inputs/aurora-thermal-expansion.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#400ccbc1-3554-4f5d-a839-15c76687aa14">(main.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#3ce2ea16-5779-45fb-9bda-16d1dfb3311d">(unit/aurora_app_inputs/aurora-refine.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#9dcd82c9-d20e-441b-9d4b-3e62f54d4c4c">(unit/aurora_app_inputs/aurora.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#b1d85a12-d39f-4bbf-bef9-e8961e36d26d">(unit/aurora_app_inputs/function_user_object.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#7cfe549c-c95f-4a2e-a8dc-a0b625cccb68">(unit/aurora_app_inputs/variable_function.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#ab57a9bd-0f3f-4d17-8ddd-f9ed3e8fa938">(main_temp_mech.i)</a></li><li><a class="moose-source-filename tooltipped modal-trigger" href="#4470f216-12a9-4dc2-b267-50459ac4f009">(unit/aurora_app_inputs/transfer.i)</a></li></ul></section></section><div class="moose-modal modal" id="f552b1d4-3749-4990-8420-fdd490a0b228"><div class="modal-content"><h4>(unit/aurora_app_inputs/aurora-thermal-expansion.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [cube]
+    # Length dimensions are cm
+    type = GeneratedMeshGenerator
+    dim = 3
+    nx = 5
+    ny = 5
+    nz = 5
+    xmax = 1
+    ymax = 1
+    zmax = 1
+    elem_type=TET4
+  []
+  [cube_id]
+    type = SubdomainIDGenerator
+    input = cube
+    subdomain_id = 1
+  []
+  displacements = &#x27;disp_x disp_y disp_z&#x27;
+[]
+
+
+
+[Executioner]
+  type = Transient
+  solve_type = &#x27;PJFNK&#x27;
+  petsc_options_iname = &#x27;-pc_type -pc_hypre_type -ksp_gmres_restart&#x27;
+  petsc_options_value = &#x27;hypre boomeramg 101&#x27;
+  abort_on_solve_fail=True
+  num_steps=2
+  dt = 0.1
+  nl_abs_tol = 1e-10
+[]
+
+[Variables]
+  [disp_x]
+  []
+  [disp_y]
+  []
+  [disp_z]
+  []
+[]
+
+[AuxVariables]
+  [temp]
+  []
+  [heating-local]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
+
+[Functions]
+  [temp-function]
+    type = ParsedFunction
+    value = T0*exp((x-x0)/(rdec))
+    vars = &#x27;rdec T0 x0&#x27;
+    vals = &#x27;2 1000 1&#x27;
+  []
+[]
+
+[Kernels]
+  [TensorMechanics]
+    displacements = &#x27;disp_x disp_y disp_z&#x27;
+  []
+[]
+
+[AuxKernels]
+  [temp-kernel]
+    type = FunctionAux
+    variable = temp
+    function = temp-function
+  []
+[]
+
+[BCs]
+  [./x_bot]
+    type = DirichletBC
+    variable = disp_x
+    boundary = left
+    value = 0.0
+  [../]
+  [./y_bot]
+    type = DirichletBC
+    variable = disp_y
+    boundary = bottom
+    value = 0.0
+  [../]
+  [./z_bot]
+    type = DirichletBC
+    variable = disp_z
+    boundary = back
+    value = 0.0
+  [../]
+[]
+
+[Materials]
+  [copper]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
+    prop_values = &#x27;3.97 0.385 8.920&#x27; # W/cm*K, J/g-K, g/cm^3
+    block = 1
+  []
+  [./elasticity_tensor]
+    type = ComputeIsotropicElasticityTensor
+    youngs_modulus = 1e7 # 100 GPa =  10^7 N / (cm)^2
+    poissons_ratio = 0.3
+  [../]
+  [./strain] #We use small deformation mechanics
+    type = ComputeSmallStrain
+    displacements = &#x27;disp_x disp_y disp_z&#x27;
+    eigenstrain_names = eigenstrain
+  [../]
+  [./stress]
+    type = ComputeLinearElasticStress
+  [../]
+  [./thermal_expansion_strain]
+    type = ComputeThermalExpansionEigenstrain
+    stress_free_temperature = 300
+    thermal_expansion_coeff = 1.8e-5 # K^-1
+    temperature = temp
+    eigenstrain_name = eigenstrain
+  [../]
+[]
+
+
+[MultiApps]
+  [openmc]
+    type = FullSolveMultiApp
+    app_type = OpenMCApp
+    execute_on = &quot;timestep_begin&quot;
+    input_files = &quot;openmc-thermal-expansion.i&quot;
+    positions = &#x27;0   0   0&#x27;
+    library_path = ../openmc/lib
+  []
+[]
+
+[Transfers]
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
+    multi_app = openmc
+    moabname = &quot;moab&quot;
+    apptype_from=&quot;AuroraApp&quot;
+  [../]
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = &quot;initial&quot;
+  []
+[]
+
+[Postprocessors]
+  [volume_calc_deformed]
+    type = VolumePostprocessor
+    use_displaced_mesh = true
+  []
+  [volume_calc_orig]
+    type = VolumePostprocessor
+    use_displaced_mesh = false
+  []
+  #[total-heating]
+  #  type = ElementIntegralVariablePostprocessor
+  #  variable = heating-local
+  #  use_displaced_mesh = true
+  #[]
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="400ccbc1-3554-4f5d-a839-15c76687aa14"><div class="modal-content"><h4>(main.i)</h4><pre class="moose-pre"><code class="language-text"># Example input for neutronics + heat conduction
+# Usage: ./aurora-opt -i main.i
+[Mesh]
+  type = FileMesh
+  file = copper_air_bcs_tetmesh.e
+  # Uncomment to use tet10 in MOOSE
+  # second_order=true
+[]
+
+[Problem]
+  type = FEProblem
+[]
+
+[Executioner]
+  type = Transient
+  num_steps = 10
+  dt = 1
+  solve_type = NEWTON
+  abort_on_solve_fail=True
+[]
+
+[Variables]
+  [temperature]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 300 # Start at room temperature
+  []
+[]
+
+[AuxVariables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [heating-local-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [flux-err]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+[]
+
+[BCs]
+  [air-outer]
+    #type = DirichletBC
+    # penalty is a variant for monomials
+    type = PenaltyDirichletBC
+    penalty = 1e5
+    variable = temperature
+    boundary = &#x27;top-outer bottom-outer left-outer right-outer front-outer back-outer&#x27;
+    value = 300 # (K)
+  []
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = &quot;initial&quot;
+  []
+[]
+
+[Functions]
+  [heating-function]
+    type = VariableFunction
+    uoname = &quot;uo-heating-function&quot;
+  []
+[]
+
+[Materials]
+  [copper_props]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
+    prop_values = &#x27;3.97 0.385 8.920&#x27; # W/cm*K, J/g-K, g/cm^3
+    block = 1
+  []
+  [air_props]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
+    prop_values = &#x27;0.26 1 0.001&#x27;
+    block = 2
+  []
+  [heating]
+    type = ADGenericFunctionMaterial
+    prop_names = &#x27;volumetric_heat&#x27;
+    prop_values = &#x27;heating-function&#x27;
+    block = &#x27;1 2&#x27;
+    constant_on = &#x27;ELEMENT&#x27;
+    output_properties = &#x27;volumetric_heat&#x27;
+    outputs = exodus
+  []
+[]
+
+[Kernels]
+  [heat_conduction]
+    type = ADHeatConduction
+    variable = temperature
+  []
+  [heat_conduction_time_derivative]
+    type = ADHeatConductionTimeDerivative
+    variable = temperature
+  []
+  [heat-source]
+    type = ADMatHeatSource
+    material_property = volumetric_heat
+    variable = temperature
+    block = &#x27;1 2&#x27;
+  []
+[]
+
+[MultiApps]
+  [openmc]
+    type = FullSolveMultiApp
+    app_type = OpenMCApp
+    execute_on = &quot;timestep_begin&quot;
+    input_files = &quot;openmc.i&quot;
+    positions = &#x27;0   0   0&#x27;
+    library_path = openmc/lib
+  []
+[]
+
+[Transfers]
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
+    multi_app = openmc
+    moabname = &quot;moab&quot;
+  [../]
+[]
+
+[Postprocessors]
+  [total-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+  []
+  [total-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+  []
+  [copper-heating]
+    type = ElementIntegralVariablePostprocessor
+    variable = heating-local
+    block = 1
+  []
+  [copper-flux]
+    type = ElementIntegralVariablePostprocessor
+    variable = flux
+    block = 1
+  []
+[]
+
+[Outputs]
+  exodus = true
+  csv = true
+  execute_on = &#x27;timestep_end&#x27;
+#  Uncomment these lines to disable output to screen
+#  console = false
+#  [my_console]
+#    type = Console
+#    output_screen = false
+#  []
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="3ce2ea16-5779-45fb-9bda-16d1dfb3311d"><div class="modal-content"><h4>(unit/aurora_app_inputs/aurora-refine.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [cube]
+    # Length dimensions are cm
+    type = GeneratedMeshGenerator
+    dim = 3
+    nx = 5
+    ny = 5
+    nz = 5
+    xmax = 1
+    ymax = 1
+    zmax = 1
+    elem_type=TET4
+  []
+  [cube_id]
+    type = SubdomainIDGenerator
+    input = cube
+    subdomain_id = 1
+  []
+[]
+
+[Executioner]
+  type = Transient
+  solve_type = &#x27;PJFNK&#x27;
+  petsc_options_iname = &#x27;-pc_type -pc_hypre_type -ksp_gmres_restart&#x27;
+  petsc_options_value = &#x27;hypre boomeramg 101&#x27;
+  num_steps=2
+  dt = 0.1
+[]
+
+[Variables]
+  [temp]
+    order = FIRST
+    family = LAGRANGE
+    initial_condition = 300 # Start at room temperature
+  []
+[]
+
+[AuxVariables]
+  [heating-local]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
+
+[Functions]
+  [heat-function]
+    type = ParsedFunction
+    value = (q1-q0)*(x-x0)+q0
+    vars = &#x27;q1 q0 x0 &#x27;
+    vals = &#x27;1000 0 0&#x27;
+  []
+[]
+
+[Kernels]
+  [heat_conduction]
+    type = ADHeatConduction
+    variable = temp
+  []
+  [heat_conduction_time_derivative]
+    type = ADHeatConductionTimeDerivative
+    variable = temp
+  []
+  [heat-source]
+    type = ADMatHeatSource
+    material_property = volumetric_heat
+    variable = temp
+  []
+[]
+
+[BCs]
+  [temp-bc]
+    type = DirichletBC
+    variable = temp
+    boundary = left
+    value = 300
+  []
+[]
+
+[Materials]
+  [copper]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
+    prop_values = &#x27;3.97 0.385 8.920&#x27; # W/cm*K, J/g-K, g/cm^3
+    block = 1
+  []
+  [heating]
+    type = ADGenericFunctionMaterial
+    prop_names = &#x27;volumetric_heat&#x27;
+    prop_values = &#x27;heat-function&#x27;
+    block = &#x27;1&#x27;
+    constant_on = &#x27;ELEMENT&#x27;
+  []
+[]
+
+[MultiApps]
+  [openmc]
+    type = FullSolveMultiApp
+    app_type = OpenMCApp
+    execute_on = &quot;timestep_begin&quot;
+    input_files = &quot;openmc-refine.i&quot;
+    positions = &#x27;0   0   0&#x27;
+    library_path = ../openmc/lib
+ []
+[]
+
+[Transfers]
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
+    multi_app = openmc
+    moabname = &quot;moab&quot;
+    apptype_from=&quot;AuroraApp&quot;
+  [../]
+[]
+
+[Adaptivity]
+  marker = error_frac
+  max_h_level = 1
+  start_time = 0.1
+  [Indicators]
+    [temperature_jump]
+      type = GradientJumpIndicator
+      variable = temp
+      scale_by_flux_faces = true
+    []
+  []
+  [Markers]
+    [error_frac]
+      type = ErrorFractionMarker
+      indicator = temperature_jump
+      refine = 1
+      coarsen = 0
+    []
+  []
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = &quot;initial&quot;
+  []
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="9dcd82c9-d20e-441b-9d4b-3e62f54d4c4c"><div class="modal-content"><h4>(unit/aurora_app_inputs/aurora.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [meshcm]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
+[]
+
+[Problem]
+  type = FEProblem
+[]
+
+[Executioner]
+  type = Transient
+  num_steps = 5
+  dt = 1
+  solve_type = NEWTON
+  abort_on_solve_fail=True
+[]
+
+[Variables]
+  [temperature]
+    order = CONSTANT
+    family = MONOMIAL
+    initial_condition = 300 # Start at room temperature
+  []
+[]
+
+[AuxVariables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+[]
+
+[BCs]
+  [air-outer]
+    #type = DirichletBC
+    # penalty is a variant for monomials
+    type = PenaltyDirichletBC
+    penalty = 1e5
+    variable = temperature
+    boundary = &#x27;top-outer bottom-outer left-outer right-outer front-outer back-outer&#x27;
+    value = 300 # (K)
+  []
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = &quot;initial&quot;
+  []
+[]
+
+[Functions]
+  [heating-function]
+    type = VariableFunction
+    uoname = &quot;uo-heating-function&quot;
+  []
+[]
+
+[Materials]
+  [copper]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
+    prop_values = &#x27;397.48 385.0 8920.0&#x27; # W/m*K, J/kg-K, kg/m^3
+    block = 1
+  []
+  [air]
+    type = ADGenericConstantMaterial
+    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
+    prop_values = &#x27;26.3 1000 1&#x27;
+    block = 2
+  []
+  [heating]
+    type = ADGenericFunctionMaterial
+    prop_names = &#x27;volumetric_heat&#x27;
+    prop_values = &#x27;heating-function&#x27;
+    block = &#x27;1 2&#x27;
+    constant_on = &#x27;ELEMENT&#x27;
+  []
+[]
+
+[Kernels]
+  [heat_conduction]
+    type = ADHeatConduction
+    variable = temperature
+  []
+  [heat_conduction_time_derivative]
+    type = ADHeatConductionTimeDerivative
+    variable = temperature
+  []
+  [heat-source]
+    type = ADMatHeatSource
+    material_property = volumetric_heat
+    variable = temperature
+  []
+[]
+
+[MultiApps]
+  [openmc]
+    type = FullSolveMultiApp
+    app_type = OpenMCApp
+    execute_on = &quot;timestep_begin&quot;
+    input_files = &quot;openmc.i&quot;
+    positions = &#x27;0   0   0&#x27;
+    library_path = ../openmc/lib
+  []
+[]
+
+[Transfers]
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
+    multi_app = openmc
+    moabname = &quot;moab&quot;
+    apptype_from=&quot;AuroraApp&quot;
+  [../]
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="b1d85a12-d39f-4bbf-bef9-e8961e36d26d"><div class="modal-content"><h4>(unit/aurora_app_inputs/function_user_object.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [mesh]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
+[]
+
+[Problem]
+  type = FEProblem
+  solve = false
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[MultiApps]
+  [openmc]
+    type = FullSolveMultiApp
+    app_type = OpenMCApp
+    input_files = &quot;function_user_object_sub.i&quot;
+    library_path = ../openmc/lib
+  []
+[]
+
+[Transfers]
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
+    multi_app = openmc
+    moabname = &quot;moab&quot;
+    apptype_from=&quot;AuroraApp&quot;
+  [../]
+[]
+
+[AuxVariables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = &quot;initial&quot;
+  []
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="7cfe549c-c95f-4a2e-a8dc-a0b625cccb68"><div class="modal-content"><h4>(unit/aurora_app_inputs/variable_function.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [mesh]
+    type = FileMeshGenerator
+    file = copper_air_bcs_tetmesh.e
+  []
+[]
+
+[Problem]
+  type = FEProblem
+  solve = false
+[]
+
+[Executioner]
+  type = Steady
+[]
+
+[MultiApps]
+  [openmc]
+    type = FullSolveMultiApp
+    app_type = OpenMCApp
+    input_files = &quot;function_user_object_sub.i&quot;
+    library_path = ../openmc/lib
+  []
+[]
+
+[Transfers]
+  [./to_openmc]
+    type = MoabMeshTransfer
+    direction = to_multiapp
+    multi_app = openmc
+    moabname = &quot;moab&quot;
+    apptype_from=&quot;AuroraApp&quot;
+  [../]
+[]
+
+[AuxVariables]
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+[]
+
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = &quot;initial&quot;
+  []
+[]
+
+[Functions]
+  [heating-function]
+    type = VariableFunction
+    uoname = &quot;uo-heating-function&quot;
+  []
+[]
+
+[Outputs]
+  console=false
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="ab57a9bd-0f3f-4d17-8ddd-f9ed3e8fa938"><div class="modal-content"><h4>(main_temp_mech.i)</h4><pre class="moose-pre"><code class="language-text"># Example input for neutronics + heat conduction + thermal expansion
 # Usage: ./aurora-opt -i main_temp_mech.i
 [Mesh]
   type = FileMesh
@@ -261,402 +986,7 @@
 #    output_screen = false
 #  []
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="4f8dcb37-4028-4277-87c5-ce23c5aa2d41"><div class="modal-content"><h4>(main.i)</h4><pre class="moose-pre"><code class="language-text"># Example input for neutronics + heat conduction
-# Usage: ./aurora-opt -i main.i
-[Mesh]
-  type = FileMesh
-  file = copper_air_bcs_tetmesh.e
-  # Uncomment to use tet10 in MOOSE
-  # second_order=true
-[]
-
-[Problem]
-  type = FEProblem
-[]
-
-[Executioner]
-  type = Transient
-  num_steps = 10
-  dt = 1
-  solve_type = NEWTON
-  abort_on_solve_fail=True
-[]
-
-[Variables]
-  [temperature]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 300 # Start at room temperature
-  []
-[]
-
-[AuxVariables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [heating-local-err]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [flux]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-  [flux-err]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
-
-[BCs]
-  [air-outer]
-    #type = DirichletBC
-    # penalty is a variant for monomials
-    type = PenaltyDirichletBC
-    penalty = 1e5
-    variable = temperature
-    boundary = &#x27;top-outer bottom-outer left-outer right-outer front-outer back-outer&#x27;
-    value = 300 # (K)
-  []
-[]
-
-[UserObjects]
-  [uo-heating-function]
-    type = FunctionUserObject
-    variable = heating-local
-    execute_on = &quot;initial&quot;
-  []
-[]
-
-[Functions]
-  [heating-function]
-    type = VariableFunction
-    uoname = &quot;uo-heating-function&quot;
-  []
-[]
-
-[Materials]
-  [copper_props]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
-    prop_values = &#x27;3.97 0.385 8.920&#x27; # W/cm*K, J/g-K, g/cm^3
-    block = 1
-  []
-  [air_props]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
-    prop_values = &#x27;0.26 1 0.001&#x27;
-    block = 2
-  []
-  [heating]
-    type = ADGenericFunctionMaterial
-    prop_names = &#x27;volumetric_heat&#x27;
-    prop_values = &#x27;heating-function&#x27;
-    block = &#x27;1 2&#x27;
-    constant_on = &#x27;ELEMENT&#x27;
-    output_properties = &#x27;volumetric_heat&#x27;
-    outputs = exodus
-  []
-[]
-
-[Kernels]
-  [heat_conduction]
-    type = ADHeatConduction
-    variable = temperature
-  []
-  [heat_conduction_time_derivative]
-    type = ADHeatConductionTimeDerivative
-    variable = temperature
-  []
-  [heat-source]
-    type = ADMatHeatSource
-    material_property = volumetric_heat
-    variable = temperature
-    block = &#x27;1 2&#x27;
-  []
-[]
-
-[MultiApps]
-  [openmc]
-    type = FullSolveMultiApp
-    app_type = OpenMCApp
-    execute_on = &quot;timestep_begin&quot;
-    input_files = &quot;openmc.i&quot;
-    positions = &#x27;0   0   0&#x27;
-    library_path = openmc/lib
-  []
-[]
-
-[Transfers]
-  [./to_openmc]
-    type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
-    moabname = &quot;moab&quot;
-  [../]
-[]
-
-[Postprocessors]
-  [total-heating]
-    type = ElementIntegralVariablePostprocessor
-    variable = heating-local
-  []
-  [total-flux]
-    type = ElementIntegralVariablePostprocessor
-    variable = flux
-  []
-  [copper-heating]
-    type = ElementIntegralVariablePostprocessor
-    variable = heating-local
-    block = 1
-  []
-  [copper-flux]
-    type = ElementIntegralVariablePostprocessor
-    variable = flux
-    block = 1
-  []
-[]
-
-[Outputs]
-  exodus = true
-  csv = true
-  execute_on = &#x27;timestep_end&#x27;
-#  Uncomment these lines to disable output to screen
-#  console = false
-#  [my_console]
-#    type = Console
-#    output_screen = false
-#  []
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="e72d1a9d-4b2c-492d-a546-afb9079893a6"><div class="modal-content"><h4>(unit/inputs/function_user_object.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [mesh]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[MultiApps]
-  [openmc]
-    type = FullSolveMultiApp
-    app_type = OpenMCApp
-    input_files = &quot;function_user_object_sub.i&quot;
-    library_path = ../openmc/lib
-  []
-[]
-
-[Transfers]
-  [./to_openmc]
-    type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
-    moabname = &quot;moab&quot;
-    apptype_from=&quot;AuroraApp&quot;
-  [../]
-[]
-
-[AuxVariables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
-
-[UserObjects]
-  [uo-heating-function]
-    type = FunctionUserObject
-    variable = heating-local
-    execute_on = &quot;initial&quot;
-  []
-[]
-
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="73249a2f-fa74-4428-ae5e-4ff0abfb9f80"><div class="modal-content"><h4>(unit/inputs/aurora-thermal-expansion.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [cube]
-    # Length dimensions are cm
-    type = GeneratedMeshGenerator
-    dim = 3
-    nx = 5
-    ny = 5
-    nz = 5
-    xmax = 1
-    ymax = 1
-    zmax = 1
-    elem_type=TET4
-  []
-  [cube_id]
-    type = SubdomainIDGenerator
-    input = cube
-    subdomain_id = 1
-  []
-  displacements = &#x27;disp_x disp_y disp_z&#x27;
-[]
-
-
-
-[Executioner]
-  type = Transient
-  solve_type = &#x27;PJFNK&#x27;
-  petsc_options_iname = &#x27;-pc_type -pc_hypre_type -ksp_gmres_restart&#x27;
-  petsc_options_value = &#x27;hypre boomeramg 101&#x27;
-  abort_on_solve_fail=True
-  num_steps=2
-  dt = 0.1
-  nl_abs_tol = 1e-10
-[]
-
-[Variables]
-  [disp_x]
-  []
-  [disp_y]
-  []
-  [disp_z]
-  []
-[]
-
-[AuxVariables]
-  [temp]
-  []
-  [heating-local]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-[]
-
-[Functions]
-  [temp-function]
-    type = ParsedFunction
-    value = T0*exp((x-x0)/(rdec))
-    vars = &#x27;rdec T0 x0&#x27;
-    vals = &#x27;2 1000 1&#x27;
-  []
-[]
-
-[Kernels]
-  [TensorMechanics]
-    displacements = &#x27;disp_x disp_y disp_z&#x27;
-  []
-[]
-
-[AuxKernels]
-  [temp-kernel]
-    type = FunctionAux
-    variable = temp
-    function = temp-function
-  []
-[]
-
-[BCs]
-  [./x_bot]
-    type = DirichletBC
-    variable = disp_x
-    boundary = left
-    value = 0.0
-  [../]
-  [./y_bot]
-    type = DirichletBC
-    variable = disp_y
-    boundary = bottom
-    value = 0.0
-  [../]
-  [./z_bot]
-    type = DirichletBC
-    variable = disp_z
-    boundary = back
-    value = 0.0
-  [../]
-[]
-
-[Materials]
-  [copper]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
-    prop_values = &#x27;3.97 0.385 8.920&#x27; # W/cm*K, J/g-K, g/cm^3
-    block = 1
-  []
-  [./elasticity_tensor]
-    type = ComputeIsotropicElasticityTensor
-    youngs_modulus = 1e7 # 100 GPa =  10^7 N / (cm)^2
-    poissons_ratio = 0.3
-  [../]
-  [./strain] #We use small deformation mechanics
-    type = ComputeSmallStrain
-    displacements = &#x27;disp_x disp_y disp_z&#x27;
-    eigenstrain_names = eigenstrain
-  [../]
-  [./stress]
-    type = ComputeLinearElasticStress
-  [../]
-  [./thermal_expansion_strain]
-    type = ComputeThermalExpansionEigenstrain
-    stress_free_temperature = 300
-    thermal_expansion_coeff = 1.8e-5 # K^-1
-    temperature = temp
-    eigenstrain_name = eigenstrain
-  [../]
-[]
-
-
-[MultiApps]
-  [openmc]
-    type = FullSolveMultiApp
-    app_type = OpenMCApp
-    execute_on = &quot;timestep_begin&quot;
-    input_files = &quot;openmc-thermal-expansion.i&quot;
-    positions = &#x27;0   0   0&#x27;
-    library_path = ../openmc/lib
-  []
-[]
-
-[Transfers]
-  [./to_openmc]
-    type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
-    moabname = &quot;moab&quot;
-    apptype_from=&quot;AuroraApp&quot;
-  [../]
-[]
-
-[UserObjects]
-  [uo-heating-function]
-    type = FunctionUserObject
-    variable = heating-local
-    execute_on = &quot;initial&quot;
-  []
-[]
-
-[Postprocessors]
-  [volume_calc_deformed]
-    type = VolumePostprocessor
-    use_displaced_mesh = true
-  []
-  [volume_calc_orig]
-    type = VolumePostprocessor
-    use_displaced_mesh = false
-  []
-  #[total-heating]
-  #  type = ElementIntegralVariablePostprocessor
-  #  variable = heating-local
-  #  use_displaced_mesh = true
-  #[]
-[]
-
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="9e1c50b6-4433-4c81-91ff-b82c51b78ee8"><div class="modal-content"><h4>(unit/inputs/transfer.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="4470f216-12a9-4dc2-b267-50459ac4f009"><div class="modal-content"><h4>(unit/aurora_app_inputs/transfer.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
   type = GeneratedMesh
   dim = 1
   nx = 1
@@ -693,334 +1023,4 @@
 [Outputs]
   console=false
 []
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="15ad5dd0-d398-4c41-a50b-da89cfa18f1e"><div class="modal-content"><h4>(unit/inputs/aurora-refine.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [cube]
-    # Length dimensions are cm
-    type = GeneratedMeshGenerator
-    dim = 3
-    nx = 5
-    ny = 5
-    nz = 5
-    xmax = 1
-    ymax = 1
-    zmax = 1
-    elem_type=TET4
-  []
-  [cube_id]
-    type = SubdomainIDGenerator
-    input = cube
-    subdomain_id = 1
-  []
-[]
-
-[Executioner]
-  type = Transient
-  solve_type = &#x27;PJFNK&#x27;
-  petsc_options_iname = &#x27;-pc_type -pc_hypre_type -ksp_gmres_restart&#x27;
-  petsc_options_value = &#x27;hypre boomeramg 101&#x27;
-  num_steps=2
-  dt = 0.1
-[]
-
-[Variables]
-  [temp]
-    order = FIRST
-    family = LAGRANGE
-    initial_condition = 300 # Start at room temperature
-  []
-[]
-
-[AuxVariables]
-  [heating-local]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-[]
-
-[Functions]
-  [heat-function]
-    type = ParsedFunction
-    value = (q1-q0)*(x-x0)+q0
-    vars = &#x27;q1 q0 x0 &#x27;
-    vals = &#x27;1000 0 0&#x27;
-  []
-[]
-
-[Kernels]
-  [heat_conduction]
-    type = ADHeatConduction
-    variable = temp
-  []
-  [heat_conduction_time_derivative]
-    type = ADHeatConductionTimeDerivative
-    variable = temp
-  []
-  [heat-source]
-    type = ADMatHeatSource
-    material_property = volumetric_heat
-    variable = temp
-  []
-[]
-
-[BCs]
-  [temp-bc]
-    type = DirichletBC
-    variable = temp
-    boundary = left
-    value = 300
-  []
-[]
-
-[Materials]
-  [copper]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
-    prop_values = &#x27;3.97 0.385 8.920&#x27; # W/cm*K, J/g-K, g/cm^3
-    block = 1
-  []
-  [heating]
-    type = ADGenericFunctionMaterial
-    prop_names = &#x27;volumetric_heat&#x27;
-    prop_values = &#x27;heat-function&#x27;
-    block = &#x27;1&#x27;
-    constant_on = &#x27;ELEMENT&#x27;
-  []
-[]
-
-[MultiApps]
-  [openmc]
-    type = FullSolveMultiApp
-    app_type = OpenMCApp
-    execute_on = &quot;timestep_begin&quot;
-    input_files = &quot;openmc-refine.i&quot;
-    positions = &#x27;0   0   0&#x27;
-    library_path = ../openmc/lib
- []
-[]
-
-[Transfers]
-  [./to_openmc]
-    type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
-    moabname = &quot;moab&quot;
-    apptype_from=&quot;AuroraApp&quot;
-  [../]
-[]
-
-[Adaptivity]
-  marker = error_frac
-  max_h_level = 1
-  start_time = 0.1
-  [Indicators]
-    [temperature_jump]
-      type = GradientJumpIndicator
-      variable = temp
-      scale_by_flux_faces = true
-    []
-  []
-  [Markers]
-    [error_frac]
-      type = ErrorFractionMarker
-      indicator = temperature_jump
-      refine = 1
-      coarsen = 0
-    []
-  []
-[]
-
-[UserObjects]
-  [uo-heating-function]
-    type = FunctionUserObject
-    variable = heating-local
-    execute_on = &quot;initial&quot;
-  []
-[]
-
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="d1333147-2730-4435-b14c-6c15faaafc2c"><div class="modal-content"><h4>(unit/inputs/aurora.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [meshcm]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-[]
-
-[Problem]
-  type = FEProblem
-[]
-
-[Executioner]
-  type = Transient
-  num_steps = 5
-  dt = 1
-  solve_type = NEWTON
-  abort_on_solve_fail=True
-[]
-
-[Variables]
-  [temperature]
-    order = CONSTANT
-    family = MONOMIAL
-    initial_condition = 300 # Start at room temperature
-  []
-[]
-
-[AuxVariables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
-
-[BCs]
-  [air-outer]
-    #type = DirichletBC
-    # penalty is a variant for monomials
-    type = PenaltyDirichletBC
-    penalty = 1e5
-    variable = temperature
-    boundary = &#x27;top-outer bottom-outer left-outer right-outer front-outer back-outer&#x27;
-    value = 300 # (K)
-  []
-[]
-
-[UserObjects]
-  [uo-heating-function]
-    type = FunctionUserObject
-    variable = heating-local
-    execute_on = &quot;initial&quot;
-  []
-[]
-
-[Functions]
-  [heating-function]
-    type = VariableFunction
-    uoname = &quot;uo-heating-function&quot;
-  []
-[]
-
-[Materials]
-  [copper]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
-    prop_values = &#x27;397.48 385.0 8920.0&#x27; # W/m*K, J/kg-K, kg/m^3
-    block = 1
-  []
-  [air]
-    type = ADGenericConstantMaterial
-    prop_names = &#x27;thermal_conductivity specific_heat density&#x27;
-    prop_values = &#x27;26.3 1000 1&#x27;
-    block = 2
-  []
-  [heating]
-    type = ADGenericFunctionMaterial
-    prop_names = &#x27;volumetric_heat&#x27;
-    prop_values = &#x27;heating-function&#x27;
-    block = &#x27;1 2&#x27;
-    constant_on = &#x27;ELEMENT&#x27;
-  []
-[]
-
-[Kernels]
-  [heat_conduction]
-    type = ADHeatConduction
-    variable = temperature
-  []
-  [heat_conduction_time_derivative]
-    type = ADHeatConductionTimeDerivative
-    variable = temperature
-  []
-  [heat-source]
-    type = ADMatHeatSource
-    material_property = volumetric_heat
-    variable = temperature
-  []
-[]
-
-[MultiApps]
-  [openmc]
-    type = FullSolveMultiApp
-    app_type = OpenMCApp
-    execute_on = &quot;timestep_begin&quot;
-    input_files = &quot;openmc.i&quot;
-    positions = &#x27;0   0   0&#x27;
-    library_path = ../openmc/lib
-  []
-[]
-
-[Transfers]
-  [./to_openmc]
-    type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
-    moabname = &quot;moab&quot;
-    apptype_from=&quot;AuroraApp&quot;
-  [../]
-[]
-
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div><div class="moose-modal modal" id="649f91ba-93f2-4ae2-a710-74f372c37b99"><div class="modal-content"><h4>(unit/inputs/variable_function.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
-  [mesh]
-    type = FileMeshGenerator
-    file = copper_air_bcs_tetmesh.e
-  []
-[]
-
-[Problem]
-  type = FEProblem
-  solve = false
-[]
-
-[Executioner]
-  type = Steady
-[]
-
-[MultiApps]
-  [openmc]
-    type = FullSolveMultiApp
-    app_type = OpenMCApp
-    input_files = &quot;function_user_object_sub.i&quot;
-    library_path = ../openmc/lib
-  []
-[]
-
-[Transfers]
-  [./to_openmc]
-    type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
-    moabname = &quot;moab&quot;
-    apptype_from=&quot;AuroraApp&quot;
-  [../]
-[]
-
-[AuxVariables]
-  [heating-local]
-      order = CONSTANT
-      family = MONOMIAL
-  []
-[]
-
-[UserObjects]
-  [uo-heating-function]
-    type = FunctionUserObject
-    variable = heating-local
-    execute_on = &quot;initial&quot;
-  []
-[]
-
-[Functions]
-  [heating-function]
-    type = VariableFunction
-    uoname = &quot;uo-heating-function&quot;
-  []
-[]
-
-[Outputs]
-  console=false
-[]
-</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#cbea69e8-3508-4e83-807d-4c1b74c6605a" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#c0899b88-2a1f-43bb-87ed-3e0d6882bc1f" class="tooltipped" data-position="left" data-tooltip="Example Input File Syntax">Example Input File Syntax</a></li><li><a href="#c15a8d18-dad3-4198-9b56-c2375002d803" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li><li><a href="#43ac4bca-cb4b-4a70-a2a3-7814a09eb7b9" class="tooltipped" data-position="left" data-tooltip="Input Files">Input Files</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script>
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#20a57c56-2d81-4664-aa2f-c1d0f9666daa" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#5691fd59-c6e4-4358-9987-a905bebbafcd" class="tooltipped" data-position="left" data-tooltip="Example Input File Syntax">Example Input File Syntax</a></li><li><a href="#a2a375aa-999e-4657-96d3-f2d0cfe02e65" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li><li><a href="#99ed5ae8-984a-43bf-b940-e26620e1a07f" class="tooltipped" data-position="left" data-tooltip="Input Files">Input Files</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>

@@ -306,7 +306,7 @@ It is a good idea to sync frequently so that your branch does not deviate signif
 7) Update documentation (currently manual):
 - Generate/update MOOSE markdown stubs
 ```
-cd doc && ./moosedocs.py generate
+cd doc && ./moosedocs.py generate app_types OpenMCApp AuroraApp
 ```
 - Build the MOOSE html pages
 ```

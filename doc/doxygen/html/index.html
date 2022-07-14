@@ -65,7 +65,8 @@ $(function() {
 <div class="title">AURORA </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>The <a href="https://en.wikipedia.org/wiki/Aurora_(mythology)">name</a> of this application is based on the following acronym:</p>
+<div class="textblock"><p><a href="https://github.com/aurora-multiphysics/aurora/actions/workflows/main.yml"><object type="image/svg+xml" data="https://github.com/aurora-multiphysics/aurora/actions/workflows/main.yml/badge.svg?event=push" style="pointer-events: none;">GitHub Actions build status</object></a> <a href="https://coveralls.io/github/aurora-multiphysics/aurora"><object type="image/svg+xml" data="https://coveralls.io/repos/github/aurora-multiphysics/aurora/badge.svg" style="pointer-events: none;">Coverage Status</object></a></p>
+<p>The <a href="https://en.wikipedia.org/wiki/Aurora_(mythology)">name</a> of this application is based on the following acronym:</p>
 <p><b>A</b> **U**nified **R**esource for **O**penMC (fusion) **R**eactor **A**pplications.</p>
 <p>AURORA combines the Monte Carlo neutron transport calculations from OpenMC with the FEA calculations supported by the MOOSE framework, intended for the modelling of tokamak physics. Currently supported modules within MOOSE are Heat Conduction and Tensor Mechanics, intended to model the increase in temperature arising from heat deposited from neutrons, and subsequent thermal expansion and density changes respectively. Support for further modules is ongoing.</p>
 <p>For more information on MOOSE see: [<a href="http://mooseframework.org">http://mooseframework.org</a>]</p>
@@ -259,7 +260,7 @@ Want to contribute?</h1>
 <p>For a nice explanation of rebasing, see <a href="https://git-scm.com/book/en/v2/Git-Branching-Rebasing">here</a>. It's possible you may at this point have to deal with conflicts; manually edit the files which are in conflict to resolve them, then run: </p><div class="fragment"><div class="line">git rebase --continue</div>
 </div><!-- fragment --><p>It is a good idea to sync frequently so that your branch does not deviate significantly or merging will become quite a headache! Note, we will not approve pull requests that are not up-to-date with our <code>main</code> branch.</p>
 <p>7) Update documentation (currently manual):</p><ul>
-<li>Generate/update MOOSE markdown stubs <div class="fragment"><div class="line">cd doc &amp;&amp; ./moosedocs.py generate</div>
+<li>Generate/update MOOSE markdown stubs <div class="fragment"><div class="line">cd doc &amp;&amp; ./moosedocs.py generate app_types OpenMCApp AuroraApp</div>
 </div><!-- fragment --></li>
 <li>Build the MOOSE html pages <div class="fragment"><div class="line">cd doc &amp;&amp; ./moosedocs.py build --destination=htmldoc</div>
 </div><!-- fragment --></li>

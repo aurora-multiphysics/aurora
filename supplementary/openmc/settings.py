@@ -6,7 +6,7 @@ import os
 import subprocess
 
 def createMaterials(createplots=True):
-    
+
     air = openmc.Material(1, name='air')
     air.set_density('g/cc', 0.001205)
     air.add_element('N', 0.784431)
@@ -17,7 +17,7 @@ def createMaterials(createplots=True):
     copper.add_element('Cu', 1.0)
     copper.set_density('g/cm3', 8.96)
     copper.temperature = 300
-    
+
     mats = openmc.Materials([copper, air])
     mats.export_to_xml()
     print("Created materials.xml")
@@ -46,7 +46,7 @@ def createMaterials(createplots=True):
         p_yz.color_by = 'material'
         p_yz.colors = {copper: 'orange', air: 'blue'}
         p_yz.basis = 'yz'
-    
+
         plots = openmc.Plots([p_xy,p_xz,p_yz])
         plots.export_to_xml()
         print("Created plots.xml")
@@ -63,18 +63,15 @@ def createSettings( suppressOutput=True ):
     settings.source = src
     settings.run_mode = 'fixed source'
     settings.photon_transport = False
-    
-    # Turn on dagmc
-    settings.dagmc = True
+
     settings.batches = 10
-    settings.inactive = 2
-    settings.particles = 5000
+    settings.particles = 10000
 
     # Interpolate temperatures
     settings.temperature['method'] = 'interpolation'
 
     # Reduce openmc verbosity
-    settings.verbosity = 2
+    #settings.verbosity = 2
 
     if suppressOutput:
         # Turn off outputs
@@ -84,23 +81,30 @@ def createSettings( suppressOutput=True ):
 
         settings.statepoint={}
         settings.statepoint["batches"]=[]
-    
+
     settings.export_to_xml()
     print("Created settings.xml")
 
-def createTallies(meshname, create=True, load=True):
+def createTallies(meshname):
 
     # Filters
-    
+
     # Unstructured mesh to calculate tallies upon
-    umesh = openmc.UnstructuredMesh(meshname, create, load)    
+    umesh = openmc.UnstructuredMesh(meshname, library='moab')
     mesh_filter = openmc.MeshFilter(umesh)
 
     # Tallies
     tally = openmc.Tally()
     tally.filters = [mesh_filter]
     tally.scores = ['heating-local', 'flux']
-    tally.estimator = 'tracklength'    
+    tally.estimator = 'tracklength'
     tallies = openmc.Tallies([tally])
     tallies.export_to_xml()
     print("Created tallies.xml")
+
+
+def createGeometry(filename="dagmc.h5m"):
+    dagmc_univ = openmc.DAGMCUniverse(filename,auto_mat_ids=True)
+    geometry = openmc.Geometry(root=dagmc_univ)
+    geometry.export_to_xml()
+    print("Created geometry.xml")

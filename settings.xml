@@ -1,9 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <settings>
   <run_mode>fixed source</run_mode>
-  <particles>10000</particles>
+  <particles>1000</particles>
   <batches>10</batches>
-  <inactive>2</inactive>
   <source strength="1.0">
     <space type="point">
       <parameters>0 0 0</parameters>
@@ -17,7 +16,5 @@
     <batches />
   </state_point>
   <photon_transport>false</photon_transport>
-  <verbosity>2</verbosity>
   <temperature_method>interpolation</temperature_method>
-  <dagmc>true</dagmc>
 </settings>

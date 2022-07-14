@@ -3,7 +3,7 @@
   <run_mode>fixed source</run_mode>
   <particles>100</particles>
   <batches>2</batches>
-  <inactive>2</inactive>
+  <inactive>0</inactive>
   <source strength="1.0">
     <space type="point">
       <parameters>0 0 0</parameters>
@@ -12,5 +12,4 @@
   <photon_transport>false</photon_transport>
   <verbosity>0</verbosity>
   <temperature_method>interpolation</temperature_method>
-  <dagmc>true</dagmc>
 </settings>

@@ -244,3 +244,4 @@ conf_vars.mk
 main_out.e
 main_temp_mech_out.e
 openmc/example_out.e
+uwuw_materials.xml

@@ -1,1 +1,0 @@
-../make_input_and_run.py

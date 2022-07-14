@@ -134,12 +134,12 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a02a083660df7c3f5e5bc7ce9487a4b4b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a02a083660df7c3f5e5bc7ce9487a4b4b">initOpenMC</a> ()</td></tr>
 <tr class="memdesc:a02a083660df7c3f5e5bc7ce9487a4b4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise OpenMC.  <a href="classOpenMCExecutioner.html#a02a083660df7c3f5e5bc7ce9487a4b4b">More...</a><br /></td></tr>
 <tr class="separator:a02a083660df7c3f5e5bc7ce9487a4b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6819d95e8eb5edaa03e2da13e05cd7ae"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a6819d95e8eb5edaa03e2da13e05cd7ae">initDAGUniverse</a> ()</td></tr>
+<tr class="memdesc:a6819d95e8eb5edaa03e2da13e05cd7ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise booking of DAGMC universe.  <a href="classOpenMCExecutioner.html#a6819d95e8eb5edaa03e2da13e05cd7ae">More...</a><br /></td></tr>
+<tr class="separator:a6819d95e8eb5edaa03e2da13e05cd7ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a363718e895922a7fffd30e299d6fa423"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a363718e895922a7fffd30e299d6fa423">initMaterials</a> ()</td></tr>
-<tr class="memdesc:a363718e895922a7fffd30e299d6fa423"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise material maps (either local map or UWUW)  <a href="classOpenMCExecutioner.html#a363718e895922a7fffd30e299d6fa423">More...</a><br /></td></tr>
+<tr class="memdesc:a363718e895922a7fffd30e299d6fa423"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise material maps of names to ids.  <a href="classOpenMCExecutioner.html#a363718e895922a7fffd30e299d6fa423">More...</a><br /></td></tr>
 <tr class="separator:a363718e895922a7fffd30e299d6fa423"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d072a917eeb5b600ffaac879724ea07"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a9d072a917eeb5b600ffaac879724ea07">initMatNames</a> ()</td></tr>
-<tr class="memdesc:a9d072a917eeb5b600ffaac879724ea07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up map of names to ids.  <a href="classOpenMCExecutioner.html#a9d072a917eeb5b600ffaac879724ea07">More...</a><br /></td></tr>
-<tr class="separator:a9d072a917eeb5b600ffaac879724ea07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8f9e4f11fe14a96eb0b1ad02c2ac84f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac8f9e4f11fe14a96eb0b1ad02c2ac84f">initMeshTallies</a> ()</td></tr>
 <tr class="memdesc:ac8f9e4f11fe14a96eb0b1ad02c2ac84f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass MOAB mesh into OpenMC and set up tallies with a mesh filter.  <a href="classOpenMCExecutioner.html#ac8f9e4f11fe14a96eb0b1ad02c2ac84f">More...</a><br /></td></tr>
 <tr class="separator:ac8f9e4f11fe14a96eb0b1ad02c2ac84f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,8 +168,11 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:ac42a4117a707c7c9b3957a5b63327fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear some data in OpenMC.  <a href="classOpenMCExecutioner.html#ac42a4117a707c7c9b3957a5b63327fcd">More...</a><br /></td></tr>
 <tr class="separator:ac42a4117a707c7c9b3957a5b63327fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1a40cf53a28007e16230addce4e0afa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa1a40cf53a28007e16230addce4e0afa">reloadDAGMC</a> ()</td></tr>
-<tr class="memdesc:aa1a40cf53a28007e16230addce4e0afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass in mesh, new surfaces, setup metadata.  <a href="classOpenMCExecutioner.html#aa1a40cf53a28007e16230addce4e0afa">More...</a><br /></td></tr>
+<tr class="memdesc:aa1a40cf53a28007e16230addce4e0afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update DAGMC with reset MOAB interface.  <a href="classOpenMCExecutioner.html#aa1a40cf53a28007e16230addce4e0afa">More...</a><br /></td></tr>
 <tr class="separator:aa1a40cf53a28007e16230addce4e0afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a608b21d0bb0b22272c8ece422070d554"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a608b21d0bb0b22272c8ece422070d554">updateDAGUniverse</a> ()</td></tr>
+<tr class="memdesc:a608b21d0bb0b22272c8ece422070d554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update DAGMC universe in OpenMC.  <a href="classOpenMCExecutioner.html#a608b21d0bb0b22272c8ece422070d554">More...</a><br /></td></tr>
+<tr class="separator:a608b21d0bb0b22272c8ece422070d554"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e49365e72c9b2b3f805cfa0d97434fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a4e49365e72c9b2b3f805cfa0d97434fa">updateMaterials</a> ()</td></tr>
 <tr class="memdesc:a4e49365e72c9b2b3f805cfa0d97434fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update materials.  <a href="classOpenMCExecutioner.html#a4e49365e72c9b2b3f805cfa0d97434fa">More...</a><br /></td></tr>
 <tr class="separator:a4e49365e72c9b2b3f805cfa0d97434fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,33 +188,18 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:aee88cba722d4f820947fd83435c57654"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aee88cba722d4f820947fd83435c57654">setupTally</a> (int32_t &amp;tally_id, openmc::Filter *filter_ptr, std::vector&lt; <a class="el" href="structOpenMCExecutioner_1_1ScoreData.html">ScoreData</a> &gt; &amp;scores)</td></tr>
 <tr class="memdesc:aee88cba722d4f820947fd83435c57654"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up an OpenMC tally.  <a href="classOpenMCExecutioner.html#aee88cba722d4f820947fd83435c57654">More...</a><br /></td></tr>
 <tr class="separator:aee88cba722d4f820947fd83435c57654"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac817a8037668cd9086a8af017aae45bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac817a8037668cd9086a8af017aae45bb">setupCells</a> ()</td></tr>
-<tr class="memdesc:ac817a8037668cd9086a8af017aae45bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up OpenMC cells.  <a href="classOpenMCExecutioner.html#ac817a8037668cd9086a8af017aae45bb">More...</a><br /></td></tr>
-<tr class="separator:ac817a8037668cd9086a8af017aae45bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20d952e12006d9ab33ae0658d8007d53"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a20d952e12006d9ab33ae0658d8007d53">setupSurfaces</a> ()</td></tr>
-<tr class="memdesc:a20d952e12006d9ab33ae0658d8007d53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up OpenMC surfaces.  <a href="classOpenMCExecutioner.html#a20d952e12006d9ab33ae0658d8007d53">More...</a><br /></td></tr>
-<tr class="separator:a20d952e12006d9ab33ae0658d8007d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac54b069591549ac46cf3af3bee18701f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac54b069591549ac46cf3af3bee18701f">setCellAttrib</a> (openmc::DAGCell &amp;cell, unsigned int index, int32_t universe_idx)</td></tr>
-<tr class="memdesc:ac54b069591549ac46cf3af3bee18701f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set attributes of a DAGMC cell.  <a href="classOpenMCExecutioner.html#ac54b069591549ac46cf3af3bee18701f">More...</a><br /></td></tr>
-<tr class="separator:ac54b069591549ac46cf3af3bee18701f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f6b16128c81d0f61a79f6efe90ce26e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a2f6b16128c81d0f61a79f6efe90ce26e">setSurfAttrib</a> (openmc::DAGSurface &amp;surf, unsigned int index)</td></tr>
-<tr class="memdesc:a2f6b16128c81d0f61a79f6efe90ce26e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set attributes of a DAGMC surface.  <a href="classOpenMCExecutioner.html#a2f6b16128c81d0f61a79f6efe90ce26e">More...</a><br /></td></tr>
-<tr class="separator:a2f6b16128c81d0f61a79f6efe90ce26e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefb2f5efde10126f47f7159c6facdbd7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aefb2f5efde10126f47f7159c6facdbd7">completeSetup</a> ()</td></tr>
-<tr class="memdesc:aefb2f5efde10126f47f7159c6facdbd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final openMC set up after geometery has been set.  <a href="classOpenMCExecutioner.html#aefb2f5efde10126f47f7159c6facdbd7">More...</a><br /></td></tr>
+<tr class="memdesc:aefb2f5efde10126f47f7159c6facdbd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up OpenMC cells.  <a href="classOpenMCExecutioner.html#aefb2f5efde10126f47f7159c6facdbd7">More...</a><br /></td></tr>
 <tr class="separator:aefb2f5efde10126f47f7159c6facdbd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:aa767d201d7d751ac3794fb4bd9e54b77"><td class="memItemLeft" align="right" valign="top">moab::DagMC *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa767d201d7d751ac3794fb4bd9e54b77">dagPtr</a></td></tr>
-<tr class="memdesc:aa767d201d7d751ac3794fb4bd9e54b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy of the pointer to DAGMC.  <a href="classOpenMCExecutioner.html#aa767d201d7d751ac3794fb4bd9e54b77">More...</a><br /></td></tr>
-<tr class="separator:aa767d201d7d751ac3794fb4bd9e54b77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf24bf9696fa895f135afda185af41ec"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; dagmcMetaData &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#abf24bf9696fa895f135afda185af41ec">dmdPtr</a></td></tr>
-<tr class="memdesc:abf24bf9696fa895f135afda185af41ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">DAGMC Metadata object pointer.  <a href="classOpenMCExecutioner.html#abf24bf9696fa895f135afda185af41ec">More...</a><br /></td></tr>
-<tr class="separator:abf24bf9696fa895f135afda185af41ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c88760c5abafd5a425b3818ff8f7a48"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; UWUW &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a0c88760c5abafd5a425b3818ff8f7a48">uwuwPtr</a></td></tr>
-<tr class="memdesc:a0c88760c5abafd5a425b3818ff8f7a48"><td class="mdescLeft">&#160;</td><td class="mdescRight">DAGMC UWUW object pointer.  <a href="classOpenMCExecutioner.html#a0c88760c5abafd5a425b3818ff8f7a48">More...</a><br /></td></tr>
-<tr class="separator:a0c88760c5abafd5a425b3818ff8f7a48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac61703f43ec56d3f5ca22cb56c8df96d"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; moab::DagMC &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ac61703f43ec56d3f5ca22cb56c8df96d">dagPtr</a></td></tr>
+<tr class="memdesc:ac61703f43ec56d3f5ca22cb56c8df96d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy of the pointer to DAGMC.  <a href="classOpenMCExecutioner.html#ac61703f43ec56d3f5ca22cb56c8df96d">More...</a><br /></td></tr>
+<tr class="separator:ac61703f43ec56d3f5ca22cb56c8df96d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0a7cf429c28b47e36bce3b5c3558d63"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#aa0a7cf429c28b47e36bce3b5c3558d63">dag_univ_idx</a></td></tr>
+<tr class="memdesc:aa0a7cf429c28b47e36bce3b5c3558d63"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenMC index for DAGMC universe.  <a href="classOpenMCExecutioner.html#aa0a7cf429c28b47e36bce3b5c3558d63">More...</a><br /></td></tr>
+<tr class="separator:aa0a7cf429c28b47e36bce3b5c3558d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95522032e2556f5d090fcd166d6f1a56"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a95522032e2556f5d090fcd166d6f1a56">setProblemLocal</a></td></tr>
 <tr class="memdesc:a95522032e2556f5d090fcd166d6f1a56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Record whether we set the FE Problem locally.  <a href="classOpenMCExecutioner.html#a95522032e2556f5d090fcd166d6f1a56">More...</a><br /></td></tr>
 <tr class="separator:a95522032e2556f5d090fcd166d6f1a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -221,6 +209,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a094ccc39cedfd5abdc4d0642bb9a6549"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a094ccc39cedfd5abdc4d0642bb9a6549">matsUpdated</a></td></tr>
 <tr class="memdesc:a094ccc39cedfd5abdc4d0642bb9a6549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save if we have updated the materials.  <a href="classOpenMCExecutioner.html#a094ccc39cedfd5abdc4d0642bb9a6549">More...</a><br /></td></tr>
 <tr class="separator:a094ccc39cedfd5abdc4d0642bb9a6549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46861d685a5f9d8673f1bfff67c70639"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#a46861d685a5f9d8673f1bfff67c70639">updateDensity</a></td></tr>
+<tr class="memdesc:a46861d685a5f9d8673f1bfff67c70639"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save if we are updating densities.  <a href="classOpenMCExecutioner.html#a46861d685a5f9d8673f1bfff67c70639">More...</a><br /></td></tr>
+<tr class="separator:a46861d685a5f9d8673f1bfff67c70639"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4ae2466d2311a01075c3f0663d31fa0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOpenMCExecutioner.html#ae4ae2466d2311a01075c3f0663d31fa0">useUWUW</a></td></tr>
 <tr class="memdesc:ae4ae2466d2311a01075c3f0663d31fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save whether we have a UWUW material library.  <a href="classOpenMCExecutioner.html#ae4ae2466d2311a01075c3f0663d31fa0">More...</a><br /></td></tr>
 <tr class="separator:ae4ae2466d2311a01075c3f0663d31fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -320,7 +311,8 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Final openMC set up after geometery has been set. </p>
+<p>Set up OpenMC cells. </p>
+<p>Set up OpenMC surfaces Set attributes of a DAGMC cell Set attributes of a DAGMC surface Final openMC set up after geometery has been set. </p>
 
 </div>
 </div>
@@ -504,6 +496,33 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a6819d95e8eb5edaa03e2da13e05cd7ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6819d95e8eb5edaa03e2da13e05cd7ae">&#9670;&nbsp;</a></span>initDAGUniverse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::initDAGUniverse </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialise booking of DAGMC universe. </p>
+
+</div>
+</div>
 <a id="a158c703ae174414d2dbcba21bfbae858"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a158c703ae174414d2dbcba21bfbae858">&#9670;&nbsp;</a></span>initialize()</h2>
 
@@ -554,34 +573,7 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Initialise material maps (either local map or UWUW) </p>
-
-</div>
-</div>
-<a id="a9d072a917eeb5b600ffaac879724ea07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d072a917eeb5b600ffaac879724ea07">&#9670;&nbsp;</a></span>initMatNames()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenMCExecutioner::initMatNames </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set up map of names to ids. </p>
+<p>Initialise material maps of names to ids. </p>
 
 </div>
 </div>
@@ -797,7 +789,7 @@ Static Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Pass in mesh, new surfaces, setup metadata. </p>
+<p>Update DAGMC with reset MOAB interface. </p>
 
 </div>
 </div>
@@ -852,50 +844,6 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Run OpenMC and get results. </p>
-
-</div>
-</div>
-<a id="ac54b069591549ac46cf3af3bee18701f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac54b069591549ac46cf3af3bee18701f">&#9670;&nbsp;</a></span>setCellAttrib()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenMCExecutioner::setCellAttrib </td>
-          <td>(</td>
-          <td class="paramtype">openmc::DAGCell &amp;&#160;</td>
-          <td class="paramname"><em>cell</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int32_t&#160;</td>
-          <td class="paramname"><em>universe_idx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set attributes of a DAGMC cell. </p>
 
 </div>
 </div>
@@ -999,98 +947,6 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a2f6b16128c81d0f61a79f6efe90ce26e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f6b16128c81d0f61a79f6efe90ce26e">&#9670;&nbsp;</a></span>setSurfAttrib()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenMCExecutioner::setSurfAttrib </td>
-          <td>(</td>
-          <td class="paramtype">openmc::DAGSurface &amp;&#160;</td>
-          <td class="paramname"><em>surf</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set attributes of a DAGMC surface. </p>
-
-</div>
-</div>
-<a id="ac817a8037668cd9086a8af017aae45bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac817a8037668cd9086a8af017aae45bb">&#9670;&nbsp;</a></span>setupCells()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenMCExecutioner::setupCells </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set up OpenMC cells. </p>
-
-</div>
-</div>
-<a id="a20d952e12006d9ab33ae0658d8007d53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20d952e12006d9ab33ae0658d8007d53">&#9670;&nbsp;</a></span>setupSurfaces()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OpenMCExecutioner::setupSurfaces </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set up OpenMC surfaces. </p>
-
-</div>
-</div>
 <a id="a4af55cfa67ebe2e737cc5b75a6c0c547"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4af55cfa67ebe2e737cc5b75a6c0c547">&#9670;&nbsp;</a></span>setupTallies()</h2>
 
@@ -1187,6 +1043,33 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Update MOAB with any results from MOOSE. </p>
+
+</div>
+</div>
+<a id="a608b21d0bb0b22272c8ece422070d554"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a608b21d0bb0b22272c8ece422070d554">&#9670;&nbsp;</a></span>updateDAGUniverse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpenMCExecutioner::updateDAGUniverse </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update DAGMC universe in OpenMC. </p>
 
 </div>
 </div>
@@ -1491,6 +1374,30 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aa0a7cf429c28b47e36bce3b5c3558d63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0a7cf429c28b47e36bce3b5c3558d63">&#9670;&nbsp;</a></span>dag_univ_idx</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t OpenMCExecutioner::dag_univ_idx</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>OpenMC index for DAGMC universe. </p>
+
+</div>
+</div>
 <a id="a169c4d787c4e8cfde1b54678d08dfde1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a169c4d787c4e8cfde1b54678d08dfde1">&#9670;&nbsp;</a></span>dagmc_logname</h2>
 
@@ -1539,8 +1446,8 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa767d201d7d751ac3794fb4bd9e54b77"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa767d201d7d751ac3794fb4bd9e54b77">&#9670;&nbsp;</a></span>dagPtr</h2>
+<a id="ac61703f43ec56d3f5ca22cb56c8df96d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac61703f43ec56d3f5ca22cb56c8df96d">&#9670;&nbsp;</a></span>dagPtr</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1549,7 +1456,7 @@ Static Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">moab::DagMC* OpenMCExecutioner::dagPtr</td>
+          <td class="memname">std::shared_ptr&lt;moab::DagMC&gt; OpenMCExecutioner::dagPtr</td>
         </tr>
       </table>
   </td>
@@ -1608,30 +1515,6 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constant for geometric volume dimension. </p>
-
-</div>
-</div>
-<a id="abf24bf9696fa895f135afda185af41ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf24bf9696fa895f135afda185af41ec">&#9670;&nbsp;</a></span>dmdPtr</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unique_ptr&lt;dagmcMetaData&gt; OpenMCExecutioner::dmdPtr</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>DAGMC Metadata object pointer. </p>
 
 </div>
 </div>
@@ -1947,6 +1830,30 @@ Static Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a46861d685a5f9d8673f1bfff67c70639"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46861d685a5f9d8673f1bfff67c70639">&#9670;&nbsp;</a></span>updateDensity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool OpenMCExecutioner::updateDensity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save if we are updating densities. </p>
+
+</div>
+</div>
 <a id="ae4ae2466d2311a01075c3f0663d31fa0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae4ae2466d2311a01075c3f0663d31fa0">&#9670;&nbsp;</a></span>useUWUW</h2>
 
@@ -1968,30 +1875,6 @@ Static Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Save whether we have a UWUW material library. </p>
-
-</div>
-</div>
-<a id="a0c88760c5abafd5a425b3818ff8f7a48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c88760c5abafd5a425b3818ff8f7a48">&#9670;&nbsp;</a></span>uwuwPtr</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unique_ptr&lt;UWUW&gt; OpenMCExecutioner::uwuwPtr</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>DAGMC UWUW object pointer. </p>
 
 </div>
 </div>
