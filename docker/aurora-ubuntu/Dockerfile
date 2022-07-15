@@ -46,11 +46,11 @@ RUN if "$test_coverage" ; then \
     cd /home/aurora/data && \
     tar xzvf endfb71_hdf5.tgz && \
     export OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml && \
-   cd ../openmc/unit && \
-   make -j"$compile_cores"  && \
-   cd ../../unit && \
-   make -j"$compile_cores" && \
-   ./run_tests
+    cd ../openmc/unit && \
+    make -j"$compile_cores"  && \
+    cd ../../unit && \
+    make -j"$compile_cores" && \
+    ./run_tests
 
 # Generate test coverage report using coveralls and upload
 RUN if "$test_coverage" && "$coveralls_token" != "" ; then \
