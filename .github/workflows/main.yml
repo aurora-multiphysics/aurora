@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       # Now build in a container with all deps
-        - name: DockerBuildTestPR
+      - name: DockerBuildTestPR
         if:  ${{ github.event.pull_request.head.sha != '' }}
         run: docker build -t ci-aurora-ubuntu -f docker/aurora-ubuntu/Dockerfile .  --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN --build-arg coveralls_branch=$GITHUB_HEAD_REF
       - name:  DockerBuildTestPush
