@@ -69,39 +69,40 @@ git clone https://bitbucket.org/fathomteam/moab && \
 ```
   - c. [ (Optionally) Double Down](https://github.com/pshriwise/double-down) - if you want to leverage Intel Embree's ray tracing kernels within DAGMC. First install [Embree ](https://github.com/embree/embree) and its dependencies.
 ```
-	# Embree dependencies
-	sudo apt-get -y install libglfw3-dev libtbb-dev pkg-config
+# Embree dependencies
+sudo apt-get -y install libglfw3-dev libtbb-dev pkg-config
 
-	# Build Embree
-	git clone https://github.com/embree/embree.git && \
-		cd embree && \
-		git checkout v3.6.1 && \
-		mkdir build && \
-		cd build && \
-		cmake ../ \
-		-DCMAKE_CXX_COMPILER=$CXX \
-		-DCMAKE_C_COMPILER=$CC \
-		-DEMBREE_ISPC_SUPPORT=0 && \
-		make -j $compile_cores && \
-		make install 
+# Build Embree
+git clone https://github.com/embree/embree.git && \
+	cd embree && \
+	git checkout v3.6.1 && \
+	mkdir build && \
+	cd build && \
+	cmake ../ \
+	-DCMAKE_CXX_COMPILER=$CXX \
+	-DCMAKE_C_COMPILER=$CC \
+	-DEMBREE_ISPC_SUPPORT=0 && \
+	make -j $compile_cores && \
+	make install 
 
-	# Build DoubleDown
-		git clone https://github.com/pshriwise/double-down && \
-		cd double-down && \
-		mkdir build && \
-		cd build && \
-		cmake ../ \
-		-DMOAB_DIR=/home/moab \
-		-DEMBREE_DIR=/PATH-TO-EMBREE/ \
-		-DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
-		make -j $compile_cores && \
-		make install
+# Build DoubleDown
+git clone https://github.com/pshriwise/double-down && \
+	cd double-down && \
+	mkdir build && \
+	cd build && \
+	cmake ../ \
+	-DMOAB_DIR=/home/moab \
+	-DEMBREE_DIR=/PATH-TO-EMBREE/ \
+	-DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
+	make -j $compile_cores && \
+	make install
 ```
 
   - d. [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
 Ensure to configure with Double Down if you want this library to be used.
 ```
 mkdir dagmc-bld && \
+    cd dagmc-bld && \
     git clone https://github.com/svalinn/DAGMC && \
     cd DAGMC && \
     git checkout develop && \
@@ -120,8 +121,8 @@ mkdir dagmc-bld && \
 ```
 
 3) [OpenMC](https://docs.openmc.org/en/stable/)
-  ```
-    mkdir openmc-bld && \
+```
+mkdir openmc-bld && \
     cd openmc-bld && \
     git clone https://github.com/openmc-dev/openmc.git && \
     cd openmc && \
@@ -136,7 +137,7 @@ mkdir dagmc-bld && \
           -DDAGMC_DIR=/PATH-TO-DAGMC/ && \
     make -j $compile_cores && \
     make -j $compile_cores install
-  ```  
+```  
   Further detailed installation instructions for OpenMC can be found [here](https://docs.openmc.org/en/stable/usersguide/install.html).
   Please ensure you configure with support for DagMC enabled, and support for MPI/threads enabled if you intend to run in parallel.
 
