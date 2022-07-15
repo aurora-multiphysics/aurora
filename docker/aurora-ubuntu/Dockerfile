@@ -1,20 +1,19 @@
-# To make use of multiple cores during the compile stages of the docker build
-# docker build -t aurora-ubuntu --build-arg compile_cores=8 .
+# NB This docker file expects to be run from the root aurora directory, e.g.
+# docker build -t aurora-ubuntu -f docker/aurora-ubuntu/Dockerfile .
 
-# To compile a particular git sha use
-# docker build -t aurora-ubuntu --build-arg build_git_sha=${GITHUB_SHA} .
+# To make use of multiple cores during the compile stages of the docker build
+# docker build -t aurora-ubuntu --build-arg compile_cores=8 \
+#              -f docker/aurora-ubuntu/Dockerfile .
 
 # To compile with gcov support and generate coverage report
-# docker build -t aurora-ubuntu --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN .
+# docker build -t aurora-ubuntu --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN \
+#              -f docker/aurora-ubuntu/Dockerfile .
 
 # Get MOOSE image with aurora deps
 FROM helenbrooks/aurora-deps-ubuntu:v.0.3.0
 
 # By default one core is used to compile
 ARG compile_cores=1
-
-# By default checkout main branch
-ARG build_git_sha="main"
 
 # Should we generate a coverage report
 ARG test_coverage=false
@@ -33,20 +32,19 @@ RUN if "$test_coverage" ; then \
        pip install coveralls; \
     fi
 
+# Copy entire repository into image
+COPY ./ /home/aurora/
+
 # Build
 RUN if "$test_coverage" ; then \
        export CXXFLAGS="--coverage $CXXFLAGS"; \
        export CFLAGS="-fprofile-arcs -ftest-coverage"; \
        echo "Generating test coverage"; \
     fi && \
-    cd /home && \
-    git clone https://github.com/aurora-multiphysics/aurora.git && \
-    cd aurora && \
-    git checkout "$build_git_sha" && \
-    cd data && \
+    cd /home/aurora/data && \
     tar xzvf endfb71_hdf5.tgz && \
     export OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml && \
-    cd ../openmc/unit && \
+   cd ../openmc/unit && \
     make -j"$compile_cores" && \
     cd ../../unit && \
     make -j"$compile_cores" && \
