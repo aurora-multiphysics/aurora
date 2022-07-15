@@ -11,7 +11,7 @@ on:
 jobs:
   docker-build-test-ubuntu:
     runs-on: ubuntu-latest
-    name: BuildTestCoverallsUbuntu
+    name: BuildTestUbuntu
     env:
       COVERALLS_TOKEN : ${{ secrets.COVERALLS_TOKEN }}
     steps:
@@ -19,7 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       # Now build in a container with all deps
-      - name: DockerBuildTestPR
+        # Github secrets are not shared with forks, so can't check code coverage :(
+        - name: DockerBuildTestPRNoCoveralls
+        if:  ${{ env.COVERALLS_TOKEN ==  '' }}
+        run: docker build -t ci-aurora-ubuntu -f docker/aurora-ubuntu/Dockerfile .
+        - name: DockerBuildTestPR
         if:  ${{ github.event.pull_request.head.sha != '' }}
         run: docker build -t ci-aurora-ubuntu -f docker/aurora-ubuntu/Dockerfile .  --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN --build-arg coveralls_branch=$GITHUB_HEAD_REF
       - name:  DockerBuildTestPush
