@@ -10,7 +10,7 @@ on:
 jobs:
   docker-build-test-ubuntu:
     runs-on: ubuntu-latest
-    name: BuildTestUbuntu
+    name: BuildTestCoverallsUbuntu
     env:
       COVERALLS_TOKEN : ${{ secrets.COVERALLS_TOKEN }}
     steps:
