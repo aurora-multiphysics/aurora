@@ -34,5 +34,4 @@ jobs:
         uses: actions/checkout@v2
       # Now build in a container with all deps
       - name: DockerBuildTest
-        if:  ${{ github.event.pull_request.head.sha != '' }}
         run: docker build -t ci-aurora-fedora -f docker/aurora-fedora/Dockerfile .
