@@ -131,10 +131,10 @@ mkdir openmc-bld && \
     mkdir build && \
     cd build && \
     cmake ../openmc \
-          -Doptimize=on \
-          -Ddagmc=on \
-          -DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ \
-          -DDAGMC_DIR=/PATH-TO-DAGMC/ && \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DOPENMC_USE_DAGMC=on \
+          -DDAGMC_DIR=/PATH-TO-DAGMC/ \
+          -DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
     make -j $compile_cores && \
     make -j $compile_cores install
 ```  
