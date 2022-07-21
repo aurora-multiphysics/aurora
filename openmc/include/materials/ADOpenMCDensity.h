@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ADDensity.h"
+#include "Density.h"
 
 /** \brief Derived ADDensity class which allows the original density
 parameter to be returned.
