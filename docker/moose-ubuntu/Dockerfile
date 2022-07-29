@@ -4,6 +4,8 @@
 # docker build -t moose-ubuntu:tagname --build-arg moose_tag=tag .
 # Build with git sha
 # docker build -t moose-ubuntu:tagname --build-arg moose_git_sha=gitsha .
+# Build with particular configuration arguments
+# docker build -t moose-ubuntu:tagname --build-arg moose_configure_flags=config .
 
 # Basic environment
 FROM ubuntu:20.04
@@ -87,9 +89,14 @@ ENV PETSC_DIR=/home/petsc
 RUN cd /home/moose && \
     METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
+# Allow specification of MOOSE configuration flags
+ARG moose_configure_flags=""
+
+RUN echo "$moose_configure_flags"
+
 # Make MOOSE framework
 RUN cd /home/moose/ && \
-    ./configure --with-derivative-size=200 --with-ad-indexing-type=global && \
+    ./configure "$moose_configure_flags"  && \
     cd test && \
     METHOD="opt" make -j"$compile_cores"
 

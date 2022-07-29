@@ -1,18 +1,16 @@
 # To make use of multiple cores during the compile stages of the docker build
 # docker build -t aurora-deps-ubuntu --build-arg compile_cores=8 .
-
-# By default one core is used to compile
-ARG compile_cores=1
-
 # Get MOOSE image
-FROM helenbrooks/moose-ubuntu:2021-04
+FROM helenbrooks/moose-ubuntu:2022-07-21
+
+# By default 4 cores are used to compile
+ARG compile_cores=4
 
 # Get MOAB / Embree / DagMC dependencies
 RUN apt-get update && apt-get -y install \
     libeigen3-dev \
-    libhdf5-dev \
-    libglfw3-dev \
-    libtbb-dev \
+    libglfw3-dev  \
+    libtbb-dev  \
     pkg-config
 
 # Build MOAB
