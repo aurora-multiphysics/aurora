@@ -5,7 +5,7 @@
 FROM fedora:33
 
 # By default one core is used to compile
-ARG compile_cores=1
+ARG compile_cores=4
 
 RUN echo "Building with $compile_cores cores"
 
@@ -41,34 +41,95 @@ ENV CXX=mpicxx
 ENV F90=mpif90
 ENV F77=mpif77
 ENV FC=mpif90
-ENV MOOSE_JOBS="$compile_cores"
 
-# Get MOOSE source
+# Optional build-arg to specify moose version
+ARG moose_tag=
+ARG moose_git_sha=
+
+# Get MOOSE source code and checkout the desired version
 RUN cd /home/ && \
     git clone https://github.com/idaholab/moose.git && \
     cd moose && \
-    git checkout master
+    if ! [ "$moose_tag" = "" ] ; then \
+       git fetch --tags && \
+       git checkout tags/"$moose_tag" -b master; \
+    elif ! [ "$moose_git_sha" = "" ] ; then \
+       git checkout "$moose_git_sha"; \
+    else \
+       git checkout master; \
+    fi && \
+    git log -1
 
-# Make PETSC
-RUN cd /home/moose &&  \
-    ./scripts/update_and_rebuild_petsc.sh --prefix=/home/petsc
+# Specify number of cores for compilation
+ARG compile_cores=4
+ENV MOOSE_JOBS=$compile_cores
+
+RUN cd /home/moose && \
+    git submodule update --init --recursive petsc
+
+ENV PETSC_ARCH=arch-moose
+ENV PETSC_DIR=/home/moose/petsc
+
+# Configure PETSC ourselves because MOOSE script can't find HDF5 on Fedora
+RUN cd /home/moose/petsc && \
+    ./configure --download-hypre=1 \
+                --prefix=/home/petsc \
+                --CC=$CC \
+                --CXX=$CXX \
+                --FC=$FC \
+                --with-shared-libraries=1 \
+                --with-hdf5=1 \
+                --with-make-np="$MOOSE_JOBS" \
+                --with-debugging=no \
+                --download-fblaslapack=1 \
+                --download-metis=1 \
+                --download-ptscotch=1 \
+                --download-parmetis=1 \
+                --download-superlu_dist=1 \
+                --download-mumps=1 \
+                --download-strumpack=1 \
+                --download-scalapack=1 \
+                --download-slepc=1 \
+                --with-mpi=1 \
+                --with-openmp=1 \
+                --with-cxx-dialect=C++11 \
+                --with-fortran-bindings=0 \
+                --with-sowing=0 \
+                --with-64-bit-indices
+
+RUN cd /home/moose/petsc && \
+    make all && \
+    make install
+
 ENV PETSC_DIR=/home/petsc
 
 # Make libMesh
 RUN cd /home/moose && \
-    ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+    METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+
+# Allow specification of MOOSE configuration flags
+ARG moose_configure_flags=""
 
 # Make MOOSE framework
 RUN cd /home/moose/ && \
-    ./configure --with-derivative-size=200 --with-ad-indexing-type=global && \
+    ./configure "$moose_configure_flags"  && \
     cd test && \
-    make -j"$compile_cores" && \
-     ./run_tests -j"$compile_cores"
-ENV MOOSE_DIR=/home/moose
+    METHOD="opt" make -j"$compile_cores"
 
 # Make MOOSE modules
 RUN cd /home/moose/modules && \
-    make -j"$compile_cores"  && \
-    ./run_tests -j"$compile_cores"
+    make -j"$compile_cores"
+
+ENV MOOSE_DIR=/home/moose
+
+# We need rsync for the tests
+RUN dnf -y install rsync
+
+# Run tests
+RUN cd /home/moose/test && \
+    ./run_tests -j "$compile_cores"
+
+RUN cd /home/moose/modules && \
+    ./run_tests -j "$compile_cores"
 
     

@@ -92,8 +92,6 @@ RUN cd /home/moose && \
 # Allow specification of MOOSE configuration flags
 ARG moose_configure_flags=""
 
-RUN echo "$moose_configure_flags"
-
 # Make MOOSE framework
 RUN cd /home/moose/ && \
     ./configure "$moose_configure_flags"  && \
@@ -111,12 +109,12 @@ ENV MOOSE_DIR=/home/moose
 ENV OMPI_ALLOW_RUN_AS_ROOT=1
 ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
-# RUN tests
+# Run tests
 RUN cd /home/moose/test && \
     ./run_tests -j "$compile_cores"
 
-#RUN cd /home/moose/modules && \
-#    ./run_tests -j "$compile_cores"
+RUN cd /home/moose/modules && \
+    ./run_tests -j "$compile_cores"
 
 # Unset these variables we set before
 ENV OMPI_ALLOW_RUN_AS_ROOT=
