@@ -53,7 +53,7 @@ RUN if "$test_coverage" ; then \
     ./run_tests
 
 # Generate test coverage report using coveralls and upload
-RUN if "$test_coverage" && "$coveralls_token" != "" ; then \
+RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
        echo "Uploading test coverage to coveralls"; \
        export COVERALLS_REPO_TOKEN="$coveralls_token" && \
        export CI_BRANCH="$coveralls_branch" && \
