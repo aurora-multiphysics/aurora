@@ -1,13 +1,11 @@
 # To make use of multiple cores during the compile stages of the docker build
-# docker build -t aurora-deps-ubuntu --build-arg compile_cores=8 .
+# docker build -t aurora-deps-fedora --build-arg compile_cores=8 .
 
 # Get MOOSE image
-FROM helenbrooks/moose-fedora:2021-04
+FROM helenbrooks/moose-fedora:2022-07-21
 
 # By default one core is used to compile
-ARG compile_cores=1
-
-RUN echo Builing with "$compile_cores" cores.
+ARG compile_cores=4
 
 # Build MOAB
 RUN mkdir /home/dagmc-bld

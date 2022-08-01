@@ -6,10 +6,10 @@
 #              -f docker/aurora-fedora/Dockerfile .
 
 # Get MOOSE image with aurora deps
-FROM helenbrooks/aurora-deps-fedora:v.0.3.0
+FROM helenbrooks/aurora-deps-fedora:v.0.3.1
 
-# By default one core is used to compile
-ARG compile_cores=1
+# By default four cores are used to compile
+ARG compile_cores=4
 
 # Copy entire repository into image
 COPY ./ /home/aurora/
