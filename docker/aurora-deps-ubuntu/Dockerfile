@@ -14,8 +14,8 @@ RUN apt-get update && apt-get -y install \
     pkg-config
 
 # Build MOAB
-RUN mkdir /home/dagmc-bld
-RUN cd /home/dagmc-bld && \
+RUN mkdir /home/dagmc-bld && \
+    cd /home/dagmc-bld && \
     git clone https://bitbucket.org/fathomteam/moab && \
     cd moab && \
     git checkout Version5.2.0 && \
