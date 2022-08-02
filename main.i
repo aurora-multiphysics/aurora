@@ -128,8 +128,7 @@
 [Transfers]
   [./to_openmc]
     type = MoabMeshTransfer
-    direction = to_multiapp
-    multi_app = openmc
+    to_multi_app = openmc
     moabname = "moab"
   [../]
 []
