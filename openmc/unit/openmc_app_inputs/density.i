@@ -57,6 +57,7 @@
   []
   [test_density]
     type = OpenMCDensity
+    displacements = 'disp_x disp_y disp_z'
     density = 8.0
   []
   [elasticity_tensor]

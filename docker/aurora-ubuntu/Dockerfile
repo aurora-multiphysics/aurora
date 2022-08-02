@@ -11,10 +11,10 @@
 #              -f docker/aurora-ubuntu/Dockerfile .
 
 # Get MOOSE image with aurora deps
-FROM helenbrooks/aurora-deps-ubuntu:v.0.3.0
+FROM helenbrooks/aurora-deps-ubuntu:v.0.3.1
 
-# By default one core is used to compile
-ARG compile_cores=1
+# By default 4 cores are used to compile
+ARG compile_cores=4
 
 # Should we generate a coverage report
 ARG test_coverage=false
@@ -53,7 +53,7 @@ RUN if "$test_coverage" ; then \
     ./run_tests
 
 # Generate test coverage report using coveralls and upload
-RUN if "$test_coverage" && "$coveralls_token" != "" ; then \
+RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
        echo "Uploading test coverage to coveralls"; \
        export COVERALLS_REPO_TOKEN="$coveralls_token" && \
        export CI_BRANCH="$coveralls_branch" && \
