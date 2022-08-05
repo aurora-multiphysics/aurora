@@ -77,5 +77,4 @@ RUN cd /home/aurora/openmc && \
     ./open_mc-opt -i example.i && \
     cd ../ && \
    ./aurora-opt -i main.i  && \
-   cd ../ && \
    ./aurora-opt -i main_temp_mech.i
