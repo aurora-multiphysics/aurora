@@ -13,7 +13,7 @@
 
 [Executioner]
   type = Transient
-  num_steps = 10
+  num_steps = 5
   dt = 1
   solve_type = NEWTON
   abort_on_solve_fail=True

@@ -17,8 +17,20 @@ COPY ./ /home/aurora/
 RUN cd /home/aurora/data && \
     tar xzvf endfb71_hdf5.tgz && \
     export OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml && \
-    cd ../openmc/unit && \
-    make -j"$compile_cores" && \
-    cd ../../unit && \
+    cd ../openmc/ && \
+    make -j"$compile_cores"  && \
+    cd unit && \
+    make -j"$compile_cores"  && \
+    cd ../../ && \
+    make -j"$compile_cores"  && \
+    cd unit && \
     make -j"$compile_cores" && \
     ./run_tests
+
+# Ensure examples run
+RUN cd /home/aurora/openmc && \
+    ./open_mc-opt -i example.i && \
+    cd ../ && \
+   ./aurora-opt -i main.i  && \
+   cd ../ && \
+   ./aurora-opt -i main_temp_mech.i
