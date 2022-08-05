@@ -17,7 +17,7 @@
   solve_type = PJFNK
   petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
   petsc_options_value = 'hypre boomeramg 101'
-  num_steps = 10
+  num_steps = 5
   dt = 1
   abort_on_solve_fail=True
 []
