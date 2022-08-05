@@ -70,6 +70,8 @@ RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
        gcovr -e src/main.C -e openmc/unit/ -e unit/ -e openmc/src/main.C -e test -e openmc/test build/ openmc/build/; \
     fi
 
+ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
+
 # Ensure examples run
 RUN cd /home/aurora/openmc && \
     ./open_mc-opt -i example.i && \

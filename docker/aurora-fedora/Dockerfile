@@ -27,6 +27,8 @@ RUN cd /home/aurora/data && \
     make -j"$compile_cores" && \
     ./run_tests
 
+ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
+
 # Ensure examples run
 RUN cd /home/aurora/openmc && \
     ./open_mc-opt -i example.i && \
