@@ -45,9 +45,6 @@
 [BCs]
   [air-outer]
     type = DirichletBC
-    # penalty is a variant for monomials
-    #type = PenaltyDirichletBC
-    penalty = 1e5
     variable = temperature
     boundary = 'top-outer bottom-outer left-outer right-outer front-outer back-outer'
     value = 300 # (K)
