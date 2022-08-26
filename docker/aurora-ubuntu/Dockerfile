@@ -37,6 +37,8 @@ RUN if "$test_coverage" ; then \
 # Copy entire repository into image
 COPY ./ /home/aurora/
 
+ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
+
 # Build
 RUN if "$test_coverage" ; then \
        export CXXFLAGS="--coverage $CXXFLAGS"; \
@@ -45,7 +47,6 @@ RUN if "$test_coverage" ; then \
     fi && \
     cd /home/aurora/data && \
     tar xzvf endfb71_hdf5.tgz && \
-    export OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml && \
     cd ../openmc/ && \
     make -j"$compile_cores"  && \
     cd unit && \
@@ -70,11 +71,6 @@ RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
        gcovr -e src/main.C -e openmc/unit/ -e unit/ -e openmc/src/main.C -e test -e openmc/test build/ openmc/build/; \
     fi
 
-ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
-
-# Ensure examples run
-RUN cd /home/aurora/openmc && \
-    ./open_mc-opt -i example.i && \
-    cd ../ && \
-   ./aurora-opt -i main.i  && \
-   ./aurora-opt -i main_temp_mech.i
+# Run examples
+RUN cd /home/aurora/ && \
+    ./run_tests

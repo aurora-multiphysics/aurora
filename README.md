@@ -40,7 +40,7 @@ If you intend to run in parallel using either MPI or thread (or both) please ens
 2) OpenMC dependencies
 
   - a. HDF5
-  
+
   On Debian:
 ```
 apt-get install -y libhdf5-dev
@@ -83,7 +83,7 @@ git clone https://github.com/embree/embree.git && \
 	-DCMAKE_C_COMPILER=$CC \
 	-DEMBREE_ISPC_SUPPORT=0 && \
 	make -j $compile_cores && \
-	make install 
+	make install
 
 # Build DoubleDown
 git clone https://github.com/pshriwise/double-down && \
@@ -137,13 +137,13 @@ mkdir openmc-bld && \
           -DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
     make -j $compile_cores && \
     make -j $compile_cores install
-```  
+```
   Further detailed installation instructions for OpenMC can be found [here](https://docs.openmc.org/en/stable/usersguide/install.html).
   Please ensure you configure with support for DagMC enabled, and support for MPI/threads enabled if you intend to run in parallel.
 
 4) MOOSE ( + PETSc /  libMesh )
   Please follow these [installation instructions ](https://mooseframework.inl.gov/getting_started/installation/install_moose.html).
-  
+
 #### B. Environment
 
   The Makefile for AURORA assumes the following environment variables have been set:
@@ -157,7 +157,7 @@ Finally, in order to run AURORA, you will need to have set the variable `OPENMC_
 
 #### C. Build
 In case you skipped to this section, ensure you have set up your dependencies and environment as per sections A,B (or you are working in a pre-built docker container for these, see below).
-``` 
+```
 git clone https://github.com/aurora-multiphysics/aurora.git && \
     cd aurora/openmc/ && \
     make -j $compile_cores && \
@@ -176,12 +176,13 @@ Before you do this ensure the `OPENMC_CROSS_SECTIONS` environment variable point
 ```
 cd aurora/data && \
    tar xzvf endfb71_hdf5.tgz && \
-   export OPENMC_CROSS_SECTIONS=/PATH-TO-AURORA/aurora/data/endfb71_hdf5/cross_sections.xml 
+   export OPENMC_CROSS_SECTIONS=/PATH-TO-AURORA/aurora/data/endfb71_hdf5/cross_sections.xml
 ```
 See [this discussion](https://openmc.discourse.group/t/nuclear-data-dependent-zero-result-for-heating-local-tally/833) for further details. Now you can run the tests as follows
 ```
 cd aurora && \
-./run_unit_tests
+./run_unit_tests && \
+./run_tests
 ```
 All the tests should pass. (Let us know via [GitHub Issues](https://github.com/aurora-multiphysics/aurora/issues) if you experience problems.)
 
@@ -223,18 +224,20 @@ The `dagmc.h5m` file is a surface mesh file, in length units assumed to be cm. T
 
 The AURORA application itself requires two input files, and an exodus file. For details on the syntax of these input files, see the following section.
 
-The first input file controls the main driver application (which performs the FEA), and the second input file (referenced by the first) controls the sub-app that calls OpenMC. We recommend you have read [this guide](https://mooseframework.inl.gov/syntax/MultiApps/index.html) on multiapps before proceeding. 
+The first input file controls the main driver application (which performs the FEA), and the second input file (referenced by the first) controls the sub-app that calls OpenMC. We recommend you have read [this guide](https://mooseframework.inl.gov/syntax/MultiApps/index.html) on multiapps before proceeding.
 
-Finally, the exodus file should contain a tetrahedral mesh of the geometry of interest. Currently this geometry needs to be the same as that in the dagmc.h5m file, however in future we intend to support the case where the FEA geometry is a subset of the OpenMC geometry. It is possible to use different lengthscales between the exodus and dagmc files, in which case the parameter `length_scale` for the  `MoabUserObject` should be set (e.g. to convert from m in the exodus file into cm in dagmc.h5m this parameter would be 100). Note that although MOOSE generically is unit-agnostic, it is necessary to have consistency with physical material properties. Thus, if you use m in your exodus file, ensure all length-dimensionful material properties are also given values in units of m. 
+Finally, the exodus file should contain a tetrahedral mesh of the geometry of interest. Currently this geometry needs to be the same as that in the dagmc.h5m file, however in future we intend to support the case where the FEA geometry is a subset of the OpenMC geometry. It is possible to use different lengthscales between the exodus and dagmc files, in which case the parameter `length_scale` for the  `MoabUserObject` should be set (e.g. to convert from m in the exodus file into cm in dagmc.h5m this parameter would be 100). Note that although MOOSE generically is unit-agnostic, it is necessary to have consistency with physical material properties. Thus, if you use m in your exodus file, ensure all length-dimensionful material properties are also given values in units of m.
 
-There are two examples provided in the root aurora directory. 
+There are two examples provided in the test directory.
 The first example performs a simple neutronics + heat conduction simulation.
 ```
-./aurora-opt -i main.i
+cd test/tests/thermal
+../../../aurora-opt -i main.i
 ```
 The second example performs neutronics + heat conduction + thermal expansion.
 ```
-./aurora-opt -i main_temp_mech.i
+cd test/tests/thermal-mech
+../../../aurora-opt -i main_temp_mech.i
 ```
 
 ## Input File Syntax
@@ -294,7 +297,7 @@ git merge upstream/main
 ```
 git switch <my_branch_name>
 ```
-- Finally, roll your changes on top of the changes from `main`. 
+- Finally, roll your changes on top of the changes from `main`.
 ```
 git rebase main
 ```
@@ -322,4 +325,3 @@ doxygen doc/doxygen/Doxyfile
 8) Create a pull request, detailing the changes you have made and reference your original issue. Creating a pull request will trigger our CI pipeline, which tests the build and runs tests in two environments. If you would like to test your changes in a different environment to your own, you may want to use our docker images (see section on docker above).
 
 Once a pull request has been opened we will review your code. We may require some changes, in which case you'll need to make some further commits. Once your code has been reviewd and approved, we will merge it into `main`.
-
