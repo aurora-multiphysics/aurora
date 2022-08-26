@@ -1,0 +1,84 @@
+<!DOCTYPE html><head><meta charset="UTF-8"><title>PlaneIDMeshGenerator | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down" id="home-button">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="83925ba4-6443-4046-b3f4-6610f3aac2ae"><i class="material-icons">menu</i></a><ul class="sidenav" id="83925ba4-6443-4046-b3f4-6610f3aac2ae"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">meshgenerators</span><a href="#" class="breadcrumb">PlaneIDMeshGenerator</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="eb592b03-3ce7-4620-a19b-b4e34a220886" data-section-level="1" data-section-text="PlaneIDMeshGenerator"><h1 id="planeidmeshgenerator">PlaneIDMeshGenerator</h1><p>Adds an extra element integer that identifies planes in a mesh.</p><section class="scrollspy" id="062b49bc-3391-4e92-bc9d-c0a6623c3028" data-section-level="2" data-section-text="Overview"><h2 id="overview">Overview</h2><p>The <code>PlaneIDMeshGenerator</code> object applies an extra IDs to axial planes defined in a extruded mesh.</p></section><section class="scrollspy" id="56e4eb69-5b86-4b86-81cf-f2894f6c41d1" data-section-level="2" data-section-text="Extra ID Control"><h2 id="extra-id-control">Extra ID Control</h2><p>The <code>PlaneIDMeshGenerator</code> takes a mesh object and its axial layer structure as input. This axial plane structure given in <a href="#a620f515-5579-407f-95cb-5e869d9de380" class="moose-modal-link modal-trigger">&quot;plane_coordinates&quot;</a> contains a list of coordinates defining each plane from bottom to top. If there are N planes, N+1 coordinate points should be defined here.</p><p>If each axial plane is uniformly sub-divided into mutiple layers during the extrusion, distinct extra IDs can be optionally assigned to individual layers in each plane. <a href="#4d4db444-05f2-4181-ac04-ade977032226" class="moose-modal-link modal-trigger">&quot;num_ids_per_plane&quot;</a> defines the number of unique IDs in each plane defined in <a href="#3f6c26b9-188b-4a98-b455-8908f0b06236" class="moose-modal-link modal-trigger">&quot;plane_coordinates&quot;</a>.</p><p>Note that this generator only works for extruded geometries where the concept of axial layer is valid. The axis of plane can be specfied using <a href="#eb8189c5-88f1-4d97-b148-2108e8d9e671" class="moose-modal-link modal-trigger">&quot;plane_axis&quot;</a>.</p></section><section class="scrollspy" id="1c1e7b02-ffd9-4c4b-81e7-edc607c36a73" data-section-level="2" data-section-text="Example Syntax"><h2 id="example-syntax">Example Syntax</h2><pre class="moose-pre" style="max-height:350px;"><code class="language-text">[Mesh]
+  [pin2d]
+    type = ConcentricCircleMeshGenerator
+    num_sectors = 2
+    radii = &#x27;0.4 0.5&#x27;
+    rings = &#x27;1 1 1&#x27;
+    has_outer_square = on
+    pitch = 1.26
+    preserve_volumes = yes
+    smoothing_max_it = 3
+  []
+  [pin3d]
+    type = FancyExtruderGenerator
+    input = &#x27;pin2d&#x27;
+    heights = &#x27;5.0 5.0 5.0&#x27;
+    direction = &#x27;0 0 1&#x27;
+    num_layers = &#x27;2 2 2&#x27;
+  []
+  [pin3d_id]
+    type = PlaneIDMeshGenerator
+    input = &#x27;pin3d&#x27;
+    plane_coordinates = &#x27;0.0 5.0 10.0 15.0&#x27;
+    num_ids_per_plane = &#x27; 1 2 1&#x27;
+    plane_axis = &#x27;z&#x27;
+    id_name = &#x27;plane_id&#x27;
+  []
+[]
+</code></pre><a class="moose-source-filename tooltipped modal-trigger" href="#cc3f9713-8121-44f4-a871-f55b999c48db">(../../../SoftwareDownloads/moose/test/tests/meshgenerators/plane_id_mesh_generator/plane_id_pin3d.i)</a></section><section class="scrollspy" id="42c06026-5f08-4e40-96d1-5f5e768b5308" data-section-level="2" data-section-text="Input Parameters"><h2 id="input-parameters">Input Parameters</h2><section id="33862ae9-3583-4ef0-92fb-3975f82f40fa" data-section-level="3" data-section-text="Required Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">id_name</span><span class="moose-parameter-header-description">Name of extra integer ID set</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::string</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Name of extra integer ID set</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">input</span><span class="moose-parameter-header-description">The mesh we want to modify</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MeshGeneratorName</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>The mesh we want to modify</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">plane_coordinates</span><span class="moose-parameter-header-description">Coordinates of planes</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;double&gt;</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Coordinates of planes</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Required Parameters</h3></summary></details></section><section id="aafb6fdf-28ef-481c-ac9d-48c3092e3245" data-section-level="3" data-section-text="Optional Parameters" data-details-open="open"><details class="moose-section-content" open="open"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">num_ids_per_plane</span><span class="moose-parameter-header-description">Number of unique ids per plane</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;unsigned int&gt;</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Number of unique ids per plane</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">plane_axis</span><span class="moose-parameter-header-default">z</span><span class="moose-parameter-header-description">Axis of plane</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>z</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>x, y, z</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Axis of plane</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">show_info</span><span class="moose-parameter-header-default">False</span><span class="moose-parameter-header-description">Whether or not to show mesh info after generating the mesh (bounding box, element types, sidesets, nodesets, subdomains, etc)</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>False</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Whether or not to show mesh info after generating the mesh (bounding box, element types, sidesets, nodesets, subdomains, etc)</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">tolerance</span><span class="moose-parameter-header-default">0.0001</span><span class="moose-parameter-header-description">Tolerance for plane coordinate check</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>0.0001</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>double</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Tolerance for plane coordinate check</p></div></li></ul><summary><h3 data-details-open="open"><span class="moose-section-icon"></span>Optional Parameters</h3></summary></details></section><section id="58891eb0-6996-4bac-b740-2fadb5997a4e" data-section-level="3" data-section-text="Advanced Parameters" data-details-open="close"><details class="moose-section-content"><ul class="collapsible" data-collapsible="expandable"><li><div class="collapsible-header"><span class="moose-parameter-name">control_tags</span><span class="moose-parameter-header-description">Adds user-defined labels for accessing object parameters via control logic.</span></div><div class="collapsible-body"><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;std::string&gt;</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Adds user-defined labels for accessing object parameters via control logic.</p></div></li><li><div class="collapsible-header"><span class="moose-parameter-name">enable</span><span class="moose-parameter-header-default">True</span><span class="moose-parameter-header-description">Set the enabled status of the MooseObject.</span></div><div class="collapsible-body"><p class="moose-parameter-description-default"><span>Default:</span>True</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>bool</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Set the enabled status of the MooseObject.</p></div></li></ul><summary><h3 data-details-open="close"><span class="moose-section-icon"></span>Advanced Parameters</h3></summary></details></section></section></section><div class="moose-modal modal" id="a620f515-5579-407f-95cb-5e869d9de380"><div class="modal-content"><h4>plane_coordinates</h4><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;double&gt;</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Coordinates of planes</p></div></div><div class="moose-modal modal" id="4d4db444-05f2-4181-ac04-ade977032226"><div class="modal-content"><h4>num_ids_per_plane</h4><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;unsigned int&gt;</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Number of unique ids per plane</p></div></div><div class="moose-modal modal" id="3f6c26b9-188b-4a98-b455-8908f0b06236"><div class="modal-content"><h4>plane_coordinates</h4><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>std::vector&lt;double&gt;</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Coordinates of planes</p></div></div><div class="moose-modal modal" id="eb8189c5-88f1-4d97-b148-2108e8d9e671"><div class="modal-content"><h4>plane_axis</h4><p class="moose-parameter-description-default"><span>Default:</span>z</p><p class="moose-parameter-description-cpptype"><span>C++ Type:</span>MooseEnum</p><p class="moose-parameter-description-options"><span>Options:</span>x, y, z</p><p class="moose-parameter-description-controllable"><span>Controllable:</span>No</p><p class="moose-parameter-description"><span>Description:</span>Axis of plane</p></div></div><div class="moose-modal modal" id="cc3f9713-8121-44f4-a871-f55b999c48db"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/test/tests/meshgenerators/plane_id_mesh_generator/plane_id_pin3d.i)</h4><pre class="moose-pre"><code class="language-text">[Mesh]
+  [pin2d]
+    type = ConcentricCircleMeshGenerator
+    num_sectors = 2
+    radii = &#x27;0.4 0.5&#x27;
+    rings = &#x27;1 1 1&#x27;
+    has_outer_square = on
+    pitch = 1.26
+    preserve_volumes = yes
+    smoothing_max_it = 3
+  []
+  [pin3d]
+    type = FancyExtruderGenerator
+    input = &#x27;pin2d&#x27;
+    heights = &#x27;5.0 5.0 5.0&#x27;
+    direction = &#x27;0 0 1&#x27;
+    num_layers = &#x27;2 2 2&#x27;
+  []
+  [pin3d_id]
+    type = PlaneIDMeshGenerator
+    input = &#x27;pin3d&#x27;
+    plane_coordinates = &#x27;0.0 5.0 10.0 15.0&#x27;
+    num_ids_per_plane = &#x27; 1 2 1&#x27;
+    plane_axis = &#x27;z&#x27;
+    id_name = &#x27;plane_id&#x27;
+  []
+[]
+
+
+[Executioner]
+  type = Steady
+[]
+
+[Problem]
+  solve = false
+[]
+
+[AuxVariables]
+  [plane_id]
+    family = MONOMIAL
+    order = CONSTANT
+  []
+[]
+
+[AuxKernels]
+  [set_plane_id]
+    type = ExtraElementIDAux
+    variable = plane_id
+    extra_id_name = plane_id
+  []
+[]
+
+[Outputs]
+  exodus = true
+  execute_on = timestep_end
+[]
+</code></pre></div><div class="modal-footer"><a class="modal-close btn-flat">Close</a></div></div></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"><li><a href="#062b49bc-3391-4e92-bc9d-c0a6623c3028" class="tooltipped" data-position="left" data-tooltip="Overview">Overview</a></li><li><a href="#56e4eb69-5b86-4b86-81cf-f2894f6c41d1" class="tooltipped" data-position="left" data-tooltip="Extra ID Control">Extra ID Control</a></li><li><a href="#1c1e7b02-ffd9-4c4b-81e7-edc607c36a73" class="tooltipped" data-position="left" data-tooltip="Example Syntax">Example Syntax</a></li><li><a href="#42c06026-5f08-4e40-96d1-5f5e768b5308" class="tooltipped" data-position="left" data-tooltip="Input Parameters">Input Parameters</a></li></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../../js/init.js"></script><script type="text/javascript" src="../../js/navigation.js"></script><script type="text/javascript" src="../../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../../js/search_index.js"></script><script type="text/javascript" src="../../js/sqa_moose.js"></script>
