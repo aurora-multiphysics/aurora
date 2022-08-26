@@ -1,0 +1,1 @@
+../thermal/copper_air_bcs_tetmesh.e

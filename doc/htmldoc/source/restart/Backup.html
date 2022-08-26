@@ -1,4 +1,4 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>Backup | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="cbb8567a-a4bd-44b7-85c1-29e2082d0269"><i class="material-icons">menu</i></a><ul class="sidenav" id="cbb8567a-a4bd-44b7-85c1-29e2082d0269"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">restart</span><a href="#" class="breadcrumb">Backup</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="f9336dea-c999-4a32-86d0-61e48e3deda8" data-section-level="1" data-section-text="Backup"><h1 id="backup">Backup</h1><p>The Backup object is a simply a <code>struct</code> for holding binary blob &quot;checkpoint&quot; data. The object contains a stream for holding global simulation state data along with a separate vector for holding individual thread state for each thread in the simulation. The Backup object is part of the larger Restart/Recovery system in MOOSE.</p><p>The Backup object contains the serialized data from MOOSE&#x27;s <code>dataLoad/dataStore</code> routines found in <a class="moose-source-filename tooltipped modal-trigger" href="#4d228e96-b534-4247-80ce-310eee3c740e">DataIO.h</a>. </p></section><div class="moose-modal modal" id="4d228e96-b534-4247-80ce-310eee3c740e"><div class="modal-content"><h4>(../../../../../DataIO.h)</h4><pre class="moose-pre"><code class="language-cpp">// This file is part of the MOOSE framework
+<!DOCTYPE html><head><meta charset="UTF-8"><title>Backup | Aurora App</title><link href="../../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down" id="home-button">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../../media/framework/github-logo.png" class="github-mark"></img><img src="../../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="b3eba809-52be-4e27-8a59-c2689f97071a"><i class="material-icons">menu</i></a><ul class="sidenav" id="b3eba809-52be-4e27-8a59-c2689f97071a"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><a href=".." class="breadcrumb">source</a><span class="breadcrumb">restart</span><a href="#" class="breadcrumb">Backup</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><section id="64f1ddeb-4c6d-4367-adf8-1da803b26f88" data-section-level="1" data-section-text="Backup"><h1 id="backup">Backup</h1><p>The Backup object is a simply a <code>struct</code> for holding binary blob &quot;checkpoint&quot; data. The object contains a stream for holding global simulation state data along with a separate vector for holding individual thread state for each thread in the simulation. The Backup object is part of the larger Restart/Recovery system in MOOSE.</p><p>The Backup object contains the serialized data from MOOSE&#x27;s <code>dataLoad/dataStore</code> routines found in <a class="moose-source-filename tooltipped modal-trigger" href="#9cf7db6b-e886-455b-895c-22ca9dcc4ba9">DataIO.h</a>. </p></section><div class="moose-modal modal" id="9cf7db6b-e886-455b-895c-22ca9dcc4ba9"><div class="modal-content"><h4>(../../../SoftwareDownloads/moose/framework/include/restart/DataIO.h)</h4><pre class="moose-pre"><code class="language-cpp">// This file is part of the MOOSE framework
 // https://www.mooseframework.org
 //
 // All rights reserved, see COPYRIGHT for full restrictions
@@ -371,6 +371,14 @@ void dataStore(std::ostream &amp; stream, libMesh::Parameters &amp; p, void * co
 
 template &lt;std::size_t N&gt;
 inline void
+dataStore(std::ostream &amp; stream, std::array&lt;DualReal, N&gt; &amp; dn, void * context)
+{
+  for (std::size_t i = 0; i &lt; N; ++i)
+    dataStore(stream, dn[i], context);
+}
+
+template &lt;std::size_t N&gt;
+inline void
 dataStore(std::ostream &amp; stream, DualReal (&amp;dn)[N], void * context)
 {
   for (std::size_t i = 0; i &lt; N; ++i)
@@ -436,6 +444,20 @@ void
 dataStore(std::ostream &amp; stream, RankFourTensorTempl&lt;T&gt; &amp; rft, void * context)
 {
   dataStore(stream, rft._vals, context);
+}
+
+template &lt;typename T&gt;
+void
+dataStore(std::ostream &amp; stream, SymmetricRankTwoTensorTempl&lt;T&gt; &amp; srtt, void * context)
+{
+  dataStore(stream, srtt._vals, context);
+}
+
+template &lt;typename T&gt;
+void
+dataStore(std::ostream &amp; stream, SymmetricRankFourTensorTempl&lt;T&gt; &amp; srft, void * context)
+{
+  dataStore(stream, srft._vals, context);
 }
 
 template &lt;typename T&gt;
@@ -643,6 +665,14 @@ void dataLoad(std::istream &amp; stream, libMesh::Parameters &amp; p, void * con
 
 template &lt;std::size_t N&gt;
 inline void
+dataLoad(std::istream &amp; stream, std::array&lt;DualReal, N&gt; &amp; dn, void * context)
+{
+  for (std::size_t i = 0; i &lt; N; ++i)
+    dataLoad(stream, dn[i], context);
+}
+
+template &lt;std::size_t N&gt;
+inline void
 dataLoad(std::istream &amp; stream, DualReal (&amp;dn)[N], void * context)
 {
   for (std::size_t i = 0; i &lt; N; ++i)
@@ -707,6 +737,20 @@ dataLoad(std::istream &amp; stream, RankThreeTensorTempl&lt;T&gt; &amp; rtt, voi
 template &lt;typename T&gt;
 void
 dataLoad(std::istream &amp; stream, RankFourTensorTempl&lt;T&gt; &amp; rft, void * context)
+{
+  dataLoad(stream, rft._vals, context);
+}
+
+template &lt;typename T&gt;
+void
+dataLoad(std::istream &amp; stream, SymmetricRankTwoTensorTempl&lt;T&gt; &amp; rtt, void * context)
+{
+  dataLoad(stream, rtt._vals, context);
+}
+
+template &lt;typename T&gt;
+void
+dataLoad(std::istream &amp; stream, SymmetricRankFourTensorTempl&lt;T&gt; &amp; rft, void * context)
 {
   dataLoad(stream, rft._vals, context);
 }

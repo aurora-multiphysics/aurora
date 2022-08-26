@@ -1,4 +1,4 @@
-<!DOCTYPE html><head><meta charset="UTF-8"><title>framework_srs.md | Aurora App</title><link href="../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../media/framework/github-logo.png" class="github-mark"></img><img src="../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="e26db12b-bcca-4ee2-8ae4-d327822d38d1"><i class="material-icons">menu</i></a><ul class="sidenav" id="e26db12b-bcca-4ee2-8ae4-d327822d38d1"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><span class="breadcrumb">sqa</span><a href="#" class="breadcrumb">framework_srs</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><p class="moose-disabled">!template load file=srs.md.template project=Framework</p><p class="moose-disabled">
+<!DOCTYPE html><head><meta charset="UTF-8"><title>framework_srs.md | Aurora App</title><link href="../contrib/materialize/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"></link><link href="../contrib/prism/prism.min.css" type="text/css" rel="stylesheet"></link><link href="../css/moose.css" type="text/css" rel="stylesheet"></link><link href="../css/devel_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/alert_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/content_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/sqa_moose.css" type="text/css" rel="stylesheet"></link><link href="../css/civet_moose.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../contrib/jquery/jquery.min.js"></script></head><body><div class="page-wrap"><header><nav><div class="nav-wrapper container"><a href="https://aurora-multiphysics.github.io/aurora/" class="left moose-logo hide-on-med-and-down" id="home-button">Aurora App</a><a href="https://github.com/aurora-multiphysics/aurora" class="right"><img src="../media/framework/github-logo.png" class="github-mark"></img><img src="../media/framework/github-mark.png" class="github-logo"></img></a><ul class="right hide-on-med-and-down"></ul><a href="#" class="sidenav-trigger" data-target="9db924cc-508a-4040-8727-8db4a9f4e6f2"><i class="material-icons">menu</i></a><ul class="sidenav" id="9db924cc-508a-4040-8727-8db4a9f4e6f2"></ul><a href="#moose-search" class="modal-trigger"><i class="material-icons">search</i></a></div></nav><div class="modal modal-fixed-footer moose-search-modal" id="moose-search"><div class="modal-content container moose-search-modal-content"><div class="row"><div class="col l12"><div class="input-field"><input type_="text" onkeyup="mooseSearch()" placeholder="https://aurora-multiphysics.github.io/aurora/" id="moose-search-box"></input></div></div><div><div class="col s12" id="moose-search-results"></div></div></div></div><div class="modal-footer"><a href="#!" class="modal-close btn-flat">Close</a></div></div></header><main class="main"><div class="container"><div class="row"><div class="col hide-on-med-and-down l12"><nav class="breadcrumb-nav"><div class="nav-wrapper"><span class="breadcrumb">sqa</span><a href="#" class="breadcrumb">framework_srs</a></div></nav></div></div><div class="row"><div class="moose-content col s12 m12 l10"><p class="moose-disabled">!template load file=srs.md.template project=Framework</p><p class="moose-disabled">
 
 !template! item key=system-purpose
 !include sqa/system_purpose.md
@@ -9,6 +9,7 @@
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=system-context
+!! system-context-begin
 [!ac](MOOSE) is a command-line driven application. This is typical for a high-performance software
 that is designed to run across several nodes of a cluster system. As such, all of the usage
 of the software is through any standard terminal program generally available on all supported
@@ -21,16 +22,20 @@ which may be launched from the command line and writes out various result files 
        id=usage_diagram
        caption=Usage of [!ac](MOOSE) and [!ac](MOOSE)-based applications.
        style=width:50%;
+!! system-context-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=system-functions
+!! system-functions-begin
 Since [!ac](MOOSE) is a command-line driven application, all functionality provided in the framework
 is operated through the use of standard UNIX command line flags and the extendable MOOSE input file.
 The framework is completely extendable so individual design pages should be consulted for specific
 behaviors of each user-defined object.
+!! system-functions-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=user-characteristics
+!! user-characteristics-begin
 
 - +Framework Developers+: These are the core developers of the framework. They will be responsible
   for following and enforcing the appropriate software development standards. They will be
@@ -46,6 +51,7 @@ behaviors of each user-defined object.
   they perform.  These users may interact with developers of the system requesting new features and
   reporting bugs found and will typically make heavy use of the input file format.
 
+!! user-characteristics-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=assumptions-and-dependencies
@@ -53,10 +59,12 @@ behaviors of each user-defined object.
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=definitions
+!! definitions-begin
 - +Verification+: (1) The process of: evaluating a system or component to determine whether the
   products of a given development phase satisfy the conditions imposed at the start of that
   phase. (2) Formal proof of program correctness (e.g., requirements, design, implementation reviews,
   system tests) [!citep](ISO-systems-software).
+!! definitions-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=acronyms
@@ -64,13 +72,15 @@ behaviors of each user-defined object.
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=minimum-requirements
+!! minimum-requirements-begin
 - A [!ac](POSIX) compliant Unix including the two most recent versions of MacOS and most current
   versions of Linux.
 - 4 GB of RAM for optimized compilation (8 GB for debug compilation), 2 GB per core execution
 - 100 GB disk space
-- C++14 compatible compiler (GCC, Clang)
-- Python 3.6+
+- C++17 compatible compiler (GCC, Clang)
+- Python 3.7+
 - Git
+!! minimum-requirements-finish
 !template-end!</p><p class="moose-disabled">
 
 !template item key=functional-requirements
@@ -86,14 +96,17 @@ behaviors of each user-defined object.
 !sqa requirements link=False collections=SYSTEM category=framework</p><p class="moose-disabled">
 
 !template! item key=human-system-integration
+!! human-system-integration-begin
 [!ac](MOOSE) is a command line driven application which conforms to all standard terminal
 behaviors. Specific human system interaction accommodations shall be a function of the end-user&#x27;s
 terminal. MOOSE does support optional coloring within the terminal&#x27;s ability to display color,
 which may be disabled.
+!! human-system-integration-finish
 !template-end!</p><p class="moose-disabled">
 
 
 !template! item key=maintainability
+!! maintainability-begin
 - The latest working version (defined as the version that passes all tests in the current regression
   test suite) shall be publicly available at all times through the repository host provider.
 - Flaws identified in the system shall be reported and tracked in a ticket or issue based system. The
@@ -103,26 +116,34 @@ which may be disabled.
   (within two business days).
 - The core framework in its entirety will be made publicly available under the [!ac](LGPL)
   version 2.0 license.
+!! maintainability-finish
 !template-end!</p><p class="moose-disabled">
 
 
 !template item key=reliability
+!! reliability-begin
 The regression test suite will cover at least 80% of all lines of code at all times. Known
 regressions will be recorded and tracked (see [#maintainability]) to an independent and
 satisfactory resolution.
+!! reliability-finish
 !template-end!</p><p class="moose-disabled">
 
 !template item key=information-management
+!! information-management-begin
 The core framework in its entirety will be made publicly available on an appropriate repository
 hosting site. Backups and security services will be provided by the hosting service.
+!! information-management-finish
 !template-end!</p><p class="moose-disabled">
 
 !template item key=verification
+!! verification-begin
 The regression test suite will employ several verification tests using comparison against known
 analytical solutions, the method of manufactured solutions, and convergence rate analysis.
+!! verification-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=system-modes
+!! system-modes-begin
 [!ac](MOOSE) applications normally run in normal execution  mode when an input file is supplied. However
 there are a few other modes that can be triggered with various command line flags as indicated here:
 
@@ -143,35 +164,48 @@ there are a few other modes that can be triggered with various command line flag
 The list of system-modes may not be extensive as the system is designed to be extendable to end-user applications.
 The complete list of command line options for applications can be obtained by running the executable with
 zero arguments. See the [command line usage](command_line_usage.md optional=True).
+!! system-modes-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=physical-characteristics
+!! physical-characteristics-begin
 [!ac](MOOSE) is software only with no associated physical media. See [#system-requirements] for a description
 of the minimum required hardware necessary for running a [!ac](MOOSE)-based application.
+!! physical-characteristics-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=environmental-conditions
+!! environmental-conditions-begin
 Not Applicable
+!! environmental-conditions-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=system-security
+!! system-security-begin
 [!ac](MOOSE) based applications have no requirements or special needs related to system-security. The framework
 is designed to run completely in user-space with no elevated privileges required nor recommended.
+!! system-security-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=policies-and-regulations
+!! policies-and-regulations-begin
 [!ac](MOOSE)-based applications must comply with all export control restrictions.
+!! policies-and-regulations-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=system-life-cycle
+!! system-life-cycle-begin
 [!ac](MOOSE)-based development follows various agile methods. The system is continuously built and deployed in
 a piecemeal fashion since objects within the system are more or less independent. Every new object requires a test,
 which in turn requires an associated requirement and design description. Some [!ac](MOOSE)-based development
 teams follow the [!ac](NQA-1) standards.
+!! system-life-cycle-finish
 !template-end!</p><p class="moose-disabled">
 
 !template! item key=packaging
+!! packaging-begin
 No special requirements are needed for packaging or shipping any media containing [!ac](MOOSE) source code. However,
 some [!ac](MOOSE)-based applications maybe be export controlled in which case all export control restrictions must
 be adhered to when packaging and shipping media.
+!! packaging-finish
 !template-end!</p></div><div class="col hide-on-med-and-down l2"><div class="toc-wrapper pin-top"><ul class="section table-of-contents"></ul></div></div></div></div></main></div></body><script type="text/javascript" src="../contrib/materialize/materialize.min.js"></script><script type="text/javascript" src="../contrib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="../contrib/prism/prism.min.js"></script><script type="text/javascript" src="../js/init.js"></script><script type="text/javascript" src="../js/navigation.js"></script><script type="text/javascript" src="../contrib/fuse/fuse.min.js"></script><script type="text/javascript" src="../js/search_index.js"></script><script type="text/javascript" src="../js/sqa_moose.js"></script>

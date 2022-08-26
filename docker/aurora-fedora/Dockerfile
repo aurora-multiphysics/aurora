@@ -14,9 +14,10 @@ ARG compile_cores=4
 # Copy entire repository into image
 COPY ./ /home/aurora/
 
+ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
+
 RUN cd /home/aurora/data && \
     tar xzvf endfb71_hdf5.tgz && \
-    export OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml && \
     cd ../openmc/ && \
     make -j"$compile_cores"  && \
     cd unit && \
@@ -27,11 +28,6 @@ RUN cd /home/aurora/data && \
     make -j"$compile_cores" && \
     ./run_tests
 
-ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
-
-# Ensure examples run
-RUN cd /home/aurora/openmc && \
-    ./open_mc-opt -i example.i && \
-    cd ../ && \
-   ./aurora-opt -i main.i  && \
-   ./aurora-opt -i main_temp_mech.i
+# Run examples
+RUN cd /home/aurora/ && \
+    ./run_tests

@@ -1,0 +1,7 @@
+[Tests]
+  [./test]
+    type = 'Exodiff'
+    input = 'openmc_example.i'
+    exodiff = 'openmc_example_out.e'
+  [../]
+[]
