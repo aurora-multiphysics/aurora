@@ -291,7 +291,6 @@ MoabUserObject::findDAGBoundaries()
 
   // Get the surface type
 
-
   // Get the libmesh surface boundary names
 
   // Get the libmesh boundary ids
@@ -518,16 +517,16 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
         // Save the handle for adding to entity sets
         block_elems.insert(ent);
 
-        // Check if this element has faces participates in any boundaries
-        findElemBoundaries(elem,ent);
+        // // Check if this element has faces participates in any boundaries
+        // findElemBoundaries(elem,ent);
       } // End loop over sub-tetrahedra for current elem
 
     } // End loop over elems in this block
 
-    // Find the boundaries of this block (skin)
-    if (!findBoundaries(block_elems)){
-      mooseError("Failed to find block boundary");
-    }
+    // // Find the boundaries of this block (skin)
+    // if (!findBoundaries(block_elems)){
+    //   mooseError("Failed to find block boundary");
+    // }
 
     // Add the elems to the full meshset
     rval = moabPtr->add_entities(meshset,block_elems);
@@ -546,97 +545,96 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
 void findElemBoundaries(const Elem& elem, moab::EntityHandle ent)
 {
-
   mooseError("Not yet implemented");
+  // // Check if this element participates in a boundary
+  // std::vector<std::pair<unsigned int, boundary_id_type>> boundary_pairs;
+  // if(elemInDAGBoundary(elem,boundary_pairs)){
 
-  // Check if this element participates in a boundary
-  std::vector<std::pair<unsigned int, boundary_id_type>> boundary_pairs;
-  if(elemInDAGBoundary(elem,boundary_pairs)){
+  //   // Skin element to get faces
+  //   moab::Range single_elem;
+  //   single_elem.insert(ent);
+  //   moab::Range face_ents; // Tris on surfaces with outward normal
+  //   moab::Range face_ents_reversed; // Tris on surfaces with inward normal
+  //   moab::ErrorCode rval = skinner->find_skin(0,single_elems,false,face_ents,&face_ents_reversed);
+  //   // Skinning failed
+  //   if(rval != moab::MB_SUCCESS) return false;
 
-    // Skin element to get faces
-    moab::Range single_elem;
-    single_elem.insert(ent);
-    moab::Range face_ents; // Tris on surfaces with outward normal
-    moab::Range face_ents_reversed; // Tris on surfaces with inward normal
-    moab::ErrorCode rval = skinner->find_skin(0,single_elems,false,face_ents,&face_ents_reversed);
-    // Skinning failed
-    if(rval != moab::MB_SUCCESS) return false;
+  //   // Single tet: all normals should point out
+  //   if(face_ents_reversed.size()!=0) return false;
 
-    // Single tet: all normals should point out
-    if(face_ents_reversed.size()!=0) return false;
+  //   // Single tet with 4 faces
+  //   if(face_ents.size() !=4 ) return false;
 
-    // Single tet with 4 faces
-    if(face_ents.size() !=4 ) return false;
+  //   for(const auto face_on_boundary : boundary_pairs){
+  //     unsigned int face_index = face_to_boundary.first;
+  //     boundary_id_type boundary_id = face_to_boundary.second;
 
-    for(const auto face_on_boundary : boundary_pairs){
-      unsigned int face_index = face_to_boundary.first;
-      boundary_id_type boundary_id = face_to_boundary.second;
+  //     // Get the face
+  //     Elem& face_elem = *(elem.build_side_ptr(face_index));
 
-      // Get the face
-      Elem& face_elem = *(elem.build_side_ptr(face_index));
+  //     // Sanity check
+  //     if(!face_elem.is_face()) mooseError("Expected a face");
 
-      // Sanity check
-      if(!face_elem.is_face()) mooseError("Expected a face");
+  //     // Find the corrsponding moab entity handle to this face
+  //     const auto entity_it = face_ents.begin();
+  //     for( ; entity_it != face_ents.end(); ++entity_it){
+  //       // Get the vertices for the entity
 
-      // Find the corrsponding moab entity handle to this face
-      const auto entity_it = face_ents.begin();
-      for( ; entity_it != face_ents.end(); ++entity_it){
-        // Get the vertices for the entity
+  //       // Compute the face centroid from the vertices
 
-        // Compute the face centroid from the vertices
+  //       // Check if the libmesh face contains this point within the faceting tolerance
+  //       // If true found the match.
 
-        // Check if the libmesh face contains this point within the faceting tolerance
-        // If true found the match.
+  //       // Add moab entity to appropriate meshset
+  //       // break
 
-        // Add moab entity to appropriate meshset
-        // break
-
-      }//End loop over tet entity handles
-    } // End loop over libmesh elem sides on boundary
-  }
+  //     }//End loop over tet entity handles
+  //   } // End loop over libmesh elem sides on boundary
+  // }
 }
 
 bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
                                        std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs)
 {
-  // Sanity check
-  if(!boundary_pairs.empty())
-    mooseError("Please provide empty vector as argument.")
+  mooseError("Not yet implemented");
+  // // Sanity check
+  // if(!boundary_pairs.empty())
+  //   mooseError("Please provide empty vector as argument.");
 
-  // Loop over faces
-  unsigned int n_sides =elem.n_sides();
-  for(unsigned int i_side=0; i_side<n_sides; i_side++){
-    // Retrieve the boundaries this face is in
-    std::vector< boundary_id_type > face_boundary_list;
-    boundary_info_ptr->boundary_ids(&elem, i_side,face_boundary_list);
+  // // Loop over faces
+  // unsigned int n_sides =elem.n_sides();
+  // for(unsigned int i_side=0; i_side<n_sides; i_side++){
+  //   // Retrieve the boundaries this face is in
+  //   std::vector< boundary_id_type > face_boundary_list;
+  //   boundary_info_ptr->boundary_ids(&elem, i_side,face_boundary_list);
 
-    // Nothing to do if no boundaries
-    if(face_boundary_list.empty()) continue;
+  //   // Nothing to do if no boundaries
+  //   if(face_boundary_list.empty()) continue;
 
-    // Find which of these boundaries have a Dagmc BC
-    boundary_id_type dag_boundary_id;
-    unsigned int count_boundaries;
-    for(const auto boundary_id : face_boundary_list){
-      // Is this a dagmc boundary?
-      auto it = boundary_id_to_type.find(boundary_id);
-      if (it != boundary_id_to_type.end()){
-        // Save and count
-        dag_boundary_id = boundary_id;
-        count_boundaries++;
-      }
-    }
+  //   // Find which of these boundaries have a Dagmc BC
+  //   boundary_id_type dag_boundary_id;
+  //   unsigned int count_boundaries;
+  //   for(const auto boundary_id : face_boundary_list){
+  //     // Is this a dagmc boundary?
+  //     auto it = boundary_id_to_type.find(boundary_id);
+  //     if (it != boundary_id_to_type.end()){
+  //       // Save and count
+  //       dag_boundary_id = boundary_id;
+  //       count_boundaries++;
+  //     }
+  //   }
 
-    // Error if more than one dagmc boundary
-    if( count_boundaries > 1 ){
-      std::stringstream ss;
-      ss<<"Side "<<i_side<<" of elem "<<elem.id()
-        <<" is associated with multiple DAGMC boundary conditions."
-        <<" Please check your model.";
-      mooseError(ss.str());
-    }
+  //   // Error if more than one dagmc boundary
+  //   if( count_boundaries > 1 ){
+  //     std::stringstream ss;
+  //     ss<<"Side "<<i_side<<" of elem "<<elem.id()
+  //       <<" is associated with multiple DAGMC boundary conditions."
+  //       <<" Please check your model.";
+  //     mooseError(ss.str());
+  //   }
 
-    boundary_pairs.push_back(std::make_pair<unsigned int, boundary_id_type>(i_side,dag_boundary_id));
-  }
+  //   boundary_pairs.push_back(std::make_pair<unsigned int, boundary_id_type>(i_side,dag_boundary_id));
+  // }
 
   // Return if we found some boundaries associated with any of the sides
   return !boundary_pairs.empty();
@@ -644,67 +642,67 @@ bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
 
 void MoabUserObject::findBoundaries(const moab::Range& block_elems)
 {
+  mooseError("Not yet implemented");
+  // // Find the skin of this block
+  // moab::Range skin_elems; // Tris on surfaces with outward normal
+  // moab::Range skin_elems_reversed; // Tris on surfaces with inward normal
+  // moab::ErrorCode rval = skinner->find_skin(0,block_elems,false,skin_elems,&skin_elems_reversed);
+  // if(rval != moab::MB_SUCCESS) return false;
+  // if(skin_elems.size()==0 && skin_elems_reversed.size()==0) return false;
 
-  // Find the skin of this block
-  moab::Range skin_elems; // Tris on surfaces with outward normal
-  moab::Range skin_elems_reversed; // Tris on surfaces with inward normal
-  moab::ErrorCode rval = skinner->find_skin(0,block_elems,false,skin_elems,&skin_elems_reversed);
-  if(rval != moab::MB_SUCCESS) return false;
-  if(skin_elems.size()==0 && skin_elems_reversed.size()==0) return false;
+  // std::cout<<"tris size = "<<skin_elems.size()<<std::endl;
+  // std::cout<<"rtris size = "<<skin_elems_reversed.size()<<std::endl;
 
-  std::cout<<"tris size = "<<skin_elems.size()<<std::endl;
-  std::cout<<"rtris size = "<<skin_elems_reversed.size()<<std::endl;
-
-  // For both the forward and reverse skins find the boundaries
-  findBoundariesFromSkin(skin_elems);
-  findBoundariesFromSkin(skin_elems_reversed);
+  // // For both the forward and reverse skins find the boundaries
+  // findBoundariesFromSkin(skin_elems);
+  // findBoundariesFromSkin(skin_elems_reversed);
 }
 
 void MoabUserObject::findBoundariesFromSkin(const moab::Range& skin_elems, std::set< moab::EntityHandle>& bc_set)
 {
-  // Loop over every entity handle in the given skin
-  const auto entity_it = skin_elems.begin();
-  for( ; entity_it != skin_elems.end(); ++entity_it){
-    // Query each element in skin - is it in a surface?
-    moab::EntityHandle skin_handle = *entity_it;
-    boundary_id_type boundary_id;
-    if(entityInBoundary(skin_handle,boundary_id)){
-      // Save sideset of elem handles as a meshset
-      addToBoundary(skin_handle,boundary_id);
-    }
-  }
-
+  mooseError("Not yet implemented");
+  // // Loop over every entity handle in the given skin
+  // const auto entity_it = skin_elems.begin();
+  // for( ; entity_it != skin_elems.end(); ++entity_it){
+  //   // Query each element in skin - is it in a surface?
+  //   moab::EntityHandle skin_handle = *entity_it;
+  //   boundary_id_type boundary_id;
+  //   if(entityInBoundary(skin_handle,boundary_id)){
+  //     // Save sideset of elem handles as a meshset
+  //     addToBoundary(skin_handle,boundary_id);
+  //   }
+  // }
 }
 
 bool MoabUserObject::entityInBoundary(moab::EntityHandle skin_handle,
                                       boundary_id_type& boundary_id)
 {
   mooseError("Not yet implemented");
- moab::ErrorCode rval = moab::MB_SUCCESS;
+ // moab::ErrorCode rval = moab::MB_SUCCESS;
 
-  // Get parent handle (tet)
-  moab::EntityHandle parent;
-  // TODO
-  rval = moabPtr->
-  if(rval!=moab::MB_SUCCESS) return rval;
-
-
-  // Find libMesh equivalent of this tet using internal maps
-  dof_id_type elem_id;
-  // TODO
-
-  // Find the libMesh face corresponding to orignal handle
-  unsigned int face_index;
-  // TODO
-
-  // Find any boundaries which this face is part of
-  std::vector< boundary_id_type > face_boundary_ids;
-  // TODO
+ //  // Get parent handle (tet)
+ //  moab::EntityHandle parent;
+ //  // TODO
+ //  rval = moabPtr->
+ //  if(rval!=moab::MB_SUCCESS) return rval;
 
 
+ //  // Find libMesh equivalent of this tet using internal maps
+ //  dof_id_type elem_id;
+ //  // TODO
 
-  // No boundary associated with this elem
-  return false;
+ //  // Find the libMesh face corresponding to orignal handle
+ //  unsigned int face_index;
+ //  // TODO
+
+ //  // Find any boundaries which this face is part of
+ //  std::vector< boundary_id_type > face_boundary_ids;
+ //  // TODO
+
+
+
+ //  // No boundary associated with this elem
+ //  return false;
 }
 
 void MoabUserObject::addToBoundary(moab::EntityHandle skin_handle,
@@ -830,7 +828,7 @@ MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab
   std::string boundary_type;
 
   // Set tags
-  rval = setTags(surface_set,id,2,"Surface",boundary_type);
+  rval = setTags(surface_set,id,2,"Surface","",boundary_type);
   if(rval!=moab::MB_SUCCESS) return rval;
 
   // Add tris to the surface
@@ -869,7 +867,7 @@ MoabUserObject::updateSurfData(moab::EntityHandle surface_set,VolData data)
 
 
 moab::ErrorCode
-MoabUserObject::setTags(moab::EntityHandle ent, unsigned int id, int dim, std::string category, std::string name="", std::string boundary_type="")
+MoabUserObject::setTags(moab::EntityHandle ent, unsigned int id, int dim, std::string category, std::string name, std::string boundary_type)
 {
 
   moab::ErrorCode rval;
@@ -1714,7 +1712,7 @@ MoabUserObject::createSurfaces(moab::Range& faces, VolData& voldata, unsigned in
   partitionByBoundary(faces,mapped_faces);
 
   for( const auto & boundary_to_faces : mapped_faces){
-    boundary_id boundary = boundary_to_faces.first;
+    boundary_id_type boundary = boundary_to_faces.first;
     moab::Range boundary_faces = boundary_to_faces.second;
     rval = createSurfaces(boundary_faces, boundary, voldata, surf_id);
     if(rval!=moab::MB_SUCCESS) return rval;

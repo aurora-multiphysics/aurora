@@ -124,11 +124,18 @@ private:
   /// Helper method to create MOAB elements
   void createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
 
+
+  /// Helper method to find which faces of an element participate in a boundary
+  void findElemBoundaries(const Elem& elem, moab::EntityHandle ent);
+
+  /// Return pairings of face index to DAGMC boundary IDs and test if non empty list
+  bool elemInDAGBoundary(const Elem& elem,                                         std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs);
+
   /// Helper method to find MOAB surface entities having a boundary condition given a block
   void findBoundaries(const moab::Range& block_elems);
 
   /// Helper method to find MOAB surface entities having a boundary condition given a geometric skin
-  void findBoundariesFromSkin(const moab::Range& skin_elems);
+  void findBoundariesFromSkin(const moab::Range& skin_elems, std::set< moab::EntityHandle>& bc_set);
 
   /// Query if the given MOAB entity handle has a boundary condition
   bool entityInBoundary(moab::EntityHandle skin_handle,
@@ -178,7 +185,7 @@ private:
   moab::ErrorCode updateSurfData(moab::EntityHandle surface_set,VolData data);
 
   /// Generic method to set the tags that DAGMC requires
-  moab::ErrorCode setTags(moab::EntityHandle ent, unsigned int id, int dim, std::string category, std::string name, std::string boundary)
+  moab::ErrorCode setTags(moab::EntityHandle ent, unsigned int id, int dim, std::string category, std::string name="", std::string boundary_type="");
 
   /// Helper function to wrap moab::tag_set_data for a string
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, std::string data, unsigned int SIZE);
@@ -320,8 +327,8 @@ private:
   /// Save the first tet entity handle
   moab::EntityHandle offset;
 
-  /// Map from libmesh boundary id to DAGMC surface type
-  std::map<boundary_id_type, DagBoundaryType > boundary_id_to_type;
+  // /// Map from libmesh boundary id to DAGMC surface type
+  // std::map<boundary_id_type, DagBoundaryType > boundary_id_to_type;
 
   // Data members relating to binning in temperature
 
