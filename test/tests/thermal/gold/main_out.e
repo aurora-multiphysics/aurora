@@ -1,0 +1,1 @@
+../../thermal-legacy/gold/main_out.e

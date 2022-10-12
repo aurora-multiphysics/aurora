@@ -1,0 +1,1 @@
+../../thermal-mech-legacy/gold/main_temp_mech_out.e

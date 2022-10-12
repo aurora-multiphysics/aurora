@@ -1,0 +1,12 @@
+[Tests]
+  [test]
+    type = Exodiff
+    input = main.i
+    exodiff = main_out.e
+
+    # This is just to ignore the volumetric_heat variable in the gold file that
+    # we are pointing to (from a legacy approach for converting OpenMC's output
+    # to a heat source term).
+    custom_cmp = exodiff.cmp
+  []
+[]
