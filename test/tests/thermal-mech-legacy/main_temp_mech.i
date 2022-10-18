@@ -91,7 +91,31 @@
   [../]
 []
 
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = "initial"
+  []
+[]
+
+[Functions]
+  [heating-function]
+    type = VariableFunction
+    uoname = "uo-heating-function"
+  []
+[]
+
 [Materials]
+  [heating]
+    type = ADGenericFunctionMaterial
+    prop_names = 'volumetric_heat'
+    prop_values = 'heating-function'
+    block = '1 2'
+    constant_on = 'ELEMENT'
+    output_properties = 'volumetric_heat'
+    outputs = exodus
+  []
   [air_const_props]
     type = ADGenericConstantMaterial
     prop_names = 'thermal_conductivity specific_heat'
@@ -152,8 +176,8 @@
     variable = temp
   []
   [heat-source]
-    type = CoupledForce
-    v = heating-local
+    type = ADMatHeatSource
+    material_property = volumetric_heat
     variable = temp
     block = '1 2'
   []
