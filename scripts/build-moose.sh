@@ -213,7 +213,7 @@ cd test
 METHOD="opt" make -j${MOOSE_JOBS}
 
 # Build MOOSE modules
-RUN cd ${MOOSE_DIR}/modules
+cd ${MOOSE_DIR}/modules
 METHOD="opt" make -j${MOOSE_JOBS}
 
 # This is needed or it mpiexec complains because docker runs as root
