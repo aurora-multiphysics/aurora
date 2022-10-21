@@ -11,3 +11,5 @@ dnf -y install cmake \
     bison flex bison-devel flex-devel \
     python3 python3-devel libtirpc libtirpc-devel \
     rsync
+
+pip3 install packaging

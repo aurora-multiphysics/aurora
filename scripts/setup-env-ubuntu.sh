@@ -31,3 +31,4 @@ apt-get install -y cmake \
         liblapack-dev \
         libhdf5-dev
 
+pip3 install packaging
