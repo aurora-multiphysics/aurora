@@ -16,7 +16,9 @@ Help()
     echo "d      Provide HDF5 installation directory"
     echo "p      Set PETSC installation directory"
     echo "e      Set file from which to source environment"
+    echo "o      Set file in which to create moose profile"
     echo "r      Must supply this if user is running as root (e.g. in docker)"
+    echo "c      Allow petsc to download cmake"
     echo
 }
 
@@ -31,9 +33,10 @@ PETSC_INSTALL_DIR=""
 ENV_FILE=""
 ENV_OUTFILE=""
 ROOTUSER=false
+DOWNLOAD_CMAKE=false
 
 # Read arguments
-while getopts "w:t:b:s:j:d:p:e:o:hr" option; do
+while getopts "w:t:b:s:j:d:p:e:o:hrc" option; do
     case $option in
         h)
             Help
@@ -58,16 +61,18 @@ while getopts "w:t:b:s:j:d:p:e:o:hr" option; do
             ENV_OUTFILE=$OPTARG;;
         r)
             ROOTUSER=true;;
+        c)
+            DOWNLOAD_CMAKE=true;;
         \?) # Invalid option
             echo "Error: Invalid option"
-            exit;;
+            exit 1;;
     esac
 done
 
 if [ "$WORKDIR" = "" ] ; then
     echo "Please set working directory through the -w flag"
     Help
-    exit
+    exit 1
 fi
 
 # Set up environment variables
@@ -78,6 +83,7 @@ export HDF5_DIR=${HDF5_DIR_IN}
 
 # Set build strings from user-provided arguments
 PETSC_BUILD_DIR=$MOOSE_DIR/petsc
+CMAKE_STR=""
 if [ -n "$PETSC_INSTALL_DIR" ]; then
     echo "Using PETSC installation prefix $PETSC_INSTALL_DIR"
     PETSC_PREFIX_STRING="--prefix=$PETSC_INSTALL_DIR"
@@ -89,6 +95,10 @@ if [ -n "$HDF5_DIR" ]; then
     echo "HDF5 installation location was set using HDF5_DIR=$HDF5_DIR"
     HDF5_STR="--with-hdf5-dir=$HDF5_DIR"
     HDF5_SRC_STR="HDF5_DIR=$HDF5_DIR"
+fi
+if [ "$DOWNLOAD_CMAKE" = true ] ; then
+    echo "User provided -c argument: PETSC will install cmake"
+    CMAKE_STR="--download-cmake"
 fi
 
 SRC_STR=""
@@ -105,7 +115,7 @@ fi
 
 if [ -f $ENV_OUTFILE ]; then
    echo "File $ENV_OUTFILE already exists!"
-   exit
+   exit 1
 fi
 
 # Create a MOOSE profile
@@ -167,6 +177,7 @@ cd ${PETSC_BUILD_DIR}
             "$HDF5_STR" \
             --with-make-np=$MOOSE_JOBS \
             --with-debugging=no \
+            "$CMAKE_STR" \
             --download-hypre=1 \
             --download-fblaslapack=1 \
             --download-metis=1 \
