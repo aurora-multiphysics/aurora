@@ -13,6 +13,7 @@ Help()
     echo "t      Set MOOSE github tag to check out"
     echo "b      Set MOOSE github branch to check out"
     echo "s      Set MOOSE github sha to check out"
+    echo "j      Set number of MOOSE build jobs"
     echo "d      Provide HDF5 installation directory"
     echo "p      Set PETSC installation directory"
     echo "e      Set file from which to source environment"
@@ -225,8 +226,9 @@ fi
 
 # Run tests
 cd ${MOOSE_DIR}/test
+source PATH=$PATH:${MOOSE_DIR}/test
 ./run_tests -j${MOOSE_JOBS}
-cd ${MOOSE_DIR}modules
+cd ${MOOSE_DIR}/modules
 ./run_tests -j${MOOSE_JOBS}
 
 # Unset those OMPI environment variables we set before
