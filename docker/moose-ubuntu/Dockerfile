@@ -13,8 +13,9 @@ ENV TZ=Europe/London
 
 RUN mkdir /home/scripts
 
-COPY ./scripts/setup-env-ubuntu.sh /home/scripts
 COPY ./scripts/ubuntu-envs.sh /home/scripts
+COPY ./scripts/setup-env-ubuntu.sh /home/scripts
+COPY ./scripts/setup-python-venv.sh /home/scripts
 COPY ./scripts/build-moose.sh /home/scripts
 
 WORKDIR /home
@@ -22,12 +23,12 @@ WORKDIR /home
 # Get the packages we need
 RUN ./scripts/setup-env-ubuntu.sh
 
+# Set up python environment
+RUN ./scripts/setup-python-venv.sh -w /home -d env -e moose -f /home/scripts/ubuntu-envs.sh
+
 # Optional build-arg to specify moose version
 ARG moose_tag=
 ARG moose_git_sha=
 ARG compile_cores=4
-
-
-ENV PETSC_DIR=/home/petsc
 
 RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -d /usr/lib/x86_64-linux-gnu/hdf5/serial/ -e "scripts/ubuntu-envs.sh"  -o /home/.moose_profile -r

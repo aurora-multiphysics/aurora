@@ -6,14 +6,18 @@ FROM fedora:33
 
 RUN mkdir /home/scripts
 
-COPY ./scripts/setup-env-fedora.sh /home/scripts
 COPY ./scripts/fedora-envs.sh /home/scripts
+COPY ./scripts/setup-env-fedora.sh /home/scripts
+COPY ./scripts/setup-python-venv.sh /home/scripts
 COPY ./scripts/build-moose.sh /home/scripts
 
 WORKDIR /home
 
 # Get the packages we need
 RUN ./scripts/setup-env-fedora.sh
+
+# Set up python environment
+RUN ./scripts/setup-python-venv.sh -w /home -d env -e moose -f /home/scripts/fedora-envs.sh
 
 # Optional build-arg to specify moose version
 ARG moose_tag=
