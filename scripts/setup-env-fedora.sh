@@ -11,4 +11,4 @@ dnf -y install cmake \
     autoconf automake libtool vim emacs \
     bison flex bison-devel flex-devel \
     python3 python3-devel libtirpc libtirpc-devel \
-    rsync
+    rsync tbb-devel glfw-devel

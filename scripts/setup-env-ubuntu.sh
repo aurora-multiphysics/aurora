@@ -29,4 +29,8 @@ apt-get install -y cmake \
         flex \
         libblas-dev \
         liblapack-dev \
-        libhdf5-dev
+        libhdf5-dev \
+        libeigen3-dev \
+        libglfw3-dev  \
+        libtbb-dev  \
+        pkg-config
