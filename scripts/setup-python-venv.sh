@@ -12,7 +12,8 @@ Help()
     echo "w      Full path to working directory (default: $WORKDIR)"
     echo "d      Set the name of the sub-directory in which to install the env (default: $DIRNAME)"
     echo "e      Set the environment name (default: $ENV)"
-    echo "f      Set the profile file to append (default: ${ENV_FILE})"
+    echo "i      Set the profile file to source (default: ${ENV_IN})"
+    echo "o      Set the profile file to append (default: ${ENV_OUT})"
     echo
 }
 
@@ -20,9 +21,10 @@ Help()
 WORKDIR=$HOME
 DIRNAME="env"
 ENV="moose"
-ENV_FILE="${HOME}/.${ENV}_profile"
+ENV_IN=""
+ENV_OUT="${HOME}/.${ENV}_profile"
 
-while getopts "w:d:e:f:h" option; do
+while getopts "w:d:e:i:o:h" option; do
     case $option in
         h)
             Help
@@ -33,15 +35,34 @@ while getopts "w:d:e:f:h" option; do
             DIRNAME=$OPTARG;;
         e)
             ENV=$OPTARG;;
-        f)
-            ENV_FILE=$OPTARG;;
+        i)
+            ENV_IN=$OPTARG;;
+        o)
+            ENV_OUT=$OPTARG;;
         \?) # Invalid option
             echo "Error: Invalid option"
             exit 1;;
     esac
 done
 
-# Set up directoy
+# Create the profile
+if [ -f $ENV_OUT ]; then
+   echo "File ${ENV_OUT} already exists!"
+   exit 1
+fi
+touch ${ENV_OUT}
+echo "Created ${ENV_OUT}"
+
+# Source another environment first
+if [ -n "$ENV_IN" ]; then
+    echo "Sourcing environment from $ENV_IN"
+    SRC_STR="source ${ENV_IN}"
+    echo ${SRC_STR} >> ${ENV_OUT}
+    echo ${SRC_STR}
+    eval $SRC_STR
+fi
+
+# Set up environment directoy
 ENVDIR="$WORKDIR/$DIRNAME"
 if [ ! -d $ENVDIR ]; then
     mkdir $ENVDIR
@@ -54,13 +75,15 @@ cd $ENVDIR
 python -m venv $ENV
 cd
 
-# Update the profile
-echo "source $ENVDIR/$ENV/bin/activate" >> ${ENV_FILE}
-echo "Updated ${ENV_FILE}"
+# Update profile
+SRC_STR="source $ENVDIR/$ENV/bin/activate"
+echo ${SRC_STR} >> ${ENV_OUT}
+echo "Updated ${ENV_OUT}"
 
 # Start the virtual env
 echo "Launching profile"
-source ${ENV_FILE}
+echo ${SRC_STR}
+eval ${SRC_STR}
 
 # Update pip
 echo "Upgrading pip"
@@ -69,6 +92,5 @@ pip install --upgrade pip
 # Packages for moose
 echo "Installing python packages"
 pip install packaging
-#pip install hit
 
 

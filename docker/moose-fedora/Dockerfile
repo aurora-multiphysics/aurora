@@ -4,8 +4,8 @@
 # Start from Fedora
 FROM fedora:33
 
+# Copy scripts across
 RUN mkdir /home/scripts
-
 COPY ./scripts/fedora-envs.sh /home/scripts
 COPY ./scripts/setup-env-fedora.sh /home/scripts
 COPY ./scripts/setup-python-venv.sh /home/scripts
@@ -17,10 +17,12 @@ WORKDIR /home
 RUN ./scripts/setup-env-fedora.sh
 
 # Set up python environment
-RUN ./scripts/setup-python-venv.sh -w /home -d env -e moose -f /home/scripts/fedora-envs.sh
+RUN ./scripts/setup-python-venv.sh -w /home -d env -e moose -i /home/scripts/fedora-envs.sh -o /home/.moose_base_profile
 
-# Optional build-arg to specify moose version
+# Optional build-arg to specify moose version and cores
 ARG moose_tag=
 ARG moose_git_sha=
 ARG compile_cores=4
-RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -e "scripts/fedora-envs.sh" -o /home/.moose_profile -r
+
+# Build MOOSE
+RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -e /home/.moose_base_profile -o /home/.moose_profile -r

@@ -1,34 +1,20 @@
-# Basic usage:
-# docker build -t moose-ubuntu .
-# Build with tag
-# docker build -t moose-ubuntu:tagname --build-arg moose_tag=tag .
-# Build with git sha
-# docker build -t moose-ubuntu:tagname --build-arg moose_git_sha=gitsha .
-# Build with particular configuration arguments
+# Example usage
+# docker build --no-cache -t moose-ubuntu -f docker/moose-ubuntu/Dockerfile --build-arg compile_cores=8 .
 
-# Basic environment
-FROM ubuntu:20.04
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/London
+# Get base image
+FROM helenbrooks/aurora-base-ubuntu:latest
 
-RUN mkdir /home/scripts
-
-COPY ./scripts/ubuntu-envs.sh /home/scripts
-COPY ./scripts/setup-env-ubuntu.sh /home/scripts
+# Copy files across
 COPY ./scripts/setup-python-venv.sh /home/scripts
 COPY ./scripts/build-moose.sh /home/scripts
 
-WORKDIR /home
-
-# Get the packages we need
-RUN ./scripts/setup-env-ubuntu.sh
-
 # Set up python environment
-RUN ./scripts/setup-python-venv.sh -w /home -d env -e moose -f /home/scripts/ubuntu-envs.sh
+RUN ./scripts/setup-python-venv.sh -w /home -d env -e moose -i /home/env/ubuntu-envs.sh -o /home/.moose_base_profile
 
-# Optional build-arg to specify moose version
+# Optional build-arg to specify moose version and cores
 ARG moose_tag=
 ARG moose_git_sha=
 ARG compile_cores=4
 
-RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -d /usr/lib/x86_64-linux-gnu/hdf5/serial/ -e "scripts/ubuntu-envs.sh"  -o /home/.moose_profile -r
+# Build MOOSE
+RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -d /usr/lib/x86_64-linux-gnu/hdf5/serial/ -e /home/.moose_base_profile  -o /home/.moose_profile -r
