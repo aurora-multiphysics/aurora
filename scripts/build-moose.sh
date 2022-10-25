@@ -226,7 +226,7 @@ fi
 
 # Run tests
 cd ${MOOSE_DIR}/test
-source PATH=$PATH:${MOOSE_DIR}/test
+export PATH=$PATH:${MOOSE_DIR}/test
 ./run_tests -j${MOOSE_JOBS}
 cd ${MOOSE_DIR}/modules
 ./run_tests -j${MOOSE_JOBS}
