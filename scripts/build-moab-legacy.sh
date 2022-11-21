@@ -64,7 +64,7 @@ build_moab()
     make -j$JOBS
     make check
     make install
-
+    
     # Return to starting directory
     cd $ORIGDIR
 }
@@ -131,3 +131,5 @@ if [ -n "$SRC_STR" ]; then
 fi
 
 build_moab
+
+echo "MOAB_DIR=${PACKAGE_INSTALL_DIR}" >>  $ENV_OUTFILE
