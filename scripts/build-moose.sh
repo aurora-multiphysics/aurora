@@ -18,6 +18,7 @@ Help()
     echo "p      Set PETSC installation directory"
     echo "e      Set file from which to source environment"
     echo "o      Set file in which to create moose profile"
+    echo "f      Set MOOSE configuration flags as a string"
     echo "r      Must supply this if user is running as root (e.g. in docker)"
     echo "c      Allow petsc to download cmake"
     echo
@@ -35,9 +36,11 @@ ENV_FILE=""
 ENV_OUTFILE=""
 ROOTUSER=false
 DOWNLOAD_CMAKE=false
+# Sensible default MOOSE configuration, but allow user to decide
+CONFIG_FLAGS="--with-derivative-size=200 --with-ad-indexing-type=global"
 
 # Read arguments
-while getopts "w:t:b:s:j:d:p:e:o:hrc" option; do
+while getopts "w:t:b:s:j:d:p:e:o:f:hrc" option; do
     case $option in
         h)
             Help
@@ -60,6 +63,8 @@ while getopts "w:t:b:s:j:d:p:e:o:hrc" option; do
             ENV_FILE=$OPTARG;;
         o)
             ENV_OUTFILE=$OPTARG;;
+        f)
+            CONFIG_FLAGS=$OPTARG;;
         r)
             ROOTUSER=true;;
         c)
@@ -207,7 +212,9 @@ cd ${MOOSE_DIR}
 METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Configure MOOSE
-./configure --with-derivative-size=200 --with-ad-indexing-type=global
+CONFIG_CMD="./configure ${CONFIG_FLAGS}"
+echo ${CONFIG_CMD}
+eval ${CONFIG_CMD}
 
 # Build MOOSE framework and tests
 cd test
