@@ -2,7 +2,7 @@
 # docker build --no-cache -t aurora-deps-ubuntu -f docker/aurora-deps-ubuntu/Dockerfile --build-arg compile_cores=8 .
 
 # Base image
-FROM helenbrooks/aurora-base-ubuntu:latest
+FROM helenbrooks/aurora-base-ubuntu:latest AS aurora-base
 
 # Copy files across
 COPY ./scripts/build-aurora-deps.sh /home/scripts/build-aurora-deps.sh
@@ -22,3 +22,10 @@ RUN cd /home/scripts  && \
     -i /home/local  \
     -e /home/env/ubuntu-envs.sh \
     -o /home/env/
+
+# Now move to moose build image - multistage to reduce image size
+FROM helenbrooks/moose-ubuntu:latest
+
+# Copy our dependencies and profiles across
+COPY --from=aurora-base /home/local /home/local
+COPY --from=aurora-base /home/env/* /home/env/
