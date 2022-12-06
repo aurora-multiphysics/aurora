@@ -2,7 +2,7 @@
 # docker build --no-cache -t aurora-deps-fedora -f docker/aurora-deps-fedora/Dockerfile --build-arg compile_cores=8 .
 
 # Base image
-FROM helenbrooks/aurora-base-fedora:latest
+FROM helenbrooks/aurora-base-fedora:latest AS aurora-base
 
 # Copy files across
 COPY ./scripts/build-aurora-deps.sh /home/scripts/build-aurora-deps.sh
@@ -14,7 +14,6 @@ ARG compile_cores=4
 # Create a local directory to install packages
 RUN mkdir local
 
-
 # Build all AURORA dependencies
 RUN cd /home/scripts  && \
     HDF5_DIR=$(rpm -ql hdf5-devel | grep libhdf5.so | sed 's/\/libhdf5.so//') \
@@ -23,3 +22,10 @@ RUN cd /home/scripts  && \
     -i /home/local  \
     -e /home/env/fedora-envs.sh \
     -o /home/env/
+
+# Now move to moose build image - multistage to reduce image size
+FROM helenbrooks/moose-fedora:latest
+
+# Copy our dependencies and profiles across
+COPY --from=aurora-base /home/local /home/local
+COPY --from=aurora-base /home/env/* /home/env/

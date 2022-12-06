@@ -13,7 +13,7 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6AF7F09730B3F0A4
 apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
 apt-get update
 apt-get install -y kitware-archive-keyring
-rm /etc/apt/trusted.gpg.d/kitware.gpg 
+rm /etc/apt/trusted.gpg.d/kitware.gpg
 apt-get install -y cmake \
         gcc \
         g++ \
@@ -21,6 +21,7 @@ apt-get install -y cmake \
         git \
         libopenmpi3 \
         python3 \
+        python3-venv \
         python3-dev \
         python3-distutils \
         python-is-python3 \
