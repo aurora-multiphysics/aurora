@@ -212,9 +212,11 @@ cd ${MOOSE_DIR}
 METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Configure MOOSE
-CONFIG_CMD="./configure ${CONFIG_FLAGS}"
-echo ${CONFIG_CMD}
-eval ${CONFIG_CMD}
+if [ -n "${CONFIG_FLAGS}" ]; then
+    CONFIG_CMD="./configure ${CONFIG_FLAGS}"
+    echo ${CONFIG_CMD}
+    eval ${CONFIG_CMD}
+fi
 
 # Build MOOSE framework and tests
 cd test

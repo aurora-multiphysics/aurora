@@ -17,4 +17,4 @@ ARG moose_git_sha=
 ARG compile_cores=4
 
 # Build MOOSE
-RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -d /usr/lib/x86_64-linux-gnu/hdf5/serial/ -e /home/.moose_base_profile  -o /home/.moose_profile -r
+RUN ./scripts/build-moose.sh -w /home -j "$compile_cores" -t "$moose_tag" -s "$moose_git_sha" -d /usr/lib/x86_64-linux-gnu/hdf5/serial/ -e /home/.moose_base_profile  -o /home/.moose_profile -f "" -r
