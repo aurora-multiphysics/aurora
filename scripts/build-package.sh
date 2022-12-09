@@ -256,7 +256,9 @@ create_profile()
         SRC_STR="source $ENV_FILE"
         echo $SRC_STR >>  $ENV_OUTFILE
     done
-    echo "export ${ENV_NAME}_DIR=${PACKAGE_INSTALL_DIR}" >> $ENV_OUTFILE
+		if [ -n "${ENV_NAME}" ]; then
+				echo "export ${ENV_NAME}_DIR=${PACKAGE_INSTALL_DIR}" >> $ENV_OUTFILE
+		fi
     echo "export PATH=\${PATH}:${PACKAGE_INSTALL_DIR}/bin" >> $ENV_OUTFILE
     echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:${PACKAGE_INSTALL_DIR}/lib" >> $ENV_OUTFILE
 }
@@ -402,6 +404,7 @@ build_njoy()
 {
     process_args $*
     PACKAGE=njoy
+    ENV_NAME=
     REPO_NAME=NJOY2016
     PACKAGE_REPO=https://github.com/njoy/NJOY2016.git
     TAG=
@@ -416,6 +419,7 @@ build_openmc()
 
     PACKAGE=openmc
     REPO_NAME=openmc
+		ENV_NAME=
     PACKAGE_REPO=https://github.com/openmc-dev/openmc.git
     TAG=a21174e4f968c07ab791c7b343dc0e07a7ab28b3
     ADDITIONAL_CMAKE_FLAGS=("-DCMAKE_BUILD_TYPE=Release" "-DOPENMC_USE_DAGMC=on" "-DDAGMC_DIR=\${DAGMC_DIR}/lib/cmake")

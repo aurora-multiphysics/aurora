@@ -11,7 +11,7 @@
 #              -f docker/aurora-ubuntu/Dockerfile .
 
 # Get MOOSE image with aurora deps
-FROM helenbrooks/aurora-deps-ubuntu:v.0.3.1
+FROM helenbrooks/aurora-deps-ubuntu:v.0.3.2
 
 # By default 4 cores are used to compile
 ARG compile_cores=4
@@ -25,10 +25,9 @@ ARG coveralls_token=""
 # Branch name for coveralls
 ARG coveralls_branch=""
 
+
 # Install extra packages if we want test coverage
 RUN if "$test_coverage" ; then \
-       apt-get update && \
-       apt-get install -y python3-pip && \
        pip install cpp-coveralls && \
        pip install coveralls && \
        pip install gcovr; \
@@ -39,12 +38,20 @@ COPY ./ /home/aurora/
 
 ENV OPENMC_CROSS_SECTIONS=/home/aurora/data/endfb71_hdf5/cross_sections.xml
 
+# Finally create a profile to set up our environment on startup
+RUN echo "source /home/env/moose_profile" > /home/env/aurora_profile && \
+		echo "source /home/env/openmc_profile" >> /home/env/aurora_profile && \
+		echo "source /home/env/aurora_profile" >> ~/.bashrc
+
+SHELL ["/bin/bash", "-c"]
+
 # Build
 RUN if "$test_coverage" ; then \
        export CXXFLAGS="--coverage $CXXFLAGS"; \
        export CFLAGS="-fprofile-arcs -ftest-coverage"; \
        echo "Generating test coverage"; \
     fi && \
+		source /home/env/aurora_profile && \
     cd /home/aurora/data && \
     tar xzvf endfb71_hdf5.tgz && \
     cd ../openmc/ && \
@@ -73,4 +80,5 @@ RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
 
 # Run examples
 RUN cd /home/aurora/ && \
+		source /home/env/aurora_profile && \
     ./run_tests
