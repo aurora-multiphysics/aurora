@@ -6,8 +6,11 @@
 # MOOSE_DIR        - Root directory of the MOOSE project
 #
 ###############################################################################
+AURORA_DIR          := $(abspath $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))))
+CONTRIB_DIR         := $(AURORA_DIR)/contrib
+MOOSE_SUBMODULE     ?= $(CONTRIB_DIR)/moose
+
 # Use the MOOSE submodule if it exists and MOOSE_DIR is not set
-MOOSE_SUBMODULE    := $(CURDIR)/moose
 ifneq ($(wildcard $(MOOSE_SUBMODULE)/framework/Makefile),)
   MOOSE_DIR        ?= $(MOOSE_SUBMODULE)
 else
