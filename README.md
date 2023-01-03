@@ -18,6 +18,44 @@ For more information on OpenMC see: [https://docs.openmc.org/en/stable/]
 
 [AURORA](https://github.com/aurora-multiphysics/aurora) is licensed under LGPL v2.1, see [here](https://github.com/aurora-multiphysics/aurora/blob/main/LICENSE).
 
+## Citation
+
+If you have used AURORA in your work to produce results, please cite:
+- _H Brooks and A Davis 2023 Plasma Phys. Control. Fusion 65 024002_
+
+  **DOI:** [10.1088/1361-6587/aca998](https://iopscience.iop.org/article/10.1088/1361-6587/aca998)
+  
+  **Bibtex:**
+  ```
+  @article{brooks_aurora,
+  author = {Brooks, H and Davis, A},
+  year = {2022},
+  month = {12},
+  pages = {024002},
+  title = {Scalable multi-physics for fusion reactors with AURORA},
+  volume = {65},
+  journal = {Plasma Physics and Controlled Fusion},
+  doi = {10.1088/1361-6587/aca998}
+  }
+  ```
+If in addition you are performing breeder blanket studies and/or you have used the code [Achlys](https://github.com/aurora-multiphysics/achlys), please also cite:
+
+- _Brooks H, Dixon S and Davis A 2022 Towards Multiphysics Simulations of Fusion Breeder Blankets International Conference on Physics of Reactors 2022 (PHYSOR 2022) / Pittsburgh, PA, May 15-20 (American Nuclear Society) pp 2480–2489_
+
+  **Bibtex:**
+  ```
+  @inproceedings{brooks_physor,
+  author       = "Brooks, Helen and Dixon, Stephen, and Davis, Andrew",
+  title        = {{Towards Multiphysics Simulations of Fusion Breeder Blankets}},
+  booktitle    = {{International Conference on Physics of Reactors 2022 (PHYSOR 2022) / Pittsburgh, PA, May 15-20}},
+  year         = "2022",
+  pages        = "2480-2489",
+  publisher    = "American Nuclear Society",
+  }
+  ```  
+  
+We also recommend that you cite works corresponding to AURORA's primary dependencies: [MOOSE](https://mooseframework.inl.gov/citing.html) and [OpenMC](https://docs.openmc.org/en/stable/publications.html).
+
 ## Installation
 
 We currently provide support for Debian and Redhat flavours of Linux; we have explicitly tested for Ubuntu 20.04 and Fedora 33 using gcc 9.3.0.
