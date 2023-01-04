@@ -8,7 +8,7 @@ MoabMeshTransfer::validParams()
 {
   InputParameters params = MultiAppTransfer::validParams();
 
-  params.addParam<std::string>("apptype_from", "AuroraTestApp","Type of app from which we are taking mesh and systems.");
+  params.addParam<std::string>("apptype_from", "AuroraApp","Type of app from which we are taking mesh and systems.");
   params.addParam<std::string>("apptype_to", "OpenMCApp","Type of app to which we are sending mesh and systems.");
   params.addRequiredParam<std::string>(
       "moabname", "Name of the MoabUserObject to which we are transferring the mesh and systems.");

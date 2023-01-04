@@ -11,7 +11,7 @@
 #
 ###############################################################################
 # Use the MOOSE submodule if it exists and MOOSE_DIR is not set
-MOOSE_SUBMODULE    := $(CURDIR)/../moose
+MOOSE_SUBMODULE    := $(CURDIR)/../contrib/moose
 ifneq ($(wildcard $(MOOSE_SUBMODULE)/framework/Makefile),)
   MOOSE_DIR        ?= $(MOOSE_SUBMODULE)
 else
@@ -26,21 +26,9 @@ include $(FRAMEWORK_DIR)/moose.mk
 
 ################################## MODULES ####################################
 # set desired physics modules equal to 'yes' to enable them
-CHEMICAL_REACTIONS        := no
-CONTACT                   := no
-FLUID_PROPERTIES          := no
 HEAT_CONDUCTION           := yes
-MISC                      := no
-NAVIER_STOKES             := no
-PHASE_FIELD               := no
-RDG                       := no
-RICHARDS                  := no
-SOLID_MECHANICS           := no
-STOCHASTIC_TOOLS          := no
+MISC                      := yes
 TENSOR_MECHANICS          := yes
-XFEM                      := no
-POROUS_FLOW               := no
-LEVEL_SET                 := no
 include           $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
@@ -60,24 +48,10 @@ BUILD_EXEC         := yes
 
 DEP_APPS    ?= $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME))
 
-# Link OpenMC standalone app
-OPENMC_APP_NAME = open_mc
-OPENMC_APP_LIB_NAME = $(OPENMC_APP_NAME)-$(METHOD)
-OPENMC_APP_DIR = $(CURRENT_DIR)/../openmc
-OPENMC_APP_INC = -I$(OPENMC_APP_DIR)/include
-OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_APP_DIR)/lib -L$(OPENMC_APP_DIR)/lib -l$(OPENMC_APP_LIB_NAME)
+include $(CURRENT_DIR)/../config.inc
 
-
-# Link OpenMC App tests
-OPENMC_TEST_DIR = $(OPENMC_APP_DIR)/unit/
-OPENMC_TEST_INC = -I$(OPENMC_TEST_DIR)/include
-OPENMC_TEST_LIB_NAME = $(OPENMC_APP_NAME)-unit-$(METHOD)
-OPENMC_APP_LIB = -Wl,-rpath,$(OPENMC_TEST_DIR)/lib -L$(OPENMC_TEST_DIR)/lib -l$(OPENMC_TEST_LIB_NAME)
-
-include $(OPENMC_APP_DIR)/config.inc
-
-ADDITIONAL_INCLUDES += $(OPENMC_TEST_INC) $(OPENMC_APP_INC) $(OPENMC_INC) $(MOAB_INC) $(HDF5_INC)
-ADDITIONAL_LIBS += $(OPENMC_TEST_LIB) $(OPENMC_APP_LIB) $(OPENMC_LIB) $(MOAB_LIB)
+ADDITIONAL_INCLUDES += $(OPENMC_INC) $(MOAB_INC) $(DAGMC_INC)
+ADDITIONAL_LIBS += $(OPENMC_LIB) $(MOAB_LIB) $(DAGMC_LIB)
 
 include $(FRAMEWORK_DIR)/app.mk
 

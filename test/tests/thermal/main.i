@@ -90,7 +90,6 @@
     execute_on = "timestep_begin"
     input_files = "openmc.i"
     positions = '0   0   0'
-    library_path = ../../../openmc/lib
   []
 []
 
