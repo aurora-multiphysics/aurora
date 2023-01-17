@@ -11,31 +11,39 @@ process_args()
     JOBS=1
     ENV_FILE_LIST=
     ENV_OUTDIR=$HOME
+    HDF5_DIR_IN=""
 
     # Read arguments
     local OPTIND # This line is crucial for this to work as a function
-    while getopts "w:i:b:j:e:o:h" option; do
+    while getopts "w:i:b:j:d:e:o:h" option; do
         case $option in
             h)
                 Help
                 exit;;
             w)
-                WORKDIR=$OPTARG;;
+                WORKDIR=$(realpath $OPTARG);;
             i)
-                INSTALLDIR=$OPTARG;;
+                INSTALLDIR=$(realpath $OPTARG);;
             b)
-                BUILDDIDR=$OPTARG;;
+                BUILDDIDR=$(realpath $OPTARG);;
             j)
                 JOBS=$OPTARG;;
+            d)
+                HDF5_DIR_IN=$OPTARG;;
             e)
-                ENV_FILE_LIST=$OPTARG;;
+                ENV_FILE_LIST=$(for i in `echo $OPTARG`; do printf $(realpath $i),; done);;
             o)
-                ENV_OUTDIR=$OPTARG;;
+                ENV_OUTDIR=$(realpath $OPTARG);;
             \?) # Invalid option
                 echo "Error: Invalid option"
                 exit 1;;
         esac
     done
+
+    if [ -n "$HDF5_DIR_IN" ]; then
+       echo "Setting HDF5 dir to: $HDF5_DIR_IN"
+       export "HDF5_DIR=$HDF5_DIR_IN"
+    fi
 }
 
 Help()
@@ -48,6 +56,7 @@ Help()
     echo "w      Set working directory"
     echo "i      Set installation directory, i.e. installs to  INSTALLDIR/$PACKAGE (default: $INSTALLDIR)"
     echo "j      Set number of build jobs  (default: $JOBS)"
+    echo "d      Provide HDF5 installation directory"
     echo "e      Set file from which to source environment"
     echo "o      Set output directory to create profiles (default:${ENV_OUTDIR} )"
     echo
@@ -250,7 +259,7 @@ create_profile()
     # Create a profile to source
     echo "Creating profile in ${ENV_OUTFILE}"
     touch $ENV_OUTFILE
-    for ENV_FILE in $(printf $ENV_FILE_LIST | xargs -d ',' -n1); do
+    for ENV_FILE in $(printf -- $ENV_FILE_LIST | xargs -d ',' -n1); do
         echo "Sourcing environment from $ENV_FILE"
         source $ENV_FILE
         SRC_STR="source $ENV_FILE"
@@ -364,7 +373,7 @@ build_embree()
     ENV_NAME=EMBREE
     PACKAGE_REPO=https://github.com/embree/embree.git
     TAG=v3.6.1
-    ADDITIONAL_CMAKE_FLAGS=("-DCMAKE_CXX_COMPILER=\$CXX" "-DCMAKE_C_COMPILER=\$CC" "-DEMBREE_ISPC_SUPPORT=0")
+    ADDITIONAL_CMAKE_FLAGS=("-DCMAKE_CXX_COMPILER=\$CXX" "-DCMAKE_C_COMPILER=\$CC" "-DEMBREE_ISPC_SUPPORT=0" "-DEMBREE_TUTORIALS=OFF")
     RUN_TEST_CMD=""
 
     build_cmake_package
