@@ -1,8 +1,10 @@
 # Example usage
 # docker build --no-cache -t moose-ubuntu -f docker/moose-ubuntu/Dockerfile --build-arg compile_cores=8 .
 
+ARG base_image_tag=latest
+
 # Get base image
-FROM helenbrooks/aurora-base-ubuntu:latest
+FROM helenbrooks/aurora-base-ubuntu:$base_image
 
 # Copy files across
 COPY ./scripts/setup-python-venv.sh /home/scripts

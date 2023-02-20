@@ -49,4 +49,5 @@ jobs:
           tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
           file: docker/moose-ubuntu/Dockerfile
           build-args: |
+            base_image=latest
             compile_cores=2
