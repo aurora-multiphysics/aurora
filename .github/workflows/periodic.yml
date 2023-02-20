@@ -1,0 +1,50 @@
+name: PeriodicBuild
+on:
+  workflow_dispatch:
+
+  #schedule:
+  #  branches:
+  #    - main
+  #  # Cron syntax has five fields separated by a space, and each field represents a unit of time.
+  #  # Min hour day-of-month month day-of-week
+  #  - cron: '0 12 * * 1'
+        
+jobs:
+  build-moose-ubuntu:
+    runs-on: ubuntu-latest
+    name: build-moose-ubuntu:
+    steps:
+      # First check out the repository to get the docker file
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Log in to Docker Hub
+      - name: DockerInit 
+        uses: docker/login-action@v2
+        with:
+          username: helenbrooks
+          password: ${{ secrets.DOCKERHUB_SECRET }}
+
+      #- name: Extract metadata (tags, labels) for Docker
+      #  id: meta
+      #  uses: docker/metadata-action@v4
+      #  with:
+      #    images: sdixonukaea/achlys-ubuntu
+
+      - name: DockerBuildPushBase
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-base-ubuntu:github_job_${{github.job}}
+          file: docker/aurora-base-ubuntu/Dockerfile
+
+      #- name: DockerBuildPushMooseUbuntu
+      #  uses: docker/build-push-action@v4
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: helenbrooks/moose-ubuntu:github_job_${{github.job}}
+      #    file: docker/moose-ubuntu/Dockerfile
+      #    build-args: | 
+      #      compile_cores=2
