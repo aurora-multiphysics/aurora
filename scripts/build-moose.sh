@@ -46,7 +46,7 @@ while getopts "w:t:b:s:j:d:p:e:o:f:hrc" option; do
             Help
             exit;;
         w)
-            WORKDIR=$OPTARG;;
+            WORKDIR=$(realpath $OPTARG);;
         t)
             TAG=$OPTARG;;
         b)
@@ -56,13 +56,13 @@ while getopts "w:t:b:s:j:d:p:e:o:f:hrc" option; do
         j)
             JOBS=$OPTARG;;
         d)
-            HDF5_DIR_IN=$OPTARG;;
+            HDF5_DIR_IN=$(realpath $OPTARG);;
         p)
-            PETSC_INSTALL_DIR=$OPTARG;;
+            PETSC_INSTALL_DIR=$(realpath $OPTARG);;
         e)
-            ENV_FILE=$OPTARG;;
+            ENV_FILE=$(realpath $OPTARG);;
         o)
-            ENV_OUTFILE=$OPTARG;;
+            ENV_OUTFILE=$(realpath $OPTARG);;
         f)
             CONFIG_FLAGS=$OPTARG;;
         r)
@@ -235,10 +235,9 @@ fi
 
 # Run tests
 cd ${MOOSE_DIR}/test
-export PATH=$PATH:${MOOSE_DIR}/test
-#./run_tests -j${MOOSE_JOBS}
+./run_tests -j${MOOSE_JOBS}
 cd ${MOOSE_DIR}/modules
-#./run_tests -j${MOOSE_JOBS}
+./run_tests -j${MOOSE_JOBS}
 
 # Unset those OMPI environment variables we set before
 if [ "$ROOTUSER" = true ] ; then
