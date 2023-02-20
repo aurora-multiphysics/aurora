@@ -46,7 +46,7 @@ jobs:
         with:
           context: .
           push: true
-              tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
-              file: docker/moose-ubuntu/Dockerfile
+          tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/moose-ubuntu/Dockerfile
           build-args: |
             compile_cores=2
