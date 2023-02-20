@@ -38,7 +38,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: helenbrooks/aurora-base-ubuntu:github_job_${{github.job}}
+          tags: helenbrooks/aurora-base-ubuntu:github_${{ github.sha }} 
           file: docker/aurora-base-ubuntu/Dockerfile
 
       #- name: DockerBuildPushMooseUbuntu
