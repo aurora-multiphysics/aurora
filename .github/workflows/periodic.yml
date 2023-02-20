@@ -1,6 +1,8 @@
 name: PeriodicBuild
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - 20-periodic-ci
 
   #schedule:
   #  branches:
