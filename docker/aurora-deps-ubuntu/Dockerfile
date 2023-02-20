@@ -24,7 +24,7 @@ RUN cd /home/scripts  && \
     -o /home/env/
 
 # Now move to moose build image - multistage to reduce image size
-FROM helenbrooks/moose-ubuntu:latest
+FROM helenbrooks/moose-ubuntu:v.0.3.2
 
 # Copy our dependencies and profiles across
 COPY --from=aurora-base /home/local /home/local
