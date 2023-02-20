@@ -14,14 +14,14 @@ on:
 jobs:
   build-moose-ubuntu:
     runs-on: ubuntu-latest
-    name: build-moose-ubuntu:
+    name: DockerBuildPushBase
     steps:
       # First check out the repository to get the docker file
       - name: Checkout
         uses: actions/checkout@v2
 
       # Log in to Docker Hub
-      - name: DockerInit 
+      - name: Login
         uses: docker/login-action@v2
         with:
           username: helenbrooks
@@ -33,7 +33,7 @@ jobs:
       #  with:
       #    images: sdixonukaea/achlys-ubuntu
 
-      - name: DockerBuildPushBase
+      - name: BuildPush
         uses: docker/build-push-action@v4
         with:
           context: .
