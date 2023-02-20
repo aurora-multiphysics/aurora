@@ -4,7 +4,7 @@
 ARG base_image_tag=latest
 
 # Get base image
-FROM helenbrooks/aurora-base-ubuntu:$base_image
+FROM helenbrooks/aurora-base-ubuntu:$base_image_tag
 
 # Copy files across
 COPY ./scripts/setup-python-venv.sh /home/scripts
