@@ -10,7 +10,7 @@ on:
   #  # Cron syntax has five fields separated by a space, and each field represents a unit of time.
   #  # Min hour day-of-month month day-of-week
   #  - cron: '0 12 * * 1'
-        
+
 jobs:
   build-moose-ubuntu:
     runs-on: ubuntu-latest
@@ -33,20 +33,20 @@ jobs:
       #  with:
       #    images: sdixonukaea/achlys-ubuntu
 
-      - name: BuildPush
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: helenbrooks/aurora-base-ubuntu:github_workflow_${{ github.run_id }} 
-          file: docker/aurora-base-ubuntu/Dockerfile
-
-      #- name: DockerBuildPushMooseUbuntu
+      #- name: BuildPush
       #  uses: docker/build-push-action@v4
       #  with:
       #    context: .
       #    push: true
-      #    tags: helenbrooks/moose-ubuntu:github_job_${{github.job}}
-      #    file: docker/moose-ubuntu/Dockerfile
-      #    build-args: | 
-      #      compile_cores=2
+      #    tags: helenbrooks/aurora-base-ubuntu:github_workflow_${{ github.run_id }}
+      #    file: docker/aurora-base-ubuntu/Dockerfile
+
+      - name: DockerBuildPushMooseUbuntu
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+              tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
+              file: docker/moose-ubuntu/Dockerfile
+          build-args: |
+            compile_cores=2
