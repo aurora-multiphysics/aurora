@@ -41,13 +41,25 @@ jobs:
       #    tags: helenbrooks/aurora-base-ubuntu:github_workflow_${{ github.run_id }}
       #    file: docker/aurora-base-ubuntu/Dockerfile
 
-      - name: DockerBuildPushMooseUbuntu
+      # - name: DockerBuildPushMooseUbuntu
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
+      #     file: docker/moose-ubuntu/Dockerfile
+      #     build-args: |
+      #       base_image_tag=github_workflow_4225038104
+      #       compile_cores=2
+
+      - name: DockerBuildPushAuroraDepsUbuntu
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
-          file: docker/moose-ubuntu/Dockerfile
+          tags: helenbrooks/aurora-deps-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/aurora-deps-ubuntu/Dockerfile
           build-args: |
-            base_image=latest
+            base_image_tag=latest
+            moose_image_tag=github_workflow_4225038104
             compile_cores=2
