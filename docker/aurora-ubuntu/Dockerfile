@@ -10,8 +10,10 @@
 # docker build -t aurora-ubuntu --build-arg test_coverage=true --build-arg coveralls_token=$COVERALLS_TOKEN \
 #              -f docker/aurora-ubuntu/Dockerfile .
 
-# Get MOOSE image with aurora deps
-FROM helenbrooks/aurora-deps-ubuntu:v.0.3.2
+ARG base_image_tag=latest
+
+# Get image with aurora deps
+FROM helenbrooks/aurora-deps-ubuntu:$base_image_tag
 
 # By default 4 cores are used to compile
 ARG compile_cores=4
