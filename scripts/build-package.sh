@@ -25,13 +25,13 @@ process_args()
             i)
                 INSTALLDIR=$(realpath $OPTARG);;
             b)
-                BUILDDIDR=$(realpath $OPTARG);;
+                BUILDDIR=$(realpath $OPTARG);;
             j)
                 JOBS=$OPTARG;;
             d)
-                HDF5_DIR_IN=$OPTARG;;
+                HDF5_DIR_IN=$(realpath $OPTARG);;
             e)
-                ENV_FILE_LIST=$(for i in `echo $OPTARG`; do printf $(realpath $i),; done);;
+                ENV_FILE_LIST=$OPTARG;;
             o)
                 ENV_OUTDIR=$(realpath $OPTARG);;
             \?) # Invalid option
@@ -238,7 +238,7 @@ set_base_profile()
             echo "Please only pass one base profile"
             exit 1
         fi
-        BASE_PROFILE=${ENV_FILE}
+        BASE_PROFILE=$(realpath ${ENV_FILE})
         echo "BASE_PROFILE=${BASE_PROFILE}"
     done
 }
@@ -259,7 +259,8 @@ create_profile()
     # Create a profile to source
     echo "Creating profile in ${ENV_OUTFILE}"
     touch $ENV_OUTFILE
-    for ENV_FILE in $(printf -- $ENV_FILE_LIST | xargs -d ',' -n1); do
+    for ENV_FILE in $(printf $ENV_FILE_LIST | xargs -d ',' -n1); do
+        ENV_FILE=$(realpath ${ENV_FILE})
         echo "Sourcing environment from $ENV_FILE"
         source $ENV_FILE
         SRC_STR="source $ENV_FILE"
