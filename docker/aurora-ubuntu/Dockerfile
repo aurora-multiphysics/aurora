@@ -15,57 +15,59 @@ ARG base_image_tag=latest
 # Get image with aurora deps
 FROM helenbrooks/aurora-deps-ubuntu:$base_image_tag
 
-# By default 4 cores are used to compile
-ARG compile_cores=4
+RUN /home/local/moab/bin/mbconvert -h
 
-# Should we generate a coverage report
-ARG test_coverage=false
+## By default 4 cores are used to compile
+#ARG compile_cores=4
 
-# Coverage repo token
-ARG coveralls_token=""
+# # Should we generate a coverage report
+# ARG test_coverage=false
 
-# Branch name for coveralls
-ARG coveralls_branch=""
+# # Coverage repo token
+# ARG coveralls_token=""
+
+# # Branch name for coveralls
+# ARG coveralls_branch=""
 
 
-# Install extra packages if we want test coverage
-RUN if "$test_coverage" ; then \
-       pip install cpp-coveralls && \
-       pip install coveralls && \
-       pip install gcovr; \
-    fi
+# # Install extra packages if we want test coverage
+# RUN if "$test_coverage" ; then \
+#        pip install cpp-coveralls && \
+#        pip install coveralls && \
+#        pip install gcovr; \
+#     fi
 
-# Copy entire repository into image
-COPY ./ /home/aurora/
+# # Copy entire repository into image
+# COPY ./ /home/aurora/
 
-RUN cd /home/aurora && \
-    ./scripts/build-aurora.sh -j "$compile_cores" \
-    -e "/home/env/moose_profile,/home/env/openmc_profile" \
-    -o /home/env/aurora_profile \
-    -d /home/aurora
+# RUN cd /home/aurora && \
+#     ./scripts/build-aurora.sh -j "$compile_cores" \
+#     -e "/home/env/moose_profile,/home/env/openmc_profile" \
+#     -o /home/env/aurora_profile \
+#     -d /home/aurora
 
-# Build
-RUN if "$test_coverage" ; then \
-         export CXXFLAGS="--coverage $CXXFLAGS"; \
-         export CFLAGS="-fprofile-arcs -ftest-coverage"; \
-         echo "Generating test coverage"; \
-    fi && \
-    cd /home/aurora && \
-    ./scripts/build-aurora.sh -j "$compile_cores" \
-    -e "/home/env/moose_profile,/home/env/openmc_profile" \
-    -o /home/env/aurora_profile \
-    -d /home/aurora
+# # Build
+# RUN if "$test_coverage" ; then \
+#          export CXXFLAGS="--coverage $CXXFLAGS"; \
+#          export CFLAGS="-fprofile-arcs -ftest-coverage"; \
+#          echo "Generating test coverage"; \
+#     fi && \
+#     cd /home/aurora && \
+#     ./scripts/build-aurora.sh -j "$compile_cores" \
+#     -e "/home/env/moose_profile,/home/env/openmc_profile" \
+#     -o /home/env/aurora_profile \
+#     -d /home/aurora
 
-# Generate test coverage report using coveralls and upload
- RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
-        echo "Uploading test coverage to coveralls"; \
-        export COVERALLS_REPO_TOKEN="$coveralls_token" && \
-        export CI_BRANCH="$coveralls_branch" && \
-        cd /home/aurora/ && \
-        cpp-coveralls -i src/ -i include/ -i openmc/src/ -i openmc/include/ --exclude-pattern "/usr/*" --dump cpp_cov.json && \
-        coveralls --merge=cpp_cov.json; \
-     elif  "$test_coverage"  ; then \
-        echo "Test coverage set to true but no coveralls token, using govr" && \
-        cd /home/aurora/ && \
-        gcovr -e src/main.C -e openmc/unit/ -e unit/ -e openmc/src/main.C -e test -e openmc/test build/ openmc/build/; \
-     fi
+# # Generate test coverage report using coveralls and upload
+#  RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
+#         echo "Uploading test coverage to coveralls"; \
+#         export COVERALLS_REPO_TOKEN="$coveralls_token" && \
+#         export CI_BRANCH="$coveralls_branch" && \
+#         cd /home/aurora/ && \
+#         cpp-coveralls -i src/ -i include/ -i openmc/src/ -i openmc/include/ --exclude-pattern "/usr/*" --dump cpp_cov.json && \
+#         coveralls --merge=cpp_cov.json; \
+#      elif  "$test_coverage"  ; then \
+#         echo "Test coverage set to true but no coveralls token, using govr" && \
+#         cd /home/aurora/ && \
+#         gcovr -e src/main.C -e openmc/unit/ -e unit/ -e openmc/src/main.C -e test -e openmc/test build/ openmc/build/; \
+#      fi
