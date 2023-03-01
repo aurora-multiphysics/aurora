@@ -27,11 +27,11 @@ jobs:
           username: helenbrooks
           password: ${{ secrets.DOCKERHUB_SECRET }}
 
-      #- name: Extract metadata (tags, labels) for Docker
-      #  id: meta
-      #  uses: docker/metadata-action@v4
-      #  with:
-      #    images: sdixonukaea/achlys-ubuntu
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: helenbrooks/aurora-deps-ubuntu
 
       #- name: BuildPush
       #  uses: docker/build-push-action@v4
