@@ -13,7 +13,7 @@ on:
 
 jobs:
   build-moose-ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: DockerBuildPushBase
     steps:
       # First check out the repository to get the docker file
