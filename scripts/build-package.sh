@@ -163,6 +163,15 @@ build_autotools_package()
     # Check package-specific environment variables are set
     package_check
 
+   # Enter workdir
+    if [ ! -d "$WORKDIR" ] ; then
+        echo "$WORKDIR is not a directory!"
+        echo "Please set working directory through the -w flag"
+        Help
+        exit 1
+    fi
+    cd $WORKDIR
+
     # Place to build
     echo "Building $PACKAGE in ${PACKAGE_DIR}"
     if [ ! -d ${PACKAGE_DIR} ]; then
@@ -451,38 +460,38 @@ build_aurora_deps()
                -e ${BASE_PROFILE} \
                -o ${ENV_OUTDIR}
 
-    # Build Embree
-    build_embree -w $WORKDIR \
-                 -j $JOBS \
-                 -i $INSTALLDIR  \
-                 -e ${BASE_PROFILE} \
-                 -o ${ENV_OUTDIR}
+    # # Build Embree
+    # build_embree -w $WORKDIR \
+    #              -j $JOBS \
+    #              -i $INSTALLDIR  \
+    #              -e ${BASE_PROFILE} \
+    #              -o ${ENV_OUTDIR}
 
-    # Build DoubleDown
-    build_dd -w $WORKDIR \
-             -j $JOBS \
-             -i $INSTALLDIR  \
-             -e "${ENV_OUTDIR}/moab_profile,${ENV_OUTDIR}/embree_profile" \
-             -o ${ENV_OUTDIR}
+    # # Build DoubleDown
+    # build_dd -w $WORKDIR \
+    #          -j $JOBS \
+    #          -i $INSTALLDIR  \
+    #          -e "${ENV_OUTDIR}/moab_profile,${ENV_OUTDIR}/embree_profile" \
+    #          -o ${ENV_OUTDIR}
 
-    # Build DagMC
-    build_dagmc -w  $WORKDIR \
-                -j $JOBS \
-                -i $INSTALLDIR \
-                -e "${ENV_OUTDIR}/double-down_profile" \
-                -o ${ENV_OUTDIR}
+    # # Build DagMC
+    # build_dagmc -w  $WORKDIR \
+    #             -j $JOBS \
+    #             -i $INSTALLDIR \
+    #             -e "${ENV_OUTDIR}/double-down_profile" \
+    #             -o ${ENV_OUTDIR}
 
-    # Build NJOY
-    build_njoy -w $WORKDIR \
-               -j $JOBS \
-               -i $INSTALLDIR  \
-               -e ${BASE_PROFILE} \
-               -o ${ENV_OUTDIR}
+    # # Build NJOY
+    # build_njoy -w $WORKDIR \
+    #            -j $JOBS \
+    #            -i $INSTALLDIR  \
+    #            -e ${BASE_PROFILE} \
+    #            -o ${ENV_OUTDIR}
 
-    # Build OpenMC
-    build_openmc -w $WORKDIR \
-                 -j $JOBS \
-                 -i $INSTALLDIR  \
-                 -e "${ENV_OUTDIR}/njoy_profile,${ENV_OUTDIR}/dagmc_profile" \
-                 -o ${ENV_OUTDIR}
+    # # Build OpenMC
+    # build_openmc -w $WORKDIR \
+    #              -j $JOBS \
+    #              -i $INSTALLDIR  \
+    #              -e "${ENV_OUTDIR}/njoy_profile,${ENV_OUTDIR}/dagmc_profile" \
+    #              -o ${ENV_OUTDIR}
 }

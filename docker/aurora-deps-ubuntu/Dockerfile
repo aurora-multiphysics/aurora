@@ -1,12 +1,11 @@
 # Example usage
 # docker build --no-cache -t aurora-deps-ubuntu -f docker/aurora-deps-ubuntu/Dockerfile --build-arg compile_cores=8 .
 
-#ARG base_image_tag=latest
+ARG base_image_tag=latest
 ARG moose_image_tag=latest
 
 # Get base image
-#FROM helenbrooks/aurora-base-ubuntu:$base_image_tag  AS aurora-base
-FROM helenbrooks/moose-ubuntu:$moose_image_tag
+FROM helenbrooks/aurora-base-ubuntu:$base_image_tag  AS aurora-base
 
 # Copy files across
 COPY ./scripts/build-aurora-deps.sh /home/scripts/build-aurora-deps.sh
