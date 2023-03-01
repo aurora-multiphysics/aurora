@@ -460,38 +460,38 @@ build_aurora_deps()
                -e ${BASE_PROFILE} \
                -o ${ENV_OUTDIR}
 
-    # # Build Embree
-    # build_embree -w $WORKDIR \
-    #              -j $JOBS \
-    #              -i $INSTALLDIR  \
-    #              -e ${BASE_PROFILE} \
-    #              -o ${ENV_OUTDIR}
+    # Build Embree
+    build_embree -w $WORKDIR \
+                 -j $JOBS \
+                 -i $INSTALLDIR  \
+                 -e ${BASE_PROFILE} \
+                 -o ${ENV_OUTDIR}
 
-    # # Build DoubleDown
-    # build_dd -w $WORKDIR \
-    #          -j $JOBS \
-    #          -i $INSTALLDIR  \
-    #          -e "${ENV_OUTDIR}/moab_profile,${ENV_OUTDIR}/embree_profile" \
-    #          -o ${ENV_OUTDIR}
+    # Build DoubleDown
+    build_dd -w $WORKDIR \
+             -j $JOBS \
+             -i $INSTALLDIR  \
+             -e "${ENV_OUTDIR}/moab_profile,${ENV_OUTDIR}/embree_profile" \
+             -o ${ENV_OUTDIR}
 
-    # # Build DagMC
-    # build_dagmc -w  $WORKDIR \
-    #             -j $JOBS \
-    #             -i $INSTALLDIR \
-    #             -e "${ENV_OUTDIR}/double-down_profile" \
-    #             -o ${ENV_OUTDIR}
+    # Build DagMC
+    build_dagmc -w  $WORKDIR \
+                -j $JOBS \
+                -i $INSTALLDIR \
+                -e "${ENV_OUTDIR}/double-down_profile" \
+                -o ${ENV_OUTDIR}
 
-    # # Build NJOY
-    # build_njoy -w $WORKDIR \
-    #            -j $JOBS \
-    #            -i $INSTALLDIR  \
-    #            -e ${BASE_PROFILE} \
-    #            -o ${ENV_OUTDIR}
+    # Build NJOY
+    build_njoy -w $WORKDIR \
+               -j $JOBS \
+               -i $INSTALLDIR  \
+               -e ${BASE_PROFILE} \
+               -o ${ENV_OUTDIR}
 
-    # # Build OpenMC
-    # build_openmc -w $WORKDIR \
-    #              -j $JOBS \
-    #              -i $INSTALLDIR  \
-    #              -e "${ENV_OUTDIR}/njoy_profile,${ENV_OUTDIR}/dagmc_profile" \
-    #              -o ${ENV_OUTDIR}
+    # Build OpenMC
+    build_openmc -w $WORKDIR \
+                 -j $JOBS \
+                 -i $INSTALLDIR  \
+                 -e "${ENV_OUTDIR}/njoy_profile,${ENV_OUTDIR}/dagmc_profile" \
+                 -o ${ENV_OUTDIR}
 }
