@@ -367,7 +367,7 @@ build_moab()
     ENV_NAME=MOAB
     PACKAGE_REPO=https://bitbucket.org/fathomteam/moab
     TAG=Version5.2.0
-    ADDITIONAL_CONFIG_FLAGS=("--with-hdf5=\${HDF5_DIR}" "--enable-optimize" "--enable-shared" "--disable-debug")
+    ADDITIONAL_CONFIG_FLAGS=("--with-hdf5=\${HDF5_DIR}" "--enable-shared" "--disable-debug")
     RUN_TEST_CMD="make check"
 
     build_autotools_package
