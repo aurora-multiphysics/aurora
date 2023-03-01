@@ -63,12 +63,12 @@ jobs:
       #       base_image_tag=latest
       #       compile_cores=2
 
-       - name: DockerBuildPushAuroraUbuntu
-         uses: docker/build-push-action@v4
-         with:
-           context: .
-           push: true
-           tags: helenbrooks/aurora-ubuntu:github_workflow_${{ github.run_id }}
-           file: docker/aurora-ubuntu/Dockerfile
-           build-args: |
-             base_image_tag=github_workflow_4302563358
+      - name: DockerBuildPushAuroraUbuntu
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/aurora-ubuntu/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_4302563358
