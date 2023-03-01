@@ -67,3 +67,4 @@ jobs:
           file: docker/aurora-ubuntu/Dockerfile
           build-args: |
             base_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2

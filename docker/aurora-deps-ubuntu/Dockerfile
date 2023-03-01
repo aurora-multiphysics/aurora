@@ -28,9 +28,9 @@ RUN cd /home/scripts  && \
 
 RUN /home/local/moab/bin/mbconvert -h
 
-## Now move to moose build image - multistage to reduce image size
-#FROM helenbrooks/moose-ubuntu:$moose_image_tag
+# Now move to moose build image - multistage to reduce image size
+FROM helenbrooks/moose-ubuntu:$moose_image_tag
 
-## Copy our dependencies and profiles across
-#COPY --from=aurora-base /home/local /home/local
-#COPY --from=aurora-base /home/env/* /home/env/
+# Copy our dependencies and profiles across
+COPY --from=aurora-base /home/local /home/local
+COPY --from=aurora-base /home/env/* /home/env/
