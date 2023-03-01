@@ -55,6 +55,7 @@ jobs:
           file: docker/aurora-deps-ubuntu/Dockerfile
           build-args: |
             base_image_tag=github_workflow_${{ github.run_id }}
+            moose_image_tag=github_workflow_4225038104
             compile_cores=2
 
       - name: DockerBuildPushAuroraUbuntu
