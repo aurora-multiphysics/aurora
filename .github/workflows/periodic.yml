@@ -8,9 +8,6 @@ on:
     # Cron syntax has five fields separated by a space, and each field represents a unit of time.
     # Min hour day-of-month month day-of-week
     - cron: '0 12 * * 4'
-    branches:
-      - 20-periodic-ci
-
 
 jobs:
   build-moose-ubuntu:
