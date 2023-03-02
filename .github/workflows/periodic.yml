@@ -34,15 +34,15 @@ jobs:
           file: docker/aurora-base-ubuntu/Dockerfile
 
       - name: DockerBuildPushMooseUbuntu
-         uses: docker/build-push-action@v4
-         with:
-           context: .
-           push: true
-           tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
-           file: docker/moose-ubuntu/Dockerfile
-           build-args: |
-             base_image_tag=github_workflow_${{ github.run_id }}
-             compile_cores=2
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/moose-ubuntu/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
 
       - name: DockerBuildPushAuroraDepsUbuntu
         uses: docker/build-push-action@v4
