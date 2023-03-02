@@ -4,12 +4,12 @@ on:
     branches:
       - 20-periodic-ci
 
-  #schedule:
-  #  branches:
-  #    - main
-  #  # Cron syntax has five fields separated by a space, and each field represents a unit of time.
-  #  # Min hour day-of-month month day-of-week
-  #  - cron: '0 12 * * 1'
+  schedule:
+    branches:
+      - 20-periodic-ci
+    # Cron syntax has five fields separated by a space, and each field represents a unit of time.
+    # Min hour day-of-month month day-of-week
+    - cron: '0 12 * * 4'
 
 jobs:
   build-moose-ubuntu:
@@ -35,16 +35,16 @@ jobs:
           tags: helenbrooks/aurora-base-ubuntu:github_workflow_${{ github.run_id }}
           file: docker/aurora-base-ubuntu/Dockerfile
 
-      # - name: DockerBuildPushMooseUbuntu
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     push: true
-      #     tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
-      #     file: docker/moose-ubuntu/Dockerfile
-      #     build-args: |
-      #       base_image_tag=github_workflow_4225038104
-      #       compile_cores=2
+      - name: DockerBuildPushMooseUbuntu
+         uses: docker/build-push-action@v4
+         with:
+           context: .
+           push: true
+           tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
+           file: docker/moose-ubuntu/Dockerfile
+           build-args: |
+             base_image_tag=github_workflow_${{ github.run_id }}
+             compile_cores=2
 
       - name: DockerBuildPushAuroraDepsUbuntu
         uses: docker/build-push-action@v4
@@ -55,7 +55,7 @@ jobs:
           file: docker/aurora-deps-ubuntu/Dockerfile
           build-args: |
             base_image_tag=github_workflow_${{ github.run_id }}
-            moose_image_tag=github_workflow_4225038104
+            moose_image_tag=github_workflow_${{ github.run_id }}
             compile_cores=2
 
       - name: DockerBuildPushAuroraUbuntu
