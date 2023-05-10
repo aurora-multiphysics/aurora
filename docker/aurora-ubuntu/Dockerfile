@@ -46,7 +46,7 @@ RUN if "$test_coverage" ; then \
     cd /home/aurora && \
     ./scripts/build-aurora.sh -j "$compile_cores" \
     -e "/home/env/moose_profile,/home/env/openmc_profile" \
-    -o /home/env/aurora_profile \
+    -o /home/env/ \
     -d /home/aurora
 
 # Generate test coverage report using coveralls and upload

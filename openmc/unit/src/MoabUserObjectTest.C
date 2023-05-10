@@ -65,8 +65,9 @@ TEST_F(MoabUserObjectTest, zeroSolution)
   // Normally generates a warning, but in these unit tests
   // mooseWarning throws, which is handled safely and returns false
   std::vector<double> zeroSol(nElem,0.);
+  Moose::_throw_on_warning = true;
   EXPECT_FALSE(moabUOPtr->setSolution(var_name,zeroSol,1.0,false,false));
-
+  Moose::_throw_on_warning = false;
 }
 
 // Repeat for different lengthscale
@@ -359,13 +360,8 @@ TEST_F(FindSurfsNodalTemp, nodalTemperature)
   ASSERT_TRUE(setProblem());
   ASSERT_NO_THROW(moabUOPtr->initBinningData());
 
-  // Fix due to a warning which throws
-  Moose::_throw_on_error = false;
-
   // Find the surfaces
   ASSERT_TRUE(moabUOPtr->update());
-
-  Moose::_throw_on_error = true;
 
   // Check groups, volumes and surfaces
   unsigned int nVol=4;
