@@ -18,60 +18,59 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-  #     # Log in to Docker Hub
-  #     - name: Login
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: helenbrooks
-  #         password: ${{ secrets.DOCKERHUB_SECRET }}
+      # Log in to Docker Hub
+      - name: Login
+        uses: docker/login-action@v2
+        with:
+          username: helenbrooks
+          password: ${{ secrets.DOCKERHUB_SECRET }}
 
-  #     - name: BuildPush
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         push: true
-  #         tags: helenbrooks/aurora-base-ubuntu:github_workflow_${{ github.run_id }}
-  #         file: docker/aurora-base-ubuntu/Dockerfile
+      - name: BuildPush
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-base-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/aurora-base-ubuntu/Dockerfile
 
-  #     - name: DockerBuildPushMooseUbuntu
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         push: true
-  #         tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
-  #         file: docker/moose-ubuntu/Dockerfile
-  #         build-args: |
-  #           base_image_tag=github_workflow_${{ github.run_id }}
-  #           compile_cores=2
+      - name: DockerBuildPushMooseUbuntu
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/moose-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/moose-ubuntu/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
 
-  #     - name: DockerBuildPushAuroraDepsUbuntu
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         push: true
-  #         tags: helenbrooks/aurora-deps-ubuntu:github_workflow_${{ github.run_id }}
-  #         file: docker/aurora-deps-ubuntu/Dockerfile
-  #         build-args: |
-  #           base_image_tag=github_workflow_${{ github.run_id }}
-  #           moose_image_tag=github_workflow_${{ github.run_id }}
-  #           compile_cores=2
+      - name: DockerBuildPushAuroraDepsUbuntu
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-deps-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/aurora-deps-ubuntu/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            moose_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
 
-  #     - name: DockerBuildPushAuroraUbuntu
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: .
-  #         push: true
-  #         tags: helenbrooks/aurora-ubuntu:github_workflow_${{ github.run_id }}
-  #         file: docker/aurora-ubuntu/Dockerfile
-  #         build-args: |
-  #           base_image_tag=github_workflow_${{ github.run_id }}
-  #           compile_cores=2
+      - name: DockerBuildPushAuroraUbuntu
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-ubuntu:github_workflow_${{ github.run_id }}
+          file: docker/aurora-ubuntu/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
 
   build-fedora:
     runs-on: ubuntu-20.04
     name: DockerBuildPushFedoraBase
     steps:
-      # First check out the repository to get the docker file
       - name: Checkout
         uses: actions/checkout@v3
 
