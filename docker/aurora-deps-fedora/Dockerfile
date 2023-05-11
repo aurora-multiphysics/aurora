@@ -1,8 +1,11 @@
 # Example usage
 # docker build --no-cache -t aurora-deps-fedora -f docker/aurora-deps-fedora/Dockerfile --build-arg compile_cores=8 .
 
+ARG base_image_tag=latest
+ARG moose_image_tag=latest
+
 # Base image
-FROM helenbrooks/aurora-base-fedora:latest AS aurora-base
+FROM helenbrooks/aurora-base-fedora:$base_image_tag AS aurora-base
 
 # Copy files across
 COPY ./scripts/build-aurora-deps.sh /home/scripts/build-aurora-deps.sh
@@ -24,7 +27,7 @@ RUN cd /home/scripts  && \
     -o /home/env/
 
 # Now move to moose build image - multistage to reduce image size
-FROM helenbrooks/moose-fedora:v.0.3.2
+FROM helenbrooks/moose-fedora:$moose_image_tag
 
 # Copy our dependencies and profiles across
 COPY --from=aurora-base /home/local /home/local

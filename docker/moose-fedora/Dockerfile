@@ -1,8 +1,10 @@
 # Example usage
 # docker build --no-cache -t moose-fedora -f docker/moose-fedora/Dockerfile --build-arg compile_cores=8 .
 
+ARG base_image_tag=latest
+
 # Get base image
-FROM helenbrooks/aurora-base-fedora:latest
+FROM helenbrooks/aurora-base-fedora:$base_image_tag
 
 # Copy scripts across
 COPY ./scripts/setup-python-venv.sh /home/scripts

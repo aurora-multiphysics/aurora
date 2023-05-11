@@ -26,8 +26,6 @@ RUN cd /home/scripts  && \
     -e /home/env/ubuntu-envs.sh \
     -o /home/env/
 
-RUN /home/local/moab/bin/mbconvert -h
-
 # Now move to moose build image - multistage to reduce image size
 FROM helenbrooks/moose-ubuntu:$moose_image_tag
 
