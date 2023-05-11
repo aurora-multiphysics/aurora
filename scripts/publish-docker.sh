@@ -3,8 +3,8 @@
 set -e
 
 TAG=v.0.3.2-pre
-JOBS=4
-RELEASE=0
+JOBS=64
+RELEASE=1
 
 # Ubuntu build
 docker build -t helenbrooks/aurora-base-ubuntu:$TAG -f docker/aurora-base-ubuntu/Dockerfile .
