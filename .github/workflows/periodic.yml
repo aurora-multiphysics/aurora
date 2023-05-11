@@ -10,13 +10,13 @@ on:
   #  - cron: '0 12 * * 4'
 
 jobs:
-  # build-ubuntu:
-  #   runs-on: ubuntu-20.04
-  #   name: DockerBuildPushUbuntuBase
-  #   steps:
-  #     # First check out the repository to get the docker file
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  build-ubuntu:
+    runs-on: ubuntu-20.04
+    name: DockerBuildPushUbuntuBase
+    steps:
+      # First check out the repository to get the docker file
+      - name: Checkout
+        uses: actions/checkout@v3
 
   #     # Log in to Docker Hub
   #     - name: Login
