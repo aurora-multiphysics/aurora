@@ -85,7 +85,6 @@ fi
 export MOOSE_DIR=$WORKDIR/moose
 export PETSC_ARCH=arch-moose
 export MOOSE_JOBS=$JOBS
-export HDF5_DIR=${HDF5_DIR_IN}
 
 # Set build strings from user-provided arguments
 PETSC_BUILD_DIR=$MOOSE_DIR/petsc
@@ -97,10 +96,9 @@ if [ -n "$PETSC_INSTALL_DIR" ]; then
 else
     export PETSC_DIR=$MOOSE_DIR/petsc
 fi
-if [ -n "$HDF5_DIR" ]; then
-    echo "HDF5 installation location was set using HDF5_DIR=$HDF5_DIR"
-    HDF5_STR="--with-hdf5-dir=$HDF5_DIR"
-    HDF5_SRC_STR="HDF5_DIR=$HDF5_DIR"
+if [ -n "$HDF5_DIR_IN" ]; then
+    echo "HDF5 installation location was set using HDF5_DIR=$HDF5_DIR_IN"
+    HDF5_STR="--with-hdf5-dir=$HDF5_DIR_IN"
 fi
 if [ "$DOWNLOAD_CMAKE" = true ] ; then
     echo "User provided -c argument: PETSC will install cmake"
@@ -128,9 +126,6 @@ fi
 touch $ENV_OUTFILE
 if [ -n "$SRC_STR" ]; then
     echo $SRC_STR >>  $ENV_OUTFILE
-fi
-if [ -n "$HDF5_SRC_STR" ]; then
-    echo $HDF5_SRC_STR >>  $ENV_OUTFILE
 fi
 echo "export MOOSE_JOBS=$MOOSE_JOBS" >> $ENV_OUTFILE
 echo "export MOOSE_DIR=$MOOSE_DIR" >> $ENV_OUTFILE
