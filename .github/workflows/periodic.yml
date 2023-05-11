@@ -67,10 +67,12 @@ jobs:
             base_image_tag=github_workflow_${{ github.run_id }}
             compile_cores=2
 
+
   build-fedora:
     runs-on: ubuntu-20.04
     name: DockerBuildPushFedoraBase
     steps:
+      # First check out the repository to get the docker file
       - name: Checkout
         uses: actions/checkout@v3
 
