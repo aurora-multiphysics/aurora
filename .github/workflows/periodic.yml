@@ -82,34 +82,34 @@ jobs:
           push: true
           tags: helenbrooks/aurora-base-fedora:github_workflow_${{ github.run_id }}
           file: docker/aurora-base-fedora/Dockerfile
-       - name: DockerBuildPushMooseFedora
-         uses: docker/build-push-action@v4
-         with:
-           context: .
-           push: true
-           tags: helenbrooks/moose-fedora:github_workflow_${{ github.run_id }}
-           file: docker/moose-fedora/Dockerfile
-           build-args: |
-             base_image_tag=github_workflow_${{ github.run_id }}
-             compile_cores=2
-       - name: DockerBuildPushAuroraDepsFedora
-         uses: docker/build-push-action@v4
-         with:
-           context: .
-           push: true
-           tags: helenbrooks/aurora-deps-fedora:github_workflow_${{ github.run_id }}
-           file: docker/aurora-deps-fedora/Dockerfile
-           build-args: |
-             base_image_tag=github_workflow_${{ github.run_id }}
-             moose_image_tag=github_workflow_${{ github.run_id }}
-             compile_cores=2
-       - name: DockerBuildPushAuroraFedora
-         uses: docker/build-push-action@v4
-         with:
-           context: .
-           push: true
-           tags: helenbrooks/aurora-fedora:github_workflow_${{ github.run_id }}
-           file: docker/aurora-fedora/Dockerfile
-           build-args: |
-             base_image_tag=github_workflow_${{ github.run_id }}
-             compile_cores=2
+      - name: DockerBuildPushMooseFedora
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/moose-fedora:github_workflow_${{ github.run_id }}
+          file: docker/moose-fedora/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
+      - name: DockerBuildPushAuroraDepsFedora
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-deps-fedora:github_workflow_${{ github.run_id }}
+          file: docker/aurora-deps-fedora/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            moose_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
+      - name: DockerBuildPushAuroraFedora
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: helenbrooks/aurora-fedora:github_workflow_${{ github.run_id }}
+          file: docker/aurora-fedora/Dockerfile
+          build-args: |
+            base_image_tag=github_workflow_${{ github.run_id }}
+            compile_cores=2
