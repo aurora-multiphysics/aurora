@@ -212,9 +212,13 @@ MoabUserObject::initMOAB()
   if(rval!=moab::MB_SUCCESS)
     mooseError("Failed to create mesh set");
 
+  // MOAB metadata
   rval = createTags();
   if(rval!=moab::MB_SUCCESS)
     mooseError("Could not set up tags");
+
+  // Query Moose mesh for sidesets to which we should assign BCs
+  findDAGBoundaries();
 
   std::map<dof_id_type,moab::EntityHandle> node_id_to_handle;
   rval = createNodes(node_id_to_handle);
@@ -286,19 +290,29 @@ MoabUserObject::findDAGBoundaries()
   boundary_info_ptr = &mesh().get_boundary_info();
 
   // Retrieve each userobject in dag_surface_names
+  for (const auto& bc_name : dag_surface_names) {
+    // Retrieve DAG Surface User object
+    auto& dag_bc = problem().getUserObject<DagSurfaceUserObject>(bc_name);
 
-  // Upcast to DagSurfaceUserObject
+    // Retrieve BC type
+    DagBoundaryType dag_bc_type = dag_bc.get_boundary_type();
 
-  // Get the surface type
+    // Get the libmesh sideset surface boundary names
+    auto sideset_names = dag_bc.get_boundary_names();
+    for(const auto& name : sideset_names){
+      // Look up libmesh surface boundary id
+      auto sideset_id	= boundary_info_ptr->get_id_by_name(name);
 
-  // Get the libmesh surface boundary names
-
-  // Get the libmesh boundary ids
-
-  // Map each id to a type
-  // check if this id was already added
-  //boundary_id_to_type[id] = type
-
+      // Check if this sidset already has a DAG BC
+      if (boundary_id_to_type.find(sideset_id)!=boundary_id_to_type.end()){
+        std::string err = "Multiple DAG BCs applied to sideset with id "
+          +std::to_string(sideset_id);
+        mooseError(err);
+      }
+      // Map each sideset id to a type
+      boundary_id_to_type[sideset_id] = dag_bc_type;
+    }
+  }
 }
 
 void
@@ -517,8 +531,8 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
         // Save the handle for adding to entity sets
         block_elems.insert(ent);
 
-        // // Check if this element has faces participates in any boundaries
-        // findElemBoundaries(elem,ent);
+        // Check if this element has faces participates in any boundaries
+        findElemBoundaries(elem,ent);
       } // End loop over sub-tetrahedra for current elem
 
     } // End loop over elems in this block
@@ -543,7 +557,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
   }
 }
 
-void findElemBoundaries(const Elem& elem, moab::EntityHandle ent)
+void MoabUserObject::findElemBoundaries(const Elem& elem, moab::EntityHandle ent)
 {
   mooseError("Not yet implemented");
   // // Check if this element participates in a boundary
@@ -596,10 +610,12 @@ void findElemBoundaries(const Elem& elem, moab::EntityHandle ent)
 bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
                                        std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs)
 {
+  // Sanity check
+  if(!boundary_pairs.empty())
+    mooseError("Please provide empty vector as argument.");
+
   mooseError("Not yet implemented");
-  // // Sanity check
-  // if(!boundary_pairs.empty())
-  //   mooseError("Please provide empty vector as argument.");
+
 
   // // Loop over faces
   // unsigned int n_sides =elem.n_sides();

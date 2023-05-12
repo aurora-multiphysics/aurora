@@ -12,10 +12,10 @@ DagSurfaceUserObject::validParams()
 
   MooseEnum dag_bc_types("Vacuum Reflecting White Periodic Graveyard");
   params.addRequiredParam<MooseEnum>(
-      "dag_bc_type",
+      "boundary_type",
       dag_bc_types,
       "Specify the type of DAGMC boundary coundition. Valid types are: Graveyard, Vacuum, Reflecting, White, Periodic");
-  params.addRequiredParam<std::vector<BoundaryName>>(
+  params.addRequiredParam<std::vector<std::string>>(
       "boundary_names",
       "Specify the boundary ids or names on which to apply this DagMC boundary condition");
   return params;
@@ -23,8 +23,8 @@ DagSurfaceUserObject::validParams()
 
 // Constructor
 DagSurfaceUserObject::DagSurfaceUserObject(const InputParameters & parameters) :
-  UserObject(parameters)
-  //, boundary_type(Utility::string_to_enum<DagBoundaryType>(getParam<MooseEnum>("boundary_type")))
-  //,  boundary_names(getParam<std::vector<BoundaryName>("boundary_names"))
+  UserObject(parameters),
+  boundary_type_(DagBoundaryType(int(getParam<MooseEnum>("boundary_type")))),
+  boundary_names_(getParam<std::vector<std::string>>("boundary_names"))
 {
 }

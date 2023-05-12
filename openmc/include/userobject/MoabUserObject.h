@@ -30,7 +30,6 @@ struct MOABMaterialProperties{
 // Forward Declarations
 class MoabUserObject;
 
-
 /**
     \brief UserObject class which wraps a moab::Interface pointer.
 
@@ -123,7 +122,6 @@ private:
   moab::ErrorCode createNodes(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
   /// Helper method to create MOAB elements
   void createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to_handle);
-
 
   /// Helper method to find which faces of an element participate in a boundary
   void findElemBoundaries(const Elem& elem, moab::EntityHandle ent);
@@ -327,8 +325,8 @@ private:
   /// Save the first tet entity handle
   moab::EntityHandle offset;
 
-  // /// Map from libmesh boundary id to DAGMC surface type
-  // std::map<boundary_id_type, DagBoundaryType > boundary_id_to_type;
+  /// Map from libmesh boundary id to DAGMC surface type
+  std::map<boundary_id_type, int > boundary_id_to_type;
 
   // Data members relating to binning in temperature
 

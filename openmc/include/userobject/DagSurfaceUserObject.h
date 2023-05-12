@@ -27,18 +27,16 @@ class DagSurfaceUserObject : public UserObject
   /// Override MOOSE virtual method to do nothing
   virtual void threadJoin(const UserObject & /*uo*/){};
 
-  // /// Return the type
-  DagBoundaryType get_boundary_type() const { return boundary_type; };
+  /// Return the type
+  DagBoundaryType get_boundary_type() const { return boundary_type_; };
   /// Return the boundary ids
-  std::vector<boundary_id_type> get_boundary_ids() const { return boundary_ids; };
+  std::vector<std::string> get_boundary_names() const { return boundary_names_; };
 
  private:
 
   /// Store the type of the boundary as enum 
-  DagBoundaryType boundary_type;
+  DagBoundaryType boundary_type_;
   /// Store the names of the boundaries upon which the condition is applied
-  std::vector<BoundaryName> boundary_names;
-  /// Store the ids of the boundaries upon which the condition is applied
-  std::vector<boundary_id_type> boundary_ids;
+  std::vector<std::string> boundary_names_;
 
 };
