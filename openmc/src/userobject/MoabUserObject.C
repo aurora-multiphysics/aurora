@@ -538,9 +538,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
     } // End loop over elems in this block
 
     // // Find the boundaries of this block (skin)
-    // if (!findBoundaries(block_elems)){
-    //   mooseError("Failed to find block boundary");
-    // }
+    // findBoundaries(block_elems);
 
     // Add the elems to the full meshset
     rval = moabPtr->add_entities(meshset,block_elems);
@@ -559,53 +557,114 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 
 void MoabUserObject::findElemBoundaries(const Elem& elem, moab::EntityHandle ent)
 {
-  mooseError("Not yet implemented");
-  // // Check if this element participates in a boundary
-  // std::vector<std::pair<unsigned int, boundary_id_type>> boundary_pairs;
-  // if(elemInDAGBoundary(elem,boundary_pairs)){
+  // Check if this element participates in a DAGMC boundary
+  std::vector<std::pair<unsigned int, boundary_id_type>> boundary_pairs;
+  if(elemInDAGBoundary(elem,boundary_pairs)){
 
-  //   // Skin element to get faces
-  //   moab::Range single_elem;
-  //   single_elem.insert(ent);
-  //   moab::Range face_ents; // Tris on surfaces with outward normal
-  //   moab::Range face_ents_reversed; // Tris on surfaces with inward normal
-  //   moab::ErrorCode rval = skinner->find_skin(0,single_elems,false,face_ents,&face_ents_reversed);
-  //   // Skinning failed
-  //   if(rval != moab::MB_SUCCESS) return false;
+    // Construct a mapping of face index to MOAB entity handle
+    std::map< unsigned int , moab::EntityHandle> face_index_to_handle;
+    findFaceMap(elem,ent,face_index_to_handle);
+    // std::cout<<"Elem in boundary"<<std::endl;
+    // for(auto face_pair: face_index_to_handle){
+    //   std::cout<<"  Mapped side"<<face_pair.first<<" to"<< face_pair.second<<std::endl;
+    // }
 
-  //   // Single tet: all normals should point out
-  //   if(face_ents_reversed.size()!=0) return false;
-
-  //   // Single tet with 4 faces
-  //   if(face_ents.size() !=4 ) return false;
-
-  //   for(const auto face_on_boundary : boundary_pairs){
-  //     unsigned int face_index = face_to_boundary.first;
-  //     boundary_id_type boundary_id = face_to_boundary.second;
-
-  //     // Get the face
-  //     Elem& face_elem = *(elem.build_side_ptr(face_index));
-
-  //     // Sanity check
-  //     if(!face_elem.is_face()) mooseError("Expected a face");
-
-  //     // Find the corrsponding moab entity handle to this face
-  //     const auto entity_it = face_ents.begin();
-  //     for( ; entity_it != face_ents.end(); ++entity_it){
-  //       // Get the vertices for the entity
-
-  //       // Compute the face centroid from the vertices
-
-  //       // Check if the libmesh face contains this point within the faceting tolerance
-  //       // If true found the match.
-
-  //       // Add moab entity to appropriate meshset
-  //       // break
-
-  //     }//End loop over tet entity handles
-  //   } // End loop over libmesh elem sides on boundary
-  // }
+    // For each boundary face, get MOAB handle and save
+    for(const auto face_on_boundary : boundary_pairs){
+      unsigned int face_index = face_on_boundary.first;
+      boundary_id_type boundary_id = face_on_boundary.second;
+      // Not guaranteed to find a match for second order mesh, so check
+      if (face_index_to_handle.find(face_index)!=face_index_to_handle.end()){
+        moab::EntityHandle face_ent = face_index_to_handle[face_index];
+        // Save in BC
+        addToBoundary(face_ent,boundary_id);
+      }
+    }
+  }
 }
+
+void MoabUserObject::findFaceMap(const Elem& elem, const moab::EntityHandle ent,
+                                 std::map< unsigned int , moab::EntityHandle>& face_index_to_handle)
+{
+  // First obtain the faces in the MOAB ent
+  moab::Range single_elem;
+  single_elem.insert(ent);
+  moab::Range face_ents_forwards; // Tris on surfaces with outward normal
+  moab::Range face_ents_reversed; // Tris on surfaces with inward normal
+  moab::ErrorCode rval = skinner->find_skin(0,single_elem,false,face_ents_forwards,&face_ents_reversed);
+  // Skinning failed
+  if(rval != moab::MB_SUCCESS)
+    mooseError("Skinning failed");
+
+  // Consolidate ranges into one vector (Ranges are stupid)
+  std::vector<moab::EntityHandle> face_ents;
+  moab::Range::const_iterator entity_it = face_ents_forwards.begin();
+  for( ; entity_it != face_ents_forwards.end(); ++entity_it){
+    face_ents.push_back(*entity_it);
+  }
+  entity_it = face_ents_reversed.begin();
+  for( ; entity_it != face_ents_reversed.end(); ++entity_it){
+    face_ents.push_back(*entity_it);
+  }
+  if(face_ents.size()!=4)
+    mooseError("Wrong number of faces for MOAB skinned tet");
+
+  // Map each MOAB face to a libmesh face
+  // (N.B. for second order mesh, may not be 1-1)
+  // Todo refactor and do all faces at once
+  unsigned int i_face=0;
+  for(const auto face_ent: face_ents){
+    moab::Range single_face;
+    single_face.insert(face_ent);
+
+    //std::cout<<"Handle: "<<ent<<" face: "<<i_face++<<" face handle: "<<face_ent<<std::endl;
+    moab::Range vertices;
+    // Get the vertices of this face
+    rval = skinner->find_skin(0,single_face,true,vertices);
+    if(rval != moab::MB_SUCCESS || vertices.size() != nNodesPerTri )
+      mooseError("Failed to obtain MOAB face vertices");
+
+    std::vector<double> coords(nNodesPerTri*3,0.);
+    rval = moabPtr->get_coords(vertices,coords.data());
+    if(rval != moab::MB_SUCCESS)
+      mooseError("Failed to get MOAB vertices' coords");
+
+    // Compute the face centroid from the vertices
+    Point p_centroid(0.,0.,0);
+    for(unsigned int i_vertex=0; i_vertex<nNodesPerTri; i_vertex++){
+      Point p_vertex(coords[3*i_vertex],coords[3*i_vertex+1],coords[3*i_vertex+2]);
+      p_centroid += p_vertex;
+      // std::cout<<" vertex "<<i_vertex<<" p = ("
+      //          <<" "<< p_vertex(0)
+      //          <<" "<< p_vertex(1)
+      //          <<" "<< p_vertex(2)
+      //          <<" )"
+      //          <<std::endl;
+    }
+    p_centroid/=(double(nNodesPerTri)*lengthscale);
+    // std::cout<<"  Face centroid: ("
+    //          <<" "<< p_centroid(0)
+    //          <<" "<< p_centroid(1)
+    //          <<" "<< p_centroid(2)
+    //          <<" )"
+    //          <<std::endl;
+
+    // Find which libmesh face contains this tri's centroid.
+    unsigned int n_sides =elem.n_sides();
+    //std::cout<<"Elem has "<<n_sides<<" sides"<<std::endl;
+    for(unsigned int i_side=0; i_side<n_sides; i_side++){
+      // Get face for current side
+      std::unique_ptr<const Elem> face_ptr = elem.build_side_ptr(i_side);
+      // Found match
+      if(face_ptr->contains_point(p_centroid, faceting_tol)){
+        //std::cout<<"Mapping side "<<i_side<<" to handle "<<face_ent<<std::endl;
+        face_index_to_handle[i_side]=face_ent;
+        break;
+      }
+    }
+  }
+}
+
 
 bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
                                        std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs)
@@ -614,43 +673,42 @@ bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
   if(!boundary_pairs.empty())
     mooseError("Please provide empty vector as argument.");
 
-  mooseError("Not yet implemented");
+  // Loop over faces
+  unsigned int n_sides =elem.n_sides();
+  for(unsigned int i_side=0; i_side<n_sides; i_side++){
+    // Retrieve the boundaries this face is in
+    std::vector< boundary_id_type > face_boundary_list;
+    boundary_info_ptr->boundary_ids(&elem, i_side,face_boundary_list);
 
+    // Nothing to do if no boundaries
+    if(face_boundary_list.empty()) continue;
 
-  // // Loop over faces
-  // unsigned int n_sides =elem.n_sides();
-  // for(unsigned int i_side=0; i_side<n_sides; i_side++){
-  //   // Retrieve the boundaries this face is in
-  //   std::vector< boundary_id_type > face_boundary_list;
-  //   boundary_info_ptr->boundary_ids(&elem, i_side,face_boundary_list);
+    // Find which of these boundaries have a Dagmc BC
+    boundary_id_type dag_boundary_id=0;
+    unsigned int count_boundaries=0;
+    for(const auto boundary_id : face_boundary_list){
+      // Is this a dagmc boundary?
+      auto it = boundary_id_to_type.find(boundary_id);
+      if (it != boundary_id_to_type.end()){
+        // Save and count
+        dag_boundary_id = boundary_id;
+        count_boundaries++;
+      }
+    }
 
-  //   // Nothing to do if no boundaries
-  //   if(face_boundary_list.empty()) continue;
+    // Error if more than one dagmc boundary
+    if( count_boundaries > 1 ){
+      std::stringstream ss;
+      ss<<"Side "<<i_side<<" of elem "<<elem.id()
+        <<" is associated with multiple DAGMC boundary conditions."
+        <<" Please check your model.";
+      mooseError(ss.str());
+    }
 
-  //   // Find which of these boundaries have a Dagmc BC
-  //   boundary_id_type dag_boundary_id;
-  //   unsigned int count_boundaries;
-  //   for(const auto boundary_id : face_boundary_list){
-  //     // Is this a dagmc boundary?
-  //     auto it = boundary_id_to_type.find(boundary_id);
-  //     if (it != boundary_id_to_type.end()){
-  //       // Save and count
-  //       dag_boundary_id = boundary_id;
-  //       count_boundaries++;
-  //     }
-  //   }
-
-  //   // Error if more than one dagmc boundary
-  //   if( count_boundaries > 1 ){
-  //     std::stringstream ss;
-  //     ss<<"Side "<<i_side<<" of elem "<<elem.id()
-  //       <<" is associated with multiple DAGMC boundary conditions."
-  //       <<" Please check your model.";
-  //     mooseError(ss.str());
-  //   }
-
-  //   boundary_pairs.push_back(std::make_pair<unsigned int, boundary_id_type>(i_side,dag_boundary_id));
-  // }
+    //  Save a mapping from side to boundary id
+    std::pair<unsigned int, boundary_id_type> boundary_pair(i_side,dag_boundary_id);
+    boundary_pairs.push_back(boundary_pair);
+  }
 
   // Return if we found some boundaries associated with any of the sides
   return !boundary_pairs.empty();
@@ -716,16 +774,16 @@ bool MoabUserObject::entityInBoundary(moab::EntityHandle skin_handle,
  //  // TODO
 
 
-
  //  // No boundary associated with this elem
- //  return false;
+  return false;
 }
 
-void MoabUserObject::addToBoundary(moab::EntityHandle skin_handle,
+void MoabUserObject::addToBoundary(moab::EntityHandle ent,
                      boundary_id_type& boundary_id)
 {
   // Save this handle to map against the boundary id
-  mooseError("Not yet implemented");
+  std::cout<<"Added handle "<<ent<< " to boundary "<< boundary_id<<std::endl;
+  //mooseError("Not yet implemented");
 }
 
 
@@ -1311,9 +1369,10 @@ MoabUserObject::sortElemsByResults()
 }
 
 Point
-MoabUserObject::elemCentroid(Elem& elem){
+MoabUserObject::elemCentroid(const Elem& elem){
   Point centroid(0.,0.,0.);
-  unsigned int nNodes = elem.n_nodes();
+  unsigned int nNodes = elem.n_vertices();
+  //unsigned int nNodes = elem.n_nodes();
   for(unsigned int iNode=0; iNode<nNodes; ++iNode){
     // Get the point coords for this node
     const Point& point = elem.point(iNode);

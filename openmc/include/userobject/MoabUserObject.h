@@ -126,6 +126,10 @@ private:
   /// Helper method to find which faces of an element participate in a boundary
   void findElemBoundaries(const Elem& elem, moab::EntityHandle ent);
 
+  /// Helper method to map sides indices of a libmesh elem to MOAB entity handles
+  void findFaceMap(const Elem& elem, const moab::EntityHandle ent,
+                   std::map< unsigned int , moab::EntityHandle>& face_index_to_handle);
+
   /// Return pairings of face index to DAGMC boundary IDs and test if non empty list
   bool elemInDAGBoundary(const Elem& elem,                                         std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs);
 
@@ -280,7 +284,7 @@ private:
   void calcMidpointsLin(double var_min_in, double bin_width_in,int nbins_in,std::vector<double>& midpoints_in);
 
   /// Return the centroid position of an element
-  Point elemCentroid(Elem& elem);
+  Point elemCentroid(const Elem& elem);
 
   /// Clear the containers of elements grouped into bins of constant temp
   void resetContainers();
@@ -424,6 +428,8 @@ private:
 
   /// Const to encode that MOAB tets have 4 nodes
   const unsigned int nNodesPerTet = 4;
+  /// Const to encode that MOAB tris have 3 nodes
+  const unsigned int nNodesPerTri = 3;
 
   // DagMC settings
   /// Faceting tolerence needed by DAGMC
