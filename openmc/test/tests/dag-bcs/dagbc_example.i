@@ -4,7 +4,6 @@
     file = copper_air_bcs_tetmesh.e
     show_info = true
   []
-  construct_side_list_from_node_list = true
 []
 
 [Problem]
