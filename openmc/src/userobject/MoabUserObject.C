@@ -297,6 +297,12 @@ MoabUserObject::findDAGBoundaries()
     // Retrieve BC type
     DagBoundaryType dag_bc_type = dag_bc.get_boundary_type();
 
+    // Create a MOAB meshset
+    moab::EntityHandle bc_set;
+    moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,bc_set);
+    if(rval!=moab::MB_SUCCESS)
+      mooseError("Failed to create meshset");
+
     // Get the libmesh sideset surface boundary names
     auto sideset_names = dag_bc.get_boundary_names();
     for(const auto& name : sideset_names){
@@ -309,8 +315,9 @@ MoabUserObject::findDAGBoundaries()
           +std::to_string(sideset_id);
         mooseError(err);
       }
-      // Map each sideset id to a type
+      // Map each sideset id to type and moab meshset
       boundary_id_to_type[sideset_id] = dag_bc_type;
+      boundary_id_to_meshset[sideset_id] = bc_set;
     }
   }
 }
@@ -684,19 +691,21 @@ bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
     if(face_boundary_list.empty()) continue;
 
     // Find which of these boundaries have a Dagmc BC
-    boundary_id_type dag_boundary_id=0;
     unsigned int count_boundaries=0;
     for(const auto boundary_id : face_boundary_list){
       // Is this a dagmc boundary?
       auto it = boundary_id_to_type.find(boundary_id);
       if (it != boundary_id_to_type.end()){
-        // Save and count
-        dag_boundary_id = boundary_id;
+        // Count
         count_boundaries++;
+
+        //  Save a mapping from side to boundary id
+        std::pair<unsigned int, boundary_id_type> boundary_pair(i_side,boundary_id);
+        boundary_pairs.push_back(boundary_pair);
       }
     }
 
-    // Error if more than one dagmc boundary
+    // Error if more than one dagmc boundary for this face
     if( count_boundaries > 1 ){
       std::stringstream ss;
       ss<<"Side "<<i_side<<" of elem "<<elem.id()
@@ -705,9 +714,6 @@ bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
       mooseError(ss.str());
     }
 
-    //  Save a mapping from side to boundary id
-    std::pair<unsigned int, boundary_id_type> boundary_pair(i_side,dag_boundary_id);
-    boundary_pairs.push_back(boundary_pair);
   }
 
   // Return if we found some boundaries associated with any of the sides
@@ -779,11 +785,15 @@ bool MoabUserObject::entityInBoundary(moab::EntityHandle skin_handle,
 }
 
 void MoabUserObject::addToBoundary(moab::EntityHandle ent,
-                     boundary_id_type& boundary_id)
+                                   boundary_id_type& boundary_id)
 {
-  // Save this handle to map against the boundary id
-  std::cout<<"Added handle "<<ent<< " to boundary "<< boundary_id<<std::endl;
-  //mooseError("Not yet implemented");
+  // Look up the mesh set
+  auto bc_set = boundary_id_to_meshset.at(boundary_id);
+
+  // Add this entity handle to the group
+  moab::ErrorCode rval = moabPtr->add_entities(bc_set,&ent,1);
+  if(rval != moab::MB_SUCCESS)
+    mooseError("Failed to add entity to meshset");
 }
 
 
@@ -1784,7 +1794,8 @@ MoabUserObject::createSurfaces(moab::Range& faces, VolData& voldata, unsigned in
 
   // Start by partitioning the starting face range by boundary id
   std::map< boundary_id_type, moab::Range> mapped_faces;
-  partitionByBoundary(faces,mapped_faces);
+  moab::Range unmapped_faces;
+  partitionByBoundary(faces,mapped_faces, unmapped_faces);
 
   for( const auto & boundary_to_faces : mapped_faces){
     boundary_id_type boundary = boundary_to_faces.first;
@@ -1798,10 +1809,16 @@ MoabUserObject::createSurfaces(moab::Range& faces, VolData& voldata, unsigned in
 
 void
 MoabUserObject::partitionByBoundary(const moab::Range faces,
-                                    std::map< boundary_id_type,
-                                    moab::Range>& mapped_faces)
+                                    std::map< boundary_id_type,moab::Range>& mapped_faces,
+                                    moab::Range& unmapped_faces)
 {
   mooseError("Not yet implemented");
+
+  // For each boundary id lift out the union of bc with this range
+
+  // subtract boundary set from faces list
+
+  // remainder is unmapped (do we actually want a vector here??)
 }
 
 moab::ErrorCode

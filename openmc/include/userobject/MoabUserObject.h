@@ -295,9 +295,10 @@ private:
   /// Find the surfaces for the provided range and add to group
   bool findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set);
 
-  // Given a starting range of faces, split into groups by boundary
+  // Given a starting range of faces, split into groups having a bc and those without
   void partitionByBoundary(const moab::Range faces,
-                           std::map< boundary_id_type, moab::Range>& mapped_faces);
+                           std::map< boundary_id_type,moab::Range>& mapped_faces,
+                           moab::Range& unmapped_faces);
 
   /// Write to file
   bool write();
@@ -331,6 +332,9 @@ private:
 
   /// Map from libmesh boundary id to DAGMC surface type
   std::map<boundary_id_type, int > boundary_id_to_type;
+
+  /// Map from libmesh boundary id to MOAB meshset
+  std::map<boundary_id_type, moab::EntityHandle> boundary_id_to_meshset;
 
   // Data members relating to binning in temperature
 
