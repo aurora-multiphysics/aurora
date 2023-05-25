@@ -231,7 +231,7 @@ MoabUserObject::initMOAB()
   findMaterials();
 }
 
-bool
+void
 MoabUserObject::update()
 {
 
@@ -244,12 +244,13 @@ MoabUserObject::update()
   initMOAB();
 
   // Sort libMesh elements into bins of the specified variable
-  if(!sortElemsByResults()) return false;
+  if(!sortElemsByResults())
+    mooseError("Failed to sort results");
 
   // Find the surfaces of local temperature regions
-  if(!findSurfaces()) return false;
+  if(!findSurfaces())
+    mooseError("Failed to find surfaces");
 
-  return true;
 }
 
 // Pass the results for named variable into the libMesh systems solution
@@ -295,13 +296,16 @@ MoabUserObject::findDAGBoundaries()
     auto& dag_bc = problem().getUserObject<DagSurfaceUserObject>(bc_name);
 
     // Retrieve BC type
-    DagBoundaryType dag_bc_type = dag_bc.get_boundary_type();
+    std::string dag_bc_type = dag_bc.get_boundary_type();
 
     // Create a MOAB meshset
     moab::EntityHandle bc_set;
     moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,bc_set);
     if(rval!=moab::MB_SUCCESS)
       mooseError("Failed to create meshset");
+
+    // Save boundary
+    meshset_to_boundary[bc_set] = dag_bc_type;
 
     // Get the libmesh sideset surface boundary names
     auto sideset_names = dag_bc.get_boundary_names();
@@ -310,13 +314,12 @@ MoabUserObject::findDAGBoundaries()
       auto sideset_id	= boundary_info_ptr->get_id_by_name(name);
 
       // Check if this sidset already has a DAG BC
-      if (boundary_id_to_type.find(sideset_id)!=boundary_id_to_type.end()){
+      if (boundary_id_to_meshset.find(sideset_id)!=boundary_id_to_meshset.end()){
         std::string err = "Multiple DAG BCs applied to sideset with id "
           +std::to_string(sideset_id);
         mooseError(err);
       }
       // Map each sideset id to type and moab meshset
-      boundary_id_to_type[sideset_id] = dag_bc_type;
       boundary_id_to_meshset[sideset_id] = bc_set;
     }
   }
@@ -538,7 +541,7 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
         // Save the handle for adding to entity sets
         block_elems.insert(ent);
 
-        // Check if this element has faces participates in any boundaries
+        // Store if this element has faces participates in any boundaries
         findElemBoundaries(elem,ent);
       } // End loop over sub-tetrahedra for current elem
 
@@ -565,26 +568,22 @@ MoabUserObject::createElems(std::map<dof_id_type,moab::EntityHandle>& node_id_to
 void MoabUserObject::findElemBoundaries(const Elem& elem, moab::EntityHandle ent)
 {
   // Check if this element participates in a DAGMC boundary
-  std::vector<std::pair<unsigned int, boundary_id_type>> boundary_pairs;
+  std::vector<std::pair<unsigned int, moab::EntityHandle>> boundary_pairs;
   if(elemInDAGBoundary(elem,boundary_pairs)){
 
     // Construct a mapping of face index to MOAB entity handle
     std::map< unsigned int , moab::EntityHandle> face_index_to_handle;
     findFaceMap(elem,ent,face_index_to_handle);
-    // std::cout<<"Elem in boundary"<<std::endl;
-    // for(auto face_pair: face_index_to_handle){
-    //   std::cout<<"  Mapped side"<<face_pair.first<<" to"<< face_pair.second<<std::endl;
-    // }
 
     // For each boundary face, get MOAB handle and save
     for(const auto face_on_boundary : boundary_pairs){
       unsigned int face_index = face_on_boundary.first;
-      boundary_id_type boundary_id = face_on_boundary.second;
+      moab::EntityHandle bc_meshset = face_on_boundary.second;
       // Not guaranteed to find a match for second order mesh, so check
       if (face_index_to_handle.find(face_index)!=face_index_to_handle.end()){
         moab::EntityHandle face_ent = face_index_to_handle[face_index];
-        // Save in BC
-        addToBoundary(face_ent,boundary_id);
+        // Save in BC mesehset
+        addToBoundary(face_ent,bc_meshset);
       }
     }
   }
@@ -624,7 +623,6 @@ void MoabUserObject::findFaceMap(const Elem& elem, const moab::EntityHandle ent,
     moab::Range single_face;
     single_face.insert(face_ent);
 
-    //std::cout<<"Handle: "<<ent<<" face: "<<i_face++<<" face handle: "<<face_ent<<std::endl;
     moab::Range vertices;
     // Get the vertices of this face
     rval = skinner->find_skin(0,single_face,true,vertices);
@@ -641,30 +639,16 @@ void MoabUserObject::findFaceMap(const Elem& elem, const moab::EntityHandle ent,
     for(unsigned int i_vertex=0; i_vertex<nNodesPerTri; i_vertex++){
       Point p_vertex(coords[3*i_vertex],coords[3*i_vertex+1],coords[3*i_vertex+2]);
       p_centroid += p_vertex;
-      // std::cout<<" vertex "<<i_vertex<<" p = ("
-      //          <<" "<< p_vertex(0)
-      //          <<" "<< p_vertex(1)
-      //          <<" "<< p_vertex(2)
-      //          <<" )"
-      //          <<std::endl;
     }
     p_centroid/=(double(nNodesPerTri)*lengthscale);
-    // std::cout<<"  Face centroid: ("
-    //          <<" "<< p_centroid(0)
-    //          <<" "<< p_centroid(1)
-    //          <<" "<< p_centroid(2)
-    //          <<" )"
-    //          <<std::endl;
 
     // Find which libmesh face contains this tri's centroid.
     unsigned int n_sides =elem.n_sides();
-    //std::cout<<"Elem has "<<n_sides<<" sides"<<std::endl;
     for(unsigned int i_side=0; i_side<n_sides; i_side++){
       // Get face for current side
       std::unique_ptr<const Elem> face_ptr = elem.build_side_ptr(i_side);
       // Found match
       if(face_ptr->contains_point(p_centroid, faceting_tol)){
-        //std::cout<<"Mapping side "<<i_side<<" to handle "<<face_ent<<std::endl;
         face_index_to_handle[i_side]=face_ent;
         break;
       }
@@ -674,7 +658,7 @@ void MoabUserObject::findFaceMap(const Elem& elem, const moab::EntityHandle ent,
 
 
 bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
-                                       std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs)
+                                       std::vector<std::pair<unsigned int, moab::EntityHandle>>& boundary_pairs)
 {
   // Sanity check
   if(!boundary_pairs.empty())
@@ -694,13 +678,14 @@ bool MoabUserObject::elemInDAGBoundary(const Elem& elem,
     unsigned int count_boundaries=0;
     for(const auto boundary_id : face_boundary_list){
       // Is this a dagmc boundary?
-      auto it = boundary_id_to_type.find(boundary_id);
-      if (it != boundary_id_to_type.end()){
+      auto it = boundary_id_to_meshset.find(boundary_id);
+      if (it != boundary_id_to_meshset.end()){
         // Count
         count_boundaries++;
 
-        //  Save a mapping from side to boundary id
-        std::pair<unsigned int, boundary_id_type> boundary_pair(i_side,boundary_id);
+        //  Save a mapping from side to meshset
+        moab::EntityHandle meshset= it->second;
+        std::pair<unsigned int, moab::EntityHandle> boundary_pair(i_side,meshset);
         boundary_pairs.push_back(boundary_pair);
       }
     }
@@ -785,11 +770,8 @@ bool MoabUserObject::entityInBoundary(moab::EntityHandle skin_handle,
 }
 
 void MoabUserObject::addToBoundary(moab::EntityHandle ent,
-                                   boundary_id_type& boundary_id)
+                                   moab::EntityHandle bc_set)
 {
-  // Look up the mesh set
-  auto bc_set = boundary_id_to_meshset.at(boundary_id);
-
   // Add this entity handle to the group
   moab::ErrorCode rval = moabPtr->add_entities(bc_set,&ent,1);
   if(rval != moab::MB_SUCCESS)
@@ -901,19 +883,15 @@ MoabUserObject::createVol(unsigned int id,moab::EntityHandle& volume_set,moab::E
 }
 
 moab::ErrorCode
-MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata, boundary_id_type boundary=0)
+MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata, std::string boundary_type="")
 {
   // Create meshset
   moab::ErrorCode rval = moabPtr->create_meshset(moab::MESHSET_SET,surface_set);
-  if(rval!=moab::MB_SUCCESS) return rval;
-
-  // Associate surfaces with a boundary condition if non-void
-  // Look up the string attached to this thi boundary_id_type from map
-  std::string boundary_type;
+  if(rval != moab::MB_SUCCESS) return rval;
 
   // Set tags
   rval = setTags(surface_set,id,2,"Surface","",boundary_type);
-  if(rval!=moab::MB_SUCCESS) return rval;
+  if(rval != moab::MB_SUCCESS) return rval;
 
   // Add tris to the surface
   rval = moabPtr->add_entities(surface_set,faces);
@@ -934,9 +912,8 @@ MoabUserObject::createSurf(unsigned int id,moab::EntityHandle& surface_set, moab
 moab::ErrorCode
 MoabUserObject::updateSurfData(moab::EntityHandle surface_set,VolData data)
 {
-
   // Add the surface to the volume set
-  moab::ErrorCode rval = moabPtr->add_parent_child(data.vol,surface_set);
+  moab::ErrorCode rval  = moabPtr->add_parent_child(data.vol,surface_set);
   if(rval != moab::MB_SUCCESS) return rval;
 
   // Set the surfaces sense
@@ -953,12 +930,11 @@ MoabUserObject::updateSurfData(moab::EntityHandle surface_set,VolData data)
 moab::ErrorCode
 MoabUserObject::setTags(moab::EntityHandle ent, unsigned int id, int dim, std::string category, std::string name, std::string boundary_type)
 {
-
   moab::ErrorCode rval;
 
   // Set the id tag
   rval = setTagData(id_tag,ent,&id);
-  return rval;
+  if(rval!=moab::MB_SUCCESS) return rval;
 
   // Set the dimension tag
   rval = setTagData(geometry_dimension_tag,ent,&dim);
@@ -982,6 +958,7 @@ MoabUserObject::setTags(moab::EntityHandle ent, unsigned int id, int dim, std::s
     if(rval!=moab::MB_SUCCESS) return rval;
   }
 
+  return rval;
 }
 
 moab::ErrorCode
@@ -1401,8 +1378,8 @@ MoabUserObject::communicateDofSet(std::set<dof_id_type>& dofset)
 bool
 MoabUserObject::findSurfaces()
 {
-
   moab::ErrorCode rval = moab::MB_SUCCESS;
+
   try{
     // Find all neighbours in mesh
     mesh().find_neighbors();
@@ -1436,7 +1413,8 @@ MoabUserObject::findSurfaces()
           moab::EntityHandle group_set;
           unsigned int group_id = iSortBin+1;
           rval = createGroup(group_id,updated_mat_name,group_set);
-          if(rval != moab::MB_SUCCESS) return false;
+          if(rval != moab::MB_SUCCESS)
+            return false;
 
           // Sort elems in this mat-density-temp bin into local regions
           std::vector<moab::Range> regions;
@@ -1448,7 +1426,6 @@ MoabUserObject::findSurfaces()
             if(!findSurface(region,group_set,vol_id,surf_id,volume_set)){
               return false;
             }
-
           } // End loop over local regions
 
         } // End loop over temperature bins
@@ -1616,8 +1593,10 @@ MoabUserObject::reset()
   skinner.reset(new moab::Skinner(moabPtr.get()));
   gtt.reset(new moab::GeomTopoTool(moabPtr.get()));
 
-  // Clear entity set maps
+  // Clear maps
   surfsToVols.clear();
+  boundary_id_to_meshset.clear();
+  meshset_to_boundary.clear();
 }
 
 int
@@ -1728,9 +1707,9 @@ MoabUserObject::getMatBin(int iVarBin, int iDenBin, int nVarBinsIn, int nDenBins
     mooseError(err);
   }
 
-  int nMatBins = nDenBinsIn*nVarBins;
+  int nMatBinsNow = nDenBinsIn*nVarBins;
   int iMatBin= nVarBinsIn*iDenBin + iVarBin;
-  if(iMatBin<0 || iMatBin >= nMatBins){
+  if(iMatBin<0 || iMatBin >= nMatBinsNow){
     mooseError("Cannot find material bin index.");
   }
   return iMatBin;
@@ -1756,12 +1735,9 @@ MoabUserObject::calcMidpointsLin(double var_min_in, double bin_width_in,int nbin
 bool
 MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, unsigned int & vol_id, unsigned int & surf_id,moab::EntityHandle& volume_set)
 {
-
-  moab::ErrorCode rval;
-
   // Create a volume set
   vol_id++;
-  rval = createVol(vol_id,volume_set,group);
+  moab::ErrorCode rval = createVol(vol_id,volume_set,group);
   if(rval != moab::MB_SUCCESS) return false;
 
   // Find surfaces from these regions
@@ -1770,7 +1746,6 @@ MoabUserObject::findSurface(const moab::Range& region,moab::EntityHandle group, 
   rval = skinner->find_skin(0,region,false,tris,&rtris);
   if(rval != moab::MB_SUCCESS) return false;
   if(tris.size()==0 && rtris.size()==0) return false;
-
 
   // Create surface sets for the forwards tris
   VolData vdata = {volume_set,Sense::FORWARDS};
@@ -1789,40 +1764,58 @@ moab::ErrorCode
 MoabUserObject::createSurfaces(moab::Range& faces, VolData& voldata, unsigned int& surf_id){
 
   moab::ErrorCode rval = moab::MB_SUCCESS;
-
   if(faces.empty()) return rval;
 
   // Start by partitioning the starting face range by boundary id
-  std::map< boundary_id_type, moab::Range> mapped_faces;
-  moab::Range unmapped_faces;
-  partitionByBoundary(faces,mapped_faces, unmapped_faces);
+  std::vector< std::pair< std::string, moab::Range > > mapped_faces;
+  partitionByBoundary(faces,mapped_faces);
 
   for( const auto & boundary_to_faces : mapped_faces){
-    boundary_id_type boundary = boundary_to_faces.first;
+    std::string boundary_type = boundary_to_faces.first;
     moab::Range boundary_faces = boundary_to_faces.second;
-    rval = createSurfaces(boundary_faces, boundary, voldata, surf_id);
+    rval = createSurfaces(boundary_faces, boundary_type, voldata, surf_id);
     if(rval!=moab::MB_SUCCESS) return rval;
   }
-
   return rval;
 }
 
 void
 MoabUserObject::partitionByBoundary(const moab::Range faces,
-                                    std::map< boundary_id_type,moab::Range>& mapped_faces,
-                                    moab::Range& unmapped_faces)
+                                    std::vector< std::pair< std::string, moab::Range > > & mapped_faces)
 {
-  mooseError("Not yet implemented");
+  moab::Range faces_now = faces;
+  size_t num_faces=0;
 
-  // For each boundary id lift out the union of bc with this range
+  // Check intersection with each boundary
+  for(const auto& boundary_pair : meshset_to_boundary){
+    moab::EntityHandle meshset = boundary_pair.first;
+    moab::Range boundary_elems;
+    moab::ErrorCode rval = moabPtr->get_entities_by_handle(meshset, boundary_elems);
+    if(rval != moab::MB_SUCCESS)
+      mooseError("Failed to retrieve entities");
 
-  // subtract boundary set from faces list
+    // Don't try and intersect an empty Range
+    if(boundary_elems.size()==0) continue;
 
-  // remainder is unmapped (do we actually want a vector here??)
+    // Check intersection
+    moab::Range intersection=intersect(boundary_elems,faces_now);
+    if(!intersection.empty()){
+      // Subtract boundary set from faces list
+      faces_now = subtract(faces_now,intersection);
+
+      // Save
+      std::string bc_type = boundary_pair.second;
+      mapped_faces.push_back(std::pair< std::string, moab::Range >(bc_type,intersection));
+      num_faces+= intersection.size();
+    }
+  }
+
+  // Remainder is unmapped to boundary
+  mapped_faces.push_back(std::pair< std::string, moab::Range >("",faces_now));
 }
 
 moab::ErrorCode
-MoabUserObject::createSurfaces(moab::Range& faces, boundary_id_type boundary, VolData& voldata, unsigned int& surf_id){
+MoabUserObject::createSurfaces(moab::Range& faces, std::string boundary_type, VolData& voldata, unsigned int& surf_id){
 
   moab::ErrorCode rval = moab::MB_SUCCESS;
 
@@ -1858,7 +1851,7 @@ MoabUserObject::createSurfaces(moab::Range& faces, boundary_id_type boundary, Vo
         // Create a new shared surface
         moab::EntityHandle shared_surf;
         surf_id++;
-        rval = createSurf(surf_id,shared_surf,overlap,vols,boundary);
+        rval = createSurf(surf_id,shared_surf,overlap,vols,boundary_type);
         if(rval!=moab::MB_SUCCESS) return rval;
       }
 
@@ -1874,7 +1867,7 @@ MoabUserObject::createSurfaces(moab::Range& faces, boundary_id_type boundary, Vo
     moab::EntityHandle surface_set;
     std::vector<VolData> voldatavec(1,voldata);
     surf_id++;
-    rval = createSurf(surf_id,surface_set,faces,voldatavec,boundary);
+    rval = createSurf(surf_id,surface_set,faces,voldatavec,boundary_type);
     if(rval != moab::MB_SUCCESS) return rval;
   }
 

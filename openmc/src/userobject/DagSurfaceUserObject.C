@@ -10,7 +10,7 @@ DagSurfaceUserObject::validParams()
 {
   InputParameters params = UserObject::validParams();
 
-  MooseEnum dag_bc_types("Vacuum Reflecting White Periodic Graveyard");
+  MooseEnum dag_bc_types("Vacuum Reflecting White Graveyard");
   params.addRequiredParam<MooseEnum>(
       "boundary_type",
       dag_bc_types,
@@ -24,7 +24,7 @@ DagSurfaceUserObject::validParams()
 // Constructor
 DagSurfaceUserObject::DagSurfaceUserObject(const InputParameters & parameters) :
   UserObject(parameters),
-  boundary_type_(DagBoundaryType(int(getParam<MooseEnum>("boundary_type")))),
+  boundary_type_(std::string(getParam<MooseEnum>("boundary_type"))),
   boundary_names_(getParam<std::vector<std::string>>("boundary_names"))
 {
 }

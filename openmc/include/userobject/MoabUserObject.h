@@ -78,7 +78,7 @@ class MoabUserObject : public UserObject
   void reset();
 
   /// Update MOAB with any results from MOOSE
-  bool update();
+  void update();
 
   /// Pass the OpenMC results into the libMesh systems solution
   bool setSolution(std::string var_now,std::vector< double > &results, double scaleFactor=1., bool isErr=false, bool normToVol=true);
@@ -131,9 +131,11 @@ private:
                    std::map< unsigned int , moab::EntityHandle>& face_index_to_handle);
 
   /// Return pairings of face index to DAGMC boundary IDs and test if non empty list
-  bool elemInDAGBoundary(const Elem& elem,                                         std::vector<std::pair<unsigned int, boundary_id_type>>& boundary_pairs);
+  bool elemInDAGBoundary(const Elem& elem,
+                         std::vector<std::pair<unsigned int, moab::EntityHandle>>& boundary_pairs);
 
-  /// Helper method to find MOAB surface entities having a boundary condition given a block
+
+  /// Helper method to find MOAB surfaces of a block of libmesh elems
   void findBoundaries(const moab::Range& block_elems);
 
   /// Helper method to find MOAB surface entities having a boundary condition given a geometric skin
@@ -145,7 +147,7 @@ private:
 
   /// Save this MOAB entity handle to a given boundary
   void addToBoundary(moab::EntityHandle skin_handle,
-                     boundary_id_type& boundary_id);
+                     moab::EntityHandle bc_set);
 
   /// Helper method to create MOAB tags
   moab::ErrorCode createTags();
@@ -157,14 +159,14 @@ private:
   moab::ErrorCode createVol(unsigned int id,moab::EntityHandle& volume_set,moab::EntityHandle group_set);
 
   /// Helper method to create MOAB surface entity set
-  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata, boundary_id_type boundary);
+  moab::ErrorCode createSurf(unsigned int id,moab::EntityHandle& surface_set, moab::Range& faces,  std::vector<VolData> & voldata, std::string boundary_type);
 
   /// Helper method to create MOAB surfaces with no overlaps
   moab::ErrorCode createSurfaces(moab::Range& faces, VolData& voldata, unsigned int& surf_id);
 
   /// Helper method to create MOAB surfaces with no overlaps having a given boundary
   moab::ErrorCode createSurfaces(moab::Range& faces,
-                                 boundary_id_type boundary,
+                                 std::string boundary_type,
                                  VolData& voldata, unsigned int& surf_id);
 
 
@@ -297,8 +299,7 @@ private:
 
   // Given a starting range of faces, split into groups having a bc and those without
   void partitionByBoundary(const moab::Range faces,
-                           std::map< boundary_id_type,moab::Range>& mapped_faces,
-                           moab::Range& unmapped_faces);
+                           std::vector< std::pair< std::string, moab::Range > > & mapped_faces);
 
   /// Write to file
   bool write();
@@ -330,11 +331,11 @@ private:
   /// Save the first tet entity handle
   moab::EntityHandle offset;
 
-  /// Map from libmesh boundary id to DAGMC surface type
-  std::map<boundary_id_type, int > boundary_id_to_type;
-
   /// Map from libmesh boundary id to MOAB meshset
   std::map<boundary_id_type, moab::EntityHandle> boundary_id_to_meshset;
+
+  /// Map from MOAB meshsetto DAGMC surface type
+  std::map<moab::EntityHandle, std::string> meshset_to_boundary;
 
   // Data members relating to binning in temperature
 

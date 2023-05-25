@@ -191,7 +191,7 @@ OpenMCExecutioner::update()
   if(setProblemLocal) return;
 
   // Update MOAB - extract surfaces from temperature binning
-  if(!moab().update()) mooseError("Failed to update MOAB");
+  moab().update();
 
   // Load new geometry into OpenMC and reinitialise cross sections
   if(!updateOpenMC()) mooseError("Failed to update OpenMC");
@@ -297,9 +297,10 @@ OpenMCExecutioner::initMOAB()
       if(!moabUO.hasProblem()){
         moabUO.setProblem(&feProblem());
         setProblemLocal=true;
+        moabUO.initBinningData();
       }
 
-      moabUO.initMOAB();
+      moabUO.update();
 
     }
   catch(std::exception &e)
