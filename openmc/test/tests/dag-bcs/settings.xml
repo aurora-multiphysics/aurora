@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<settings>
+  <run_mode>fixed source</run_mode>
+  <particles>10000</particles>
+  <batches>10</batches>
+  <source strength="1.0">
+    <space type="point">
+      <parameters>0 0 0</parameters>
+    </space>
+  </source>
+  <output>
+    <summary>false</summary>
+    <tallies>false</tallies>
+  </output>
+  <state_point>
+    <batches />
+  </state_point>
+  <photon_transport>false</photon_transport>
+  <temperature_method>interpolation</temperature_method>
+</settings>

@@ -12,10 +12,9 @@
 
 [Executioner]
   type = OpenMCExecutioner
-  variables = 'heating-local flux'
-  score_names = 'heating-local flux'
-  tally_ids = '1 1'
-  err_variables = 'heating-local-err flux-err'
+  variables = 'heating-local'
+  score_names = 'heating-local'
+  tally_ids = '1'
   launch_threads=false
 []
 
@@ -24,6 +23,10 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 300 # Start at room temperature
+  []
+  [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
   []
 []
 
@@ -63,4 +66,9 @@
     prop_values = '0.26 1 0.001'
     block = 2
   []
+[]
+
+[Outputs]
+  exodus = true
+  execute_on = "final"
 []
