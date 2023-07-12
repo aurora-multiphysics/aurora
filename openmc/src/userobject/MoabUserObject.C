@@ -843,8 +843,8 @@ MoabUserObject::createTags()
   rval = moabPtr->tag_get_handle("GEOMETRY_RESABS", 1, moab::MB_TYPE_DOUBLE, geometry_resabs_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
   if(rval!=moab::MB_SUCCESS)  return rval;
 
-  rval = moabPtr->tag_get_handle("DAGMCPROP_boundary", NAME_TAG_SIZE, moab::MB_TYPE_OPAQUE, boundary_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_CREAT);
-  if(rval!=moab::MB_SUCCESS)  return rval;
+  rval = moabPtr->tag_get_handle("DAGMCPROP_boundary",NAME_TAG_SIZE, moab::MB_TYPE_OPAQUE, boundary_tag, moab::MB_TAG_SPARSE | moab::MB_TAG_VARLEN | moab::MB_TAG_CREAT);
+  if(rval!=moab::MB_SUCCESS) return rval;
 
   // Set the values for DagMC faceting / geometry tolerance tags on the mesh entity set
   rval = moabPtr->tag_set_data(faceting_tol_tag, &meshset, 1, &faceting_tol);
@@ -954,7 +954,7 @@ MoabUserObject::setTags(moab::EntityHandle ent, unsigned int id, int dim, std::s
 
   // Set the boundary tag
   if(boundary_type!=""){
-    rval = setTagData(boundary_tag,ent,boundary_type,NAME_TAG_SIZE);
+    rval = setTagVariableData(boundary_tag,ent,boundary_type);
     if(rval!=moab::MB_SUCCESS) return rval;
   }
 
@@ -978,6 +978,21 @@ MoabUserObject::setTagData(moab::Tag tag, moab::EntityHandle ent, void* data)
 {
   return moabPtr->tag_set_data(tag,&ent,1,data);
 }
+
+moab::ErrorCode
+MoabUserObject::setTagVariableData(moab::Tag tag, moab::EntityHandle ent, std::string data)
+{
+  // Make a const array of const void* for names (length 1 for single entity)
+  const void* const name_array[1] = { (const void*)(data.c_str()) };
+
+  // Array of const ints for sizes (length 1 for single entity)
+  const int name_size = data.size();
+  const int sizes_array[1] = { name_size } ;
+
+  moab::ErrorCode rval = moabPtr->tag_set_by_ptr(tag,&ent,1,name_array,sizes_array);
+  return rval;
+}
+
 
 void
 MoabUserObject::clearElemMaps()

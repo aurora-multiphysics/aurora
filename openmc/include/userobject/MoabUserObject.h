@@ -197,6 +197,9 @@ private:
   /// Helper function to wrap moab::tag_set_data for a generic pointer
   moab::ErrorCode setTagData(moab::Tag tag, moab::EntityHandle ent, void* data);
 
+  /// Helper function to wrap moab::tag_set_by_ptr for a string in a variable length tag
+  moab::ErrorCode setTagVariableData(moab::Tag tag, moab::EntityHandle ent, std::string data);
+
   /// Return all sets of node indices for sub-tetrahedra if we have a second order mesh
   bool getTetSets(ElemType type, std::vector< std::vector<unsigned int> > &perms);
 
