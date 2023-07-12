@@ -8,7 +8,7 @@
 ARG base_image_tag=latest
 
 # Get image with aurora deps
-FROM helenbrooks/aurora-deps-fedora:$base_image_tag
+FROM helenbrooks/aurora-deps-fedora:${base_image_tag}
 
 # By default four cores are used to compile
 ARG compile_cores=4

@@ -72,7 +72,7 @@ class BasicTest : public ::testing::Test {
     ASSERT_TRUE(foundApp);
 
     // Get all objects registered to the app
-    const auto& appObjs = allRegistered.at(appNameTest);
+    const auto& appObjsPtrs = allRegistered.at(appNameTest);
 
     // Create a list of names of all objects we expect to see registered
     std::map<std::string,bool> knownObjs;
@@ -81,7 +81,8 @@ class BasicTest : public ::testing::Test {
     }
 
     // Check the objects match up
-    for( const auto & obj : appObjs) {
+    for( const auto & objPtr : appObjsPtrs) {
+			const auto& obj = *objPtr;
       std::string objName = obj._classname;
       bool isKnownObj = knownObjs.find(objName) != knownObjs.end();
       EXPECT_TRUE(isKnownObj) << "Unknown object was registered";

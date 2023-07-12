@@ -92,5 +92,5 @@ pip install --upgrade pip
 # Packages for moose
 echo "Installing python packages"
 pip install packaging
-
+pip install pyyaml
 
