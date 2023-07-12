@@ -4,19 +4,19 @@ set -e
 
 TAG=v.0.3.2-pre
 JOBS=64
-RELEASE=1
+RELEASE=0
 
 # Ubuntu build
-docker build -t helenbrooks/aurora-base-ubuntu:$TAG -f docker/aurora-base-ubuntu/Dockerfile .
-docker build -t helenbrooks/moose-ubuntu:$TAG -f docker/moose-ubuntu/Dockerfile --build-arg base_image_tag=$TAG  --build-arg compile_cores=$JOBS .
-docker build -t helenbrooks/aurora-deps-ubuntu:$TAG -f docker/aurora-deps-ubuntu/Dockerfile --build-arg base_image_tag=$TAG --build-arg moose_image_tag=$TAG --build-arg compile_cores=$JOBS .
-docker build -t helenbrooks/aurora-ubuntu:$TAG -f docker/aurora-deps-ubuntu/Dockerfile --build-arg base_image_tag=$TAG --build-arg compile_cores=$JOBS .
+docker build --no-cache -t helenbrooks/aurora-base-ubuntu:$TAG -f docker/aurora-base-ubuntu/Dockerfile .
+docker build --no-cache -t helenbrooks/moose-ubuntu:$TAG -f docker/moose-ubuntu/Dockerfile --build-arg base_image_tag=$TAG  --build-arg compile_cores=$JOBS .
+docker build --no-cache -t helenbrooks/aurora-deps-ubuntu:$TAG -f docker/aurora-deps-ubuntu/Dockerfile --build-arg base_image_tag=$TAG --build-arg moose_image_tag=$TAG --build-arg compile_cores=$JOBS .
+docker build --no-cache -t helenbrooks/aurora-ubuntu:$TAG -f docker/aurora-ubuntu/Dockerfile --build-arg base_image_tag=$TAG --build-arg compile_cores=$JOBS .
 
 # Fedora build
-docker build -t helenbrooks/aurora-base-fedora:$TAG -f docker/aurora-base-fedora/Dockerfile .
-docker build -t helenbrooks/moose-fedora:$TAG -f docker/moose-fedora/Dockerfile --build-arg base_image_tag=$TAG  --build-arg compile_cores=$JOBS .
-docker build -t helenbrooks/aurora-deps-fedora:$TAG -f docker/aurora-deps-fedora/Dockerfile --build-arg base_image_tag=$TAG --build-arg moose_image_tag=$TAG --build-arg compile_cores=$JOBS .
-docker build -t helenbrooks/aurora-fedora:$TAG -f docker/aurora-deps-fedora/Dockerfile --build-arg base_image_tag=$TAG --build-arg compile_cores=$JOBS .
+docker build --no-cache -t helenbrooks/aurora-base-fedora:$TAG -f docker/aurora-base-fedora/Dockerfile .
+docker build --no-cache -t helenbrooks/moose-fedora:$TAG -f docker/moose-fedora/Dockerfile --build-arg base_image_tag=$TAG  --build-arg compile_cores=$JOBS .
+docker build --no-cache -t helenbrooks/aurora-deps-fedora:$TAG -f docker/aurora-deps-fedora/Dockerfile --build-arg base_image_tag=$TAG --build-arg moose_image_tag=$TAG --build-arg compile_cores=$JOBS .
+docker build --no-cache -t helenbrooks/aurora-fedora:$TAG -f docker/aurora-fedora/Dockerfile --build-arg base_image_tag=$TAG --build-arg compile_cores=$JOBS .
 
 # If we got to here we should push all images
 # Ubuntu build
