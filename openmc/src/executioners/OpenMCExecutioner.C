@@ -396,9 +396,6 @@ OpenMCExecutioner::initDAGUniverse()
   if(useUWUW)
     dag_univ_ptr->write_uwuw_materials_xml("uwuw_materials.xml");
 
-
-
-
   return true;
 }
 
@@ -571,6 +568,11 @@ OpenMCExecutioner::updateOpenMC()
 
   // Final OpenMC setup after geometry is updated.
   completeSetup();
+
+  // Overwrite summary file
+  if (this->comm().rank() == 0 && openmc::settings::output_summary){
+    openmc::write_summary();
+  }
 
   return true;
 }
