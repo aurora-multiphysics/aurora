@@ -175,11 +175,13 @@ OpenMCExecutioner::initialize()
 
   if(!initOpenMC()) mooseError("Failed to initialize OpenMC");
 
-  if(!initDAGUniverse()) mooseError("Failed to initialize DAGMC universe");
-
   if(!initMaterials()) mooseError("Failed to initialize material data");
 
+  if(!initDAGUniverse()) mooseError("Failed to initialize DAGMC universe");
+
   if(!initMeshTallies()) mooseError("Failed to set up mesh filter tally");
+
+  if(!updateOpenMC()) mooseError("Failed to update OpenMC during initialisation step");
 
   isInit = true;
 }
@@ -393,6 +395,9 @@ OpenMCExecutioner::initDAGUniverse()
   // Write out materials for later use
   if(useUWUW)
     dag_univ_ptr->write_uwuw_materials_xml("uwuw_materials.xml");
+
+
+
 
   return true;
 }
