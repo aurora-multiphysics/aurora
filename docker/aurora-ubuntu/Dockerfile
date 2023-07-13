@@ -27,15 +27,13 @@ ARG coveralls_token=""
 # Branch name for coveralls
 ARG coveralls_branch=""
 
-# Install extra packages if we want test coverage
-RUN if "$test_coverage" ; then \
-        pip install cpp-coveralls && \
-        pip install coveralls && \
-        pip install gcovr; \
-    fi
-
 # Copy entire repository into image
 COPY ./ /home/aurora/
+
+# Install extra packages if we want test coverage
+RUN if "$test_coverage" ; then \
+ 			 /home/aurora/scripts/add-coveralls.sh -e /home/env/moose_profile; \
+		fi
 
 # Build
 RUN if "$test_coverage" ; then \
