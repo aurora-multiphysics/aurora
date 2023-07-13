@@ -37,8 +37,6 @@ install_coveralls()
 {
     process_args $*
 
-		echo ${ENV_FILE}
-		
 		if [ ! -z ${ENV_FILE} ]; then
 				echo "Sourcing environment from $ENV_FILE"
 				source $ENV_FILE
