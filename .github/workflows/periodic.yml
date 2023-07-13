@@ -1,13 +1,11 @@
 name: PeriodicBuild
 on:
-  push:
-    branches:
-      - 20-periodic-ci
+  schedule:
+		# Cron syntax has five fields separated by a space, and each field represents a unit of time.
+  	# Min hour day-of-month month day-of-week
+		- cron: '0 9 * * 1'
 
-  #schedule:
-  #  # Cron syntax has five fields separated by a space, and each field represents a unit of time.
-  #  # Min hour day-of-month month day-of-week
-  #  - cron: '0 12 * * 4'
+	workflow_dispatch:
 
 jobs:
   build-ubuntu:
