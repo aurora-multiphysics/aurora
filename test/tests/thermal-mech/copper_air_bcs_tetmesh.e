@@ -1,1 +1,1 @@
-../thermal/copper_air_bcs_tetmesh.e
+../thermal-mech-legacy/copper_air_bcs_tetmesh.e

@@ -51,6 +51,21 @@
   []
 []
 
+[UserObjects]
+  [uo-heating-function]
+    type = FunctionUserObject
+    variable = heating-local
+    execute_on = "initial"
+  []
+[]
+
+[Functions]
+  [heating-function]
+    type = VariableFunction
+    uoname = "uo-heating-function"
+  []
+[]
+
 [Materials]
   [copper_props]
     type = ADGenericConstantMaterial
@@ -64,6 +79,15 @@
     prop_values = '0.26 1 0.001'
     block = 2
   []
+  [heating]
+    type = ADGenericFunctionMaterial
+    prop_names = 'volumetric_heat'
+    prop_values = 'heating-function'
+    block = '1 2'
+    constant_on = 'ELEMENT'
+    output_properties = 'volumetric_heat'
+    outputs = exodus
+  []
 []
 
 [Kernels]
@@ -76,9 +100,9 @@
     variable = temperature
   []
   [heat-source]
-    type = CoupledForce
+    type = ADMatHeatSource
+    material_property = volumetric_heat
     variable = temperature
-    v = heating-local
     block = '1 2'
   []
 []
