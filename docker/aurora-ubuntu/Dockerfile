@@ -49,7 +49,7 @@ RUN if "$test_coverage" ; then \
 
 # Generate test coverage report using coveralls and upload
 RUN if "$test_coverage" ; then \
-				cd /home/aurora; && \
+				cd /home/aurora; \
 				./scripts/coverage-report.sh -e /home/env/moose_profile \
 				-t "$coveralls_token" -b "$coveralls_branch"; \
     fi
