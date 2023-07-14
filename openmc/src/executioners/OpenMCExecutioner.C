@@ -265,8 +265,10 @@ OpenMCExecutioner::setSolution(std::vector< double > & results_by_elem,
 {
   if(results_by_elem.empty()) return false;
 
+  bool normToVol = !getParam<bool>("no_scaling");
+
   // Pass the results into moab user object
-  if(!moab().setSolution(var_name,results_by_elem,scale_factor,isErr,true)){
+  if(!moab().setSolution(var_name,results_by_elem,scale_factor,isErr,normToVol)){
     std::cerr<<"Failed to pass OpenMC results into MoabUserObject"<<std::endl;
     return false;
   }
