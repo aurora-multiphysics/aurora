@@ -1,0 +1,7 @@
+[Tests]
+  [./test]
+    type = 'Exodiff'
+    input = 'dagbc_example.i'
+    exodiff = 'dagbc_example_out.e'
+  [../]
+[]

@@ -14,8 +14,10 @@
   type = OpenMCExecutioner
   variables = 'heating-local'
   score_names = 'heating-local'
+  err_variables = 'heating-local-err'
   tally_ids = '1'
   launch_threads=false
+  no_scaling = true
 []
 
 [AuxVariables]
@@ -25,6 +27,10 @@
     initial_condition = 300 # Start at room temperature
   []
   [heating-local]
+      order = CONSTANT
+      family = MONOMIAL
+  []
+  [heating-local-err]
       order = CONSTANT
       family = MONOMIAL
   []
@@ -48,7 +54,8 @@
     bin_varname = temperature
     material_names = 'copper air'
     material_openmc_names = 'copper air'
-    output_skins = true
+    output_skins = false
+    output_full = false
   []
 []
 
