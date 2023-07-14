@@ -21,10 +21,11 @@ For more information on OpenMC see: [https://docs.openmc.org/en/stable/]
 ## Citation
 
 If you have used AURORA in your work to produce results, please cite:
+
 - _H Brooks and A Davis 2023 Plasma Phys. Control. Fusion 65 024002_
 
   **DOI:** [10.1088/1361-6587/aca998](https://iopscience.iop.org/article/10.1088/1361-6587/aca998)
-  
+
   **Bibtex:**
   ```
   @article{brooks_aurora,
@@ -38,6 +39,7 @@ If you have used AURORA in your work to produce results, please cite:
   doi = {10.1088/1361-6587/aca998}
   }
   ```
+
 If in addition you are performing breeder blanket studies and/or you have used the code [Achlys](https://github.com/aurora-multiphysics/achlys), please also cite:
 
 - _Brooks H, Dixon S and Davis A 2022 Towards Multiphysics Simulations of Fusion Breeder Blankets International Conference on Physics of Reactors 2022 (PHYSOR 2022) / Pittsburgh, PA, May 15-20 (American Nuclear Society) pp 2480–2489_
@@ -52,8 +54,8 @@ If in addition you are performing breeder blanket studies and/or you have used t
   pages        = "2480-2489",
   publisher    = "American Nuclear Society",
   }
-  ```  
-  
+  ```
+
 We also recommend that you cite works corresponding to AURORA's primary dependencies: [MOOSE](https://mooseframework.inl.gov/citing.html) and [OpenMC](https://docs.openmc.org/en/stable/publications.html).
 
 ## Installation
@@ -68,153 +70,139 @@ If you do not want to build from source, please see the section on docker contai
 
 First ensure you have all the dependencies installed, as outlined below. If you would like to install from source in a pre-built environment (i.e. you don't want to install the dependencies below), you may want to use one of our docker images (see section below).
 
-#### A. Dependencies
-
-1) Parallel dependencies (optional)
-If you intend to run in parallel using either MPI or thread (or both) please ensure you have the following installed.
-  a. MPI: OpenMPI / MPICH
-  b. Threaded: OpenMP
-
-2) OpenMC dependencies
-
-  - a. HDF5
-
-  On Debian:
+Otherwise, start by cloning the repository. All subsequent commands, unless otherwise indicated, are assumed to be executed from the root aurora directory:
 ```
-apt-get install -y libhdf5-dev
-```
-  or Redhat
-```
-dnf -y install hdf5-devel
+git clone https://github.com/aurora-multiphysics/aurora.git && \
+cd aurora/
 ```
 
-  - b. [MOAB](https://bitbucket.org/fathomteam/moab).
-```
-git clone https://bitbucket.org/fathomteam/moab && \
-    cd moab && \
-    git checkout Version5.2.0 && \
-    autoreconf -fi && \
-    mkdir bld && \
-    cd bld && \
-    ../configure --prefix=/home/moab \
-                --with-hdf5=/PATH-TO-libhdf5.so/ \
-                --enable-optimize \
-                --enable-shared \
-                --disable-debug && \
-    make -j $compile_cores && \
-    make check && \
-    make install
-```
-  - c. [ (Optionally) Double Down](https://github.com/pshriwise/double-down) - if you want to leverage Intel Embree's ray tracing kernels within DAGMC. First install [Embree ](https://github.com/embree/embree) and its dependencies.
-```
-# Embree dependencies
-sudo apt-get -y install libglfw3-dev libtbb-dev pkg-config
+#### A. Install Dependencies
 
-# Build Embree
-git clone https://github.com/embree/embree.git && \
-	cd embree && \
-	git checkout v3.6.1 && \
-	mkdir build && \
-	cd build && \
-	cmake ../ \
-	-DCMAKE_CXX_COMPILER=$CXX \
-	-DCMAKE_C_COMPILER=$CC \
-	-DEMBREE_ISPC_SUPPORT=0 && \
-	make -j $compile_cores && \
-	make install
+##### 1. Install recommended packages (requires sudo permissions)
 
-# Build DoubleDown
-git clone https://github.com/pshriwise/double-down && \
-	cd double-down && \
-	mkdir build && \
-	cd build && \
-	cmake ../ \
-	-DMOAB_DIR=/home/moab \
-	-DEMBREE_DIR=/PATH-TO-EMBREE/ \
-	-DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
-	make -j $compile_cores && \
-	make install
+In the case of Ubuntu run from the root AURORA directory:
 ```
-
-  - d. [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
-Ensure to configure with Double Down if you want this library to be used.
+sudo ./scripts/setup-env-ubuntu.sh
 ```
-mkdir dagmc-bld && \
-    cd dagmc-bld && \
-    git clone https://github.com/svalinn/DAGMC && \
-    cd DAGMC && \
-    git checkout develop && \
-    cd ../ && \
-    mkdir build && \
-    cd build && \
-    cmake ../DAGMC \
-    -DMOAB_DIR=/PATH-TO-MOAB/ \
-    -DDOUBLE_DOWN=on \
-    -DDOUBLE_DOWN_DIR=/PATH-TO-DOUBLE-DOWN/ \
-    -DBUILD_TALLY=ON \
-    -DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
-    make -j $compile_cores && \
-    make test && \
-    make install
+or for Fedora run
 ```
-
-3) [OpenMC](https://docs.openmc.org/en/stable/)
+sudo ./scripts/setup-env-fedora.sh
 ```
-mkdir openmc-bld && \
-    cd openmc-bld && \
-    git clone https://github.com/openmc-dev/openmc.git && \
-    cd openmc && \
-    git checkout develop && \
-    cd ../ && \
-    mkdir build && \
-    cd build && \
-    cmake ../openmc \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DOPENMC_USE_DAGMC=on \
-          -DDAGMC_DIR=/PATH-TO-DAGMC/ \
-          -DCMAKE_INSTALL_PREFIX=/INSTALL-PATH/ && \
-    make -j $compile_cores && \
-    make -j $compile_cores install
+For HPC systems where administrative permissions is not typical, it is likely you can skip this step, since assumed packages will likely already be available for example as modules. Subsequent steps assume the following packages are available in your environment:
+- git
+- cmake
+- C++ compiler
+- Fortran compiler
+- Python 3
+- HDF5
+- BLAS
+- LAPACK
+- Eigen
+- OpenMPI / MPICH (Optional, but recommended)
+- rsync
+- bison
+- flex
+- TBB (Optional, needed for Embree)
+- GLFW (Optional, needed for Embree)
+
+##### 2. Install python packages
+
+There are a number of python packages required to run the MOOSE test suite. We recommend installing these in a python virtual environment, using the script we have provided. For a full list of options run:
 ```
-  Further detailed installation instructions for OpenMC can be found [here](https://docs.openmc.org/en/stable/usersguide/install.html).
-  Please ensure you configure with support for DagMC enabled, and support for MPI/threads enabled if you intend to run in parallel.
+./scripts/setup-python-venv.sh -h
+```
+Although the flags are optional and have sensible defaults, we recommend most users should run with the following options:
+```
+./scripts/setup-python-venv.sh -w $WORKDIR -d $ENV -e $NAME -i $BASE_PROFILE -o $PROFILE
+```
+where:
+- WORKDIR is the root level directory where to run commands
+- ENV is the directory name in WORKDIR where to create the moose python environment
+- BASE_PROFILE is a file from which to install the base environment (e.g. module load commands for HPC)
+- PROFILE is an output profile to source to set up the MOOSE environment in future
 
-4) MOOSE ( + PETSc /  libMesh )
-  Please follow these [installation instructions ](https://mooseframework.inl.gov/getting_started/installation/install_moose.html).
+##### 3. Install MOOSE
 
-#### B. Environment
+We recommend building MOOSE using the script we have provided. For a full list of options run:
+```
+./scripts/build-moose.sh -h
+```
+Although the flags are optional and have sensible defaults, we recommend most users run with the following options:
+```
+./scripts/build-moose.sh -w $WORKDIR -j $JOBS  -d $HDF5DIR -e ${BASE_PROFILE}  -o $PROFILE
+```
+where
+- WORKDIR is a directory in which to install moose
+- JOBS is the number of cores to compile with
+- HDF5DIR is the path to an installation of HDF5
+- BASE_PROFILE is a file from which to install the base environment (e.g. module load commands for HPC)
+- PROFILE is an output profile to source to set up the MOOSE environment in future
 
-  The Makefile for AURORA assumes the following environment variables have been set:
+Please note, this script assumes:
+- the environment variables CC, CXX and FC have been set to point at the compilers you wish to use. We recommend this is provided in your base profile.
+- the python packages from part (A) of this step have been installed (these are necessary for the MOOSE test suite). If you used our script, remember to source the output profile which was created in that step. We recommend putting this command in your base profile.
+
+##### 4. Install additional dependencies
+In adddition to MOOSE, AURORA has the following dependencies.
+  - [MOAB](https://bitbucket.org/fathomteam/moab)
+  - [Embree](https://github.com/embree/embree.git) (optional)
+  - [DoubleDownDouble Down](https://github.com/pshriwise/double-down) (optional)
+  - [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
+  - [OpenMC](https://docs.openmc.org/en/stable/)
+
+We recommend doing this with the script provided. First move into the scripts directory.
+```
+cd scripts
+```
+For a full list of options run:
+```
+./build-aurora-deps.sh -h
+```
+Although the flags are optional and have sensible defaults, we recommend most users run with the following options:
+```
+./build-aurora-deps.sh -w $WORKDIR -j $JOBS -i $INSTALLDIR -e $BASE_PROFILE -o $OUTPUTDIR
+```
+where
+- WORKDIR is a base directory in which to build packages
+- JOBS is the number of cores to compile with
+- INSTALLDIR is the installation directory
+- BASE_PROFILE is a file from which to install the base environment (e.g. module load commands for HPC)
+- OUTPUTDIR is a directory in which package profile files will be installed
+
+#### B. Set Up Environment
+
+If you followed section A to install using scripts provided you should be able to set up your environment by sourcing the profiles created for MOOSE and OpenMC.
+You can provide these files as a comma separated list in the next section.
+
+If you have installed your dependencies not using the scripts provided, you are responsible for ensuring your environment is sane:
+1. The Makefile for AURORA assumes the following environment variables have been set:
  - `PETSC_DIR`: path to PETSc installation directory.
  - `MOOSE_DIR`: path to MOOSE installation directory.
-Optionally you may want to set `MOOSE_JOBS` to the number of cores on your system.
-
-In addition it is expected that the following MOAB / DAGMC / OpenMC executables can be found in your PATH: `openmc` ; `mbconvert`; `make_watertight`.
+ - Optionally you may want to set `MOOSE_JOBS` to the number of cores on your system.
+2. In addition it is expected that the following MOAB / DAGMC / OpenMC executables can be found in your PATH: `openmc` ; `mbconvert`; `make_watertight`.
 
 Finally, in order to run AURORA, you will need to have set the variable `OPENMC_CROSS_SECTIONS` to point to a cross_sections.xml file, see [here](https://docs.openmc.org/en/stable/usersguide/cross_sections.html#environment-variable) for more details.
 
 #### C. Build
-In case you skipped to this section, ensure you have set up your dependencies and environment as per sections A,B (or you are working in a pre-built docker container for these, see below).
+Assuming you have followed sections A and B, you can run the following script to compile AURORA:
 ```
-git clone https://github.com/aurora-multiphysics/aurora.git && \
-    cd aurora/openmc/ && \
-    make -j $compile_cores && \
-    cd unit && \
-    make -j $compile_cores && \
-    cd ../../ && \
-    make -j $compile_cores && \
-    cd unit && \
-    make -j $compile_cores
+./scripts/build-aurora.sh -j $JOBS -e $ENVS -o $OUTPUTDIR -d $AURORADIR
 ```
-There should now be an executable `aurora-opt` in the root aurora directory.
+where
+- JOBS is the number of cores to compile with
+- ENVS is a comma-separated list of profiles to source the environment (e.g. MOOSE and OpenMC)
+- OUTPUTDIR is a directory in which package profile files will be installed
+- AURORADIR is the path to the root AURORA directory (default = $PWD)
+
+If everything succeeded there should now be an executable `aurora-opt` in the root aurora directory and all the tests should have passed.
 
 #### D. Run Tests
-To check your installation works, it's a good idea to run the test suite.
-Before you do this ensure the `OPENMC_CROSS_SECTIONS` environment variable points at a cross section file which contains KERMA-processed cross sections. For convenience we package a minimal set of cross sections needed for the tests, but you'll need to unpack them and set the `OPENMC_CROSS_SECTIONS` variable:
+The tests should have automatically run if you used the provided script in the previous section.
+
+However, if you choose to do development work, you may wish to run the test suite.
+Before you do this ensure the `OPENMC_CROSS_SECTIONS` environment variable points at a cross section file which contains KERMA-processed cross sections. For convenience we package a minimal set of cross sections needed for the tests - you'll need to set the `OPENMC_CROSS_SECTIONS` variable:
 ```
-cd aurora/data && \
-   tar xzvf endfb71_hdf5.tgz && \
-   export OPENMC_CROSS_SECTIONS=/PATH-TO-AURORA/aurora/data/endfb71_hdf5/cross_sections.xml
+export OPENMC_CROSS_SECTIONS=/PATH-TO-AURORA/aurora/data/endfb71_hdf5/cross_sections.xml
 ```
 See [this discussion](https://openmc.discourse.group/t/nuclear-data-dependent-zero-result-for-heating-local-tally/833) for further details. Now you can run the tests as follows
 ```
@@ -255,7 +243,7 @@ We recommend that you familiarise yourself with both OpenMC and MOOSE before try
 Specifically, OpenMC requires that the following files exist in your run directory:
  - `settings.xml`
  - `materials.xml`
- - `tallies.xml`
+ - `geometry.xml`
  - `dagmc.h5m`
 
 The `dagmc.h5m` file is a surface mesh file, in length units assumed to be cm. This [guide](https://svalinn.github.io/DAGMC/usersguide/trelis_workflow.html) provides details on the workflow to create such a file.

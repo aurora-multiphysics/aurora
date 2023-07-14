@@ -39,11 +39,10 @@ Help()
     echo "Syntax: build-aurora [options]"
     echo "options:"
     echo "h      Print this help."
-    echo "w      Set working directory"
     echo "j      Set number of build jobs  (default: $JOBS)"
     echo "e      Set file(s) from which to source environment"
     echo "o      Set output directory to create profiles (default:${ENV_OUTDIR} )"
-    echo "d      Path to AURORA root directory"
+    echo "d      Path to AURORA root directory  (default:${AURORADIR} )"
     echo
 }
 
