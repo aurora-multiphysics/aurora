@@ -86,6 +86,7 @@ temp_print_trace.*
 .clang_complete
 .failed_tests
 *.h5
+*out.e
 *#
 failed-unittest
 compile_commands.json
