@@ -204,7 +204,7 @@ fi
 
 # Build Libmesh
 cd ${MOOSE_DIR}
-METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi --skip-submodule-update --enable-exodus-long-name
 
 # Configure MOOSE
 if [ -n "${CONFIG_FLAGS}" ]; then
