@@ -146,7 +146,7 @@ Please note, this script assumes:
 In adddition to MOOSE, AURORA has the following dependencies.
   - [MOAB](https://bitbucket.org/fathomteam/moab)
   - [Embree](https://github.com/embree/embree.git) (optional)
-  - [DoubleDownDouble Down](https://github.com/pshriwise/double-down) (optional)
+  - [Double-Down](https://github.com/pshriwise/double-down) (optional)
   - [DAGMC](https://svalinn.github.io/DAGMC/install/index.html)
   - [OpenMC](https://docs.openmc.org/en/stable/)
 
@@ -246,7 +246,7 @@ Specifically, OpenMC requires that the following files exist in your run directo
  - `geometry.xml`
  - `dagmc.h5m`
 
-The `dagmc.h5m` file is a surface mesh file, in length units assumed to be cm. This [guide](https://svalinn.github.io/DAGMC/usersguide/trelis_workflow.html) provides details on the workflow to create such a file.
+The `dagmc.h5m` file is a surface mesh file, in length units assumed to be cm. This [guide](https://svalinn.github.io/DAGMC/usersguide/cubit_basics.html) provides details on the workflow to create such a file.
 
 The AURORA application itself requires two input files, and an exodus file. For details on the syntax of these input files, see the following section.
 
