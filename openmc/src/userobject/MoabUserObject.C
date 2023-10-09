@@ -293,7 +293,7 @@ MoabUserObject::findDAGBoundaries()
   // Retrieve each userobject in dag_surface_names
   for (const auto& bc_name : dag_surface_names) {
     // Retrieve DAG Surface User object
-    auto& dag_bc = problem().getUserObject<DagSurfaceUserObject>(bc_name);
+    auto& dag_bc = _fe_problem.getUserObject<DagSurfaceUserObject>(bc_name);
 
     // Retrieve BC type
     std::string dag_bc_type = dag_bc.get_boundary_type();
