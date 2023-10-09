@@ -548,6 +548,17 @@ OpenMCExecutioner::setupTally(int32_t& tally_id,
     score_data.index = score_names.size()-1;
   }
   tally_ptr->set_scores(score_names);
+
+  // Add triggers
+  // TODO generalise
+  // Trigger metric
+  openmc::TriggerMetric metric=openmc::TriggerMetric::relative_error;
+  // Trigger threshhold
+  double threshold=0.01;
+  tally_ptr->triggers_.reserve(tally_ptr->scores_.size());
+  for (auto i_score = 0; i_score < tally_ptr->scores_.size(); ++i_score) {
+    tally_ptr->triggers_.push_back({metric, threshold, i_score});
+  }
 }
 
 
