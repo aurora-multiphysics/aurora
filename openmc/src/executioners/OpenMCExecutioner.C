@@ -742,7 +742,7 @@ OpenMCExecutioner::setFilterInfo(openmc::Tally& tally,
       firstFilter=f_info.id;
     }
 
-    if(f_info.type=="mesh"){
+    if(f_info.type==openmc::FilterType::MESH){
       if(meshFilter ==-1) meshFilter = f_info.id;
       else{
         openmc::set_errmsg("Found more than one mesh filter");

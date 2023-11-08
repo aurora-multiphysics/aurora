@@ -75,7 +75,7 @@ private:
     /// Number of filter bins
     size_t nbins;
     /// Type of filter
-    std::string type;
+    openmc::FilterType type;
   };
 
   /// \brief Helper struct to store information about OpenMC scores
